@@ -38,6 +38,18 @@ func (c *CPU) stx(mode AddressingMode) {
 	c.memWrite(addr, c.RegisterX)
 }
 
+// sty - Store Y Register
+//
+// Stores the contents of the Y register into memory.
+//
+// See [STY Instruction Reference].
+//
+// [STY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STY
+func (c *CPU) sty(mode AddressingMode) {
+	addr := c.getOperandAddress(mode)
+	c.memWrite(addr, c.RegisterY)
+}
+
 // tax - Transfer Accumulator to X
 //
 // Copies the current contents of the accumulator into the X register

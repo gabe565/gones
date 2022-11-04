@@ -135,6 +135,8 @@ func (c *CPU) run() error {
 			c.sta(opcode.Mode)
 		case 0x86, 0x96, 0x8E:
 			c.stx(opcode.Mode)
+		case 0x84, 0x94, 0x8C:
+			c.sty(opcode.Mode)
 		case 0xAA:
 			c.tax()
 		case 0xE8:
