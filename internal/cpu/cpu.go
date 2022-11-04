@@ -36,6 +36,9 @@ type CPU struct {
 
 	// Memory Main memory
 	Memory [0xFFFF]uint8
+
+	// Callback optional callback to Run before every tick
+	Callback func(c *CPU)
 }
 
 const (
@@ -196,6 +199,10 @@ func (c *CPU) Run() error {
 	opcodes := OpCodeMap()
 
 	for {
+		if c.Callback != nil {
+			c.Callback(c)
+		}
+
 		code := c.memRead(c.PC)
 		c.PC += 1
 		prevPC := c.PC
