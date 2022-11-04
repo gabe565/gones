@@ -84,22 +84,22 @@ func (c *CPU) setAccumulator(v uint8) {
 
 func (c *CPU) addAccumulator(data uint8) {
 	sum := uint16(c.Accumulator) + uint16(data)
-	if bits.Has(c.Status, Carry) {
+	if c.Status.Has(Carry) {
 		sum += 1
 	}
 
 	carry := sum > 0xFF
 	if carry {
-		c.Status = bits.Set(c.Status, Carry)
+		c.Status.Set(Carry)
 	} else {
-		c.Status = bits.Clear(c.Status, Carry)
+		c.Status.Clear(Carry)
 	}
 
 	result := uint8(sum)
 	if (data^result)&(result^c.Accumulator)&0x80 != 0 {
-		c.Status = bits.Set(c.Status, Overflow)
+		c.Status.Set(Overflow)
 	} else {
-		c.Status = bits.Clear(c.Status, Overflow)
+		c.Status.Clear(Overflow)
 	}
 
 	c.setAccumulator(result)
@@ -156,15 +156,15 @@ func (c *CPU) stackPop16() uint16 {
 // updateZeroAndNegFlags updates zero and negative flags
 func (c *CPU) updateZeroAndNegFlags(result uint8) {
 	if result == 0 {
-		c.Status = bits.Set(c.Status, Zero)
+		c.Status.Set(Zero)
 	} else {
-		c.Status = bits.Clear(c.Status, Zero)
+		c.Status.Clear(Zero)
 	}
 
-	if bits.Has(bits.Bits(result), Negative) {
-		c.Status = bits.Set(c.Status, Negative)
+	if bits.Bits(result).Has(Negative) {
+		c.Status.Set(Negative)
 	} else {
-		c.Status = bits.Clear(c.Status, Negative)
+		c.Status.Clear(Negative)
 	}
 }
 
@@ -181,9 +181,9 @@ func (c *CPU) compare(mode AddressingMode, rhs uint8) {
 	addr := c.getOperandAddress(mode)
 	data := c.memRead(addr)
 	if data <= rhs {
-		c.Status = bits.Set(c.Status, Carry)
+		c.Status.Set(Carry)
 	} else {
-		c.Status = bits.Clear(c.Status, Carry)
+		c.Status.Clear(Carry)
 	}
 	c.updateZeroAndNegFlags(rhs - data)
 }
