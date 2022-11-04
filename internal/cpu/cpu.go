@@ -3,7 +3,6 @@ package cpu
 import (
 	"errors"
 	"fmt"
-	"log"
 )
 
 func New() CPU {
@@ -91,59 +90,6 @@ func (c *CPU) loadAndRun(program []uint8) error {
 	return c.run()
 }
 
-// lda - Load Accumulator
-//
-// Loads a byte of memory into the accumulator setting the zero and
-// negative flags as appropriate.
-//
-// See [LDA Instruction Reference[].
-//
-// [LDA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDA
-func (c *CPU) lda(mode AddressingMode) {
-	addr := c.getOperandAddress(mode)
-	v := c.memRead(addr)
-
-	c.RegisterA = v
-	c.updateZeroAndNegFlags(c.RegisterA)
-}
-
-// sta - Store Accumulator
-//
-// Stores the contents of the accumulator into memory.
-//
-// See [STA Instruction Reference].
-//
-// [STA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STA
-func (c *CPU) sta(mode AddressingMode) {
-	addr := c.getOperandAddress(mode)
-	c.memWrite(addr, c.RegisterA)
-}
-
-// tax - Transfer Accumulator to X
-//
-// Copies the current contents of the accumulator into the X register
-// and sets the zero and negative flags as appropriate.
-//
-// See [TAX Instruction Reference].
-//
-// [TAX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TAX
-func (c *CPU) tax() {
-	c.RegisterX = c.RegisterA
-	c.updateZeroAndNegFlags(c.RegisterX)
-}
-
-// inx - Increment X Register
-//
-// Adds one to the X register setting the zero and negative flags as appropriate.
-//
-// See [INX Instruction Reference].
-//
-// [INX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INX
-func (c *CPU) inx() {
-	c.RegisterX += 1
-	c.updateZeroAndNegFlags(c.RegisterX)
-}
-
 // updateZeroAndNegFlags updates zero and negative flags
 func (c *CPU) updateZeroAndNegFlags(result uint8) {
 	if result == 0 {
@@ -156,51 +102,6 @@ func (c *CPU) updateZeroAndNegFlags(result uint8) {
 		c.Acc |= 0b1000_0000
 	} else {
 		c.Acc &= 0b0111_1111
-	}
-}
-
-// getOperandAddress gets the address based on the [AddressingMode].
-//
-// See [6502 Addressing Mode].
-//
-// [6502 Addressing Mode]: https://www.nesdev.org/obelisk-6502-guide/addressing.html
-func (c *CPU) getOperandAddress(mode AddressingMode) uint16 {
-	switch mode {
-	case Immediate:
-		return c.PC
-	case ZeroPage:
-		return uint16(c.memRead(c.PC))
-	case Absolute:
-		return c.memRead16(c.PC)
-	case ZeroPageX:
-		pos := c.memRead(c.PC)
-		return uint16(pos + c.RegisterX)
-	case ZeroPageY:
-		pos := c.memRead(c.PC)
-		return uint16(pos + c.RegisterY)
-	case AbsoluteX:
-		pos := c.memRead(c.PC)
-		return uint16(pos) + uint16(c.RegisterX)
-	case AbsoluteY:
-		pos := c.memRead(c.PC)
-		return uint16(pos) + uint16(c.RegisterY)
-	case IndirectX:
-		base := c.memRead(c.PC)
-
-		ptr := base + c.RegisterX
-		lo := c.memRead(uint16(ptr))
-		hi := c.memRead(uint16(ptr + 1))
-		return uint16(hi)<<8 | uint16(lo)
-	case IndirectY:
-		base := c.memRead(c.PC)
-
-		lo := c.memRead(uint16(base))
-		hi := c.memRead(uint16(uint8(base) + 1))
-		derefBase := uint16(hi)<<8 | uint16(lo)
-		return derefBase + uint16(c.RegisterY)
-	default:
-		log.Panicln("unsupported mode: ", mode)
-		return 0
 	}
 }
 
