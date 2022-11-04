@@ -3,6 +3,7 @@ package cpu
 import (
 	"errors"
 	"fmt"
+	"github.com/gabe565/gones/internal/bits"
 )
 
 func New() CPU {
@@ -19,7 +20,7 @@ type CPU struct {
 	PC uint16
 
 	// Acc Accumulator
-	Acc uint8
+	Acc bits.Bits
 
 	// RegisterA Register A
 	RegisterA uint8
@@ -98,15 +99,15 @@ func (c *CPU) loadAndRun(program []uint8) error {
 // updateZeroAndNegFlags updates zero and negative flags
 func (c *CPU) updateZeroAndNegFlags(result uint8) {
 	if result == 0 {
-		c.Acc |= 0b0000_0010
+		c.Acc = bits.Set(c.Acc, Zero)
 	} else {
-		c.Acc &= 0b1111_1101
+		c.Acc = bits.Clear(c.Acc, Zero)
 	}
 
-	if result&0b1000_0000 != 0 {
-		c.Acc |= 0b1000_0000
+	if bits.Has(bits.Bits(result), Negative) {
+		c.Acc = bits.Set(c.Acc, Negative)
 	} else {
-		c.Acc &= 0b0111_1111
+		c.Acc = bits.Clear(c.Acc, Negative)
 	}
 }
 
