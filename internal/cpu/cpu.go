@@ -105,8 +105,8 @@ func (c *CPU) addAccumulator(data uint8) {
 	c.setAccumulator(result)
 }
 
-// reset resets the CPU and sets PC to the value of the [Reset] Vector.
-func (c *CPU) reset() {
+// Reset resets the CPU and sets PC to the value of the [Reset] Vector.
+func (c *CPU) Reset() {
 	c.Accumulator = 0
 	c.RegisterX = 0
 	c.Status = 0
@@ -115,8 +115,8 @@ func (c *CPU) reset() {
 	c.PC = c.memRead16(ResetAddr)
 }
 
-// load loads a program into PRG memory
-func (c *CPU) load(program []uint8) {
+// Load loads a program into PRG memory
+func (c *CPU) Load(program []uint8) {
 	for k, v := range program {
 		c.Memory[PrgRomAddr+k] = v
 	}
@@ -125,9 +125,9 @@ func (c *CPU) load(program []uint8) {
 
 // loadAndRun is a convenience function that loads a program, resets, then runs.
 func (c *CPU) loadAndRun(program []uint8) error {
-	c.load(program)
-	c.reset()
-	return c.run()
+	c.Load(program)
+	c.Reset()
+	return c.Run()
 }
 
 func (c *CPU) stackPush(data uint8) {
@@ -191,8 +191,8 @@ func (c *CPU) compare(mode AddressingMode, rhs uint8) {
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
 var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
-// run is the main run entrypoint.
-func (c *CPU) run() error {
+// Run is the main Run entrypoint.
+func (c *CPU) Run() error {
 	opcodes := OpCodeMap()
 
 	for {
