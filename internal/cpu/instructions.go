@@ -370,8 +370,32 @@ func (c *CPU) iny() {
 //
 // [JMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JMP
 func (c *CPU) jmp(mode AddressingMode) {
-	addr := c.memRead16(c.PC)
-	c.PC = addr
+	switch mode {
+	case Immediate:
+		// Absolute
+		addr := c.memRead16(c.PC)
+		c.PC = addr
+	default:
+		// Indirect
+		addr := c.memRead16(c.PC)
+
+		// let indirect_ref = self.mem_read_u16(mem_address);
+		//6502 bug mode with with page boundary:
+		//  if address $3000 contains $40, $30FF contains $80, and $3100 contains $50,
+		// the result of JMP ($30FF) will be a transfer of control to $4080 rather than $5080 as you intended
+		// i.e. the 6502 took the low byte of the address from $30FF and the high byte from $3000
+
+		var indirect uint16
+		if addr&0x00FF == 0x00FF {
+			lo := c.memRead(addr)
+			hi := c.memRead(addr & 0xFF00)
+			indirect = uint16(hi)<<8 | uint16(lo)
+		} else {
+			indirect = c.memRead16(addr)
+		}
+		c.PC = indirect
+	}
+
 }
 
 // jsr - Jump to Subroutine
@@ -383,23 +407,9 @@ func (c *CPU) jmp(mode AddressingMode) {
 //
 // [JSR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JSR
 func (c *CPU) jsr() {
+	c.stackPush16(c.PC + 2 - 1)
 	addr := c.memRead16(c.PC)
-
-	// let indirect_ref = self.mem_read_u16(mem_address);
-	//6502 bug mode with with page boundary:
-	//  if address $3000 contains $40, $30FF contains $80, and $3100 contains $50,
-	// the result of JMP ($30FF) will be a transfer of control to $4080 rather than $5080 as you intended
-	// i.e. the 6502 took the low byte of the address from $30FF and the high byte from $3000
-
-	var indirect uint16
-	if addr&0x00FF == 0x00FF {
-		lo := c.memRead(addr)
-		hi := c.memRead(addr & 0xFF00)
-		indirect = uint16(hi)<<8 | uint16(lo)
-	} else {
-		indirect = c.memRead16(addr)
-	}
-	c.PC = indirect
+	c.PC = addr
 }
 
 // lda - Load Accumulator
