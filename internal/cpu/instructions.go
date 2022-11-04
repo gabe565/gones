@@ -26,7 +26,9 @@ func (c *CPU) adc(mode AddressingMode) {
 //
 // [AND Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#AND
 func (c *CPU) and(mode AddressingMode) {
-	panic("not implemented")
+	addr := c.getOperandAddress(mode)
+	data := c.memRead(addr)
+	c.setAccumulator(c.Accumulator & data)
 }
 
 // asl - Arithmetic Shift Left
@@ -41,7 +43,16 @@ func (c *CPU) and(mode AddressingMode) {
 //
 // [ASL Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#ASL
 func (c *CPU) asl(mode AddressingMode) {
-	panic("not implemented")
+	addr := c.getOperandAddress(mode)
+	data := c.memRead(addr)
+	if data>>7 == 1 {
+		c.Status = bits.Set(c.Status, Carry)
+	} else {
+		c.Status = bits.Clear(c.Status, Carry)
+	}
+	data = data << 1
+	c.memWrite(addr, data)
+	c.updateZeroAndNegFlags(data)
 }
 
 // bcc - Branch if Carry Clear
@@ -53,7 +64,7 @@ func (c *CPU) asl(mode AddressingMode) {
 //
 // [BCC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BCC
 func (c *CPU) bcc() {
-	panic("not implemented")
+	c.branch(!bits.Has(c.Status, Carry))
 }
 
 // bcs - Branch if Carry Set
@@ -65,7 +76,7 @@ func (c *CPU) bcc() {
 //
 // [BCS Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BCS
 func (c *CPU) bcs() {
-	panic("not implemented")
+	c.branch(bits.Has(c.Status, Carry))
 }
 
 // beq - Branch if Equal
@@ -77,7 +88,7 @@ func (c *CPU) bcs() {
 //
 // [BEQ Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BEQ
 func (c *CPU) beq() {
-	panic("not implemented")
+	c.branch(bits.Has(c.Status, Zero))
 }
 
 // bit - Bit Test
@@ -91,7 +102,26 @@ func (c *CPU) beq() {
 //
 // [BIT Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BIT
 func (c *CPU) bit(mode AddressingMode) {
-	panic("not implemented")
+	addr := c.getOperandAddress(mode)
+	data := c.memRead(addr)
+	and := data & c.Accumulator
+	if and == 0 {
+		c.Status = bits.Set(c.Status, Zero)
+	} else {
+		c.Status = bits.Set(c.Status, Zero)
+	}
+
+	if bits.Has(bits.Bits(data), Negative) {
+		c.Status = bits.Set(c.Status, Negative)
+	} else {
+		c.Status = bits.Clear(c.Status, Negative)
+	}
+
+	if bits.Has(bits.Bits(data), Overflow) {
+		c.Status = bits.Set(c.Status, Overflow)
+	} else {
+		c.Status = bits.Clear(c.Status, Overflow)
+	}
 }
 
 // bmi - Branch if Minus
@@ -103,7 +133,7 @@ func (c *CPU) bit(mode AddressingMode) {
 //
 // [BMI Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BMI
 func (c *CPU) bmi() {
-	panic("not implemented")
+	c.branch(bits.Has(c.Status, Negative))
 }
 
 // bne - Branch if Not Equal
@@ -115,7 +145,7 @@ func (c *CPU) bmi() {
 //
 // [BNE Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BNE
 func (c *CPU) bne() {
-	panic("not implemented")
+	c.branch(!bits.Has(c.Status, Zero))
 }
 
 // bpl - Branch if Not Equal
@@ -127,7 +157,7 @@ func (c *CPU) bne() {
 //
 // [BPL Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BPL
 func (c *CPU) bpl() {
-	panic("not implemented")
+	c.branch(!bits.Has(c.Status, Negative))
 }
 
 // bvc - Branch if Overflow Clear
@@ -139,10 +169,10 @@ func (c *CPU) bpl() {
 //
 // [BVC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BVC
 func (c *CPU) bvc() {
-	panic("not implemented")
+	c.branch(!bits.Has(c.Status, Overflow))
 }
 
-// bvs - Branch if Overflow Clear
+// bvs - Branch if Overflow Set
 //
 // If the overflow flag is set then add the relative displacement to
 // the program counter to cause a branch to a new location.
@@ -151,7 +181,7 @@ func (c *CPU) bvc() {
 //
 // [BVS Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BVS
 func (c *CPU) bvs() {
-	panic("not implemented")
+	c.branch(bits.Has(c.Status, Overflow))
 }
 
 // clc - Clear Carry Flag
@@ -162,7 +192,7 @@ func (c *CPU) bvs() {
 //
 // [CLC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLC
 func (c *CPU) clc() {
-	panic("not implemented")
+	c.Status = bits.Clear(c.Status, Carry)
 }
 
 // cld - Clear Decimal Mode
@@ -173,7 +203,7 @@ func (c *CPU) clc() {
 //
 // [CLC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLC
 func (c *CPU) cld() {
-	panic("not implemented")
+	c.Status = bits.Clear(c.Status, DecimalMode)
 }
 
 // cli - Clear Interrupt Disable
@@ -185,7 +215,7 @@ func (c *CPU) cld() {
 //
 // [CLI Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLI
 func (c *CPU) cli() {
-	panic("not implemented")
+	c.Status = bits.Clear(c.Status, InterruptDisable)
 }
 
 // clv - Clear Overflow Flag
@@ -196,7 +226,7 @@ func (c *CPU) cli() {
 //
 // [CLV Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLV
 func (c *CPU) clv() {
-	panic("not implemented")
+	c.Status = bits.Clear(c.Status, Overflow)
 }
 
 // cmp - Compare
@@ -208,7 +238,7 @@ func (c *CPU) clv() {
 //
 // [CMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CMP
 func (c *CPU) cmp(mode AddressingMode) {
-	panic("not implemented")
+	c.compare(mode, c.Accumulator)
 }
 
 // cpx - Compare X Register
@@ -220,7 +250,7 @@ func (c *CPU) cmp(mode AddressingMode) {
 //
 // [CPX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CPX
 func (c *CPU) cpx(mode AddressingMode) {
-	panic("not implemented")
+	c.compare(mode, c.RegisterX)
 }
 
 // cpy - Compare Y Register
@@ -232,7 +262,7 @@ func (c *CPU) cpx(mode AddressingMode) {
 //
 // [CPY Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CPY
 func (c *CPU) cpy(mode AddressingMode) {
-	panic("not implemented")
+	c.compare(mode, c.RegisterY)
 }
 
 // dec - Decrement Memory
@@ -244,7 +274,11 @@ func (c *CPU) cpy(mode AddressingMode) {
 //
 // [DEC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEC
 func (c *CPU) dec(mode AddressingMode) {
-	panic("not implemented")
+	addr := c.getOperandAddress(mode)
+	data := c.memRead(addr)
+	data -= 1
+	c.memWrite(addr, data)
+	c.updateZeroAndNegFlags(data)
 }
 
 // dex - Decrement X Register
@@ -256,7 +290,8 @@ func (c *CPU) dec(mode AddressingMode) {
 //
 // [DEX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEX
 func (c *CPU) dex() {
-	panic("not implemented")
+	c.RegisterX -= 1
+	c.updateZeroAndNegFlags(c.RegisterX)
 }
 
 // dey - Decrement Y Register
@@ -268,7 +303,8 @@ func (c *CPU) dex() {
 //
 // [DEY Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEY
 func (c *CPU) dey() {
-	panic("not implemented")
+	c.RegisterY -= 1
+	c.updateZeroAndNegFlags(c.RegisterY)
 }
 
 // eor - Exclusive OR
@@ -280,7 +316,9 @@ func (c *CPU) dey() {
 //
 // [EOR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#EOR
 func (c *CPU) eor(mode AddressingMode) {
-	panic("not implemented")
+	addr := c.getOperandAddress(mode)
+	data := c.memRead(addr)
+	c.setAccumulator(data ^ c.Accumulator)
 }
 
 // inc - Increment Memory
@@ -292,7 +330,11 @@ func (c *CPU) eor(mode AddressingMode) {
 //
 // [INC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INC
 func (c *CPU) inc(mode AddressingMode) {
-	panic("not implemented")
+	addr := c.getOperandAddress(mode)
+	data := c.memRead(addr)
+	data += 1
+	c.memWrite(addr, data)
+	c.updateZeroAndNegFlags(data)
 }
 
 // inx - Increment X Register
@@ -328,7 +370,8 @@ func (c *CPU) iny() {
 //
 // [JMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JMP
 func (c *CPU) jmp(mode AddressingMode) {
-	panic("not implemented")
+	addr := c.memRead16(c.PC)
+	c.PC = addr
 }
 
 // jsr - Jump to Subroutine
@@ -340,7 +383,23 @@ func (c *CPU) jmp(mode AddressingMode) {
 //
 // [JSR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JSR
 func (c *CPU) jsr() {
-	panic("not implemented")
+	addr := c.memRead16(c.PC)
+
+	// let indirect_ref = self.mem_read_u16(mem_address);
+	//6502 bug mode with with page boundary:
+	//  if address $3000 contains $40, $30FF contains $80, and $3100 contains $50,
+	// the result of JMP ($30FF) will be a transfer of control to $4080 rather than $5080 as you intended
+	// i.e. the 6502 took the low byte of the address from $30FF and the high byte from $3000
+
+	var indirect uint16
+	if addr&0x00FF == 0x00FF {
+		lo := c.memRead(addr)
+		hi := c.memRead(addr & 0xFF00)
+		indirect = uint16(hi)<<8 | uint16(lo)
+	} else {
+		indirect = c.memRead16(addr)
+	}
+	c.PC = indirect
 }
 
 // lda - Load Accumulator
@@ -366,7 +425,10 @@ func (c *CPU) lda(mode AddressingMode) {
 //
 // [LDX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDX
 func (c *CPU) ldx(mode AddressingMode) {
-	panic("not implemented")
+	addr := c.getOperandAddress(mode)
+	data := c.memRead(addr)
+	c.RegisterX = data
+	c.updateZeroAndNegFlags(c.RegisterX)
 }
 
 // ldy - Load Y Register
@@ -378,7 +440,10 @@ func (c *CPU) ldx(mode AddressingMode) {
 //
 // [LDY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDY
 func (c *CPU) ldy(mode AddressingMode) {
-	panic("not implemented")
+	addr := c.getOperandAddress(mode)
+	data := c.memRead(addr)
+	c.RegisterY = data
+	c.updateZeroAndNegFlags(c.RegisterY)
 }
 
 // lsr - Logical Shift Right
@@ -390,8 +455,17 @@ func (c *CPU) ldy(mode AddressingMode) {
 // See [LSR Instruction Reference[].
 //
 // [LSR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LSR
-func (c *CPU) lsr() {
-	panic("not implemented")
+func (c *CPU) lsr(mode AddressingMode) {
+	addr := c.getOperandAddress(mode)
+	data := c.memRead(addr)
+	if data&1 == 1 {
+		c.Status = bits.Set(c.Status, Carry)
+	} else {
+		c.Status = bits.Clear(c.Status, Carry)
+	}
+	data >>= 1
+	c.memWrite(addr, data)
+	c.updateZeroAndNegFlags(data)
 }
 
 // ora - Logical Inclusive OR
@@ -403,7 +477,9 @@ func (c *CPU) lsr() {
 //
 // [ORA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ORA
 func (c *CPU) ora(mode AddressingMode) {
-	panic("not implemented")
+	addr := c.getOperandAddress(mode)
+	data := c.memRead(addr)
+	c.setAccumulator(data | c.Accumulator)
 }
 
 // pha - Push Accumulator
@@ -414,7 +490,7 @@ func (c *CPU) ora(mode AddressingMode) {
 //
 // [PHA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PHA
 func (c *CPU) pha() {
-	panic("not implemented")
+	c.stackPush(c.Accumulator)
 }
 
 // php - Push Processor Status
@@ -425,7 +501,10 @@ func (c *CPU) pha() {
 //
 // [PHP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PHP
 func (c *CPU) php() {
-	panic("not implemented")
+	flags := c.Status
+	flags = bits.Set(flags, Break)
+	flags = bits.Set(flags, Break2)
+	c.stackPush(uint8(flags))
 }
 
 // pla - Pull Accumulator
@@ -437,7 +516,8 @@ func (c *CPU) php() {
 //
 // [PLA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLA
 func (c *CPU) pla() {
-	panic("not implemented")
+	data := c.stackPop()
+	c.Accumulator = data
 }
 
 // plp - Pull Processor Status
@@ -449,7 +529,10 @@ func (c *CPU) pla() {
 //
 // [PLP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLP
 func (c *CPU) plp() {
-	panic("not implemented")
+	flags := bits.Bits(c.stackPop())
+	flags = bits.Clear(flags, Break)
+	flags = bits.Clear(flags, Break2)
+	c.Status = flags
 }
 
 // rol - Rotate Left
@@ -462,7 +545,31 @@ func (c *CPU) plp() {
 //
 // [ROL Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ROL
 func (c *CPU) rol(mode AddressingMode) {
-	panic("not implemented")
+	var addr uint16
+	var data uint8
+	if mode == NoneAddressing {
+		data = c.Accumulator
+	} else {
+		addr = c.getOperandAddress(mode)
+		data = c.memRead(addr)
+	}
+	prevCarry := bits.Has(c.Status, Carry)
+
+	if data>>7 == 1 {
+		c.Status = bits.Set(c.Status, Carry)
+	} else {
+		c.Status = bits.Clear(c.Status, Carry)
+	}
+	data <<= 1
+	if prevCarry {
+		data |= 1
+	}
+	if mode == NoneAddressing {
+		c.Accumulator = data
+	} else {
+		c.memWrite(addr, data)
+		c.updateZeroAndNegFlags(data)
+	}
 }
 
 // ror - Rotate Right
@@ -475,7 +582,31 @@ func (c *CPU) rol(mode AddressingMode) {
 //
 // [ROR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ROR
 func (c *CPU) ror(mode AddressingMode) {
-	panic("not implemented")
+	var addr uint16
+	var data uint8
+	if mode == NoneAddressing {
+		data = c.Accumulator
+	} else {
+		addr = c.getOperandAddress(mode)
+		data = c.memRead(addr)
+	}
+	prevCarry := bits.Has(c.Status, Carry)
+
+	if data&1 == 1 {
+		c.Status = bits.Set(c.Status, Carry)
+	} else {
+		c.Status = bits.Clear(c.Status, Carry)
+	}
+	data >>= 1
+	if prevCarry {
+		data |= uint8(Negative)
+	}
+	if mode == NoneAddressing {
+		c.Accumulator = data
+	} else {
+		c.memWrite(addr, data)
+		c.updateZeroAndNegFlags(data)
+	}
 }
 
 // rti - Return from Interrupt
@@ -487,7 +618,12 @@ func (c *CPU) ror(mode AddressingMode) {
 //
 // [RTI Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#RTI
 func (c *CPU) rti() {
-	panic("not implemented")
+	flags := bits.Bits(c.stackPop())
+	flags = bits.Clear(flags, Break)
+	flags = bits.Set(flags, Break2)
+	c.Status = flags
+
+	c.PC = c.stackPop16()
 }
 
 // rts - Return from Subroutine

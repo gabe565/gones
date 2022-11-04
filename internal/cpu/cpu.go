@@ -168,6 +168,26 @@ func (c *CPU) updateZeroAndNegFlags(result uint8) {
 	}
 }
 
+func (c *CPU) branch(condition bool) {
+	if condition {
+		jump := int8(c.memRead(c.PC))
+		jumpAddr := c.PC + 1 + uint16(jump)
+
+		c.PC = jumpAddr
+	}
+}
+
+func (c *CPU) compare(mode AddressingMode, rhs uint8) {
+	addr := c.getOperandAddress(mode)
+	data := c.memRead(addr)
+	if data <= rhs {
+		c.Status = bits.Set(c.Status, Carry)
+	} else {
+		c.Status = bits.Clear(c.Status, Carry)
+	}
+	c.updateZeroAndNegFlags(rhs - data)
+}
+
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
 var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
@@ -249,7 +269,7 @@ func (c *CPU) run() error {
 		case 0xA0, 0xA4, 0xB4, 0xAC, 0xBC:
 			c.ldy(opcode.Mode)
 		case 0x4A, 0x46, 0x56, 0x4E, 0x5E:
-			c.lsr()
+			c.lsr(opcode.Mode)
 		case 0xEA:
 			// NOP
 		case 0x09, 0x05, 0x15, 0x0D, 0x1D, 0x19, 0x01, 0x11:
