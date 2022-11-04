@@ -229,6 +229,8 @@ func (c *CPU) Run() error {
 			c.bit(opcode.Mode)
 		case 0x30:
 			c.bmi()
+		case 0xD0:
+			c.bne()
 		case 0x10:
 			c.bpl()
 		case 0x00:
