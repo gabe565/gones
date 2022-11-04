@@ -14,7 +14,7 @@ import "github.com/gabe565/gones/internal/bits"
 func (c *CPU) adc(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
 	v := c.memRead(addr)
-	c.addRegisterA(v)
+	c.addAccumulator(v)
 }
 
 // and - Logical AND
@@ -354,7 +354,7 @@ func (c *CPU) jsr() {
 func (c *CPU) lda(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
 	v := c.memRead(addr)
-	c.setRegisterA(v)
+	c.setAccumulator(v)
 }
 
 // ldx - Load X Register
@@ -515,7 +515,7 @@ func (c *CPU) rts() {
 func (c *CPU) sbc(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
 	v := c.memRead(addr)
-	c.addRegisterA(uint8(-int8(v) - 1))
+	c.addAccumulator(uint8(-int8(v) - 1))
 }
 
 // sec - Set Carry Flag

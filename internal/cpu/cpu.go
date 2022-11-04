@@ -77,12 +77,12 @@ func (c *CPU) memWrite16(pos uint16, data uint16) {
 	c.memWrite(pos+1, hi)
 }
 
-func (c *CPU) setRegisterA(v uint8) {
+func (c *CPU) setAccumulator(v uint8) {
 	c.Accumulator = v
 	c.updateZeroAndNegFlags(c.Accumulator)
 }
 
-func (c *CPU) addRegisterA(data uint8) {
+func (c *CPU) addAccumulator(data uint8) {
 	sum := uint16(c.Accumulator) + uint16(data)
 	if bits.Has(c.Status, Carry) {
 		sum += 1
@@ -102,7 +102,7 @@ func (c *CPU) addRegisterA(data uint8) {
 		c.Status = bits.Clear(c.Status, Overflow)
 	}
 
-	c.setRegisterA(result)
+	c.setAccumulator(result)
 }
 
 // reset resets the CPU and sets PC to the value of the [Reset] Vector.
