@@ -152,19 +152,23 @@ func (c *CPU) getOperandAddress(mode AddressingMode) uint16 {
 var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
 func (c *CPU) run() error {
+	opcodes := OpCodeMap()
+
 	for {
-		opcode := c.memRead(c.PC)
+		code := c.memRead(c.PC)
 		c.PC += 1
 
-		switch opcode {
-		case 0xA9:
-			c.lda(Immediate)
+		opcode, ok := opcodes[code]
+		if !ok {
+			return fmt.Errorf("%w: $%x", ErrUnsupportedOpcode, code)
+		}
+
+		switch code {
+		case 0xA9, 0xa5, 0xb5, 0xad, 0xbd, 0xb9, 0xa1, 0xb1:
+			c.lda(opcode.Mode)
 			c.PC += 1
-		case 0xA5:
-			c.lda(ZeroPage)
-			c.PC += 1
-		case 0xAD:
-			c.lda(Absolute)
+		case 0x85, 0x95, 0x8d, 0x9d, 0x99, 0x81, 0x91:
+			c.lda(opcode.Mode)
 			c.PC += 1
 		case 0xAA:
 			c.tax()
