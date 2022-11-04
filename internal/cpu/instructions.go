@@ -76,6 +76,19 @@ func (c *CPU) tsx() {
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
 
+// txa - Transfer X to Accumulator
+//
+// Copies the current contents of the X register into the accumulator
+// and sets the zero and negative flags as appropriate.
+//
+// See [TXA Instruction Reference].
+//
+// [TXA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TXA
+func (c *CPU) txa() {
+	c.Accumulator = c.RegisterX
+	c.updateZeroAndNegFlags(c.Accumulator)
+}
+
 // tay - Transfer Accumulator to Y
 //
 // Copies the current contents of the accumulator into the Y register
