@@ -100,6 +100,19 @@ func (c *CPU) txs() {
 	c.SP = c.RegisterX
 }
 
+// tya - Transfer Y to Accumulator
+//
+// Copies the current contents of the Y register into the accumulator
+// and sets the zero and negative flags as appropriate.
+//
+// See [TYA Instruction Reference].
+//
+// [TYA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TYA
+func (c *CPU) tya() {
+	c.Accumulator = c.RegisterY
+	c.updateZeroAndNegFlags(c.Accumulator)
+}
+
 // tay - Transfer Accumulator to Y
 //
 // Copies the current contents of the accumulator into the Y register

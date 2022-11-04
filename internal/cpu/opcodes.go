@@ -26,6 +26,7 @@ var OpCodes = []OpCode{
 	{0xBA, "TSX", 1, 2, NoneAddressing},
 	{0x8A, "TXA", 1, 2, NoneAddressing},
 	{0x9A, "TXS", 1, 2, NoneAddressing},
+	{0x98, "TYA", 1, 2, NoneAddressing},
 
 	{0xA9, "LDA", 2, 2, Immediate},
 	{0xA5, "LDA", 2, 3, ZeroPage},
