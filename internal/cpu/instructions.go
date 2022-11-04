@@ -17,6 +17,284 @@ func (c *CPU) adc(mode AddressingMode) {
 	c.addRegisterA(v)
 }
 
+// and - Logical AND
+//
+// A logical AND is performed, bit by bit, on the accumulator contents
+// using the contents of a byte of memory.
+//
+// See [AND Instruction Reference].
+//
+// [AND Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#AND
+func (c *CPU) and(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// asl - Arithmetic Shift Left
+//
+// This operation shifts all the bits of the accumulator or memory contents
+// one bit left. Bit 0 is set to 0 and bit 7 is placed in the carry flag.
+// The effect of this operation is to multiply the memory contents by 2
+// (ignoring 2's complement considerations), setting the carry if the result
+// will not fit in 8 bits.
+//
+// See [ASL Instruction Reference].
+//
+// [ASL Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#ASL
+func (c *CPU) asl(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// bcc - Branch if Carry Clear
+//
+// If the carry flag is clear then add the relative displacement to the
+// program counter to cause a branch to a new location.
+//
+// See [BCC Instruction Reference].
+//
+// [BCC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BCC
+func (c *CPU) bcc() {
+	panic("not implemented")
+}
+
+// bcs - Branch if Carry Set
+//
+// If the carry flag is set then add the relative displacement to the
+// program counter to cause a branch to a new location.
+//
+// See [BCS Instruction Reference].
+//
+// [BCS Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BCS
+func (c *CPU) bcs() {
+	panic("not implemented")
+}
+
+// beq - Branch if Equal
+//
+// If the zero flag is set then add the relative displacement to the
+// program counter to cause a branch to a new location.
+//
+// See [BEQ Instruction Reference].
+//
+// [BEQ Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BEQ
+func (c *CPU) beq() {
+	panic("not implemented")
+}
+
+// bit - Bit Test
+//
+// This instruction is used to test if one or more bits are set in a
+// target memory location. The mask pattern in A is ANDed with the value
+// in memory to set or clear the zero flag, but the result is not kept.
+// Bits 7 and 6 of the value from memory are copied into the N and V flags.
+//
+// See [BIT Instruction Reference].
+//
+// [BIT Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BIT
+func (c *CPU) bit(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// bmi - Branch if Minus
+//
+// If the negative flag is set then add the relative displacement to the
+// program counter to cause a branch to a new location.
+//
+// See [BMI Instruction Reference].
+//
+// [BMI Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BMI
+func (c *CPU) bmi() {
+	panic("not implemented")
+}
+
+// bne - Branch if Not Equal
+//
+// If the zero flag is clear then add the relative displacement to the
+// program counter to cause a branch to a new location.
+//
+// See [BNE Instruction Reference].
+//
+// [BNE Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BNE
+func (c *CPU) bne() {
+	panic("not implemented")
+}
+
+// bpl - Branch if Not Equal
+//
+// If the negative flag is clear then add the relative displacement to
+// the program counter to cause a branch to a new location.
+//
+// See [BPL Instruction Reference].
+//
+// [BPL Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BPL
+func (c *CPU) bpl() {
+	panic("not implemented")
+}
+
+// bvc - Branch if Overflow Clear
+//
+// If the overflow flag is clear then add the relative displacement to
+// the program counter to cause a branch to a new location.
+//
+// See [BVC Instruction Reference].
+//
+// [BVC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BVC
+func (c *CPU) bvc() {
+	panic("not implemented")
+}
+
+// bvs - Branch if Overflow Clear
+//
+// If the overflow flag is set then add the relative displacement to
+// the program counter to cause a branch to a new location.
+//
+// See [BVS Instruction Reference].
+//
+// [BVS Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BVS
+func (c *CPU) bvs() {
+	panic("not implemented")
+}
+
+// clc - Clear Carry Flag
+//
+// Sets the carry flag to zero.
+//
+// See [CLC Instruction Reference].
+//
+// [CLC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLC
+func (c *CPU) clc() {
+	panic("not implemented")
+}
+
+// cld - Clear Decimal Mode
+//
+// Sets the decimal mode flag to zero.
+//
+// See [CLC Instruction Reference].
+//
+// [CLC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLC
+func (c *CPU) cld() {
+	panic("not implemented")
+}
+
+// cli - Clear Interrupt Disable
+//
+// Clears the interrupt disable flag allowing normal interrupt requests
+// to be serviced.
+//
+// See [CLI Instruction Reference].
+//
+// [CLI Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLI
+func (c *CPU) cli() {
+	panic("not implemented")
+}
+
+// clv - Clear Overflow Flag
+//
+// Clears the overflow flag.
+//
+// See [CLV Instruction Reference].
+//
+// [CLV Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLV
+func (c *CPU) clv() {
+	panic("not implemented")
+}
+
+// cmp - Compare
+//
+// This instruction compares the contents of the accumulator with
+// another memory held value and sets the zero and carry flags as appropriate.
+//
+// See [CMP Instruction Reference].
+//
+// [CMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CMP
+func (c *CPU) cmp(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// cpx - Compare X Register
+//
+// This instruction compares the contents of the X register with
+// another memory held value and sets the zero and carry flags as appropriate.
+//
+// See [CPX Instruction Reference].
+//
+// [CPX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CPX
+func (c *CPU) cpx(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// cpy - Compare Y Register
+//
+// This instruction compares the contents of the Y register with
+// another memory held value and sets the zero and carry flags as appropriate.
+//
+// See [CPY Instruction Reference].
+//
+// [CPY Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CPY
+func (c *CPU) cpy(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// dec - Decrement Memory
+//
+// Subtracts one from the value held at a specified memory location setting
+// the zero and negative flags as appropriate.
+//
+// See [DEC Instruction Reference].
+//
+// [DEC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEC
+func (c *CPU) dec(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// dex - Decrement X Register
+//
+// Subtracts one from the X register setting the zero and negative flags
+// as appropriate.
+//
+// See [DEX Instruction Reference].
+//
+// [DEX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEX
+func (c *CPU) dex() {
+	panic("not implemented")
+}
+
+// dey - Decrement Y Register
+//
+// Subtracts one from the Y register setting the zero and negative flags
+// as appropriate.
+//
+// See [DEY Instruction Reference].
+//
+// [DEY Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEY
+func (c *CPU) dey() {
+	panic("not implemented")
+}
+
+// eor - Exclusive OR
+//
+// An exclusive OR is performed, bit by bit, on the accumulator contents
+// using the contents of a byte of memory.
+//
+// See [EOR Instruction Reference].
+//
+// [EOR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#EOR
+func (c *CPU) eor(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// inc - Increment Memory
+//
+// Adds one to the value held at a specified memory location setting
+// the zero and negative flags as appropriate.
+//
+// See [INC Instruction Reference].
+//
+// [INC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INC
+func (c *CPU) inc(mode AddressingMode) {
+	panic("not implemented")
+}
+
 // inx - Increment X Register
 //
 // Adds one to the X register setting the zero and negative flags as appropriate.
@@ -27,6 +305,42 @@ func (c *CPU) adc(mode AddressingMode) {
 func (c *CPU) inx() {
 	c.RegisterX += 1
 	c.updateZeroAndNegFlags(c.RegisterX)
+}
+
+// iny - Increment Y Register
+//
+// Adds one to the Y register setting the zero and
+// negative flags as appropriate.
+//
+// See [INY Instruction Reference].
+//
+// [INY Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INY
+func (c *CPU) iny() {
+	c.RegisterY += 1
+	c.updateZeroAndNegFlags(c.RegisterY)
+}
+
+// jmp - Jump
+//
+// Sets the program counter to the address specified by the operand.
+//
+// See [JMP Instruction Reference].
+//
+// [JMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JMP
+func (c *CPU) jmp(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// jsr - Jump to Subroutine
+//
+// The JSR instruction pushes the address (minus one) of the return point on to
+// the stack and then sets the program counter to the target memory address.
+//
+// See [JSR Instruction Reference].
+//
+// [JSR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JSR
+func (c *CPU) jsr() {
+	panic("not implemented")
 }
 
 // lda - Load Accumulator
@@ -41,6 +355,139 @@ func (c *CPU) lda(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
 	v := c.memRead(addr)
 	c.setRegisterA(v)
+}
+
+// ldx - Load X Register
+//
+// Loads a byte of memory into the X register setting the zero and
+// negative flags as appropriate.
+//
+// See [LDX Instruction Reference[].
+//
+// [LDX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDX
+func (c *CPU) ldx(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// ldy - Load Y Register
+//
+// Loads a byte of memory into the Y register setting the zero and
+// negative flags as appropriate.
+//
+// See [LDY Instruction Reference[].
+//
+// [LDY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDY
+func (c *CPU) ldy(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// lsr - Logical Shift Right
+//
+// Each of the bits in A or M is shift one place to the right.
+// The bit that was in bit 0 is shifted into the carry flag.
+// Bit 7 is set to zero.
+//
+// See [LSR Instruction Reference[].
+//
+// [LSR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LSR
+func (c *CPU) lsr() {
+	panic("not implemented")
+}
+
+// ora - Logical Inclusive OR
+//
+// An inclusive OR is performed, bit by bit, on the accumulator contents
+// using the contents of a byte of memory.
+//
+// See [ORA Instruction Reference[].
+//
+// [ORA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ORA
+func (c *CPU) ora(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// pha - Push Accumulator
+//
+// Pushes a copy of the accumulator on to the stack.
+//
+// See [PHA Instruction Reference[].
+//
+// [PHA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PHA
+func (c *CPU) pha() {
+	panic("not implemented")
+}
+
+// php - Push Processor Status
+//
+// Pushes a copy of the status flags on to the stack.
+//
+// See [PHP Instruction Reference[].
+//
+// [PHP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PHP
+func (c *CPU) php() {
+	panic("not implemented")
+}
+
+// pla - Pull Accumulator
+//
+// Pulls an 8 bit value from the stack and into the accumulator.
+// The zero and negative flags are set as appropriate.
+//
+// See [PLA Instruction Reference[].
+//
+// [PLA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLA
+func (c *CPU) pla() {
+	panic("not implemented")
+}
+
+// plp - Pull Processor Status
+//
+// Pulls an 8 bit value from the stack and into the processor flags.
+// The flags will take on new states as determined by the value pulled.
+//
+// See [PLP Instruction Reference[].
+//
+// [PLP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLP
+func (c *CPU) plp() {
+	panic("not implemented")
+}
+
+// rol - Rotate Left
+//
+// Move each of the bits in either A or M one place to the left.
+// Bit 0 is filled with the current value of the carry flag
+// whilst the old bit 7 becomes the new carry flag value.
+//
+// See [ROL Instruction Reference[].
+//
+// [ROL Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ROL
+func (c *CPU) rol(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// ror - Rotate Right
+//
+// Move each of the bits in either A or M one place to the right.
+// Bit 0 is filled with the current value of the carry flag whilst
+// the old bit 7 becomes the new carry flag value.
+//
+// See [ROR Instruction Reference[].
+//
+// [ROR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ROR
+func (c *CPU) ror(mode AddressingMode) {
+	panic("not implemented")
+}
+
+// rti - Return from Interrupt
+//
+// The RTI instruction is used at the end of an interrupt processing routine.
+// It pulls the processor flags from the stack followed by the program counter.
+//
+// See [RTI Instruction Reference[].
+//
+// [RTI Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#RTI
+func (c *CPU) rti() {
+	panic("not implemented")
 }
 
 // rts - Return from Subroutine
