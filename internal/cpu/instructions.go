@@ -89,6 +89,17 @@ func (c *CPU) txa() {
 	c.updateZeroAndNegFlags(c.Accumulator)
 }
 
+// txs - Transfer X to Stack Pointer
+//
+// Copies the current contents of the X register into the stack register.
+//
+// See [TXS Instruction Reference].
+//
+// [TXS Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TXS
+func (c *CPU) txs() {
+	c.SP = c.RegisterX
+}
+
 // tay - Transfer Accumulator to Y
 //
 // Copies the current contents of the accumulator into the Y register

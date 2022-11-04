@@ -53,6 +53,8 @@ var OpCodes = []OpCode{
 	{0xBA, "TSX", 1, 2, NoneAddressing},
 
 	{0x8A, "TXA", 1, 2, NoneAddressing},
+
+	{0x9A, "TXS", 1, 2, NoneAddressing},
 }
 
 // OpCodeMap converts OpCodes into a map with the code as the key.

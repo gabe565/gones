@@ -148,6 +148,8 @@ func (c *CPU) run() error {
 			c.tsx()
 		case 0x8A:
 			c.txa()
+		case 0x9A:
+			c.txs()
 		case 0xE8:
 			c.inx()
 		case 0x00:
