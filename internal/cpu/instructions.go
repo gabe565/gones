@@ -63,6 +63,19 @@ func (c *CPU) tax() {
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
 
+// tay - Transfer Accumulator to Y
+//
+// Copies the current contents of the accumulator into the Y register
+// and sets the zero and negative flags as appropriate.
+//
+// See [TAY Instruction Reference].
+//
+// [TAY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TAY
+func (c *CPU) tay() {
+	c.RegisterY = c.Accumulator
+	c.updateZeroAndNegFlags(c.RegisterY)
+}
+
 // inx - Increment X Register
 //
 // Adds one to the X register setting the zero and negative flags as appropriate.
