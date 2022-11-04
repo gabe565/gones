@@ -322,7 +322,7 @@ func (c *CPU) Run() error {
 		case 0x98:
 			c.tya()
 		default:
-			return fmt.Errorf("%w: $%x", ErrUnsupportedOpcode, opcode)
+			return fmt.Errorf("%w: $%x", ErrUnsupportedOpcode, code)
 		}
 
 		if prevPC == c.PC {
