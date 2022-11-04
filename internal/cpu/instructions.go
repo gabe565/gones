@@ -63,6 +63,19 @@ func (c *CPU) tax() {
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
 
+// tsx - Transfer Stack Pointer to X
+//
+// Copies the current contents of the stack register into the X register
+// and sets the zero and negative flags as appropriate.
+//
+// See [TSX Instruction Reference].
+//
+// [TSX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TSX
+func (c *CPU) tsx() {
+	c.RegisterX = c.SP
+	c.updateZeroAndNegFlags(c.RegisterX)
+}
+
 // tay - Transfer Accumulator to Y
 //
 // Copies the current contents of the accumulator into the Y register

@@ -144,6 +144,8 @@ func (c *CPU) run() error {
 			c.tax()
 		case 0xA8:
 			c.tay()
+		case 0xBA:
+			c.tsx()
 		case 0xE8:
 			c.inx()
 		case 0x00:
