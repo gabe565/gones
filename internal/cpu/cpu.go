@@ -10,6 +10,11 @@ func New() CPU {
 	return CPU{}
 }
 
+// CPU implements the NES CPU.
+//
+// See [6502 Guide].
+//
+// [6502 Guide]: https://www.nesdev.org/obelisk-6502-guide/
 type CPU struct {
 	// PC Program Counter
 	PC uint16
@@ -31,24 +36,30 @@ type CPU struct {
 }
 
 const (
+	// PrgRomStart is the memory address that PRG begins.
 	PrgRomStart = 0x8000
-	Reset       = 0xFFFC
+	// Reset is the memory address for the Reset Interrupt Vector.
+	Reset = 0xFFFC
 )
 
+// memRead reads uint8 from memory.
 func (c *CPU) memRead(addr uint16) uint8 {
 	return c.Memory[addr]
 }
 
+// memWrite writes uint8 to memory.
 func (c *CPU) memWrite(addr uint16, data uint8) {
 	c.Memory[addr] = data
 }
 
+// memRead16 reads uint16 from memory.
 func (c *CPU) memRead16(pos uint16) uint16 {
 	lo := uint16(c.memRead(pos))
 	hi := uint16(c.memRead(pos + 1))
 	return hi<<8 | lo
 }
 
+// memWrite16 writes uint16 to memory.
 func (c *CPU) memWrite16(pos uint16, data uint16) {
 	hi := uint8(data >> 8)
 	lo := uint8(data & 0xFF)
@@ -56,6 +67,7 @@ func (c *CPU) memWrite16(pos uint16, data uint16) {
 	c.memWrite(pos+1, hi)
 }
 
+// reset resets the CPU and sets PC to the value of the [Reset] Vector.
 func (c *CPU) reset() {
 	c.RegisterA = 0
 	c.RegisterX = 0
@@ -64,6 +76,7 @@ func (c *CPU) reset() {
 	c.PC = c.memRead16(Reset)
 }
 
+// load loads a program into PRG memory
 func (c *CPU) load(program []uint8) {
 	for k, v := range program {
 		c.Memory[PrgRomStart+k] = v
@@ -71,12 +84,21 @@ func (c *CPU) load(program []uint8) {
 	c.memWrite16(Reset, PrgRomStart)
 }
 
+// loadAndRun is a convenience function that loads a program, resets, then runs.
 func (c *CPU) loadAndRun(program []uint8) error {
 	c.load(program)
 	c.reset()
 	return c.run()
 }
 
+// lda - Load Accumulator
+//
+// Loads a byte of memory into the accumulator setting the zero and
+// negative flags as appropriate.
+//
+// See [LDA Instruction Reference[].
+//
+// [LDA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDA
 func (c *CPU) lda(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
 	v := c.memRead(addr)
@@ -85,21 +107,44 @@ func (c *CPU) lda(mode AddressingMode) {
 	c.updateZeroAndNegFlags(c.RegisterA)
 }
 
+// sta - Store Accumulator
+//
+// Stores the contents of the accumulator into memory.
+//
+// See [STA Instruction Reference].
+//
+// [STA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STA
 func (c *CPU) sta(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
 	c.memWrite(addr, c.RegisterA)
 }
 
+// tax - Transfer Accumulator to X
+//
+// Copies the current contents of the accumulator into the X register
+// and sets the zero and negative flags as appropriate.
+//
+// See [TAX Instruction Reference].
+//
+// [TAX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TAX
 func (c *CPU) tax() {
 	c.RegisterX = c.RegisterA
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
 
+// inx - Increment X Register
+//
+// Adds one to the X register setting the zero and negative flags as appropriate.
+//
+// See [INX Instruction Reference].
+//
+// [INX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INX
 func (c *CPU) inx() {
 	c.RegisterX += 1
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
 
+// updateZeroAndNegFlags updates zero and negative flags
 func (c *CPU) updateZeroAndNegFlags(result uint8) {
 	if result == 0 {
 		c.Acc |= 0b0000_0010
@@ -114,6 +159,11 @@ func (c *CPU) updateZeroAndNegFlags(result uint8) {
 	}
 }
 
+// getOperandAddress gets the address based on the [AddressingMode].
+//
+// See [6502 Addressing Mode].
+//
+// [6502 Addressing Mode]: https://www.nesdev.org/obelisk-6502-guide/addressing.html
 func (c *CPU) getOperandAddress(mode AddressingMode) uint16 {
 	switch mode {
 	case Immediate:
@@ -154,8 +204,10 @@ func (c *CPU) getOperandAddress(mode AddressingMode) uint16 {
 	}
 }
 
+// ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
 var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
+// run is the main run entrypoint.
 func (c *CPU) run() error {
 	opcodes := OpCodeMap()
 

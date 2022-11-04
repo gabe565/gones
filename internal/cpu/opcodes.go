@@ -1,5 +1,10 @@
 package cpu
 
+// OpCode defines an opcode and its parameters.
+//
+// See [6502 Instruction Reference].
+//
+// [6502 Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html
 type OpCode struct {
 	Code     uint8
 	Mnemonic string
@@ -8,6 +13,11 @@ type OpCode struct {
 	Mode     AddressingMode
 }
 
+// OpCodes is a list of supported opcodes.
+//
+// See [6502 Instruction Reference].
+//
+// [6502 Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html
 var OpCodes = []OpCode{
 	{0x00, "BRK", 1, 7, NoneAddressing},
 	{0xAA, "TAX", 1, 2, NoneAddressing},
@@ -31,6 +41,7 @@ var OpCodes = []OpCode{
 	{0x91, "STA", 2, 6, IndirectY},
 }
 
+// OpCodeMap converts OpCodes into a map with the code as the key.
 func OpCodeMap() map[uint8]OpCode {
 	codes := make(map[uint8]OpCode)
 	for _, opcode := range OpCodes {
