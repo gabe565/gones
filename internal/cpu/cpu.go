@@ -85,6 +85,11 @@ func (c *CPU) lda(mode AddressingMode) {
 	c.updateZeroAndNegFlags(c.RegisterA)
 }
 
+func (c *CPU) sta(mode AddressingMode) {
+	addr := c.getOperandAddress(mode)
+	c.memWrite(addr, c.RegisterA)
+}
+
 func (c *CPU) tax() {
 	c.RegisterX = c.RegisterA
 	c.updateZeroAndNegFlags(c.RegisterX)
@@ -168,7 +173,7 @@ func (c *CPU) run() error {
 		case 0xA9, 0xA5, 0xB5, 0xAD, 0xBD, 0xB9, 0xA1, 0xB1:
 			c.lda(opcode.Mode)
 		case 0x85, 0x95, 0x8D, 0x9D, 0x99, 0x81, 0x91:
-			c.lda(opcode.Mode)
+			c.sta(opcode.Mode)
 		case 0xAA:
 			c.tax()
 		case 0xE8:
