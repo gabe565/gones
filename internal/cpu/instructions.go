@@ -28,6 +28,17 @@ func (c *CPU) lda(mode AddressingMode) {
 	c.setRegisterA(v)
 }
 
+// sec - Set Carry Flag
+//
+// Set the carry flag to one.
+//
+// See [SEC Instruction Reference].
+//
+// [SEC Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SEC
+func (c *CPU) sec() {
+	c.Status = bits.Set(c.Status, Carry)
+}
+
 // sed - Set Decimal Flag
 //
 // Set the decimal mode flag to one.

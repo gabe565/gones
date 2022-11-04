@@ -21,6 +21,7 @@ type OpCode struct {
 var OpCodes = []OpCode{
 	{0x00, "BRK", 1, 7, NoneAddressing},
 	{0xE8, "INX", 1, 2, NoneAddressing},
+	{0x38, "SEC", 1, 2, NoneAddressing},
 	{0xF8, "SED", 1, 2, NoneAddressing},
 	{0x78, "SEI", 1, 2, NoneAddressing},
 	{0xAA, "TAX", 1, 2, NoneAddressing},
