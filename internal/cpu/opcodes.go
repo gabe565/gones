@@ -31,6 +31,15 @@ var OpCodes = []OpCode{
 	{0x9A, "TXS", 1, 2, NoneAddressing},
 	{0x98, "TYA", 1, 2, NoneAddressing},
 
+	{0x69, "ADC", 2, 2, Immediate},
+	{0x65, "ADC", 2, 2, ZeroPage},
+	{0x75, "ADC", 2, 2, ZeroPageX},
+	{0x6D, "ADC", 3, 3, Absolute},
+	{0x7D, "ADC", 3, 3 /*+1 if page crossed*/, AbsoluteX},
+	{0x79, "ADC", 3, 3 /*+1 if page crossed*/, AbsoluteY},
+	{0x61, "ADC", 2, 2, IndirectX},
+	{0x71, "ADC", 2, 2 /*+1 if page crossed*/, IndirectY},
+
 	{0xA9, "LDA", 2, 2, Immediate},
 	{0xA5, "LDA", 2, 3, ZeroPage},
 	{0xB5, "LDA", 2, 4, ZeroPageX},

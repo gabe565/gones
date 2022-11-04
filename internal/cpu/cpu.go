@@ -75,6 +75,29 @@ func (c *CPU) setRegisterA(v uint8) {
 	c.updateZeroAndNegFlags(c.Accumulator)
 }
 
+func (c *CPU) addRegisterA(data uint8) {
+	sum := uint16(c.Accumulator) + uint16(data)
+	if bits.Has(c.Status, Carry) {
+		sum += 1
+	}
+
+	carry := sum > 0xFF
+	if carry {
+		c.Status = bits.Set(c.Status, Carry)
+	} else {
+		c.Status = bits.Clear(c.Status, Carry)
+	}
+
+	result := uint8(sum)
+	if (data^result)&(result^c.Accumulator)&0x80 != 0 {
+		c.Status = bits.Set(c.Status, Overflow)
+	} else {
+		c.Status = bits.Clear(c.Status, Overflow)
+	}
+
+	c.setRegisterA(result)
+}
+
 // reset resets the CPU and sets PC to the value of the [Reset] Vector.
 func (c *CPU) reset() {
 	c.Accumulator = 0
@@ -132,6 +155,8 @@ func (c *CPU) run() error {
 		}
 
 		switch code {
+		case 0x69, 0x65, 0x75, 0x6D, 0x7D, 0x79, 0x61, 0x71:
+			c.adc(opcode.Mode)
 		case 0xA9, 0xA5, 0xB5, 0xAD, 0xBD, 0xB9, 0xA1, 0xB1:
 			c.lda(opcode.Mode)
 		case 0x38:

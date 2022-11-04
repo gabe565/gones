@@ -2,6 +2,21 @@ package cpu
 
 import "github.com/gabe565/gones/internal/bits"
 
+// adc - Add with Carry
+//
+// This instruction adds the contents of a memory location to the accumulator
+// together with the carry bit. If overflow occurs the carry bit is set,
+// this enables multiple byte addition to be performed.
+//
+// See [ADC Instruction Reference].
+//
+// [ADC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#ADC
+func (c *CPU) adc(mode AddressingMode) {
+	addr := c.getOperandAddress(mode)
+	v := c.memRead(addr)
+	c.addRegisterA(v)
+}
+
 // inx - Increment X Register
 //
 // Adds one to the X register setting the zero and negative flags as appropriate.
