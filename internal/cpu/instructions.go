@@ -28,6 +28,17 @@ func (c *CPU) lda(mode AddressingMode) {
 	c.setRegisterA(v)
 }
 
+// sed - Set Decimal Flag
+//
+// Set the decimal mode flag to one.
+//
+// See [SED Instruction Reference].
+//
+// [SED Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SED
+func (c *CPU) sed() {
+	c.Status = bits.Set(c.Status, DecimalMode)
+}
+
 // sei - Set Interrupt Disable
 //
 // Set the interrupt disable flag to one.
