@@ -43,6 +43,19 @@ func (c *CPU) lda(mode AddressingMode) {
 	c.setRegisterA(v)
 }
 
+// rts - Return from Subroutine
+//
+// The RTS instruction is used at the end of a subroutine to return
+// to the calling routine. It pulls the program counter (minus one)
+// from the stack.
+//
+// See [RTS Instruction Reference].
+//
+// [RTS Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#RTS
+func (c *CPU) rts() {
+	c.PC = c.stackPop16() + 1
+}
+
 // sbc - Subtract with Carry
 //
 // This instruction subtracts the contents of a memory location to the
