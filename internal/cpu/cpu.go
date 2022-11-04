@@ -39,10 +39,10 @@ type CPU struct {
 }
 
 const (
-	// PrgRomStart is the memory address that PRG begins.
-	PrgRomStart = 0x8000
-	// Reset is the memory address for the Reset Interrupt Vector.
-	Reset = 0xFFFC
+	// PrgRomAddr is the memory address that PRG begins.
+	PrgRomAddr = 0x8000
+	// ResetAddr is the memory address for the Reset Interrupt Vector.
+	ResetAddr = 0xFFFC
 )
 
 // memRead reads uint8 from memory.
@@ -104,15 +104,15 @@ func (c *CPU) reset() {
 	c.RegisterX = 0
 	c.Status = 0
 
-	c.PC = c.memRead16(Reset)
+	c.PC = c.memRead16(ResetAddr)
 }
 
 // load loads a program into PRG memory
 func (c *CPU) load(program []uint8) {
 	for k, v := range program {
-		c.Memory[PrgRomStart+k] = v
+		c.Memory[PrgRomAddr+k] = v
 	}
-	c.memWrite16(Reset, PrgRomStart)
+	c.memWrite16(ResetAddr, PrgRomAddr)
 }
 
 // loadAndRun is a convenience function that loads a program, resets, then runs.
