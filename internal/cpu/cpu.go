@@ -41,10 +41,13 @@ type CPU struct {
 const (
 	// PrgRomAddr is the memory address that PRG begins.
 	PrgRomAddr = 0x8000
+
 	// ResetAddr is the memory address for the Reset Interrupt Vector.
 	ResetAddr = 0xFFFC
+
 	// StackAddr is the memory address of the stack
 	StackAddr = 0x100
+
 	// StackReset is the start value for the stack pointer
 	StackReset = 0xFD
 )
