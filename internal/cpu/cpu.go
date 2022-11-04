@@ -19,6 +19,9 @@ type CPU struct {
 	// PC Program Counter
 	PC uint16
 
+	// SP Stack Pointer
+	SP uint8
+
 	// Status Processor Status
 	Status bits.Bits
 
