@@ -1,5 +1,17 @@
 package cpu
 
+// inx - Increment X Register
+//
+// Adds one to the X register setting the zero and negative flags as appropriate.
+//
+// See [INX Instruction Reference].
+//
+// [INX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INX
+func (c *CPU) inx() {
+	c.RegisterX += 1
+	c.updateZeroAndNegFlags(c.RegisterX)
+}
+
 // lda - Load Accumulator
 //
 // Loads a byte of memory into the accumulator setting the zero and
@@ -124,16 +136,4 @@ func (c *CPU) tya() {
 func (c *CPU) tay() {
 	c.RegisterY = c.Accumulator
 	c.updateZeroAndNegFlags(c.RegisterY)
-}
-
-// inx - Increment X Register
-//
-// Adds one to the X register setting the zero and negative flags as appropriate.
-//
-// See [INX Instruction Reference].
-//
-// [INX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INX
-func (c *CPU) inx() {
-	c.RegisterX += 1
-	c.updateZeroAndNegFlags(c.RegisterX)
 }
