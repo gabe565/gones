@@ -43,6 +43,21 @@ func (c *CPU) lda(mode AddressingMode) {
 	c.setRegisterA(v)
 }
 
+// sbc - Subtract with Carry
+//
+// This instruction subtracts the contents of a memory location to the
+// accumulator together with the not of the carry bit. If overflow occurs
+// the carry bit is clear, this enables multiple byte subtraction to be performed.
+//
+// See [SBC Instruction Reference].
+//
+// [SBC Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SBC
+func (c *CPU) sbc(mode AddressingMode) {
+	addr := c.getOperandAddress(mode)
+	v := c.memRead(addr)
+	c.addRegisterA(uint8(-int8(v) - 1))
+}
+
 // sec - Set Carry Flag
 //
 // Set the carry flag to one.
