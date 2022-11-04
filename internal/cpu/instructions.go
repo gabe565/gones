@@ -1,5 +1,7 @@
 package cpu
 
+import "github.com/gabe565/gones/internal/bits"
+
 // inx - Increment X Register
 //
 // Adds one to the X register setting the zero and negative flags as appropriate.
@@ -24,6 +26,17 @@ func (c *CPU) lda(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
 	v := c.memRead(addr)
 	c.setRegisterA(v)
+}
+
+// sei - Set Interrupt Disable
+//
+// Set the interrupt disable flag to one.
+//
+// See [SEI Instruction Reference].
+//
+// [SEI Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SEI
+func (c *CPU) sei() {
+	c.Status = bits.Set(c.Status, InterruptDisable)
 }
 
 // sta - Store Accumulator
