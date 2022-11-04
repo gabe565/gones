@@ -66,6 +66,11 @@ func (c *CPU) memWrite16(pos uint16, data uint16) {
 	c.memWrite(pos+1, hi)
 }
 
+func (c *CPU) setRegisterA(v uint8) {
+	c.RegisterA = v
+	c.updateZeroAndNegFlags(c.RegisterA)
+}
+
 // reset resets the CPU and sets PC to the value of the [Reset] Vector.
 func (c *CPU) reset() {
 	c.RegisterA = 0

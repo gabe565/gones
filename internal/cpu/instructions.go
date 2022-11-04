@@ -11,9 +11,7 @@ package cpu
 func (c *CPU) lda(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
 	v := c.memRead(addr)
-
-	c.RegisterA = v
-	c.updateZeroAndNegFlags(c.RegisterA)
+	c.setRegisterA(v)
 }
 
 // sta - Store Accumulator
