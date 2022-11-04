@@ -157,6 +157,7 @@ func (c *CPU) run() error {
 	for {
 		code := c.memRead(c.PC)
 		c.PC += 1
+		prevPC := c.PC
 
 		opcode, ok := opcodes[code]
 		if !ok {
@@ -166,10 +167,8 @@ func (c *CPU) run() error {
 		switch code {
 		case 0xA9, 0xa5, 0xb5, 0xad, 0xbd, 0xb9, 0xa1, 0xb1:
 			c.lda(opcode.Mode)
-			c.PC += 1
 		case 0x85, 0x95, 0x8d, 0x9d, 0x99, 0x81, 0x91:
 			c.lda(opcode.Mode)
-			c.PC += 1
 		case 0xAA:
 			c.tax()
 		case 0xE8:
@@ -178,6 +177,10 @@ func (c *CPU) run() error {
 			return nil
 		default:
 			return fmt.Errorf("%w: $%x", ErrUnsupportedOpcode, opcode)
+		}
+
+		if prevPC == c.PC {
+			c.PC += uint16(opcode.Len - 1)
 		}
 	}
 }
