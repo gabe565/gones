@@ -23,7 +23,7 @@ func (c *CPU) lda(mode AddressingMode) {
 // [STA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STA
 func (c *CPU) sta(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	c.memWrite(addr, c.RegisterA)
+	c.memWrite(addr, c.Accumulator)
 }
 
 // stx - Store X Register
@@ -59,7 +59,7 @@ func (c *CPU) sty(mode AddressingMode) {
 //
 // [TAX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TAX
 func (c *CPU) tax() {
-	c.RegisterX = c.RegisterA
+	c.RegisterX = c.Accumulator
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
 

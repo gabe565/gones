@@ -19,11 +19,11 @@ type CPU struct {
 	// PC Program Counter
 	PC uint16
 
-	// Acc Accumulator
-	Acc bits.Bits
+	// Status Processor Status
+	Status bits.Bits
 
-	// RegisterA Register A
-	RegisterA uint8
+	// Accumulator Register A
+	Accumulator uint8
 
 	// RegisterX Register X
 	RegisterX uint8
@@ -68,15 +68,15 @@ func (c *CPU) memWrite16(pos uint16, data uint16) {
 }
 
 func (c *CPU) setRegisterA(v uint8) {
-	c.RegisterA = v
-	c.updateZeroAndNegFlags(c.RegisterA)
+	c.Accumulator = v
+	c.updateZeroAndNegFlags(c.Accumulator)
 }
 
 // reset resets the CPU and sets PC to the value of the [Reset] Vector.
 func (c *CPU) reset() {
-	c.RegisterA = 0
+	c.Accumulator = 0
 	c.RegisterX = 0
-	c.Acc = 0
+	c.Status = 0
 
 	c.PC = c.memRead16(Reset)
 }
@@ -99,15 +99,15 @@ func (c *CPU) loadAndRun(program []uint8) error {
 // updateZeroAndNegFlags updates zero and negative flags
 func (c *CPU) updateZeroAndNegFlags(result uint8) {
 	if result == 0 {
-		c.Acc = bits.Set(c.Acc, Zero)
+		c.Status = bits.Set(c.Status, Zero)
 	} else {
-		c.Acc = bits.Clear(c.Acc, Zero)
+		c.Status = bits.Clear(c.Status, Zero)
 	}
 
 	if bits.Has(bits.Bits(result), Negative) {
-		c.Acc = bits.Set(c.Acc, Negative)
+		c.Status = bits.Set(c.Status, Negative)
 	} else {
-		c.Acc = bits.Clear(c.Acc, Negative)
+		c.Status = bits.Clear(c.Status, Negative)
 	}
 }
 
