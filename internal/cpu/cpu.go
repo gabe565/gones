@@ -1,6 +1,10 @@
 package cpu
 
-import "log"
+import (
+	"errors"
+	"fmt"
+	"log"
+)
 
 func New() CPU {
 	return CPU{}
@@ -67,10 +71,10 @@ func (c *CPU) load(program []uint8) {
 	c.memWrite16(Reset, PrgRomStart)
 }
 
-func (c *CPU) loadAndRun(program []uint8) {
+func (c *CPU) loadAndRun(program []uint8) error {
 	c.load(program)
 	c.reset()
-	c.run()
+	return c.run()
 }
 
 func (c *CPU) lda(mode AddressingMode) {
@@ -145,7 +149,9 @@ func (c *CPU) getOperandAddress(mode AddressingMode) uint16 {
 	}
 }
 
-func (c *CPU) run() {
+var ErrUnsupportedOpcode = errors.New("unsupported opcode")
+
+func (c *CPU) run() error {
 	for {
 		opcode := c.memRead(c.PC)
 		c.PC += 1
@@ -165,9 +171,9 @@ func (c *CPU) run() {
 		case 0xE8:
 			c.inx()
 		case 0x00:
-			return
+			return nil
 		default:
-			log.Panicf("unsupported opcode: 0x%x\n", opcode)
+			return fmt.Errorf("%w: $%x", ErrUnsupportedOpcode, opcode)
 		}
 	}
 }
