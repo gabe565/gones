@@ -42,3 +42,11 @@ func Test_inx_overflow(t *testing.T) {
 
 	assert.EqualValues(t, 1, cpu.RegisterX)
 }
+
+func Test_lda_from_memory(t *testing.T) {
+	cpu := New()
+	cpu.memWrite(0x10, 0x55)
+	cpu.loadAndRun([]uint8{0xa5, 0x10, 0x00})
+
+	assert.EqualValues(t, 0x55, cpu.RegisterA)
+}
