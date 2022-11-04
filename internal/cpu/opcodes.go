@@ -20,8 +20,12 @@ type OpCode struct {
 // [6502 Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html
 var OpCodes = []OpCode{
 	{0x00, "BRK", 1, 7, NoneAddressing},
-	{0xAA, "TAX", 1, 2, NoneAddressing},
 	{0xE8, "INX", 1, 2, NoneAddressing},
+	{0xAA, "TAX", 1, 2, NoneAddressing},
+	{0xA8, "TAY", 1, 2, NoneAddressing},
+	{0xBA, "TSX", 1, 2, NoneAddressing},
+	{0x8A, "TXA", 1, 2, NoneAddressing},
+	{0x9A, "TXS", 1, 2, NoneAddressing},
 
 	{0xA9, "LDA", 2, 2, Immediate},
 	{0xA5, "LDA", 2, 3, ZeroPage},
@@ -47,14 +51,6 @@ var OpCodes = []OpCode{
 	{0x84, "STY", 2, 3, ZeroPage},
 	{0x94, "STY", 2, 4, ZeroPageX},
 	{0x8C, "STY", 3, 4, Absolute},
-
-	{0xA8, "TAY", 1, 2, NoneAddressing},
-
-	{0xBA, "TSX", 1, 2, NoneAddressing},
-
-	{0x8A, "TXA", 1, 2, NoneAddressing},
-
-	{0x9A, "TXS", 1, 2, NoneAddressing},
 }
 
 // OpCodeMap converts OpCodes into a map with the code as the key.
