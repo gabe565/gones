@@ -43,6 +43,10 @@ const (
 	PrgRomAddr = 0x8000
 	// ResetAddr is the memory address for the Reset Interrupt Vector.
 	ResetAddr = 0xFFFC
+	// StackAddr is the memory address of the stack
+	StackAddr = 0x100
+	// StackReset is the start value for the stack pointer
+	StackReset = 0xFD
 )
 
 // memRead reads uint8 from memory.
@@ -103,6 +107,7 @@ func (c *CPU) reset() {
 	c.Accumulator = 0
 	c.RegisterX = 0
 	c.Status = 0
+	c.SP = StackReset
 
 	c.PC = c.memRead16(ResetAddr)
 }
@@ -120,6 +125,29 @@ func (c *CPU) loadAndRun(program []uint8) error {
 	c.load(program)
 	c.reset()
 	return c.run()
+}
+
+func (c *CPU) stackPush(data uint8) {
+	c.memWrite(StackAddr+uint16(c.SP), data)
+	c.SP -= 1
+}
+
+func (c *CPU) stackPush16(data uint16) {
+	hi := uint8(data >> 8)
+	lo := uint8(data & 0xFF)
+	c.stackPush(hi)
+	c.stackPush(lo)
+}
+
+func (c *CPU) stackPop() uint8 {
+	c.SP += 1
+	return c.memRead(StackAddr + uint16(c.SP))
+}
+
+func (c *CPU) stackPop16() uint16 {
+	lo := uint16(c.stackPop())
+	hi := uint16(c.stackPop())
+	return hi<<8 | lo
 }
 
 // updateZeroAndNegFlags updates zero and negative flags
