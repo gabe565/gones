@@ -26,6 +26,18 @@ func (c *CPU) sta(mode AddressingMode) {
 	c.memWrite(addr, c.RegisterA)
 }
 
+// stx - Store X Register
+//
+// Stores the contents of the X register into memory.
+//
+// See [STX Instruction Reference].
+//
+// [STX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STX
+func (c *CPU) stx(mode AddressingMode) {
+	addr := c.getOperandAddress(mode)
+	c.memWrite(addr, c.RegisterX)
+}
+
 // tax - Transfer Accumulator to X
 //
 // Copies the current contents of the accumulator into the X register

@@ -39,6 +39,10 @@ var OpCodes = []OpCode{
 	{0x99, "STA", 3, 5, AbsoluteY},
 	{0x81, "STA", 2, 6, IndirectX},
 	{0x91, "STA", 2, 6, IndirectY},
+
+	{0x86, "STX", 2, 3, ZeroPage},
+	{0x96, "STX", 2, 4, ZeroPageY},
+	{0x8E, "STX", 3, 4, Absolute},
 }
 
 // OpCodeMap converts OpCodes into a map with the code as the key.
