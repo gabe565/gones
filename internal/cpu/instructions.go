@@ -148,7 +148,7 @@ func (c *CPU) bne() {
 	c.branch(!c.Status.Has(Zero))
 }
 
-// bpl - Branch if Not Equal
+// bpl - Branch if Positive
 //
 // If the negative flag is clear then add the relative displacement to
 // the program counter to cause a branch to a new location.
