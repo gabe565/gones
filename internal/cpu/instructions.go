@@ -535,7 +535,7 @@ func (c *CPU) php() {
 // [PLA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLA
 func (c *CPU) pla() {
 	data := c.stackPop()
-	c.Accumulator = data
+	c.setAccumulator(data)
 }
 
 // plp - Pull Processor Status
