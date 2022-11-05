@@ -81,8 +81,8 @@ func run() {
 			sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()).Scaled(win.Bounds().Center(), 10))
 			win.Update()
 			lastImg = img
+			time.Sleep(time.Second / 60)
 		}
-		time.Sleep(70000 * time.Nanosecond)
 
 		c.Memory[0xFE] = uint8(rand.Intn(15) + 1)
 	}
