@@ -83,7 +83,7 @@ var OpCodes = []OpCode{
 	{0x3D, "AND", 3, 4 /*+1 if page crossed*/, AbsoluteX},
 	{0x39, "AND", 3, 4 /*+1 if page crossed*/, AbsoluteY},
 	{0x21, "AND", 2, 6, IndirectX},
-	{0x31, "AND", 2, 5 /*f page crossed*/, IndirectY},
+	{0x31, "AND", 2, 5 /*+1 if page crossed*/, IndirectY},
 
 	{0x0A, "ASL", 1, 2, Accumulator},
 	{0x06, "ASL", 2, 5, ZeroPage},
@@ -101,7 +101,7 @@ var OpCodes = []OpCode{
 	{0xDD, "CMP", 3, 4 /*+1 if page crossed*/, AbsoluteX},
 	{0xD9, "CMP", 3, 4 /*+1 if page crossed*/, AbsoluteY},
 	{0xC1, "CMP", 2, 6, IndirectX},
-	{0xD1, "CMP", 2, 5 /*f page crossed*/, IndirectY},
+	{0xD1, "CMP", 2, 5 /*+1 if page crossed*/, IndirectY},
 
 	{0xE0, "CPX", 2, 2, Immediate},
 	{0xE4, "CPX", 2, 3, ZeroPage},
@@ -123,7 +123,7 @@ var OpCodes = []OpCode{
 	{0xBD, "LDA", 3, 4 /*+1 if page crossed*/, AbsoluteX},
 	{0xB9, "LDA", 3, 4 /*+1 if page crossed*/, AbsoluteY},
 	{0xA1, "LDA", 2, 6, IndirectX},
-	{0xB1, "LDA", 2, 5 /*f page crossed*/, IndirectY},
+	{0xB1, "LDA", 2, 5 /*+1 if page crossed*/, IndirectY},
 
 	{0x49, "EOR", 2, 2, Immediate},
 	{0x45, "EOR", 2, 3, ZeroPage},
@@ -132,7 +132,7 @@ var OpCodes = []OpCode{
 	{0x5D, "EOR", 3, 4 /*+1 if page crossed*/, AbsoluteX},
 	{0x59, "EOR", 3, 4 /*+1 if page crossed*/, AbsoluteY},
 	{0x41, "EOR", 2, 6, IndirectX},
-	{0x51, "EOR", 2, 5 /*f page crossed*/, IndirectY},
+	{0x51, "EOR", 2, 5 /*+1 if page crossed*/, IndirectY},
 
 	{0xE6, "INC", 2, 5, ZeroPage},
 	{0xF6, "INC", 2, 6, ZeroPageX},
