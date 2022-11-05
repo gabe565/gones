@@ -371,12 +371,10 @@ func (c *CPU) iny() {
 // [JMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JMP
 func (c *CPU) jmp(mode AddressingMode) {
 	switch mode {
-	case Immediate:
-		// Absolute
+	case Absolute:
 		addr := c.memRead16(c.PC)
 		c.PC = addr
-	default:
-		// Indirect
+	case Indirect:
 		addr := c.memRead16(c.PC)
 
 		// let indirect_ref = self.mem_read_u16(mem_address);

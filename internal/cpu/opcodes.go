@@ -126,8 +126,8 @@ var OpCodes = []OpCode{
 	{0xEE, "INC", 3, 6, Absolute},
 	{0xFE, "INC", 3, 7, AbsoluteX},
 
-	{0x4C, "JMP", 3, 3, Immediate},      // Acts as immediate
-	{0x6C, "JMP", 3, 5, NoneAddressing}, // Indirect with 6502 bug
+	{0x4C, "JMP", 3, 3, Absolute}, // Acts as immediate
+	{0x6C, "JMP", 3, 5, Indirect}, // Indirect with 6502 bug
 
 	{0xA2, "LDX", 2, 2, Immediate},
 	{0xA6, "LDX", 2, 3, ZeroPage},
