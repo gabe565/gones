@@ -118,7 +118,7 @@ func (c *CPU) bit(mode AddressingMode) {
 	if and == 0 {
 		c.Status.Set(Zero)
 	} else {
-		c.Status.Set(Zero)
+		c.Status.Clear(Zero)
 	}
 
 	if bits.Bits(data).Has(Negative) {
