@@ -46,11 +46,11 @@ func (c *CPU) getOperandAddress(mode AddressingMode) uint16 {
 		pos := c.memRead(c.PC)
 		return uint16(pos + c.RegisterY)
 	case AbsoluteX:
-		pos := c.memRead(c.PC)
-		return uint16(pos) + uint16(c.RegisterX)
+		pos := c.memRead16(c.PC)
+		return pos + uint16(c.RegisterX)
 	case AbsoluteY:
-		pos := c.memRead(c.PC)
-		return uint16(pos) + uint16(c.RegisterY)
+		pos := c.memRead16(c.PC)
+		return pos + uint16(c.RegisterY)
 	case IndirectX:
 		base := c.memRead(c.PC)
 
