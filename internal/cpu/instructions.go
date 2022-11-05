@@ -479,7 +479,7 @@ func (c *CPU) lsr(mode AddressingMode) {
 	}
 	data >>= 1
 	if mode == Accumulator {
-		c.Accumulator = data
+		c.setAccumulator(data)
 	} else {
 		c.memWrite(addr, data)
 		c.updateZeroAndNegFlags(data)
@@ -583,7 +583,7 @@ func (c *CPU) rol(mode AddressingMode) {
 		data |= 1
 	}
 	if mode == Accumulator {
-		c.Accumulator = data
+		c.setAccumulator(data)
 	} else {
 		c.memWrite(addr, data)
 		c.updateZeroAndNegFlags(data)
@@ -620,7 +620,7 @@ func (c *CPU) ror(mode AddressingMode) {
 		data |= uint8(Negative)
 	}
 	if mode == Accumulator {
-		c.Accumulator = data
+		c.setAccumulator(data)
 	} else {
 		c.memWrite(addr, data)
 		c.updateZeroAndNegFlags(data)
