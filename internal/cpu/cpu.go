@@ -7,7 +7,13 @@ import (
 )
 
 func New() CPU {
-	return CPU{}
+	status := bits.Bits(0)
+	status.Set(InterruptDisable)
+	status.Set(Break2)
+	return CPU{
+		Status: status,
+		SP:     StackReset,
+	}
 }
 
 // CPU implements the NES CPU.
