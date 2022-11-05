@@ -85,7 +85,7 @@ func run() {
 		}
 		time.Sleep(70000 * time.Nanosecond)
 
-		c.Memory[0xFE] = uint8(rand.Int31())
+		c.Memory[0xFE] = uint8(rand.Intn(15) + 1)
 	}
 
 	if err := c.Run(); err != nil {
