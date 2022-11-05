@@ -786,8 +786,7 @@ func (c *CPU) tsx() {
 //
 // [TXA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TXA
 func (c *CPU) txa() {
-	c.Accumulator = c.RegisterX
-	c.updateZeroAndNegFlags(c.Accumulator)
+	c.setAccumulator(c.RegisterX)
 }
 
 // txs - Transfer X to Stack Pointer
@@ -810,8 +809,7 @@ func (c *CPU) txs() {
 //
 // [TYA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TYA
 func (c *CPU) tya() {
-	c.Accumulator = c.RegisterY
-	c.updateZeroAndNegFlags(c.Accumulator)
+	c.setAccumulator(c.RegisterY)
 }
 
 // tay - Transfer Accumulator to Y
