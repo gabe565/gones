@@ -1,5 +1,7 @@
 package cpu
 
+import "fmt"
+
 // OpCode defines an opcode and its parameters.
 //
 // See [6502 Instruction Reference].
@@ -11,6 +13,17 @@ type OpCode struct {
 	Len      uint8
 	Cycles   uint8
 	Mode     AddressingMode
+}
+
+func (o OpCode) String() string {
+	return fmt.Sprintf(
+		"{$%02X %s %d %d %s}",
+		o.Code,
+		o.Mnemonic,
+		o.Len,
+		o.Cycles,
+		o.Mode,
+	)
 }
 
 // OpCodes is a list of supported opcodes.
