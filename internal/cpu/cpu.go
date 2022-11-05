@@ -11,8 +11,9 @@ func New() CPU {
 	status.Set(InterruptDisable)
 	status.Set(Break2)
 	return CPU{
-		Status: status,
-		SP:     StackReset,
+		Status:     status,
+		SP:         StackReset,
+		PrgRomAddr: PrgRomAddr,
 	}
 }
 
@@ -45,6 +46,9 @@ type CPU struct {
 
 	// Callback optional callback to Run before every tick
 	Callback func(c *CPU)
+
+	// PrgRomAddr is the PRG ROM start address
+	PrgRomAddr uint16
 }
 
 const (
@@ -127,9 +131,9 @@ func (c *CPU) Reset() {
 // Load loads a program into PRG memory
 func (c *CPU) Load(program []uint8) {
 	for k, v := range program {
-		c.Memory[PrgRomAddr+k] = v
+		c.Memory[c.PrgRomAddr+uint16(k)] = v
 	}
-	c.memWrite16(ResetAddr, PrgRomAddr)
+	c.memWrite16(ResetAddr, c.PrgRomAddr)
 }
 
 // loadAndRun is a convenience function that loads a program, resets, then runs.
