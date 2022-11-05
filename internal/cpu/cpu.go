@@ -287,6 +287,8 @@ func (c *CPU) Run() error {
 			c.pha()
 		case 0x08:
 			c.php()
+		case 0x68:
+			c.pla()
 		case 0x28:
 			c.plp()
 		case 0x2A, 0x26, 0x36, 0x2E, 0x3E:
