@@ -33,6 +33,8 @@ func run() {
 	c.Memory[0xFF] = 0x77
 	c.Reset()
 
+	rand.Seed(time.Now().UnixNano())
+
 	var lastImg image.Image
 	c.Callback = func(c *cpu.CPU) {
 		img := image.NewRGBA(image.Rect(0, 0, 32, 32))
