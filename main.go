@@ -37,6 +37,18 @@ func run() {
 
 	var lastImg image.Image
 	c.Callback = func(c *cpu.CPU) {
+		if win.Pressed(pixelgl.KeyEscape) {
+			os.Exit(0)
+		} else if win.Pressed(pixelgl.KeyW) {
+			c.Memory[0xFF] = 0x77
+		} else if win.Pressed(pixelgl.KeyA) {
+			c.Memory[0xFF] = 0x61
+		} else if win.Pressed(pixelgl.KeyS) {
+			c.Memory[0xFF] = 0x73
+		} else if win.Pressed(pixelgl.KeyD) {
+			c.Memory[0xFF] = 0x64
+		}
+
 		img := image.NewRGBA(image.Rect(0, 0, 32, 32))
 		for k, pxl := range c.Memory[0x200:0x600] {
 			var c color.Color
@@ -64,18 +76,6 @@ func run() {
 		}
 
 		if !reflect.DeepEqual(img, lastImg) {
-			if win.JustPressed(pixelgl.KeyEscape) {
-				os.Exit(0)
-			} else if win.JustPressed(pixelgl.KeyW) {
-				c.Memory[0xFF] = 0x77
-			} else if win.JustPressed(pixelgl.KeyA) {
-				c.Memory[0xFF] = 0x61
-			} else if win.JustPressed(pixelgl.KeyS) {
-				c.Memory[0xFF] = 0x73
-			} else if win.JustPressed(pixelgl.KeyD) {
-				c.Memory[0xFF] = 0x64
-			}
-
 			win.Clear(color.Black)
 			pic := pixel.PictureDataFromImage(img)
 			sprite := pixel.NewSprite(pic, pic.Bounds())
