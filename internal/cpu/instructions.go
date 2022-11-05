@@ -405,7 +405,7 @@ func (c *CPU) jmp(mode AddressingMode) {
 //
 // [JSR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JSR
 func (c *CPU) jsr() {
-	c.stackPush16(c.PC + 2 - 1)
+	c.stackPush16(c.PC + 1)
 	addr := c.memRead16(c.PC)
 	c.PC = addr
 }
