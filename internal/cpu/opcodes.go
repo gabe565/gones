@@ -141,7 +141,7 @@ var OpCodes = []OpCode{
 	{0xAC, "LDY", 3, 4, Absolute},
 	{0xBC, "LDY", 3, 4 /*+1 if page crossed*/, AbsoluteX},
 
-	{0x4A, "LSR", 1, 2, NoneAddressing},
+	{0x4A, "LSR", 1, 2, Accumulator},
 	{0x46, "LSR", 2, 5, ZeroPage},
 	{0x56, "LSR", 2, 6, ZeroPageX},
 	{0x4E, "LSR", 3, 6, Absolute},
@@ -156,13 +156,13 @@ var OpCodes = []OpCode{
 	{0x01, "ORA", 2, 6, IndirectX},
 	{0x11, "ORA", 2, 5 /*f page crossed*/, IndirectY},
 
-	{0x2A, "ROL", 1, 2, NoneAddressing},
+	{0x2A, "ROL", 1, 2, Accumulator},
 	{0x26, "ROL", 2, 5, ZeroPage},
 	{0x36, "ROL", 2, 6, ZeroPageX},
 	{0x2E, "ROL", 3, 6, Absolute},
 	{0x3E, "ROL", 3, 7, AbsoluteX},
 
-	{0x6A, "ROR", 1, 2, NoneAddressing},
+	{0x6A, "ROR", 1, 2, Accumulator},
 	{0x66, "ROR", 2, 5, ZeroPage},
 	{0x76, "ROR", 2, 6, ZeroPageX},
 	{0x6E, "ROR", 3, 6, Absolute},

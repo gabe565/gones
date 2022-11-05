@@ -466,16 +466,26 @@ func (c *CPU) ldy(mode AddressingMode) {
 //
 // [LSR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LSR
 func (c *CPU) lsr(mode AddressingMode) {
-	addr := c.getOperandAddress(mode)
-	data := c.memRead(addr)
+	var addr uint16
+	var data uint8
+	if mode == Accumulator {
+		data = c.Accumulator
+	} else {
+		addr = c.getOperandAddress(mode)
+		data = c.memRead(addr)
+	}
 	if data&1 == 1 {
 		c.Status.Set(Carry)
 	} else {
 		c.Status.Clear(Carry)
 	}
 	data >>= 1
-	c.memWrite(addr, data)
-	c.updateZeroAndNegFlags(data)
+	if mode == Accumulator {
+		c.Accumulator = data
+	} else {
+		c.memWrite(addr, data)
+		c.updateZeroAndNegFlags(data)
+	}
 }
 
 // ora - Logical Inclusive OR
@@ -557,7 +567,7 @@ func (c *CPU) plp() {
 func (c *CPU) rol(mode AddressingMode) {
 	var addr uint16
 	var data uint8
-	if mode == NoneAddressing {
+	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
 		addr = c.getOperandAddress(mode)
@@ -574,7 +584,7 @@ func (c *CPU) rol(mode AddressingMode) {
 	if prevCarry {
 		data |= 1
 	}
-	if mode == NoneAddressing {
+	if mode == Accumulator {
 		c.Accumulator = data
 	} else {
 		c.memWrite(addr, data)
@@ -594,7 +604,7 @@ func (c *CPU) rol(mode AddressingMode) {
 func (c *CPU) ror(mode AddressingMode) {
 	var addr uint16
 	var data uint8
-	if mode == NoneAddressing {
+	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
 		addr = c.getOperandAddress(mode)
@@ -611,7 +621,7 @@ func (c *CPU) ror(mode AddressingMode) {
 	if prevCarry {
 		data |= uint8(Negative)
 	}
-	if mode == NoneAddressing {
+	if mode == Accumulator {
 		c.Accumulator = data
 	} else {
 		c.memWrite(addr, data)

@@ -10,13 +10,17 @@ import "log"
 type AddressingMode uint8
 
 const (
-	Immediate AddressingMode = iota
+	Implicit AddressingMode = iota
+	Accumulator
+	Immediate
 	ZeroPage
 	ZeroPageX
 	ZeroPageY
+	Relative
 	Absolute
 	AbsoluteX
 	AbsoluteY
+	Indirect
 	IndirectX
 	IndirectY
 	NoneAddressing
