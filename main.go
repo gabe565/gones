@@ -30,7 +30,6 @@ func run() {
 	c := cpu.New()
 	c.PrgRomAddr = 0x600
 	c.Load(games.Snake)
-	c.Memory[0xFF] = 0x77
 	c.Reset()
 
 	rand.Seed(time.Now().UnixNano())
