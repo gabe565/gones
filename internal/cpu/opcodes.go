@@ -85,7 +85,7 @@ var OpCodes = []OpCode{
 	{0x21, "AND", 2, 6, IndirectX},
 	{0x31, "AND", 2, 5 /*f page crossed*/, IndirectY},
 
-	{0x0A, "ASL", 1, 2, NoneAddressing},
+	{0x0A, "ASL", 1, 2, Accumulator},
 	{0x06, "ASL", 2, 5, ZeroPage},
 	{0x16, "ASL", 2, 6, ZeroPageX},
 	{0x0E, "ASL", 3, 6, Absolute},

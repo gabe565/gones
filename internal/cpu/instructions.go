@@ -43,16 +43,26 @@ func (c *CPU) and(mode AddressingMode) {
 //
 // [ASL Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#ASL
 func (c *CPU) asl(mode AddressingMode) {
-	addr := c.getOperandAddress(mode)
-	data := c.memRead(addr)
+	var addr uint16
+	var data uint8
+	if mode == Accumulator {
+		data = c.Accumulator
+	} else {
+		addr = c.getOperandAddress(mode)
+		data = c.memRead(addr)
+	}
 	if data>>7 == 1 {
 		c.Status.Set(Carry)
 	} else {
 		c.Status.Clear(Carry)
 	}
 	data = data << 1
-	c.memWrite(addr, data)
-	c.updateZeroAndNegFlags(data)
+	if mode == Accumulator {
+		c.setAccumulator(data)
+	} else {
+		c.memWrite(addr, data)
+		c.updateZeroAndNegFlags(data)
+	}
 }
 
 // bcc - Branch if Carry Clear
