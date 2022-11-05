@@ -2,6 +2,8 @@ package cpu
 
 import "log"
 
+//go:generate stringer -type AddressingMode
+
 // AddressingMode defines opcode addressing modes.
 //
 // See [6502 Addressing Mode].
