@@ -49,6 +49,9 @@ type CPU struct {
 
 	// PrgRomAddr is the PRG ROM start address
 	PrgRomAddr uint16
+
+	// Debug enables opcode logging
+	Debug bool
 }
 
 const (
@@ -220,6 +223,10 @@ func (c *CPU) Run() error {
 		opcode, ok := opcodes[code]
 		if !ok {
 			return fmt.Errorf("%w: $%x", ErrUnsupportedOpcode, code)
+		}
+
+		if c.Debug {
+			fmt.Println(opcode)
 		}
 
 		switch code {
