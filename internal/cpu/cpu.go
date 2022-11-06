@@ -8,9 +8,9 @@ import (
 
 func New() CPU {
 	return CPU{
-		Status:     InterruptDisable | Break2,
-		SP:         StackReset,
-		PrgRomAddr: PrgRomAddr,
+		status:       InterruptDisable | Break2,
+		stackPointer: StackReset,
+		PrgRomAddr:   PrgRomAddr,
 	}
 }
 
@@ -20,26 +20,26 @@ func New() CPU {
 //
 // [6502 Guide]: https://www.nesdev.org/obelisk-6502-guide/
 type CPU struct {
-	// PC Program Counter
-	PC uint16
+	// programCounter Program Counter
+	programCounter uint16
 
-	// SP Stack Pointer
-	SP uint8
+	// stackPointer Stack Pointer
+	stackPointer uint8
 
-	// Status Processor Status
-	Status bitflags.Flags
+	// status Processor Status
+	status bitflags.Flags
 
-	// Accumulator Register A
-	Accumulator uint8
+	// accumulator Register A
+	accumulator uint8
 
-	// RegisterX Register X
-	RegisterX uint8
+	// registerX Register X
+	registerX uint8
 
-	// RegisterY Register Y
-	RegisterY uint8
+	// registerY Register Y
+	registerY uint8
 
-	// Memory Main memory
-	Memory [0xFFFF]uint8
+	// memory Main memory
+	memory [0xFFFF]uint8
 
 	// Callback optional callback to Run before every tick
 	Callback func(c *CPU)
@@ -65,20 +65,20 @@ const (
 	StackReset = 0xFD
 )
 
-// Reset resets the CPU and sets PC to the value of the [Reset] Vector.
+// Reset resets the CPU and sets programCounter to the value of the [Reset] Vector.
 func (c *CPU) Reset() {
-	c.Accumulator = 0
-	c.RegisterX = 0
-	c.Status = 0
-	c.SP = StackReset
+	c.accumulator = 0
+	c.registerX = 0
+	c.status = 0
+	c.stackPointer = StackReset
 
-	c.PC = c.MemRead16(ResetAddr)
+	c.programCounter = c.MemRead16(ResetAddr)
 }
 
 // Load loads a program into PRG memory
 func (c *CPU) Load(program []uint8) {
 	for k, v := range program {
-		c.Memory[c.PrgRomAddr+uint16(k)] = v
+		c.MemWrite(c.PrgRomAddr+uint16(k), v)
 	}
 	c.MemWrite16(ResetAddr, c.PrgRomAddr)
 }
@@ -102,9 +102,9 @@ func (c *CPU) Run() error {
 			c.Callback(c)
 		}
 
-		code := c.MemRead(c.PC)
-		c.PC += 1
-		prevPC := c.PC
+		code := c.MemRead(c.programCounter)
+		c.programCounter += 1
+		prevPC := c.programCounter
 
 		opcode, ok := opcodes[code]
 		if !ok {
@@ -232,8 +232,8 @@ func (c *CPU) Run() error {
 			return fmt.Errorf("%w: $%x", ErrUnsupportedOpcode, code)
 		}
 
-		if prevPC == c.PC {
-			c.PC += uint16(opcode.Len - 1)
+		if prevPC == c.programCounter {
+			c.programCounter += uint16(opcode.Len - 1)
 		}
 	}
 }

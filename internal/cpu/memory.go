@@ -2,12 +2,12 @@ package cpu
 
 // MemRead reads uint8 from memory.
 func (c *CPU) MemRead(addr uint16) uint8 {
-	return c.Memory[addr]
+	return c.memory[addr]
 }
 
 // MemWrite writes uint8 to memory.
 func (c *CPU) MemWrite(addr uint16, data uint8) {
-	c.Memory[addr] = data
+	c.memory[addr] = data
 }
 
 // MemRead16 reads uint16 from memory.
@@ -26,8 +26,8 @@ func (c *CPU) MemWrite16(pos uint16, data uint16) {
 }
 
 func (c *CPU) stackPush(data uint8) {
-	c.MemWrite(StackAddr+uint16(c.SP), data)
-	c.SP -= 1
+	c.MemWrite(StackAddr+uint16(c.stackPointer), data)
+	c.stackPointer -= 1
 }
 
 func (c *CPU) stackPush16(data uint16) {
@@ -38,8 +38,8 @@ func (c *CPU) stackPush16(data uint16) {
 }
 
 func (c *CPU) stackPop() uint8 {
-	c.SP += 1
-	return c.MemRead(StackAddr + uint16(c.SP))
+	c.stackPointer += 1
+	return c.MemRead(StackAddr + uint16(c.stackPointer))
 }
 
 func (c *CPU) stackPop16() uint16 {

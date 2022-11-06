@@ -36,37 +36,37 @@ const (
 func (c *CPU) getOperandAddress(mode AddressingMode) uint16 {
 	switch mode {
 	case Immediate:
-		return c.PC
+		return c.programCounter
 	case ZeroPage:
-		return uint16(c.MemRead(c.PC))
+		return uint16(c.MemRead(c.programCounter))
 	case Absolute:
-		return c.MemRead16(c.PC)
+		return c.MemRead16(c.programCounter)
 	case ZeroPageX:
-		pos := c.MemRead(c.PC)
-		return uint16(pos + c.RegisterX)
+		pos := c.MemRead(c.programCounter)
+		return uint16(pos + c.registerX)
 	case ZeroPageY:
-		pos := c.MemRead(c.PC)
-		return uint16(pos + c.RegisterY)
+		pos := c.MemRead(c.programCounter)
+		return uint16(pos + c.registerY)
 	case AbsoluteX:
-		pos := c.MemRead16(c.PC)
-		return pos + uint16(c.RegisterX)
+		pos := c.MemRead16(c.programCounter)
+		return pos + uint16(c.registerX)
 	case AbsoluteY:
-		pos := c.MemRead16(c.PC)
-		return pos + uint16(c.RegisterY)
+		pos := c.MemRead16(c.programCounter)
+		return pos + uint16(c.registerY)
 	case IndirectX:
-		base := c.MemRead(c.PC)
+		base := c.MemRead(c.programCounter)
 
-		ptr := base + c.RegisterX
+		ptr := base + c.registerX
 		lo := c.MemRead(uint16(ptr))
 		hi := c.MemRead(uint16(ptr + 1))
 		return uint16(hi)<<8 | uint16(lo)
 	case IndirectY:
-		base := c.MemRead(c.PC)
+		base := c.MemRead(c.programCounter)
 
 		lo := c.MemRead(uint16(base))
 		hi := c.MemRead(uint16(uint8(base) + 1))
 		derefBase := uint16(hi)<<8 | uint16(lo)
-		return derefBase + uint16(c.RegisterY)
+		return derefBase + uint16(c.registerY)
 	default:
 		log.Panicln("unsupported mode: ", mode)
 		return 0

@@ -49,7 +49,8 @@ func run() {
 		}
 
 		img := image.NewRGBA(image.Rect(0, 0, 32, 32))
-		for k, pxl := range c.Memory[0x200:0x600] {
+		for addr := 0x200; addr <= 0x600; addr += 1 {
+			pxl := c.MemRead(uint16(addr))
 			var c color.Color
 			switch pxl {
 			case 0:
@@ -71,6 +72,7 @@ func run() {
 			default:
 				c = color.RGBA{G: 0xFF, B: 0xFF, A: 0xFF}
 			}
+			k := addr - 0x200
 			img.Set(k%32, k/32, c)
 		}
 

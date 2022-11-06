@@ -11,9 +11,9 @@ func Test_0xa9_lda_immediate_load_data(t *testing.T) {
 		assert.NoErrorf(t, err, "loadAndRun")
 	}
 
-	assert.EqualValues(t, 0x05, cpu.Accumulator)
-	assert.EqualValues(t, 0, cpu.Status&0b0000_0010)
-	assert.EqualValues(t, 0, cpu.Status&0b1000_0010)
+	assert.EqualValues(t, 0x05, cpu.accumulator)
+	assert.EqualValues(t, 0, cpu.status&0b0000_0010)
+	assert.EqualValues(t, 0, cpu.status&0b1000_0010)
 }
 
 func Test_0xa9_lda_zero_flag(t *testing.T) {
@@ -22,17 +22,17 @@ func Test_0xa9_lda_zero_flag(t *testing.T) {
 		assert.NoErrorf(t, err, "loadAndRun")
 	}
 
-	assert.EqualValues(t, 0b10, cpu.Status&0b0000_0010)
+	assert.EqualValues(t, 0b10, cpu.status&0b0000_0010)
 }
 
 func Test_0xaa_tax_move_a_to_x(t *testing.T) {
 	cpu := New()
-	cpu.Accumulator = 10
+	cpu.accumulator = 10
 	if err := cpu.loadAndRun([]uint8{0xA9, 0x0A, 0xAA, 0x00}); err != nil {
 		assert.NoErrorf(t, err, "loadAndRun")
 	}
 
-	assert.EqualValues(t, 10, cpu.RegisterX)
+	assert.EqualValues(t, 10, cpu.registerX)
 }
 
 func Test_5_operations(t *testing.T) {
@@ -41,7 +41,7 @@ func Test_5_operations(t *testing.T) {
 		assert.NoErrorf(t, err, "loadAndRun")
 	}
 
-	assert.EqualValues(t, 0xC1, cpu.RegisterX)
+	assert.EqualValues(t, 0xC1, cpu.registerX)
 }
 
 func Test_inx_overflow(t *testing.T) {
@@ -50,7 +50,7 @@ func Test_inx_overflow(t *testing.T) {
 		assert.NoErrorf(t, err, "loadAndRun")
 	}
 
-	assert.EqualValues(t, 1, cpu.RegisterX)
+	assert.EqualValues(t, 1, cpu.registerX)
 }
 
 func Test_lda_from_memory(t *testing.T) {
@@ -60,5 +60,5 @@ func Test_lda_from_memory(t *testing.T) {
 		assert.NoErrorf(t, err, "loadAndRun")
 	}
 
-	assert.EqualValues(t, 0x55, cpu.Accumulator)
+	assert.EqualValues(t, 0x55, cpu.accumulator)
 }
