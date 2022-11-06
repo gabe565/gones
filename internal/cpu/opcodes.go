@@ -212,6 +212,9 @@ var OpCodes = []OpCode{
 func OpCodeMap() map[byte]OpCode {
 	codes := make(map[byte]OpCode)
 	for _, opcode := range OpCodes {
+		if _, ok := codes[opcode.Code]; ok {
+			panic(fmt.Sprintf("duplicate opcode: $%02X", opcode.Code))
+		}
 		codes[opcode.Code] = opcode
 	}
 	return codes
