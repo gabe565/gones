@@ -1,6 +1,11 @@
 package cpu
 
-import "github.com/gabe565/gones/internal/bitflags"
+import (
+	"errors"
+	"github.com/gabe565/gones/internal/bitflags"
+)
+
+type Instruction func(c *CPU, mode AddressingMode) error
 
 // adc - Add with Carry
 //
@@ -11,10 +16,11 @@ import "github.com/gabe565/gones/internal/bitflags"
 // See [ADC Instruction Reference].
 //
 // [ADC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#ADC
-func (c *CPU) adc(mode AddressingMode) {
+func adc(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	v := c.MemRead(addr)
 	c.addAccumulator(v)
+	return nil
 }
 
 // and - Logical AND
@@ -25,10 +31,11 @@ func (c *CPU) adc(mode AddressingMode) {
 // See [AND Instruction Reference].
 //
 // [AND Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#AND
-func (c *CPU) and(mode AddressingMode) {
+func and(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.setAccumulator(c.accumulator & data)
+	return nil
 }
 
 // asl - Arithmetic Shift Left
@@ -42,7 +49,7 @@ func (c *CPU) and(mode AddressingMode) {
 // See [ASL Instruction Reference].
 //
 // [ASL Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#ASL
-func (c *CPU) asl(mode AddressingMode) {
+func asl(c *CPU, mode AddressingMode) error {
 	var addr uint16
 	var data byte
 	if mode == Accumulator {
@@ -59,6 +66,7 @@ func (c *CPU) asl(mode AddressingMode) {
 		c.MemWrite(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
+	return nil
 }
 
 // bcc - Branch if Carry Clear
@@ -69,8 +77,9 @@ func (c *CPU) asl(mode AddressingMode) {
 // See [BCC Instruction Reference].
 //
 // [BCC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BCC
-func (c *CPU) bcc() {
+func bcc(c *CPU, mode AddressingMode) error {
 	c.branch(!c.status.Has(Carry))
+	return nil
 }
 
 // bcs - Branch if Carry Set
@@ -81,8 +90,9 @@ func (c *CPU) bcc() {
 // See [BCS Instruction Reference].
 //
 // [BCS Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BCS
-func (c *CPU) bcs() {
+func bcs(c *CPU, mode AddressingMode) error {
 	c.branch(c.status.Has(Carry))
+	return nil
 }
 
 // beq - Branch if Equal
@@ -93,8 +103,9 @@ func (c *CPU) bcs() {
 // See [BEQ Instruction Reference].
 //
 // [BEQ Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BEQ
-func (c *CPU) beq() {
+func beq(c *CPU, mode AddressingMode) error {
 	c.branch(c.status.Has(Zero))
+	return nil
 }
 
 // bit - Bit Test
@@ -107,12 +118,13 @@ func (c *CPU) beq() {
 // See [BIT Instruction Reference].
 //
 // [BIT Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BIT
-func (c *CPU) bit(mode AddressingMode) {
+func bit(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.status.Set(Zero, data&c.accumulator == 0)
 	c.status.Set(Negative, bitflags.Flags(data).Has(Negative))
 	c.status.Set(Overflow, bitflags.Flags(data).Has(Overflow))
+	return nil
 }
 
 // bmi - Branch if Minus
@@ -123,8 +135,9 @@ func (c *CPU) bit(mode AddressingMode) {
 // See [BMI Instruction Reference].
 //
 // [BMI Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BMI
-func (c *CPU) bmi() {
+func bmi(c *CPU, mode AddressingMode) error {
 	c.branch(c.status.Has(Negative))
+	return nil
 }
 
 // bne - Branch if Not Equal
@@ -135,8 +148,9 @@ func (c *CPU) bmi() {
 // See [BNE Instruction Reference].
 //
 // [BNE Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BNE
-func (c *CPU) bne() {
+func bne(c *CPU, mode AddressingMode) error {
 	c.branch(!c.status.Has(Zero))
+	return nil
 }
 
 // bpl - Branch if Positive
@@ -147,8 +161,25 @@ func (c *CPU) bne() {
 // See [BPL Instruction Reference].
 //
 // [BPL Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BPL
-func (c *CPU) bpl() {
+func bpl(c *CPU, mode AddressingMode) error {
 	c.branch(!c.status.Has(Negative))
+	return nil
+}
+
+var ErrBrk = errors.New("break")
+
+// brk - Force Interrupt
+//
+// The BRK instruction forces the generation of an interrupt request.
+// The program counter and processor status are pushed on the stack then
+// the IRQ interrupt vector at $FFFE/F is loaded into the PC and
+// the break flag in the status set to one.
+//
+// See [BRK Instruction Reference].
+//
+// [BRK Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BRK
+func brk(c *CPU, mode AddressingMode) error {
+	return ErrBrk
 }
 
 // bvc - Branch if Overflow Clear
@@ -159,8 +190,9 @@ func (c *CPU) bpl() {
 // See [BVC Instruction Reference].
 //
 // [BVC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BVC
-func (c *CPU) bvc() {
+func bvc(c *CPU, mode AddressingMode) error {
 	c.branch(!c.status.Has(Overflow))
+	return nil
 }
 
 // bvs - Branch if Overflow Set
@@ -171,8 +203,9 @@ func (c *CPU) bvc() {
 // See [BVS Instruction Reference].
 //
 // [BVS Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BVS
-func (c *CPU) bvs() {
+func bvs(c *CPU, mode AddressingMode) error {
 	c.branch(c.status.Has(Overflow))
+	return nil
 }
 
 // clc - Clear Carry Flag
@@ -182,8 +215,9 @@ func (c *CPU) bvs() {
 // See [CLC Instruction Reference].
 //
 // [CLC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLC
-func (c *CPU) clc() {
+func clc(c *CPU, mode AddressingMode) error {
 	c.status.Remove(Carry)
+	return nil
 }
 
 // cld - Clear Decimal Mode
@@ -193,8 +227,9 @@ func (c *CPU) clc() {
 // See [CLC Instruction Reference].
 //
 // [CLC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLC
-func (c *CPU) cld() {
+func cld(c *CPU, mode AddressingMode) error {
 	c.status.Remove(DecimalMode)
+	return nil
 }
 
 // cli - Clear Interrupt Disable
@@ -205,8 +240,9 @@ func (c *CPU) cld() {
 // See [CLI Instruction Reference].
 //
 // [CLI Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLI
-func (c *CPU) cli() {
+func cli(c *CPU, mode AddressingMode) error {
 	c.status.Remove(InterruptDisable)
+	return nil
 }
 
 // clv - Clear Overflow Flag
@@ -216,8 +252,9 @@ func (c *CPU) cli() {
 // See [CLV Instruction Reference].
 //
 // [CLV Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLV
-func (c *CPU) clv() {
+func clv(c *CPU, mode AddressingMode) error {
 	c.status.Remove(Overflow)
+	return nil
 }
 
 // cmp - Compare
@@ -228,8 +265,9 @@ func (c *CPU) clv() {
 // See [CMP Instruction Reference].
 //
 // [CMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CMP
-func (c *CPU) cmp(mode AddressingMode) {
+func cmp(c *CPU, mode AddressingMode) error {
 	c.compare(mode, c.accumulator)
+	return nil
 }
 
 // cpx - Compare X Register
@@ -240,8 +278,9 @@ func (c *CPU) cmp(mode AddressingMode) {
 // See [CPX Instruction Reference].
 //
 // [CPX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CPX
-func (c *CPU) cpx(mode AddressingMode) {
+func cpx(c *CPU, mode AddressingMode) error {
 	c.compare(mode, c.registerX)
+	return nil
 }
 
 // cpy - Compare Y Register
@@ -252,8 +291,9 @@ func (c *CPU) cpx(mode AddressingMode) {
 // See [CPY Instruction Reference].
 //
 // [CPY Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CPY
-func (c *CPU) cpy(mode AddressingMode) {
+func cpy(c *CPU, mode AddressingMode) error {
 	c.compare(mode, c.registerY)
+	return nil
 }
 
 // dec - Decrement Memory
@@ -264,12 +304,13 @@ func (c *CPU) cpy(mode AddressingMode) {
 // See [DEC Instruction Reference].
 //
 // [DEC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEC
-func (c *CPU) dec(mode AddressingMode) {
+func dec(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	data -= 1
 	c.MemWrite(addr, data)
 	c.updateZeroAndNegFlags(data)
+	return nil
 }
 
 // dex - Decrement X Register
@@ -280,9 +321,10 @@ func (c *CPU) dec(mode AddressingMode) {
 // See [DEX Instruction Reference].
 //
 // [DEX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEX
-func (c *CPU) dex() {
+func dex(c *CPU, mode AddressingMode) error {
 	c.registerX -= 1
 	c.updateZeroAndNegFlags(c.registerX)
+	return nil
 }
 
 // dey - Decrement Y Register
@@ -293,9 +335,10 @@ func (c *CPU) dex() {
 // See [DEY Instruction Reference].
 //
 // [DEY Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEY
-func (c *CPU) dey() {
+func dey(c *CPU, mode AddressingMode) error {
 	c.registerY -= 1
 	c.updateZeroAndNegFlags(c.registerY)
+	return nil
 }
 
 // eor - Exclusive OR
@@ -306,10 +349,11 @@ func (c *CPU) dey() {
 // See [EOR Instruction Reference].
 //
 // [EOR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#EOR
-func (c *CPU) eor(mode AddressingMode) {
+func eor(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.setAccumulator(data ^ c.accumulator)
+	return nil
 }
 
 // inc - Increment Memory
@@ -320,12 +364,13 @@ func (c *CPU) eor(mode AddressingMode) {
 // See [INC Instruction Reference].
 //
 // [INC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INC
-func (c *CPU) inc(mode AddressingMode) {
+func inc(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	data += 1
 	c.MemWrite(addr, data)
 	c.updateZeroAndNegFlags(data)
+	return nil
 }
 
 // inx - Increment X Register
@@ -335,9 +380,10 @@ func (c *CPU) inc(mode AddressingMode) {
 // See [INX Instruction Reference].
 //
 // [INX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INX
-func (c *CPU) inx() {
+func inx(c *CPU, mode AddressingMode) error {
 	c.registerX += 1
 	c.updateZeroAndNegFlags(c.registerX)
+	return nil
 }
 
 // iny - Increment Y Register
@@ -348,9 +394,10 @@ func (c *CPU) inx() {
 // See [INY Instruction Reference].
 //
 // [INY Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INY
-func (c *CPU) iny() {
+func iny(c *CPU, mode AddressingMode) error {
 	c.registerY += 1
 	c.updateZeroAndNegFlags(c.registerY)
+	return nil
 }
 
 // jmp - Jump
@@ -360,7 +407,7 @@ func (c *CPU) iny() {
 // See [JMP Instruction Reference].
 //
 // [JMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JMP
-func (c *CPU) jmp(mode AddressingMode) {
+func jmp(c *CPU, mode AddressingMode) error {
 	switch mode {
 	case Absolute:
 		addr := c.MemRead16(c.programCounter)
@@ -385,6 +432,7 @@ func (c *CPU) jmp(mode AddressingMode) {
 		c.programCounter = indirect
 	}
 
+	return nil
 }
 
 // jsr - Jump to Subroutine
@@ -395,10 +443,11 @@ func (c *CPU) jmp(mode AddressingMode) {
 // See [JSR Instruction Reference].
 //
 // [JSR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JSR
-func (c *CPU) jsr() {
+func jsr(c *CPU, mode AddressingMode) error {
 	c.stackPush16(c.programCounter + 1)
 	addr := c.MemRead16(c.programCounter)
 	c.programCounter = addr
+	return nil
 }
 
 // lda - Load Accumulator
@@ -409,10 +458,11 @@ func (c *CPU) jsr() {
 // See [LDA Instruction Reference[].
 //
 // [LDA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDA
-func (c *CPU) lda(mode AddressingMode) {
+func lda(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	v := c.MemRead(addr)
 	c.setAccumulator(v)
+	return nil
 }
 
 // ldx - Load X Register
@@ -423,11 +473,12 @@ func (c *CPU) lda(mode AddressingMode) {
 // See [LDX Instruction Reference[].
 //
 // [LDX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDX
-func (c *CPU) ldx(mode AddressingMode) {
+func ldx(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.registerX = data
 	c.updateZeroAndNegFlags(c.registerX)
+	return nil
 }
 
 // ldy - Load Y Register
@@ -438,11 +489,12 @@ func (c *CPU) ldx(mode AddressingMode) {
 // See [LDY Instruction Reference[].
 //
 // [LDY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDY
-func (c *CPU) ldy(mode AddressingMode) {
+func ldy(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.registerY = data
 	c.updateZeroAndNegFlags(c.registerY)
+	return nil
 }
 
 // lsr - Logical Shift Right
@@ -454,7 +506,7 @@ func (c *CPU) ldy(mode AddressingMode) {
 // See [LSR Instruction Reference[].
 //
 // [LSR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LSR
-func (c *CPU) lsr(mode AddressingMode) {
+func lsr(c *CPU, mode AddressingMode) error {
 	var addr uint16
 	var data byte
 	if mode == Accumulator {
@@ -471,6 +523,19 @@ func (c *CPU) lsr(mode AddressingMode) {
 		c.MemWrite(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
+	return nil
+}
+
+// nop - No Operation
+//
+// The NOP instruction causes no changes to the processor other than
+// the normal incrementing of the program counter to the next instruction.
+//
+// See [NOP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#NOP
+//
+// [NOP Instruction Reference]:
+func nop(c *CPU, mode AddressingMode) error {
+	return nil
 }
 
 // ora - Logical Inclusive OR
@@ -481,10 +546,11 @@ func (c *CPU) lsr(mode AddressingMode) {
 // See [ORA Instruction Reference[].
 //
 // [ORA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ORA
-func (c *CPU) ora(mode AddressingMode) {
+func ora(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.setAccumulator(data | c.accumulator)
+	return nil
 }
 
 // pha - Push Accumulator
@@ -494,8 +560,9 @@ func (c *CPU) ora(mode AddressingMode) {
 // See [PHA Instruction Reference[].
 //
 // [PHA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PHA
-func (c *CPU) pha() {
+func pha(c *CPU, mode AddressingMode) error {
 	c.stackPush(c.accumulator)
+	return nil
 }
 
 // php - Push Processor Status
@@ -505,10 +572,11 @@ func (c *CPU) pha() {
 // See [PHP Instruction Reference[].
 //
 // [PHP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PHP
-func (c *CPU) php() {
+func php(c *CPU, mode AddressingMode) error {
 	flags := c.status
 	flags.Insert(Break | Break2)
 	c.stackPush(byte(flags))
+	return nil
 }
 
 // pla - Pull Accumulator
@@ -519,9 +587,10 @@ func (c *CPU) php() {
 // See [PLA Instruction Reference[].
 //
 // [PLA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLA
-func (c *CPU) pla() {
+func pla(c *CPU, mode AddressingMode) error {
 	data := c.stackPop()
 	c.setAccumulator(data)
+	return nil
 }
 
 // plp - Pull Processor Status
@@ -532,10 +601,11 @@ func (c *CPU) pla() {
 // See [PLP Instruction Reference[].
 //
 // [PLP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLP
-func (c *CPU) plp() {
+func plp(c *CPU, mode AddressingMode) error {
 	flags := bitflags.Flags(c.stackPop())
 	flags.Remove(Break | Break2)
 	c.status = flags
+	return nil
 }
 
 // rol - Rotate Left
@@ -547,7 +617,7 @@ func (c *CPU) plp() {
 // See [ROL Instruction Reference[].
 //
 // [ROL Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ROL
-func (c *CPU) rol(mode AddressingMode) {
+func rol(c *CPU, mode AddressingMode) error {
 	var addr uint16
 	var data byte
 	if mode == Accumulator {
@@ -569,6 +639,7 @@ func (c *CPU) rol(mode AddressingMode) {
 		c.MemWrite(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
+	return nil
 }
 
 // ror - Rotate Right
@@ -580,7 +651,7 @@ func (c *CPU) rol(mode AddressingMode) {
 // See [ROR Instruction Reference[].
 //
 // [ROR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ROR
-func (c *CPU) ror(mode AddressingMode) {
+func ror(c *CPU, mode AddressingMode) error {
 	var addr uint16
 	var data byte
 	if mode == Accumulator {
@@ -602,6 +673,7 @@ func (c *CPU) ror(mode AddressingMode) {
 		c.MemWrite(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
+	return nil
 }
 
 // rti - Return from Interrupt
@@ -612,12 +684,13 @@ func (c *CPU) ror(mode AddressingMode) {
 // See [RTI Instruction Reference[].
 //
 // [RTI Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#RTI
-func (c *CPU) rti() {
+func rti(c *CPU, mode AddressingMode) error {
 	flags := bitflags.Flags(c.stackPop())
 	flags.Remove(Break | Break2)
 	c.status = flags
 
 	c.programCounter = c.stackPop16()
+	return nil
 }
 
 // rts - Return from Subroutine
@@ -629,8 +702,9 @@ func (c *CPU) rti() {
 // See [RTS Instruction Reference].
 //
 // [RTS Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#RTS
-func (c *CPU) rts() {
+func rts(c *CPU, mode AddressingMode) error {
 	c.programCounter = c.stackPop16() + 1
+	return nil
 }
 
 // sbc - Subtract with Carry
@@ -642,10 +716,11 @@ func (c *CPU) rts() {
 // See [SBC Instruction Reference].
 //
 // [SBC Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SBC
-func (c *CPU) sbc(mode AddressingMode) {
+func sbc(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	v := c.MemRead(addr)
 	c.addAccumulator(byte(-int8(v) - 1))
+	return nil
 }
 
 // sec - Set Carry Flag
@@ -655,8 +730,9 @@ func (c *CPU) sbc(mode AddressingMode) {
 // See [SEC Instruction Reference].
 //
 // [SEC Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SEC
-func (c *CPU) sec() {
+func sec(c *CPU, mode AddressingMode) error {
 	c.status.Insert(Carry)
+	return nil
 }
 
 // sed - Set Decimal Flag
@@ -666,8 +742,9 @@ func (c *CPU) sec() {
 // See [SED Instruction Reference].
 //
 // [SED Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SED
-func (c *CPU) sed() {
+func sed(c *CPU, mode AddressingMode) error {
 	c.status.Insert(DecimalMode)
+	return nil
 }
 
 // sei - Set Interrupt Disable
@@ -677,8 +754,9 @@ func (c *CPU) sed() {
 // See [SEI Instruction Reference].
 //
 // [SEI Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SEI
-func (c *CPU) sei() {
+func sei(c *CPU, mode AddressingMode) error {
 	c.status.Insert(InterruptDisable)
+	return nil
 }
 
 // sta - Store Accumulator
@@ -688,9 +766,10 @@ func (c *CPU) sei() {
 // See [STA Instruction Reference].
 //
 // [STA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STA
-func (c *CPU) sta(mode AddressingMode) {
+func sta(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	c.MemWrite(addr, c.accumulator)
+	return nil
 }
 
 // stx - Store X Register
@@ -700,9 +779,10 @@ func (c *CPU) sta(mode AddressingMode) {
 // See [STX Instruction Reference].
 //
 // [STX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STX
-func (c *CPU) stx(mode AddressingMode) {
+func stx(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	c.MemWrite(addr, c.registerX)
+	return nil
 }
 
 // sty - Store Y Register
@@ -712,9 +792,10 @@ func (c *CPU) stx(mode AddressingMode) {
 // See [STY Instruction Reference].
 //
 // [STY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STY
-func (c *CPU) sty(mode AddressingMode) {
+func sty(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	c.MemWrite(addr, c.registerY)
+	return nil
 }
 
 // tax - Transfer Accumulator to X
@@ -725,9 +806,10 @@ func (c *CPU) sty(mode AddressingMode) {
 // See [TAX Instruction Reference].
 //
 // [TAX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TAX
-func (c *CPU) tax() {
+func tax(c *CPU, mode AddressingMode) error {
 	c.registerX = c.accumulator
 	c.updateZeroAndNegFlags(c.registerX)
+	return nil
 }
 
 // tsx - Transfer Stack Pointer to X
@@ -738,9 +820,10 @@ func (c *CPU) tax() {
 // See [TSX Instruction Reference].
 //
 // [TSX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TSX
-func (c *CPU) tsx() {
+func tsx(c *CPU, mode AddressingMode) error {
 	c.registerX = c.stackPointer
 	c.updateZeroAndNegFlags(c.registerX)
+	return nil
 }
 
 // txa - Transfer X to Accumulator
@@ -751,8 +834,9 @@ func (c *CPU) tsx() {
 // See [TXA Instruction Reference].
 //
 // [TXA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TXA
-func (c *CPU) txa() {
+func txa(c *CPU, mode AddressingMode) error {
 	c.setAccumulator(c.registerX)
+	return nil
 }
 
 // txs - Transfer X to Stack Pointer
@@ -762,8 +846,9 @@ func (c *CPU) txa() {
 // See [TXS Instruction Reference].
 //
 // [TXS Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TXS
-func (c *CPU) txs() {
+func txs(c *CPU, mode AddressingMode) error {
 	c.stackPointer = c.registerX
+	return nil
 }
 
 // tya - Transfer Y to Accumulator
@@ -774,8 +859,9 @@ func (c *CPU) txs() {
 // See [TYA Instruction Reference].
 //
 // [TYA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TYA
-func (c *CPU) tya() {
+func tya(c *CPU, mode AddressingMode) error {
 	c.setAccumulator(c.registerY)
+	return nil
 }
 
 // tay - Transfer Accumulator to Y
@@ -786,7 +872,8 @@ func (c *CPU) tya() {
 // See [TAY Instruction Reference].
 //
 // [TAY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TAY
-func (c *CPU) tay() {
+func tay(c *CPU, mode AddressingMode) error {
 	c.registerY = c.accumulator
 	c.updateZeroAndNegFlags(c.registerY)
+	return nil
 }
