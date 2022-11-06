@@ -7,10 +7,11 @@ import (
 	"github.com/gabe565/gones/internal/bus"
 )
 
-func New() CPU {
-	return CPU{
+func New(b *bus.Bus) *CPU {
+	return &CPU{
 		status:       InterruptDisable | Break2,
 		stackPointer: StackReset,
+		bus:          b,
 	}
 }
 
@@ -39,7 +40,7 @@ type CPU struct {
 	registerY byte
 
 	// bus Main memory bus
-	bus bus.Bus
+	bus *bus.Bus
 
 	// Callback optional callback to Run before every tick
 	Callback func(c *CPU)
@@ -50,7 +51,7 @@ type CPU struct {
 
 const (
 	// PrgRomAddr is the memory address that PRG begins.
-	PrgRomAddr = 0x8000
+	PrgRomAddr = 0x600
 
 	// ResetAddr is the memory address for the Reset Interrupt Vector.
 	ResetAddr = 0xFFFC

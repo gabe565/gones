@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/gabe565/gones/internal/console"
 	"github.com/gabe565/gones/internal/cpu"
-	"github.com/gabe565/gones/internal/games"
 	"image"
 	"image/color"
 	"math/rand"
@@ -27,8 +27,13 @@ func run() {
 		panic(err)
 	}
 
-	c := cpu.New()
-	c.Load(games.Snake)
+	if len(os.Args) < 2 {
+		panic("No ROM provided")
+	}
+	c, err := console.New(os.Args[1])
+	if err != nil {
+		panic(err)
+	}
 	c.Reset()
 
 	rand.Seed(time.Now().UnixNano())
