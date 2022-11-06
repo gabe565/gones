@@ -14,25 +14,24 @@ import (
 )
 
 func main() {
-	pixelgl.Run(run)
+	if err := NewCommand().Execute(); err != nil {
+		os.Exit(1)
+	}
 }
 
-func run() {
+func run(path string) error {
 	cfg := pixelgl.WindowConfig{
 		Title:  "GoNES",
 		Bounds: pixel.R(0, 0, 10*32, 10*32),
 	}
 	win, err := pixelgl.NewWindow(cfg)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	if len(os.Args) < 2 {
-		panic("No ROM provided")
-	}
-	c, err := console.New(os.Args[1])
+	c, err := console.New(path)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	c.Reset()
 
@@ -94,6 +93,8 @@ func run() {
 	}
 
 	if err := c.Run(); err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }
