@@ -25,7 +25,6 @@ const (
 	Indirect
 	IndirectX
 	IndirectY
-	NoneAddressing
 )
 
 // getOperandAddress gets the address based on the [AddressingMode].

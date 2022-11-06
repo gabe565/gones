@@ -21,12 +21,11 @@ func _() {
 	_ = x[Indirect-10]
 	_ = x[IndirectX-11]
 	_ = x[IndirectY-12]
-	_ = x[NoneAddressing-13]
 }
 
-const _AddressingMode_name = "ImplicitAccumulatorImmediateZeroPageZeroPageXZeroPageYRelativeAbsoluteAbsoluteXAbsoluteYIndirectIndirectXIndirectYNoneAddressing"
+const _AddressingMode_name = "ImplicitAccumulatorImmediateZeroPageZeroPageXZeroPageYRelativeAbsoluteAbsoluteXAbsoluteYIndirectIndirectXIndirectY"
 
-var _AddressingMode_index = [...]uint8{0, 8, 19, 28, 36, 45, 54, 62, 70, 79, 88, 96, 105, 114, 128}
+var _AddressingMode_index = [...]uint8{0, 8, 19, 28, 36, 45, 54, 62, 70, 79, 88, 96, 105, 114}
 
 func (i AddressingMode) String() string {
 	if i >= AddressingMode(len(_AddressingMode_index)-1) {
