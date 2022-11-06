@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gabe565/gones/internal/bitflags"
+	"github.com/gabe565/gones/internal/bus"
 )
 
 func New() CPU {
@@ -38,8 +39,8 @@ type CPU struct {
 	// registerY Register Y
 	registerY byte
 
-	// memory Main memory
-	memory [0xFFFF]byte
+	// bus Main memory bus
+	bus bus.Bus
 
 	// Callback optional callback to Run before every tick
 	Callback func(c *CPU)
