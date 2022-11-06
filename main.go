@@ -41,15 +41,15 @@ func run(path string) error {
 	frameEnd := 0x600
 	frame := make([]byte, frameEnd-frameStart+1)
 	c.Callback = func(c *cpu.CPU) error {
-		if win.Pressed(pixelgl.KeyEscape) {
+		if win.JustPressed(pixelgl.KeyEscape) {
 			return cpu.ErrBrk
-		} else if win.Pressed(pixelgl.KeyW) {
+		} else if win.JustPressed(pixelgl.KeyW) {
 			c.MemWrite(0xFF, 0x77)
-		} else if win.Pressed(pixelgl.KeyA) {
+		} else if win.JustPressed(pixelgl.KeyA) {
 			c.MemWrite(0xFF, 0x61)
-		} else if win.Pressed(pixelgl.KeyS) {
+		} else if win.JustPressed(pixelgl.KeyS) {
 			c.MemWrite(0xFF, 0x73)
-		} else if win.Pressed(pixelgl.KeyD) {
+		} else if win.JustPressed(pixelgl.KeyD) {
 			c.MemWrite(0xFF, 0x64)
 		}
 
