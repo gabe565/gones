@@ -38,9 +38,9 @@ func run(path string) error {
 	rand.Seed(time.Now().UnixNano())
 
 	var lastImg image.Image
-	c.Callback = func(c *cpu.CPU) {
+	c.Callback = func(c *cpu.CPU) error {
 		if win.Pressed(pixelgl.KeyEscape) {
-			os.Exit(0)
+			return cpu.ErrBrk
 		} else if win.Pressed(pixelgl.KeyW) {
 			c.MemWrite(0xFF, 0x77)
 		} else if win.Pressed(pixelgl.KeyA) {
@@ -90,6 +90,7 @@ func run(path string) error {
 		}
 
 		c.MemWrite(0xFE, byte(rand.Intn(15)+1))
+		return nil
 	}
 
 	if err := c.Run(); err != nil {

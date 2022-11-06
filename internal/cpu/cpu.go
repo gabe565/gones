@@ -44,7 +44,7 @@ type CPU struct {
 	bus *bus.Bus
 
 	// Callback optional callback to Run before every tick
-	Callback func(c *CPU)
+	Callback func(c *CPU) error
 
 	// Debug enables opcode logging
 	Debug bool
@@ -85,7 +85,12 @@ func (c *CPU) Run() error {
 
 	for {
 		if c.Callback != nil {
-			c.Callback(c)
+			if err := c.Callback(c); err != nil {
+				if errors.Is(err, ErrBrk) {
+					return nil
+				}
+				return err
+			}
 		}
 
 		code := c.MemRead(c.programCounter)
