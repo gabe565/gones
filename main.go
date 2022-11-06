@@ -41,18 +41,6 @@ func run(path string) error {
 	frameEnd := 0x600
 	frame := make([]byte, frameEnd-frameStart+1)
 	c.Callback = func(c *cpu.CPU) error {
-		if win.JustPressed(pixelgl.KeyEscape) {
-			return cpu.ErrBrk
-		} else if win.JustPressed(pixelgl.KeyW) {
-			c.MemWrite(0xFF, 0x77)
-		} else if win.JustPressed(pixelgl.KeyA) {
-			c.MemWrite(0xFF, 0x61)
-		} else if win.JustPressed(pixelgl.KeyS) {
-			c.MemWrite(0xFF, 0x73)
-		} else if win.JustPressed(pixelgl.KeyD) {
-			c.MemWrite(0xFF, 0x64)
-		}
-
 		var drawFrame bool
 		for k, prevVal := range frame {
 			val := c.MemRead(uint16(frameStart + k))
@@ -63,6 +51,18 @@ func run(path string) error {
 		}
 
 		if drawFrame {
+			if win.JustPressed(pixelgl.KeyEscape) {
+				return cpu.ErrBrk
+			} else if win.JustPressed(pixelgl.KeyW) {
+				c.MemWrite(0xFF, 0x77)
+			} else if win.JustPressed(pixelgl.KeyA) {
+				c.MemWrite(0xFF, 0x61)
+			} else if win.JustPressed(pixelgl.KeyS) {
+				c.MemWrite(0xFF, 0x73)
+			} else if win.JustPressed(pixelgl.KeyD) {
+				c.MemWrite(0xFF, 0x64)
+			}
+
 			img := image.NewRGBA(image.Rect(0, 0, 32, 32))
 			for k, pxl := range frame {
 				var c color.Color
@@ -94,9 +94,10 @@ func run(path string) error {
 			sprite := pixel.NewSprite(pic, pic.Bounds())
 			sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()).Scaled(win.Bounds().Center(), 10))
 			win.Update()
+
+			c.MemWrite(0xFE, byte(rand.Intn(15)+1))
 		}
 
-		c.MemWrite(0xFE, byte(rand.Intn(15)+1))
 		return nil
 	}
 
