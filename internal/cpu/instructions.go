@@ -810,6 +810,20 @@ func tax(c *CPU, mode AddressingMode) error {
 	return nil
 }
 
+// tay - Transfer Accumulator to Y
+//
+// Copies the current contents of the accumulator into the Y register
+// and sets the zero and negative flags as appropriate.
+//
+// See [TAY Instruction Reference].
+//
+// [TAY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TAY
+func tay(c *CPU, mode AddressingMode) error {
+	c.registerY = c.accumulator
+	c.updateZeroAndNegFlags(c.registerY)
+	return nil
+}
+
 // tsx - Transfer Stack Pointer to X
 //
 // Copies the current contents of the stack register into the X register
@@ -859,19 +873,5 @@ func txs(c *CPU, mode AddressingMode) error {
 // [TYA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TYA
 func tya(c *CPU, mode AddressingMode) error {
 	c.setAccumulator(c.registerY)
-	return nil
-}
-
-// tay - Transfer Accumulator to Y
-//
-// Copies the current contents of the accumulator into the Y register
-// and sets the zero and negative flags as appropriate.
-//
-// See [TAY Instruction Reference].
-//
-// [TAY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TAY
-func tay(c *CPU, mode AddressingMode) error {
-	c.registerY = c.accumulator
-	c.updateZeroAndNegFlags(c.registerY)
 	return nil
 }
