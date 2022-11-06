@@ -3,15 +3,12 @@ package cpu
 import (
 	"errors"
 	"fmt"
-	"github.com/gabe565/gones/internal/bits"
+	"github.com/gabe565/gones/internal/bitflags"
 )
 
 func New() CPU {
-	status := bits.Bits(0)
-	status.Set(InterruptDisable)
-	status.Set(Break2)
 	return CPU{
-		Status:     status,
+		Status:     InterruptDisable | Break2,
 		SP:         StackReset,
 		PrgRomAddr: PrgRomAddr,
 	}
@@ -30,7 +27,7 @@ type CPU struct {
 	SP uint8
 
 	// Status Processor Status
-	Status bits.Bits
+	Status bitflags.Flags
 
 	// Accumulator Register A
 	Accumulator uint8
@@ -105,18 +102,10 @@ func (c *CPU) addAccumulator(data uint8) {
 	}
 
 	carry := sum > 0xFF
-	if carry {
-		c.Status.Set(Carry)
-	} else {
-		c.Status.Clear(Carry)
-	}
+	c.Status.Set(Carry, carry)
 
 	result := uint8(sum)
-	if (data^result)&(result^c.Accumulator)&0x80 != 0 {
-		c.Status.Set(Overflow)
-	} else {
-		c.Status.Clear(Overflow)
-	}
+	c.Status.Set(Overflow, (data^result)&(result^c.Accumulator)&0x80 != 0)
 
 	c.setAccumulator(result)
 }
@@ -171,17 +160,8 @@ func (c *CPU) stackPop16() uint16 {
 
 // updateZeroAndNegFlags updates zero and negative flags
 func (c *CPU) updateZeroAndNegFlags(result uint8) {
-	if result == 0 {
-		c.Status.Set(Zero)
-	} else {
-		c.Status.Clear(Zero)
-	}
-
-	if bits.Bits(result).Has(Negative) {
-		c.Status.Set(Negative)
-	} else {
-		c.Status.Clear(Negative)
-	}
+	c.Status.Set(Zero, result == 0)
+	c.Status.Set(Negative, bitflags.Flags(result).Has(Negative))
 }
 
 func (c *CPU) branch(condition bool) {
@@ -196,11 +176,7 @@ func (c *CPU) branch(condition bool) {
 func (c *CPU) compare(mode AddressingMode, rhs uint8) {
 	addr := c.getOperandAddress(mode)
 	data := c.memRead(addr)
-	if data <= rhs {
-		c.Status.Set(Carry)
-	} else {
-		c.Status.Clear(Carry)
-	}
+	c.Status.Set(Carry, data <= rhs)
 	c.updateZeroAndNegFlags(rhs - data)
 }
 

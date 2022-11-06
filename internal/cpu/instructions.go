@@ -1,6 +1,6 @@
 package cpu
 
-import "github.com/gabe565/gones/internal/bits"
+import "github.com/gabe565/gones/internal/bitflags"
 
 // adc - Add with Carry
 //
@@ -51,11 +51,7 @@ func (c *CPU) asl(mode AddressingMode) {
 		addr = c.getOperandAddress(mode)
 		data = c.memRead(addr)
 	}
-	if data>>7 == 1 {
-		c.Status.Set(Carry)
-	} else {
-		c.Status.Clear(Carry)
-	}
+	c.Status.Set(Carry, data>>7 == 1)
 	data = data << 1
 	if mode == Accumulator {
 		c.setAccumulator(data)
@@ -114,24 +110,9 @@ func (c *CPU) beq() {
 func (c *CPU) bit(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
 	data := c.memRead(addr)
-	and := data & c.Accumulator
-	if and == 0 {
-		c.Status.Set(Zero)
-	} else {
-		c.Status.Clear(Zero)
-	}
-
-	if bits.Bits(data).Has(Negative) {
-		c.Status.Set(Negative)
-	} else {
-		c.Status.Clear(Negative)
-	}
-
-	if bits.Bits(data).Has(Overflow) {
-		c.Status.Set(Overflow)
-	} else {
-		c.Status.Clear(Overflow)
-	}
+	c.Status.Set(Zero, data&c.Accumulator == 0)
+	c.Status.Set(Negative, bitflags.Flags(data).Has(Negative))
+	c.Status.Set(Overflow, bitflags.Flags(data).Has(Overflow))
 }
 
 // bmi - Branch if Minus
@@ -202,7 +183,7 @@ func (c *CPU) bvs() {
 //
 // [CLC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLC
 func (c *CPU) clc() {
-	c.Status.Clear(Carry)
+	c.Status.Remove(Carry)
 }
 
 // cld - Clear Decimal Mode
@@ -213,7 +194,7 @@ func (c *CPU) clc() {
 //
 // [CLC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLC
 func (c *CPU) cld() {
-	c.Status.Clear(DecimalMode)
+	c.Status.Remove(DecimalMode)
 }
 
 // cli - Clear Interrupt Disable
@@ -225,7 +206,7 @@ func (c *CPU) cld() {
 //
 // [CLI Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLI
 func (c *CPU) cli() {
-	c.Status.Clear(InterruptDisable)
+	c.Status.Remove(InterruptDisable)
 }
 
 // clv - Clear Overflow Flag
@@ -236,7 +217,7 @@ func (c *CPU) cli() {
 //
 // [CLV Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLV
 func (c *CPU) clv() {
-	c.Status.Clear(Overflow)
+	c.Status.Remove(Overflow)
 }
 
 // cmp - Compare
@@ -482,11 +463,7 @@ func (c *CPU) lsr(mode AddressingMode) {
 		addr = c.getOperandAddress(mode)
 		data = c.memRead(addr)
 	}
-	if data&1 == 1 {
-		c.Status.Set(Carry)
-	} else {
-		c.Status.Clear(Carry)
-	}
+	c.Status.Set(Carry, data&1 == 1)
 	data >>= 1
 	if mode == Accumulator {
 		c.setAccumulator(data)
@@ -530,8 +507,7 @@ func (c *CPU) pha() {
 // [PHP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PHP
 func (c *CPU) php() {
 	flags := c.Status
-	flags.Set(Break)
-	flags.Set(Break2)
+	flags.Insert(Break | Break2)
 	c.stackPush(uint8(flags))
 }
 
@@ -557,9 +533,8 @@ func (c *CPU) pla() {
 //
 // [PLP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLP
 func (c *CPU) plp() {
-	flags := bits.Bits(c.stackPop())
-	flags.Clear(Break)
-	flags.Clear(Break2)
+	flags := bitflags.Flags(c.stackPop())
+	flags.Remove(Break | Break2)
 	c.Status = flags
 }
 
@@ -583,11 +558,7 @@ func (c *CPU) rol(mode AddressingMode) {
 	}
 	prevCarry := c.Status.Has(Carry)
 
-	if data>>7 == 1 {
-		c.Status.Set(Carry)
-	} else {
-		c.Status.Clear(Carry)
-	}
+	c.Status.Set(Carry, data>>7 == 1)
 	data <<= 1
 	if prevCarry {
 		data |= 1
@@ -620,11 +591,7 @@ func (c *CPU) ror(mode AddressingMode) {
 	}
 	prevCarry := c.Status.Has(Carry)
 
-	if data&1 == 1 {
-		c.Status.Set(Carry)
-	} else {
-		c.Status.Clear(Carry)
-	}
+	c.Status.Set(Carry, data&1 == 1)
 	data >>= 1
 	if prevCarry {
 		data |= uint8(Negative)
@@ -646,9 +613,8 @@ func (c *CPU) ror(mode AddressingMode) {
 //
 // [RTI Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#RTI
 func (c *CPU) rti() {
-	flags := bits.Bits(c.stackPop())
-	flags.Clear(Break)
-	flags.Set(Break2)
+	flags := bitflags.Flags(c.stackPop())
+	flags.Remove(Break | Break2)
 	c.Status = flags
 
 	c.PC = c.stackPop16()
@@ -690,7 +656,7 @@ func (c *CPU) sbc(mode AddressingMode) {
 //
 // [SEC Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SEC
 func (c *CPU) sec() {
-	c.Status.Set(Carry)
+	c.Status.Insert(Carry)
 }
 
 // sed - Set Decimal Flag
@@ -701,7 +667,7 @@ func (c *CPU) sec() {
 //
 // [SED Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SED
 func (c *CPU) sed() {
-	c.Status.Set(DecimalMode)
+	c.Status.Insert(DecimalMode)
 }
 
 // sei - Set Interrupt Disable
@@ -712,7 +678,7 @@ func (c *CPU) sed() {
 //
 // [SEI Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SEI
 func (c *CPU) sei() {
-	c.Status.Set(InterruptDisable)
+	c.Status.Insert(InterruptDisable)
 }
 
 // sta - Store Accumulator
