@@ -31,7 +31,8 @@ func (b *Bus) MemRead(addr uint16) byte {
 		return b.cpuVram[addr]
 	} else if PpuAddr <= addr && addr <= PpuLastAddr {
 		addr &= 0b10_0000_0000_0111
-		panic("PPU unsupported")
+		log.Error("PPU unsupported")
+		return 0
 	} else if PrgRomAddr <= addr && addr <= 0xFFFF {
 		addr -= PrgRomAddr
 		if len(b.cartridge.Prg) == PrgRomMirror {
@@ -50,7 +51,7 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 		b.cpuVram[addr] = data
 	} else if PpuAddr <= addr && addr <= PpuLastAddr {
 		addr &= 0b10_0000_0000_0111
-		panic("PPU unsupported")
+		log.Error("PPU unsupported")
 	} else if PrgRomAddr <= addr && addr <= 0xFFFF {
 		panic("Attempt to write to cartridge ROM")
 	} else {
