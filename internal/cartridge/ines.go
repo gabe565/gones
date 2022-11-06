@@ -54,18 +54,18 @@ func FromiNes(path string) (*Cartridge, error) {
 
 	cartridge.Battery = (header.Control1 >> 1) & 1
 
-	cartridge.Prg = make([]byte, int(header.PrgCount)*16384)
+	cartridge.Prg = make([]byte, int(header.PrgCount)*0x4000)
 	if _, err := io.ReadFull(f, cartridge.Prg); err != nil {
 		return nil, err
 	}
 
-	cartridge.Chr = make([]byte, int(header.ChrCount)*8192)
+	cartridge.Chr = make([]byte, int(header.ChrCount)*0x2000)
 	if _, err := io.ReadFull(f, cartridge.Chr); err != nil {
 		return nil, err
 	}
 
 	if header.ChrCount == 0 {
-		cartridge.Chr = make([]byte, 8192)
+		cartridge.Chr = make([]byte, 0x2000)
 	}
 
 	return cartridge, nil
