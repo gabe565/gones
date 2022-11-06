@@ -408,19 +408,17 @@ func iny(c *CPU, mode AddressingMode) error {
 //
 // [JMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JMP
 func jmp(c *CPU, mode AddressingMode) error {
+	addr := c.MemRead16(c.programCounter)
+
 	switch mode {
 	case Absolute:
-		addr := c.MemRead16(c.programCounter)
 		c.programCounter = addr
 	case Indirect:
-		addr := c.MemRead16(c.programCounter)
-
-		// let indirect_ref = self.mem_read_u16(mem_address);
-		//6502 bug mode with with page boundary:
-		//  if address $3000 contains $40, $30FF contains $80, and $3100 contains $50,
-		// the result of JMP ($30FF) will be a transfer of control to $4080 rather than $5080 as you intended
+		// 6502 bug mode with page boundary:
+		// If address $3000 contains $40, $30FF contains $80, and $3100 contains $50,
+		// the result of JMP ($30FF) will be a transfer of control to $4080
+		// rather than $5080 as expected
 		// i.e. the 6502 took the low byte of the address from $30FF and the high byte from $3000
-
 		var indirect uint16
 		if addr&0x00FF == 0x00FF {
 			lo := c.MemRead(addr)
