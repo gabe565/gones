@@ -55,7 +55,7 @@ func Test_inx_overflow(t *testing.T) {
 
 func Test_lda_from_memory(t *testing.T) {
 	cpu := New()
-	cpu.memWrite(0x10, 0x55)
+	cpu.MemWrite(0x10, 0x55)
 	if err := cpu.loadAndRun([]uint8{0xA5, 0x10, 0x00}); err != nil {
 		assert.NoErrorf(t, err, "loadAndRun")
 	}

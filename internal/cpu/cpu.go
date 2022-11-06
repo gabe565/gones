@@ -72,7 +72,7 @@ func (c *CPU) Reset() {
 	c.Status = 0
 	c.SP = StackReset
 
-	c.PC = c.memRead16(ResetAddr)
+	c.PC = c.MemRead16(ResetAddr)
 }
 
 // Load loads a program into PRG memory
@@ -80,7 +80,7 @@ func (c *CPU) Load(program []uint8) {
 	for k, v := range program {
 		c.Memory[c.PrgRomAddr+uint16(k)] = v
 	}
-	c.memWrite16(ResetAddr, c.PrgRomAddr)
+	c.MemWrite16(ResetAddr, c.PrgRomAddr)
 }
 
 // loadAndRun is a convenience function that loads a program, resets, then runs.
@@ -102,7 +102,7 @@ func (c *CPU) Run() error {
 			c.Callback(c)
 		}
 
-		code := c.memRead(c.PC)
+		code := c.MemRead(c.PC)
 		c.PC += 1
 		prevPC := c.PC
 

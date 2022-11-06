@@ -10,7 +10,7 @@ func (c *CPU) updateZeroAndNegFlags(result uint8) {
 
 func (c *CPU) branch(condition bool) {
 	if condition {
-		jump := int8(c.memRead(c.PC))
+		jump := int8(c.MemRead(c.PC))
 		jumpAddr := c.PC + 1 + uint16(jump)
 
 		c.PC = jumpAddr
@@ -19,7 +19,7 @@ func (c *CPU) branch(condition bool) {
 
 func (c *CPU) compare(mode AddressingMode, rhs uint8) {
 	addr := c.getOperandAddress(mode)
-	data := c.memRead(addr)
+	data := c.MemRead(addr)
 	c.Status.Set(Carry, data <= rhs)
 	c.updateZeroAndNegFlags(rhs - data)
 }

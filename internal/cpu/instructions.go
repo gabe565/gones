@@ -13,7 +13,7 @@ import "github.com/gabe565/gones/internal/bitflags"
 // [ADC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#ADC
 func (c *CPU) adc(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	v := c.memRead(addr)
+	v := c.MemRead(addr)
 	c.addAccumulator(v)
 }
 
@@ -27,7 +27,7 @@ func (c *CPU) adc(mode AddressingMode) {
 // [AND Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#AND
 func (c *CPU) and(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	data := c.memRead(addr)
+	data := c.MemRead(addr)
 	c.setAccumulator(c.Accumulator & data)
 }
 
@@ -49,14 +49,14 @@ func (c *CPU) asl(mode AddressingMode) {
 		data = c.Accumulator
 	} else {
 		addr = c.getOperandAddress(mode)
-		data = c.memRead(addr)
+		data = c.MemRead(addr)
 	}
 	c.Status.Set(Carry, data>>7 == 1)
 	data = data << 1
 	if mode == Accumulator {
 		c.setAccumulator(data)
 	} else {
-		c.memWrite(addr, data)
+		c.MemWrite(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
 }
@@ -109,7 +109,7 @@ func (c *CPU) beq() {
 // [BIT Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BIT
 func (c *CPU) bit(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	data := c.memRead(addr)
+	data := c.MemRead(addr)
 	c.Status.Set(Zero, data&c.Accumulator == 0)
 	c.Status.Set(Negative, bitflags.Flags(data).Has(Negative))
 	c.Status.Set(Overflow, bitflags.Flags(data).Has(Overflow))
@@ -266,9 +266,9 @@ func (c *CPU) cpy(mode AddressingMode) {
 // [DEC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEC
 func (c *CPU) dec(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	data := c.memRead(addr)
+	data := c.MemRead(addr)
 	data -= 1
-	c.memWrite(addr, data)
+	c.MemWrite(addr, data)
 	c.updateZeroAndNegFlags(data)
 }
 
@@ -308,7 +308,7 @@ func (c *CPU) dey() {
 // [EOR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#EOR
 func (c *CPU) eor(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	data := c.memRead(addr)
+	data := c.MemRead(addr)
 	c.setAccumulator(data ^ c.Accumulator)
 }
 
@@ -322,9 +322,9 @@ func (c *CPU) eor(mode AddressingMode) {
 // [INC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INC
 func (c *CPU) inc(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	data := c.memRead(addr)
+	data := c.MemRead(addr)
 	data += 1
-	c.memWrite(addr, data)
+	c.MemWrite(addr, data)
 	c.updateZeroAndNegFlags(data)
 }
 
@@ -363,10 +363,10 @@ func (c *CPU) iny() {
 func (c *CPU) jmp(mode AddressingMode) {
 	switch mode {
 	case Absolute:
-		addr := c.memRead16(c.PC)
+		addr := c.MemRead16(c.PC)
 		c.PC = addr
 	case Indirect:
-		addr := c.memRead16(c.PC)
+		addr := c.MemRead16(c.PC)
 
 		// let indirect_ref = self.mem_read_u16(mem_address);
 		//6502 bug mode with with page boundary:
@@ -376,11 +376,11 @@ func (c *CPU) jmp(mode AddressingMode) {
 
 		var indirect uint16
 		if addr&0x00FF == 0x00FF {
-			lo := c.memRead(addr)
-			hi := c.memRead(addr & 0xFF00)
+			lo := c.MemRead(addr)
+			hi := c.MemRead(addr & 0xFF00)
 			indirect = uint16(hi)<<8 | uint16(lo)
 		} else {
-			indirect = c.memRead16(addr)
+			indirect = c.MemRead16(addr)
 		}
 		c.PC = indirect
 	}
@@ -397,7 +397,7 @@ func (c *CPU) jmp(mode AddressingMode) {
 // [JSR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JSR
 func (c *CPU) jsr() {
 	c.stackPush16(c.PC + 1)
-	addr := c.memRead16(c.PC)
+	addr := c.MemRead16(c.PC)
 	c.PC = addr
 }
 
@@ -411,7 +411,7 @@ func (c *CPU) jsr() {
 // [LDA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDA
 func (c *CPU) lda(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	v := c.memRead(addr)
+	v := c.MemRead(addr)
 	c.setAccumulator(v)
 }
 
@@ -425,7 +425,7 @@ func (c *CPU) lda(mode AddressingMode) {
 // [LDX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDX
 func (c *CPU) ldx(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	data := c.memRead(addr)
+	data := c.MemRead(addr)
 	c.RegisterX = data
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
@@ -440,7 +440,7 @@ func (c *CPU) ldx(mode AddressingMode) {
 // [LDY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDY
 func (c *CPU) ldy(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	data := c.memRead(addr)
+	data := c.MemRead(addr)
 	c.RegisterY = data
 	c.updateZeroAndNegFlags(c.RegisterY)
 }
@@ -461,14 +461,14 @@ func (c *CPU) lsr(mode AddressingMode) {
 		data = c.Accumulator
 	} else {
 		addr = c.getOperandAddress(mode)
-		data = c.memRead(addr)
+		data = c.MemRead(addr)
 	}
 	c.Status.Set(Carry, data&1 == 1)
 	data >>= 1
 	if mode == Accumulator {
 		c.setAccumulator(data)
 	} else {
-		c.memWrite(addr, data)
+		c.MemWrite(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
 }
@@ -483,7 +483,7 @@ func (c *CPU) lsr(mode AddressingMode) {
 // [ORA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ORA
 func (c *CPU) ora(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	data := c.memRead(addr)
+	data := c.MemRead(addr)
 	c.setAccumulator(data | c.Accumulator)
 }
 
@@ -554,7 +554,7 @@ func (c *CPU) rol(mode AddressingMode) {
 		data = c.Accumulator
 	} else {
 		addr = c.getOperandAddress(mode)
-		data = c.memRead(addr)
+		data = c.MemRead(addr)
 	}
 	prevCarry := c.Status.Has(Carry)
 
@@ -566,7 +566,7 @@ func (c *CPU) rol(mode AddressingMode) {
 	if mode == Accumulator {
 		c.setAccumulator(data)
 	} else {
-		c.memWrite(addr, data)
+		c.MemWrite(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
 }
@@ -587,7 +587,7 @@ func (c *CPU) ror(mode AddressingMode) {
 		data = c.Accumulator
 	} else {
 		addr = c.getOperandAddress(mode)
-		data = c.memRead(addr)
+		data = c.MemRead(addr)
 	}
 	prevCarry := c.Status.Has(Carry)
 
@@ -599,7 +599,7 @@ func (c *CPU) ror(mode AddressingMode) {
 	if mode == Accumulator {
 		c.setAccumulator(data)
 	} else {
-		c.memWrite(addr, data)
+		c.MemWrite(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
 }
@@ -644,7 +644,7 @@ func (c *CPU) rts() {
 // [SBC Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SBC
 func (c *CPU) sbc(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	v := c.memRead(addr)
+	v := c.MemRead(addr)
 	c.addAccumulator(uint8(-int8(v) - 1))
 }
 
@@ -690,7 +690,7 @@ func (c *CPU) sei() {
 // [STA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STA
 func (c *CPU) sta(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	c.memWrite(addr, c.Accumulator)
+	c.MemWrite(addr, c.Accumulator)
 }
 
 // stx - Store X Register
@@ -702,7 +702,7 @@ func (c *CPU) sta(mode AddressingMode) {
 // [STX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STX
 func (c *CPU) stx(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	c.memWrite(addr, c.RegisterX)
+	c.MemWrite(addr, c.RegisterX)
 }
 
 // sty - Store Y Register
@@ -714,7 +714,7 @@ func (c *CPU) stx(mode AddressingMode) {
 // [STY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STY
 func (c *CPU) sty(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
-	c.memWrite(addr, c.RegisterY)
+	c.MemWrite(addr, c.RegisterY)
 }
 
 // tax - Transfer Accumulator to X

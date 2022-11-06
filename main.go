@@ -39,13 +39,13 @@ func run() {
 		if win.Pressed(pixelgl.KeyEscape) {
 			os.Exit(0)
 		} else if win.Pressed(pixelgl.KeyW) {
-			c.Memory[0xFF] = 0x77
+			c.MemWrite(0xFF, 0x77)
 		} else if win.Pressed(pixelgl.KeyA) {
-			c.Memory[0xFF] = 0x61
+			c.MemWrite(0xFF, 0x61)
 		} else if win.Pressed(pixelgl.KeyS) {
-			c.Memory[0xFF] = 0x73
+			c.MemWrite(0xFF, 0x73)
 		} else if win.Pressed(pixelgl.KeyD) {
-			c.Memory[0xFF] = 0x64
+			c.MemWrite(0xFF, 0x64)
 		}
 
 		img := image.NewRGBA(image.Rect(0, 0, 32, 32))
@@ -84,7 +84,7 @@ func run() {
 			time.Sleep(time.Second / 60)
 		}
 
-		c.Memory[0xFE] = uint8(rand.Intn(15) + 1)
+		c.MemWrite(0xFE, uint8(rand.Intn(15)+1))
 	}
 
 	if err := c.Run(); err != nil {
