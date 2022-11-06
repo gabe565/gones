@@ -455,7 +455,7 @@ func jsr(c *CPU, mode AddressingMode) error {
 // Loads a byte of memory into the accumulator setting the zero and
 // negative flags as appropriate.
 //
-// See [LDA Instruction Reference[].
+// See [LDA Instruction Reference].
 //
 // [LDA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDA
 func lda(c *CPU, mode AddressingMode) error {
@@ -470,7 +470,7 @@ func lda(c *CPU, mode AddressingMode) error {
 // Loads a byte of memory into the X register setting the zero and
 // negative flags as appropriate.
 //
-// See [LDX Instruction Reference[].
+// See [LDX Instruction Reference].
 //
 // [LDX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDX
 func ldx(c *CPU, mode AddressingMode) error {
@@ -486,7 +486,7 @@ func ldx(c *CPU, mode AddressingMode) error {
 // Loads a byte of memory into the Y register setting the zero and
 // negative flags as appropriate.
 //
-// See [LDY Instruction Reference[].
+// See [LDY Instruction Reference].
 //
 // [LDY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDY
 func ldy(c *CPU, mode AddressingMode) error {
@@ -503,7 +503,7 @@ func ldy(c *CPU, mode AddressingMode) error {
 // The bit that was in bit 0 is shifted into the carry flag.
 // Bit 7 is set to zero.
 //
-// See [LSR Instruction Reference[].
+// See [LSR Instruction Reference].
 //
 // [LSR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LSR
 func lsr(c *CPU, mode AddressingMode) error {
@@ -543,7 +543,7 @@ func nop(c *CPU, mode AddressingMode) error {
 // An inclusive OR is performed, bit by bit, on the accumulator contents
 // using the contents of a byte of memory.
 //
-// See [ORA Instruction Reference[].
+// See [ORA Instruction Reference].
 //
 // [ORA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ORA
 func ora(c *CPU, mode AddressingMode) error {
@@ -557,7 +557,7 @@ func ora(c *CPU, mode AddressingMode) error {
 //
 // Pushes a copy of the accumulator on to the stack.
 //
-// See [PHA Instruction Reference[].
+// See [PHA Instruction Reference].
 //
 // [PHA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PHA
 func pha(c *CPU, mode AddressingMode) error {
@@ -569,7 +569,7 @@ func pha(c *CPU, mode AddressingMode) error {
 //
 // Pushes a copy of the status flags on to the stack.
 //
-// See [PHP Instruction Reference[].
+// See [PHP Instruction Reference].
 //
 // [PHP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PHP
 func php(c *CPU, mode AddressingMode) error {
@@ -584,7 +584,7 @@ func php(c *CPU, mode AddressingMode) error {
 // Pulls an 8 bit value from the stack and into the accumulator.
 // The zero and negative flags are set as appropriate.
 //
-// See [PLA Instruction Reference[].
+// See [PLA Instruction Reference].
 //
 // [PLA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLA
 func pla(c *CPU, mode AddressingMode) error {
@@ -598,7 +598,7 @@ func pla(c *CPU, mode AddressingMode) error {
 // Pulls an 8 bit value from the stack and into the processor flags.
 // The flags will take on new states as determined by the value pulled.
 //
-// See [PLP Instruction Reference[].
+// See [PLP Instruction Reference].
 //
 // [PLP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLP
 func plp(c *CPU, mode AddressingMode) error {
@@ -614,7 +614,7 @@ func plp(c *CPU, mode AddressingMode) error {
 // Bit 0 is filled with the current value of the carry flag
 // whilst the old bit 7 becomes the new carry flag value.
 //
-// See [ROL Instruction Reference[].
+// See [ROL Instruction Reference].
 //
 // [ROL Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ROL
 func rol(c *CPU, mode AddressingMode) error {
@@ -648,7 +648,7 @@ func rol(c *CPU, mode AddressingMode) error {
 // Bit 0 is filled with the current value of the carry flag whilst
 // the old bit 7 becomes the new carry flag value.
 //
-// See [ROR Instruction Reference[].
+// See [ROR Instruction Reference].
 //
 // [ROR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ROR
 func ror(c *CPU, mode AddressingMode) error {
@@ -681,7 +681,7 @@ func ror(c *CPU, mode AddressingMode) error {
 // The RTI instruction is used at the end of an interrupt processing routine.
 // It pulls the processor flags from the stack followed by the program counter.
 //
-// See [RTI Instruction Reference[].
+// See [RTI Instruction Reference].
 //
 // [RTI Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#RTI
 func rti(c *CPU, mode AddressingMode) error {
