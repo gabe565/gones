@@ -22,6 +22,7 @@ func run(path string) error {
 	cfg := pixelgl.WindowConfig{
 		Title:  "GoNES",
 		Bounds: pixel.R(0, 0, 10*32, 10*32),
+		VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)
 	if err != nil {
@@ -93,7 +94,6 @@ func run(path string) error {
 			sprite := pixel.NewSprite(pic, pic.Bounds())
 			sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()).Scaled(win.Bounds().Center(), 10))
 			win.Update()
-			time.Sleep(time.Second / 60)
 		}
 
 		c.MemWrite(0xFE, byte(rand.Intn(15)+1))
