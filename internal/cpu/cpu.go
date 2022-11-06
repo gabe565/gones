@@ -81,13 +81,6 @@ func (c *CPU) Load(program []byte) {
 	c.MemWrite16(ResetAddr, PrgRomAddr)
 }
 
-// loadAndRun is a convenience function that loads a program, resets, then runs.
-func (c *CPU) loadAndRun(program []byte) error {
-	c.Load(program)
-	c.Reset()
-	return c.Run()
-}
-
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
 var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
