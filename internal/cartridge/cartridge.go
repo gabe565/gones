@@ -1,5 +1,7 @@
 package cartridge
 
+import "github.com/gabe565/gones/internal/consts"
+
 type Cartridge struct {
 	Prg     []byte
 	Chr     []byte
@@ -18,12 +20,12 @@ func New() *Cartridge {
 func FromBytes(b []byte) *Cartridge {
 	cart := New()
 
-	cart.Prg = make([]byte, 0x600, 0x8000)
+	cart.Prg = make([]byte, consts.PrgRomAddr, consts.PrgChunkSize*2)
 	cart.Prg = append(cart.Prg, b...)
 	cart.Prg = cart.Prg[:cap(cart.Prg)]
-	cart.Prg[0xFFFD-0x8000] = 0x86
+	cart.Prg[consts.ResetAddr+1-consts.PrgChunkSize*2] = 0x86
 
-	cart.Chr = make([]byte, 0x2000)
+	cart.Chr = make([]byte, consts.ChrChunkSize)
 
 	return cart
 }

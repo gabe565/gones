@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gabe565/gones/internal/bitflags"
 	"github.com/gabe565/gones/internal/bus"
+	"github.com/gabe565/gones/internal/consts"
 )
 
 func New(b *bus.Bus) *CPU {
@@ -50,12 +51,6 @@ type CPU struct {
 }
 
 const (
-	// PrgRomAddr is the memory address that PRG begins.
-	PrgRomAddr = 0x600
-
-	// ResetAddr is the memory address for the Reset Interrupt Vector.
-	ResetAddr = 0xFFFC
-
 	// StackAddr is the memory address of the stack
 	StackAddr = 0x100
 
@@ -70,15 +65,15 @@ func (c *CPU) Reset() {
 	c.status = 0
 	c.stackPointer = StackReset
 
-	c.programCounter = c.MemRead16(ResetAddr)
+	c.programCounter = c.MemRead16(consts.ResetAddr)
 }
 
 // Load loads a program into PRG memory
 func (c *CPU) Load(program []byte) {
 	for k, v := range program {
-		c.MemWrite(PrgRomAddr+uint16(k), v)
+		c.MemWrite(consts.PrgRomAddr+uint16(k), v)
 	}
-	c.MemWrite16(ResetAddr, PrgRomAddr)
+	c.MemWrite16(consts.ResetAddr, consts.PrgRomAddr)
 }
 
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.

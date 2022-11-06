@@ -3,6 +3,7 @@ package cartridge
 import (
 	"encoding/binary"
 	"errors"
+	"github.com/gabe565/gones/internal/consts"
 	"io"
 	"os"
 )
@@ -54,18 +55,18 @@ func FromiNes(path string) (*Cartridge, error) {
 
 	cartridge.Battery = (header.Control1 >> 1) & 1
 
-	cartridge.Prg = make([]byte, int(header.PrgCount)*0x4000)
+	cartridge.Prg = make([]byte, int(header.PrgCount)*consts.PrgChunkSize)
 	if _, err := io.ReadFull(f, cartridge.Prg); err != nil {
 		return nil, err
 	}
 
-	cartridge.Chr = make([]byte, int(header.ChrCount)*0x2000)
+	cartridge.Chr = make([]byte, int(header.ChrCount)*consts.ChrChunkSize)
 	if _, err := io.ReadFull(f, cartridge.Chr); err != nil {
 		return nil, err
 	}
 
 	if header.ChrCount == 0 {
-		cartridge.Chr = make([]byte, 0x2000)
+		cartridge.Chr = make([]byte, consts.ChrChunkSize)
 	}
 
 	return cartridge, nil
