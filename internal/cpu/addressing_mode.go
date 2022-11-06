@@ -64,7 +64,7 @@ func (c *CPU) getOperandAddress(mode AddressingMode) uint16 {
 		base := c.MemRead(c.programCounter)
 
 		lo := c.MemRead(uint16(base))
-		hi := c.MemRead(uint16(uint8(base) + 1))
+		hi := c.MemRead(uint16(byte(base) + 1))
 		derefBase := uint16(hi)<<8 | uint16(lo)
 		return derefBase + uint16(c.registerY)
 	default:

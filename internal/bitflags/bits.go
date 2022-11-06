@@ -1,6 +1,6 @@
 package bitflags
 
-type Flags uint8
+type Flags byte
 
 // Insert inserts flags in-place
 func (b *Flags) Insert(flag Flags) { *b |= flag }

@@ -8,7 +8,7 @@ import "fmt"
 //
 // [6502 Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html
 type OpCode struct {
-	Code     uint8
+	Code     byte
 	Mnemonic string
 	Len      uint8
 	Cycles   uint8
@@ -208,8 +208,8 @@ var OpCodes = []OpCode{
 }
 
 // OpCodeMap converts OpCodes into a map with the code as the key.
-func OpCodeMap() map[uint8]OpCode {
-	codes := make(map[uint8]OpCode)
+func OpCodeMap() map[byte]OpCode {
+	codes := make(map[byte]OpCode)
 	for _, opcode := range OpCodes {
 		codes[opcode.Code] = opcode
 	}

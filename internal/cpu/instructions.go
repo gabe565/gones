@@ -44,7 +44,7 @@ func (c *CPU) and(mode AddressingMode) {
 // [ASL Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#ASL
 func (c *CPU) asl(mode AddressingMode) {
 	var addr uint16
-	var data uint8
+	var data byte
 	if mode == Accumulator {
 		data = c.accumulator
 	} else {
@@ -456,7 +456,7 @@ func (c *CPU) ldy(mode AddressingMode) {
 // [LSR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LSR
 func (c *CPU) lsr(mode AddressingMode) {
 	var addr uint16
-	var data uint8
+	var data byte
 	if mode == Accumulator {
 		data = c.accumulator
 	} else {
@@ -508,7 +508,7 @@ func (c *CPU) pha() {
 func (c *CPU) php() {
 	flags := c.status
 	flags.Insert(Break | Break2)
-	c.stackPush(uint8(flags))
+	c.stackPush(byte(flags))
 }
 
 // pla - Pull Accumulator
@@ -549,7 +549,7 @@ func (c *CPU) plp() {
 // [ROL Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ROL
 func (c *CPU) rol(mode AddressingMode) {
 	var addr uint16
-	var data uint8
+	var data byte
 	if mode == Accumulator {
 		data = c.accumulator
 	} else {
@@ -582,7 +582,7 @@ func (c *CPU) rol(mode AddressingMode) {
 // [ROR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ROR
 func (c *CPU) ror(mode AddressingMode) {
 	var addr uint16
-	var data uint8
+	var data byte
 	if mode == Accumulator {
 		data = c.accumulator
 	} else {
@@ -594,7 +594,7 @@ func (c *CPU) ror(mode AddressingMode) {
 	c.status.Set(Carry, data&1 == 1)
 	data >>= 1
 	if prevCarry {
-		data |= uint8(Negative)
+		data |= byte(Negative)
 	}
 	if mode == Accumulator {
 		c.setAccumulator(data)
@@ -645,7 +645,7 @@ func (c *CPU) rts() {
 func (c *CPU) sbc(mode AddressingMode) {
 	addr := c.getOperandAddress(mode)
 	v := c.MemRead(addr)
-	c.addAccumulator(uint8(-int8(v) - 1))
+	c.addAccumulator(byte(-int8(v) - 1))
 }
 
 // sec - Set Carry Flag

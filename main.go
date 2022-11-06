@@ -86,7 +86,7 @@ func run() {
 			time.Sleep(time.Second / 60)
 		}
 
-		c.MemWrite(0xFE, uint8(rand.Intn(15)+1))
+		c.MemWrite(0xFE, byte(rand.Intn(15)+1))
 	}
 
 	if err := c.Run(); err != nil {

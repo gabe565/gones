@@ -24,22 +24,22 @@ type CPU struct {
 	programCounter uint16
 
 	// stackPointer Stack Pointer
-	stackPointer uint8
+	stackPointer byte
 
 	// status Processor Status
 	status bitflags.Flags
 
 	// accumulator Register A
-	accumulator uint8
+	accumulator byte
 
 	// registerX Register X
-	registerX uint8
+	registerX byte
 
 	// registerY Register Y
-	registerY uint8
+	registerY byte
 
 	// memory Main memory
-	memory [0xFFFF]uint8
+	memory [0xFFFF]byte
 
 	// Callback optional callback to Run before every tick
 	Callback func(c *CPU)
@@ -76,7 +76,7 @@ func (c *CPU) Reset() {
 }
 
 // Load loads a program into PRG memory
-func (c *CPU) Load(program []uint8) {
+func (c *CPU) Load(program []byte) {
 	for k, v := range program {
 		c.MemWrite(c.PrgRomAddr+uint16(k), v)
 	}
@@ -84,7 +84,7 @@ func (c *CPU) Load(program []uint8) {
 }
 
 // loadAndRun is a convenience function that loads a program, resets, then runs.
-func (c *CPU) loadAndRun(program []uint8) error {
+func (c *CPU) loadAndRun(program []byte) error {
 	c.Load(program)
 	c.Reset()
 	return c.Run()
