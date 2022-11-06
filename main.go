@@ -28,7 +28,6 @@ func run() {
 	}
 
 	c := cpu.New()
-	c.PrgRomAddr = 0x600
 	c.Load(games.Snake)
 	c.Reset()
 
