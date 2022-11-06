@@ -9,8 +9,8 @@ type Cartridge struct {
 	Battery byte
 }
 
-func New() Cartridge {
-	return Cartridge{
+func New() *Cartridge {
+	return &Cartridge{
 		Sram: make([]byte, 0x2000),
 	}
 }

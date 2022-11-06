@@ -68,5 +68,5 @@ func FromiNes(path string) (*Cartridge, error) {
 		cartridge.Chr = make([]byte, 8192)
 	}
 
-	return &cartridge, nil
+	return cartridge, nil
 }
