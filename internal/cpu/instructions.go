@@ -601,7 +601,8 @@ func pla(c *CPU, mode AddressingMode) error {
 // [PLP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLP
 func plp(c *CPU, mode AddressingMode) error {
 	flags := bitflags.Flags(c.stackPop())
-	flags.Remove(Break | Break2)
+	flags.Remove(Break)
+	flags.Insert(Break2)
 	c.Status = flags
 	return nil
 }
