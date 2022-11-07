@@ -81,8 +81,6 @@ var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
 // Run is the main Run entrypoint.
 func (c *CPU) Run() error {
-	opcodes := OpCodeMap()
-
 	for {
 		if c.Callback != nil {
 			if err := c.Callback(c); err != nil {
@@ -97,7 +95,7 @@ func (c *CPU) Run() error {
 		c.ProgramCounter += 1
 		prevPC := c.ProgramCounter
 
-		op, ok := opcodes[code]
+		op, ok := OpCodeMap[code]
 		if !ok {
 			return fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
 		}

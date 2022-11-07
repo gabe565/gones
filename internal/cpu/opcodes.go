@@ -208,8 +208,10 @@ var OpCodes = []OpCode{
 	{0x8C, "STY", 3, 4, Absolute, sty},
 }
 
-// OpCodeMap converts OpCodes into a map with the code as the key.
-func OpCodeMap() map[byte]OpCode {
+// OpCodeMap is a map of OpCodes with the code as the key.
+var OpCodeMap map[byte]OpCode
+
+func init() {
 	codes := make(map[byte]OpCode)
 	for _, opcode := range OpCodes {
 		if _, ok := codes[opcode.Code]; ok {
@@ -217,5 +219,5 @@ func OpCodeMap() map[byte]OpCode {
 		}
 		codes[opcode.Code] = opcode
 	}
-	return codes
+	OpCodeMap = codes
 }

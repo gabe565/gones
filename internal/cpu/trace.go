@@ -6,10 +6,8 @@ import (
 )
 
 func (c *CPU) Trace() string {
-	opcodes := OpCodeMap()
-
 	code := c.MemRead(c.ProgramCounter)
-	op := opcodes[code]
+	op := OpCodeMap[code]
 
 	begin := c.ProgramCounter
 	hexDump := []uint16{uint16(code)}
