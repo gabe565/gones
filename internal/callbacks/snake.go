@@ -87,6 +87,7 @@ func Snake(win *pixelgl.Window) Callback {
 			sprite := pixel.NewSprite(pic, pic.Bounds())
 			sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()).Scaled(win.Bounds().Center(), 10))
 			win.Update()
+			time.Sleep(30 * time.Millisecond)
 		}
 
 		seed := byte(rand.Intn(15) + 1)
