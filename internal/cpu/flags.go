@@ -23,3 +23,5 @@ const (
 	Overflow
 	Negative
 )
+
+const DefaultStatus = InterruptDisable | Break2

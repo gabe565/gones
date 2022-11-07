@@ -10,7 +10,7 @@ import (
 
 func New(b *bus.Bus) *CPU {
 	return &CPU{
-		status:       InterruptDisable | Break2,
+		status:       DefaultStatus,
 		stackPointer: StackReset,
 		bus:          b,
 	}
@@ -62,7 +62,7 @@ const (
 func (c *CPU) Reset() {
 	c.accumulator = 0
 	c.registerX = 0
-	c.status = 0
+	c.status = DefaultStatus
 	c.stackPointer = StackReset
 
 	c.programCounter = c.MemRead16(consts.ResetAddr)
