@@ -8,7 +8,7 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[Implicit-0]
+	_ = x[Implied-0]
 	_ = x[Accumulator-1]
 	_ = x[Immediate-2]
 	_ = x[ZeroPage-3]
@@ -23,9 +23,9 @@ func _() {
 	_ = x[IndirectY-12]
 }
 
-const _AddressingMode_name = "ImplicitAccumulatorImmediateZeroPageZeroPageXZeroPageYRelativeAbsoluteAbsoluteXAbsoluteYIndirectIndirectXIndirectY"
+const _AddressingMode_name = "ImpliedAccumulatorImmediateZeroPageZeroPageXZeroPageYRelativeAbsoluteAbsoluteXAbsoluteYIndirectIndirectXIndirectY"
 
-var _AddressingMode_index = [...]uint8{0, 8, 19, 28, 36, 45, 54, 62, 70, 79, 88, 96, 105, 114}
+var _AddressingMode_index = [...]uint8{0, 7, 18, 27, 35, 44, 53, 61, 69, 78, 87, 95, 104, 113}
 
 func (i AddressingMode) String() string {
 	if i >= AddressingMode(len(_AddressingMode_index)-1) {

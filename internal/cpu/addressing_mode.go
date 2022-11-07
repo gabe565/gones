@@ -12,7 +12,7 @@ import "log"
 type AddressingMode uint8
 
 const (
-	Implicit AddressingMode = iota
+	Implied AddressingMode = iota
 	Accumulator
 	Immediate
 	ZeroPage
