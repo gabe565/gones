@@ -685,7 +685,8 @@ func ror(c *CPU, mode AddressingMode) error {
 // [RTI Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#RTI
 func rti(c *CPU, mode AddressingMode) error {
 	flags := bitflags.Flags(c.stackPop())
-	flags.Remove(Break | Break2)
+	flags.Remove(Break)
+	flags.Insert(Break2)
 	c.Status = flags
 
 	c.ProgramCounter = c.stackPop16()
