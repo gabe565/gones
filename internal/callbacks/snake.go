@@ -27,19 +27,19 @@ func Snake(win *pixelgl.Window) Callback {
 			frame[k] = val
 		}
 
-		if drawFrame {
-			if win.JustPressed(pixelgl.KeyEscape) {
-				return cpu.ErrBrk
-			} else if win.JustPressed(pixelgl.KeyW) {
-				c.MemWrite(0xFF, 0x77)
-			} else if win.JustPressed(pixelgl.KeyA) {
-				c.MemWrite(0xFF, 0x61)
-			} else if win.JustPressed(pixelgl.KeyS) {
-				c.MemWrite(0xFF, 0x73)
-			} else if win.JustPressed(pixelgl.KeyD) {
-				c.MemWrite(0xFF, 0x64)
-			}
+		if win.JustPressed(pixelgl.KeyEscape) {
+			return cpu.ErrBrk
+		} else if win.JustPressed(pixelgl.KeyW) {
+			c.MemWrite(0xFF, 0x77)
+		} else if win.JustPressed(pixelgl.KeyA) {
+			c.MemWrite(0xFF, 0x61)
+		} else if win.JustPressed(pixelgl.KeyS) {
+			c.MemWrite(0xFF, 0x73)
+		} else if win.JustPressed(pixelgl.KeyD) {
+			c.MemWrite(0xFF, 0x64)
+		}
 
+		if drawFrame {
 			img := image.NewRGBA(image.Rect(0, 0, 32, 32))
 			for k, pxl := range frame {
 				var c color.Color
