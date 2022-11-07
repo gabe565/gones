@@ -46,7 +46,7 @@ func (c *CPU) Trace() string {
 			trace += fmt.Sprintf("($%02X),Y = %04X @ %04X = %02X", addr, valAddr-uint16(c.RegisterY), valAddr, val)
 		case Implied, Relative:
 			// assuming local jumps: BNE, BVS, etc
-			addr := uint16(addr) + begin + 2
+			addr := uint16(int8(addr)) + begin + 2
 			trace += fmt.Sprintf("$%04X", addr)
 		default:
 			panic(fmt.Sprintf("unexpected addressing mode %s has len 2. code %02X", op.Mode, op.Code))
