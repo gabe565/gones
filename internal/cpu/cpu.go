@@ -99,7 +99,7 @@ func (c *CPU) Run() error {
 
 		op, ok := opcodes[code]
 		if !ok {
-			return fmt.Errorf("%w: $%x", ErrUnsupportedOpcode, code)
+			return fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
 		}
 
 		if c.Debug {
