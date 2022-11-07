@@ -43,7 +43,7 @@ func Snake(win *pixelgl.Window) Callback {
 			img := image.NewRGBA(image.Rect(0, 0, 32, 32))
 			for k, pxl := range frame {
 				var c color.Color
-				switch pxl {
+				switch pxl % 0x10 {
 				case 0x0: // Black
 					c = color.Black
 				case 0x1: // White
