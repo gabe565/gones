@@ -23,6 +23,56 @@ func adc(c *CPU, mode AddressingMode) error {
 	return nil
 }
 
+// ahx - Undocumented Opcode
+//
+// AND X register with accumulator then AND result with 7 and store in memory.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func ahx(c *CPU, mode AddressingMode) error {
+	var pos uint16
+	switch mode {
+	case IndirectY:
+		pos = uint16(c.MemRead(c.ProgramCounter))
+	case AbsoluteY:
+		pos = c.ProgramCounter
+	}
+	addr := c.MemRead16(pos) + uint16(c.RegisterY)
+	data := c.Accumulator & c.RegisterX & uint8(addr>>8)
+	c.MemWrite(addr, data)
+	return nil
+}
+
+// alr - Undocumented Opcode
+//
+// AND byte with accumulator, then shift right one bit in accumulator.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func alr(c *CPU, mode AddressingMode) error {
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	c.setAccumulator(data & c.Accumulator)
+	return lsr(c, Accumulator)
+}
+
+// anc - Undocumented Opcode
+//
+// AND byte with accumulator. If result is negative then carry is set.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func anc(c *CPU, mode AddressingMode) error {
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	c.setAccumulator(data & c.Accumulator)
+	c.Status.Set(Carry, c.Status.Has(Negative))
+	return nil
+}
+
 // and - Logical AND
 //
 // A logical AND is performed, bit by bit, on the accumulator contents
@@ -35,6 +85,34 @@ func and(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.setAccumulator(c.Accumulator & data)
+	return nil
+}
+
+// arr - Undocumented Opcode
+//
+// AND byte with accumulator, then rotate one bit right in accumulator
+// and check bit 5 and 6:
+// - If both bits are 1: set C, clear V.
+// - If both bits are 0: clear C and V.
+// - If only bit 5 is 1: set V, clear C.
+// - If only bit 6 is 1: set C and V.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func arr(c *CPU, mode AddressingMode) error {
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	c.setAccumulator(data & c.Accumulator)
+	if err := ror(c, Accumulator); err != nil {
+		return err
+	}
+
+	bit6 := (c.Accumulator >> 6) & 1
+	c.Status.Set(Carry, bit6 == 1)
+	bit5 := (c.Accumulator >> 5) & 1
+	c.Status.Set(Overflow, bit5^bit6 == 1)
+	c.updateZeroAndNegFlags(c.Accumulator)
 	return nil
 }
 
@@ -66,6 +144,25 @@ func asl(c *CPU, mode AddressingMode) error {
 		c.MemWrite(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
+	return nil
+}
+
+// axs - Undocumented Opcode
+//
+// AND X register with accumulator and store result in X register, then
+// subtract byte from X register (without borrow).
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func axs(c *CPU, mode AddressingMode) error {
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	result := c.RegisterX & c.Accumulator
+	c.Status.Set(Carry, data <= result)
+	result -= 1
+	c.RegisterX = result
+	c.updateZeroAndNegFlags(result)
 	return nil
 }
 
@@ -296,6 +393,23 @@ func cpy(c *CPU, mode AddressingMode) error {
 	return nil
 }
 
+// dcp - Undocumented Opcode
+//
+// Subtract 1 from memory (without borrow).
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func dcp(c *CPU, mode AddressingMode) error {
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	data -= 1
+	c.MemWrite(addr, data)
+	c.Status.Set(Carry, data <= c.Accumulator)
+	c.updateZeroAndNegFlags(c.Accumulator - data)
+	return nil
+}
+
 // dec - Decrement Memory
 //
 // Subtracts one from the value held at a specified memory location setting
@@ -400,6 +514,23 @@ func iny(c *CPU, mode AddressingMode) error {
 	return nil
 }
 
+// isb - Undocumented Opcode
+//
+// Increase memory by one, then subtract memory from accumulator (with borrow).
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func isb(c *CPU, mode AddressingMode) error {
+	if err := inc(c, mode); err != nil {
+		return err
+	}
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	c.addAccumulator(byte(-int8(data) - 1))
+	return nil
+}
+
 // jmp - Jump
 //
 // Sets the program counter to the address specified by the operand.
@@ -445,6 +576,40 @@ func jsr(c *CPU, mode AddressingMode) error {
 	c.stackPush16(c.ProgramCounter + 1)
 	addr := c.MemRead16(c.ProgramCounter)
 	c.ProgramCounter = addr
+	return nil
+}
+
+// las - Undocumented Opcode
+//
+// AND memory with stack pointer, transfer result to accumulator, X register,
+// and stack pointer.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func las(c *CPU, mode AddressingMode) error {
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	data &= c.StackPointer
+	c.Accumulator = data
+	c.RegisterX = data
+	c.StackPointer = data
+	c.updateZeroAndNegFlags(data)
+	return nil
+}
+
+// lax - Undocumented Opcode
+//
+// Load accumulator and X register with memory.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func lax(c *CPU, mode AddressingMode) error {
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	c.setAccumulator(data)
+	c.RegisterX = c.Accumulator
 	return nil
 }
 
@@ -522,6 +687,20 @@ func lsr(c *CPU, mode AddressingMode) error {
 		c.updateZeroAndNegFlags(data)
 	}
 	return nil
+}
+
+// lxa - Undocumented Opcode
+//
+// AND byte with accumulator, then transfer accumulator to X register.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func lxa(c *CPU, mode AddressingMode) error {
+	if err := lda(c, mode); err != nil {
+		return err
+	}
+	return tax(c, mode)
 }
 
 // nop - No Operation
@@ -607,6 +786,23 @@ func plp(c *CPU, mode AddressingMode) error {
 	return nil
 }
 
+// rla - Undocumented Opcode
+//
+// Rotate one bit left in memory, then AND accumulator with memory.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func rla(c *CPU, mode AddressingMode) error {
+	if err := rol(c, mode); err != nil {
+		return err
+	}
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	c.setAccumulator(data & c.Accumulator)
+	return nil
+}
+
 // rol - Rotate Left
 //
 // Move each of the bits in either A or M one place to the left.
@@ -675,6 +871,23 @@ func ror(c *CPU, mode AddressingMode) error {
 	return nil
 }
 
+// rra - Undocumented Opcode
+//
+// Rotate one bit right in memory, then add memory to accumulator (with carry).
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func rra(c *CPU, mode AddressingMode) error {
+	if err := ror(c, mode); err != nil {
+		return err
+	}
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	c.addAccumulator(data)
+	return nil
+}
+
 // rti - Return from Interrupt
 //
 // The RTI instruction is used at the end of an interrupt processing routine.
@@ -704,6 +917,21 @@ func rti(c *CPU, mode AddressingMode) error {
 // [RTS Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#RTS
 func rts(c *CPU, mode AddressingMode) error {
 	c.ProgramCounter = c.stackPop16() + 1
+	return nil
+}
+
+// sax - Undocumented Opcode
+//
+// AND X register with accumulator and store result in X register, then
+// subtract byte from X register (without borrow).
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func sax(c *CPU, mode AddressingMode) error {
+	addr := c.getOperandAddress(mode)
+	data := c.Accumulator & c.RegisterX
+	c.MemWrite(addr, data)
 	return nil
 }
 
@@ -759,6 +987,70 @@ func sei(c *CPU, mode AddressingMode) error {
 	return nil
 }
 
+// shx - Undocumented Opcode
+//
+// AND X register with the high byte of the target address of the argument + 1.
+// Store the result in memory.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func shx(c *CPU, mode AddressingMode) error {
+	addr := c.MemRead16(c.ProgramCounter) + uint16(c.RegisterY)
+	data := c.RegisterX & (uint8(addr>>8) + 1)
+	c.MemWrite(addr, data)
+	return nil
+}
+
+// shy - Undocumented Opcode
+//
+// AND Y register with the high byte of the target address of the argument + 1.
+// Store the result in memory.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func shy(c *CPU, mode AddressingMode) error {
+	addr := c.MemRead16(c.ProgramCounter) + uint16(c.RegisterX)
+	data := c.RegisterY & (uint8(addr>>8) + 1)
+	c.MemWrite(addr, data)
+	return nil
+}
+
+// slo - Undocumented Opcode
+//
+// Shift left one bit in memory, then OR accumulator with memory.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func slo(c *CPU, mode AddressingMode) error {
+	if err := asl(c, mode); err != nil {
+		return err
+	}
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	c.setAccumulator(data | c.Accumulator)
+	return nil
+}
+
+// sre - Undocumented Opcode
+//
+// Shift right one bit in memory, then EOR accumulator with memory.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func sre(c *CPU, mode AddressingMode) error {
+	if err := lsr(c, mode); err != nil {
+		return err
+	}
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	c.setAccumulator(data ^ c.Accumulator)
+	return nil
+}
+
 // sta - Store Accumulator
 //
 // Stores the contents of the accumulator into memory.
@@ -795,6 +1087,24 @@ func stx(c *CPU, mode AddressingMode) error {
 func sty(c *CPU, mode AddressingMode) error {
 	addr := c.getOperandAddress(mode)
 	c.MemWrite(addr, c.RegisterY)
+	return nil
+}
+
+// tas - Undocumented Opcode
+//
+// AND X register with accumulator and store result in stack pointer, then
+// AND stack pointer with the high byte of the target address of the
+// argument + 1. Store result in memory.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func tas(c *CPU, mode AddressingMode) error {
+	data := c.Accumulator & c.RegisterX
+	c.StackPointer = data
+	addr := c.MemRead16(c.ProgramCounter) + uint16(c.RegisterY)
+	data = (uint8(addr>>8) + 1) & c.StackPointer
+	c.MemWrite(addr, data)
 	return nil
 }
 
@@ -875,5 +1185,22 @@ func txs(c *CPU, mode AddressingMode) error {
 // [TYA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TYA
 func tya(c *CPU, mode AddressingMode) error {
 	c.setAccumulator(c.RegisterY)
+	return nil
+}
+
+// xaa - Undocumented Opcode
+//
+// Exact operation unknown. Read the referenced documents for more
+// information and observations.
+//
+// See [6502 Undocumented Opcodes]
+//
+// [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
+func xaa(c *CPU, mode AddressingMode) error {
+	c.Accumulator = c.RegisterX
+	c.updateZeroAndNegFlags(c.Accumulator)
+	addr := c.getOperandAddress(mode)
+	data := c.MemRead(addr)
+	c.setAccumulator(data & c.Accumulator)
 	return nil
 }
