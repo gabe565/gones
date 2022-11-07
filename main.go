@@ -6,6 +6,7 @@ import (
 	"github.com/gabe565/gones/internal/callbacks"
 	"github.com/gabe565/gones/internal/console"
 	"os"
+	"path/filepath"
 )
 
 func main() {
@@ -30,6 +31,8 @@ func run(path string, callback callbacks.CallbackHandler) error {
 		return err
 	}
 	c.Reset()
+
+	win.SetTitle(filepath.Base(path) + " | GoNES")
 
 	if callback != nil {
 		c.Callback = callback(win)
