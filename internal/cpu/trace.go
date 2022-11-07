@@ -75,7 +75,11 @@ func (c *CPU) Trace() string {
 		case Implicit:
 			trace += fmt.Sprintf("$%04X", addr)
 		case Absolute:
-			trace += fmt.Sprintf("$%04X = %02X", valAddr, val)
+			if op.Mnemonic == "JMP" {
+				trace += fmt.Sprintf("$%04X", valAddr)
+			} else {
+				trace += fmt.Sprintf("$%04X = %02X", valAddr, val)
+			}
 		case AbsoluteX:
 			trace += fmt.Sprintf("$%04X,X @ %04X = %02X", addr, valAddr, val)
 		case AbsoluteY:
