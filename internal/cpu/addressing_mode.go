@@ -40,20 +40,20 @@ func (c *CPU) getAbsoluteAddress(mode AddressingMode, addr uint16) uint16 {
 		return c.MemRead16(addr)
 	case ZeroPageX:
 		pos := c.MemRead(addr)
-		return uint16(pos + c.registerX)
+		return uint16(pos + c.RegisterX)
 	case ZeroPageY:
 		pos := c.MemRead(addr)
-		return uint16(pos + c.registerY)
+		return uint16(pos + c.RegisterY)
 	case AbsoluteX:
 		pos := c.MemRead16(addr)
-		return pos + uint16(c.registerX)
+		return pos + uint16(c.RegisterX)
 	case AbsoluteY:
 		pos := c.MemRead16(addr)
-		return pos + uint16(c.registerY)
+		return pos + uint16(c.RegisterY)
 	case IndirectX:
 		base := c.MemRead(addr)
 
-		ptr := base + c.registerX
+		ptr := base + c.RegisterX
 		lo := c.MemRead(uint16(ptr))
 		hi := c.MemRead(uint16(ptr + 1))
 		return uint16(hi)<<8 | uint16(lo)
@@ -63,7 +63,7 @@ func (c *CPU) getAbsoluteAddress(mode AddressingMode, addr uint16) uint16 {
 		lo := c.MemRead(uint16(base))
 		hi := c.MemRead(uint16(byte(base) + 1))
 		derefBase := uint16(hi)<<8 | uint16(lo)
-		return derefBase + uint16(c.registerY)
+		return derefBase + uint16(c.RegisterY)
 	default:
 		log.Panicln("unsupported mode: ", mode)
 		return 0
@@ -78,8 +78,8 @@ func (c *CPU) getAbsoluteAddress(mode AddressingMode, addr uint16) uint16 {
 func (c *CPU) getOperandAddress(mode AddressingMode) uint16 {
 	switch mode {
 	case Immediate:
-		return c.programCounter
+		return c.ProgramCounter
 	default:
-		return c.getAbsoluteAddress(mode, c.programCounter)
+		return c.getAbsoluteAddress(mode, c.ProgramCounter)
 	}
 }

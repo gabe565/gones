@@ -8,10 +8,10 @@ import (
 func (c *CPU) Trace() string {
 	opcodes := OpCodeMap()
 
-	code := c.MemRead(c.programCounter)
+	code := c.MemRead(c.ProgramCounter)
 	op := opcodes[code]
 
-	begin := c.programCounter
+	begin := c.ProgramCounter
 	hexDump := []uint16{uint16(code)}
 	var valAddr uint16
 	var val byte
@@ -43,9 +43,9 @@ func (c *CPU) Trace() string {
 		case ZeroPageY:
 			trace += fmt.Sprintf("$%02X,Y @ %02X = %02X", addr, valAddr, val)
 		case IndirectX:
-			trace += fmt.Sprintf("($%02X,X) @ %02X = %04X = %02X", addr, addr+c.registerX, valAddr, val)
+			trace += fmt.Sprintf("($%02X,X) @ %02X = %04X = %02X", addr, addr+c.RegisterX, valAddr, val)
 		case IndirectY:
-			trace += fmt.Sprintf("($%02X),Y = %04X @ %04X = %02X", addr, valAddr+uint16(c.registerY), valAddr, val)
+			trace += fmt.Sprintf("($%02X),Y = %04X @ %04X = %02X", addr, valAddr+uint16(c.RegisterY), valAddr, val)
 		case Implicit:
 			// assuming local jumps: BNE, BVS, etc
 			addr := uint16(addr) + begin + 2
@@ -95,11 +95,11 @@ func (c *CPU) Trace() string {
 	final := fmt.Sprintf(
 		"%-47s A:%02X X:%02X Y:%02X P:%02X SP:%02X",
 		asmStr,
-		c.accumulator,
-		c.registerX,
-		c.registerY,
-		c.status,
-		c.stackPointer,
+		c.Accumulator,
+		c.RegisterX,
+		c.RegisterY,
+		c.Status,
+		c.StackPointer,
 	)
 	return final
 }

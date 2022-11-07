@@ -10,9 +10,9 @@ import (
 
 func New(b *bus.Bus) *CPU {
 	return &CPU{
-		status:       DefaultStatus,
-		stackPointer: StackReset,
-		bus:          b,
+		Status:       DefaultStatus,
+		StackPointer: StackReset,
+		Bus:          b,
 	}
 }
 
@@ -22,26 +22,26 @@ func New(b *bus.Bus) *CPU {
 //
 // [6502 Guide]: https://www.nesdev.org/obelisk-6502-guide/
 type CPU struct {
-	// programCounter Program Counter
-	programCounter uint16
+	// ProgramCounter Program Counter
+	ProgramCounter uint16
 
-	// stackPointer Stack Pointer
-	stackPointer byte
+	// StackPointer Stack Pointer
+	StackPointer byte
 
-	// status Processor Status
-	status bitflags.Flags
+	// Status Processor Status
+	Status bitflags.Flags
 
-	// accumulator Register A
-	accumulator byte
+	// Accumulator Register A
+	Accumulator byte
 
-	// registerX Register X
-	registerX byte
+	// RegisterX Register X
+	RegisterX byte
 
-	// registerY Register Y
-	registerY byte
+	// RegisterY Register Y
+	RegisterY byte
 
-	// bus Main memory bus
-	bus *bus.Bus
+	// Bus Main memory bus
+	Bus *bus.Bus
 
 	// Callback optional callback to Run before every tick
 	Callback func(c *CPU) error
@@ -58,14 +58,14 @@ const (
 	StackReset = 0xFD
 )
 
-// Reset resets the CPU and sets programCounter to the value of the [Reset] Vector.
+// Reset resets the CPU and sets ProgramCounter to the value of the [Reset] Vector.
 func (c *CPU) Reset() {
-	c.accumulator = 0
-	c.registerX = 0
-	c.status = DefaultStatus
-	c.stackPointer = StackReset
+	c.Accumulator = 0
+	c.RegisterX = 0
+	c.Status = DefaultStatus
+	c.StackPointer = StackReset
 
-	c.programCounter = c.MemRead16(consts.ResetAddr)
+	c.ProgramCounter = c.MemRead16(consts.ResetAddr)
 }
 
 // Load loads a program into PRG memory
@@ -93,9 +93,9 @@ func (c *CPU) Run() error {
 			}
 		}
 
-		code := c.MemRead(c.programCounter)
-		c.programCounter += 1
-		prevPC := c.programCounter
+		code := c.MemRead(c.ProgramCounter)
+		c.ProgramCounter += 1
+		prevPC := c.ProgramCounter
 
 		op, ok := opcodes[code]
 		if !ok {
@@ -113,8 +113,8 @@ func (c *CPU) Run() error {
 			return err
 		}
 
-		if prevPC == c.programCounter {
-			c.programCounter += uint16(op.Len - 1)
+		if prevPC == c.ProgramCounter {
+			c.ProgramCounter += uint16(op.Len - 1)
 		}
 	}
 }

@@ -17,9 +17,9 @@ func TestCPU_TraceFormat(t *testing.T) {
 		traces = append(traces, c.Trace())
 		return nil
 	}
-	c.accumulator = 1
-	c.registerX = 2
-	c.registerY = 3
+	c.Accumulator = 1
+	c.RegisterX = 2
+	c.RegisterY = 3
 	err := c.Run()
 	if assert.NoError(t, err) {
 		assert.EqualValues(
