@@ -45,7 +45,7 @@ func (c *CPU) Trace() string {
 		case IndirectX:
 			trace += fmt.Sprintf("($%02X,X) @ %02X = %04X = %02X", addr, addr+c.RegisterX, valAddr, val)
 		case IndirectY:
-			trace += fmt.Sprintf("($%02X),Y = %04X @ %04X = %02X", addr, valAddr+uint16(c.RegisterY), valAddr, val)
+			trace += fmt.Sprintf("($%02X),Y = %04X @ %04X = %02X", addr, valAddr-uint16(c.RegisterY), valAddr, val)
 		case Implicit:
 			// assuming local jumps: BNE, BVS, etc
 			addr := uint16(addr) + begin + 2
