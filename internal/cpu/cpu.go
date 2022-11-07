@@ -97,16 +97,16 @@ func (c *CPU) Run() error {
 		c.programCounter += 1
 		prevPC := c.programCounter
 
-		opcode, ok := opcodes[code]
+		op, ok := opcodes[code]
 		if !ok {
 			return fmt.Errorf("%w: $%x", ErrUnsupportedOpcode, code)
 		}
 
 		if c.Debug {
-			fmt.Println(opcode)
+			fmt.Println(op)
 		}
 
-		if err := opcode.Exec(c, opcode.Mode); err != nil {
+		if err := op.Exec(c, op.Mode); err != nil {
 			if errors.Is(err, ErrBrk) {
 				return nil
 			}
@@ -114,7 +114,7 @@ func (c *CPU) Run() error {
 		}
 
 		if prevPC == c.programCounter {
-			c.programCounter += uint16(opcode.Len - 1)
+			c.programCounter += uint16(op.Len - 1)
 		}
 	}
 }
