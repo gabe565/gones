@@ -31,6 +31,7 @@ func NewCommand() *cobra.Command {
 				}
 			}
 
+			cmd.SilenceUsage = true
 			pixelgl.Run(func() {
 				err = run(args[0], callback)
 			})
