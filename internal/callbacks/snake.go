@@ -90,7 +90,7 @@ func Snake(win *pixelgl.Window) Callback {
 			time.Sleep(30 * time.Millisecond)
 		}
 
-		seed := byte(rand.Intn(15) + 1)
+		seed := byte(rand.Intn(256))
 		c.MemWrite(0xFE, seed)
 
 		return nil
