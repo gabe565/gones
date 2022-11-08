@@ -6,6 +6,7 @@ import (
 	"github.com/gabe565/gones/internal/bitflags"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/consts"
+	"github.com/gabe565/gones/internal/interrupts"
 )
 
 func New(b *bus.Bus) *CPU {
@@ -76,6 +77,19 @@ func (c *CPU) Load(program []byte) {
 	c.MemWrite16(consts.ResetAddr, consts.PrgRomAddr)
 }
 
+func (c *CPU) interrupt(interrupt *interrupts.Interrupt) {
+	c.stackPush16(c.ProgramCounter)
+	status := c.Status
+	status.Set(Break, interrupt.Mask.Has(Break))
+	status.Set(Break2, interrupt.Mask.Has(Break2))
+
+	c.stackPush(byte(status))
+	c.Status.Insert(InterruptDisable)
+
+	c.Bus.Tick(uint(interrupt.Cycles))
+	c.ProgramCounter = c.MemRead16(interrupt.VectorAddr)
+}
+
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
 var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
@@ -104,12 +118,19 @@ func (c *CPU) Run() error {
 			fmt.Println(op)
 		}
 
+		if interrupt := c.Bus.ReadInterrupt(); interrupt != nil {
+			c.interrupt(interrupt)
+		}
+
 		if err := op.Exec(c, op.Mode); err != nil {
 			if errors.Is(err, ErrBrk) {
 				return nil
 			}
 			return err
 		}
+
+		//TODO: Plus one if
+		c.Bus.Tick(uint(op.Cycles))
 
 		if prevPC == c.ProgramCounter {
 			c.ProgramCounter += uint16(op.Len - 1)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gabe565/gones/internal/bitflags"
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
 )
@@ -29,6 +30,10 @@ type PPU struct {
 	oam     [0x100]byte
 	palette [0x20]byte
 
+	scanline  uint16
+	cycles    uint
+	interrupt *interrupts.Interrupt
+
 	readBuf byte
 }
 
@@ -37,7 +42,11 @@ func (p *PPU) WriteAddr(data byte) {
 }
 
 func (p *PPU) WriteCtrl(data byte) {
+	beforeNmi := p.ctrl.GenerateVblankNmi()
 	p.ctrl = registers.Control(data)
+	if !beforeNmi && p.ctrl.GenerateVblankNmi() && p.status.Has(registers.VblankStarted) {
+		p.interrupt = &interrupts.NMI
+	}
 }
 
 func (p *PPU) WriteMask(data byte) {
@@ -142,4 +151,30 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 		}
 	}
 	return addr
+}
+
+func (p *PPU) Tick(cycles uint) bool {
+	p.cycles += cycles
+	if p.cycles > 341 {
+		p.cycles -= 341
+		p.scanline += 1
+
+		if p.scanline == 241 {
+			if p.ctrl.GenerateVblankNmi() {
+				p.status.Insert(registers.VblankStarted)
+				p.interrupt = &interrupts.NMI
+			}
+		}
+
+		if p.scanline >= 262 {
+			p.scanline = 0
+			p.status.Remove(registers.VblankStarted)
+			return true
+		}
+	}
+	return false
+}
+
+func (p *PPU) ReadInterrupt() *interrupts.Interrupt {
+	return p.interrupt
 }

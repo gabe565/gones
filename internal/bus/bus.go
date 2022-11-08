@@ -3,6 +3,7 @@ package bus
 import (
 	"fmt"
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/ppu"
 )
 
@@ -17,6 +18,7 @@ type Bus struct {
 	cpuVram   [0x800]byte
 	cartridge *cartridge.Cartridge
 	ppu       *ppu.PPU
+	cycles    uint
 }
 
 const (
@@ -68,4 +70,13 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 	} else {
 		panic("Attempt to write to cartridge ROM")
 	}
+}
+
+func (b *Bus) Tick(cycles uint) {
+	b.cycles += cycles
+	b.ppu.Tick(cycles * 3)
+}
+
+func (b *Bus) ReadInterrupt() *interrupts.Interrupt {
+	return b.ppu.ReadInterrupt()
 }
