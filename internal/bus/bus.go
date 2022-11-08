@@ -26,35 +26,30 @@ const (
 )
 
 func (b *Bus) MemRead(addr uint16) byte {
-	if RamAddr <= addr && addr <= RamLastAddr {
+	if addr <= RamLastAddr {
 		addr &= 0b111_1111_1111
 		return b.cpuVram[addr]
-	} else if PpuAddr <= addr && addr <= PpuLastAddr {
+	} else if addr <= PpuLastAddr {
 		// addr &= 0b10_0000_0000_0111
 		log.Error("PPU unsupported")
 		return 0
-	} else if PrgRomAddr <= addr && addr <= 0xFFFF {
+	} else {
 		addr -= PrgRomAddr
 		if len(b.cartridge.Prg) == PrgRomMirror {
 			addr %= PrgRomMirror
 		}
 		return b.cartridge.Prg[addr]
-	} else {
-		log.WithField("address", addr).Warn("Ignoring memory read")
-		return 0
 	}
 }
 
 func (b *Bus) MemWrite(addr uint16, data byte) {
-	if RamAddr <= addr && addr <= RamLastAddr {
+	if addr <= RamLastAddr {
 		addr &= 0b111_1111_1111
 		b.cpuVram[addr] = data
-	} else if PpuAddr <= addr && addr <= PpuLastAddr {
+	} else if addr <= PpuLastAddr {
 		// addr &= 0b10_0000_0000_0111
 		log.Error("PPU unsupported")
-	} else if PrgRomAddr <= addr && addr <= 0xFFFF {
-		panic("Attempt to write to cartridge ROM")
 	} else {
-		log.WithField("address", addr).Warn("Ignoring memory write")
+		panic("Attempt to write to cartridge ROM")
 	}
 }
