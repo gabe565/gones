@@ -157,20 +157,22 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 
 func (p *PPU) Tick(cycles uint) bool {
 	p.cycles += cycles
-	if p.cycles > 341 {
+	if p.cycles >= 341 {
 		p.cycles -= 341
 		p.scanline += 1
 
 		if p.scanline == 241 {
+			p.status.Insert(registers.VblankStarted)
+			p.status.Remove(registers.SpriteZeroHit)
 			if p.ctrl.GenerateVblankNmi() {
-				p.status.Insert(registers.VblankStarted)
 				p.interrupt = &interrupts.NMI
 			}
 		}
 
 		if p.scanline >= 262 {
 			p.scanline = 0
-			p.status.Remove(registers.VblankStarted)
+			p.interrupt = nil
+			p.status.Remove(registers.SpriteZeroHit | registers.VblankStarted)
 			return true
 		}
 	}
