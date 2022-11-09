@@ -18,6 +18,7 @@ type Bus struct {
 	cartridge *cartridge.Cartridge
 	ppu       *ppu.PPU
 	cycles    uint
+	Callback  func(*ppu.PPU)
 }
 
 const (
@@ -107,7 +108,10 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 
 func (b *Bus) Tick(cycles uint) {
 	b.cycles += cycles
-	b.ppu.Tick(cycles * 3)
+
+	if b.ppu.Tick(cycles*3) && b.Callback != nil {
+		b.Callback(b.ppu)
+	}
 }
 
 func (b *Bus) ReadInterrupt() *interrupts.Interrupt {
