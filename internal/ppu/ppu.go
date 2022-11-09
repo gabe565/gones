@@ -97,7 +97,7 @@ func (p *PPU) Write(data byte) {
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).Error("bad PPU write")
 	default:
 		switch addr {
-		case 0x3f10, 0x3f14, 0x3f18, 0x3f1c:
+		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
 			addr -= 0x10
 		}
 		p.palette[addr-0x3F00] = data
@@ -124,7 +124,7 @@ func (p *PPU) Read() byte {
 		return 0
 	case addr <= 0x3FFF:
 		switch addr {
-		case 0x3f10, 0x3f14, 0x3f18, 0x3f1c:
+		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
 			addr -= 0x10
 		}
 		return p.palette[addr-0x3F00]
