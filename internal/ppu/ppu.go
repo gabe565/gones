@@ -95,12 +95,14 @@ func (p *PPU) Write(data byte) {
 		p.vram[addr] = data
 	case addr <= 0x3EFF:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).Error("bad PPU write")
-	default:
+	case addr <= 0x3FFF:
 		switch addr {
 		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
 			addr -= 0x10
 		}
 		p.palette[addr-0x3F00] = data
+	default:
+		panic(fmt.Sprintf("unexpected write to mirrored space: $%02X", addr))
 	}
 	p.addr.Increment(p.ctrl.VramAddrIncrement())
 }
