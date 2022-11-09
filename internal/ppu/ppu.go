@@ -88,14 +88,14 @@ func (p *PPU) ReadStatus() byte {
 func (p *PPU) Write(data byte) {
 	addr := p.addr.Get()
 	switch {
-	case addr <= 0x1FFF:
+	case addr < 0x2000:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).Warn("attempt to write to CHR ROM")
-	case addr <= 0x2FFF:
+	case addr < 0x3000:
 		addr := p.MirrorVramAddr(addr)
 		p.vram[addr] = data
-	case addr <= 0x3EFF:
+	case addr < 0x3F00:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).Error("bad PPU write")
-	case addr <= 0x3FFF:
+	case addr < 0x4000:
 		switch addr {
 		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
 			addr -= 0x10
@@ -112,19 +112,19 @@ func (p *PPU) Read() byte {
 	p.addr.Increment(p.ctrl.VramAddrIncrement())
 
 	switch {
-	case addr <= 0x1FFF:
+	case addr < 0x2000:
 		result := p.readBuf
 		p.readBuf = p.chr[addr]
 		return result
-	case addr <= 0x2FFF:
+	case addr < 0x3000:
 		result := p.readBuf
 		addr := p.MirrorVramAddr(addr)
 		p.readBuf = p.vram[addr]
 		return result
-	case addr <= 0x3EFF:
+	case addr < 0x3F00:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).Error("bad PPU write")
 		return 0
-	case addr <= 0x3FFF:
+	case addr < 0x4000:
 		switch addr {
 		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
 			addr -= 0x10

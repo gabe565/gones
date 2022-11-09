@@ -21,18 +21,9 @@ type Bus struct {
 	Callback  func(*ppu.PPU)
 }
 
-const (
-	RamAddr      = 0x0000
-	RamLastAddr  = 0x1FFF
-	PpuAddr      = 0x2000
-	PpuLastAddr  = 0x3FFF
-	PrgRomAddr   = 0x8000
-	PrgRomMirror = 0x4000
-)
-
 func (b *Bus) MemRead(addr uint16) byte {
 	switch {
-	case addr <= RamLastAddr:
+	case addr < 0x2000:
 		addr &= 0b111_1111_1111
 		return b.cpuVram[addr]
 	case addr == 0x2000, addr == 0x2001, addr == 0x2003, addr == 0x2005, addr == 0x2006, addr == 0x4014:
@@ -43,7 +34,7 @@ func (b *Bus) MemRead(addr uint16) byte {
 		return b.ppu.ReadOam()
 	case addr == 0x2007:
 		return b.ppu.Read()
-	case 0x4000 <= addr && addr <= 0x4015:
+	case 0x4000 <= addr && addr < 0x4016:
 		// APU
 		return 0
 	case addr == 0x4016:
@@ -52,13 +43,13 @@ func (b *Bus) MemRead(addr uint16) byte {
 	case addr == 0x4017:
 		// Joypad 2
 		return 0
-	case 0x2008 <= addr && addr <= PpuLastAddr:
+	case 0x2008 <= addr && addr < 0x4000:
 		addr &= 0b0010_0000_0000_0111
 		return b.MemRead(addr)
 	default:
-		addr -= PrgRomAddr
-		if len(b.cartridge.Prg) == PrgRomMirror {
-			addr %= PrgRomMirror
+		addr -= 0x8000
+		if len(b.cartridge.Prg) == 0x4000 {
+			addr %= 0x4000
 		}
 		return b.cartridge.Prg[addr]
 	}
@@ -66,7 +57,7 @@ func (b *Bus) MemRead(addr uint16) byte {
 
 func (b *Bus) MemWrite(addr uint16, data byte) {
 	switch {
-	case addr <= RamLastAddr:
+	case addr < 0x2000:
 		addr &= 0b111_1111_1111
 		b.cpuVram[addr] = data
 	case addr == 0x2000:
@@ -92,13 +83,13 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 			buf[k] = b.MemRead(hi + uint16(k))
 		}
 		b.ppu.WriteOamDma(buf)
-	case 0x4000 <= addr && addr <= 0x4015:
+	case 0x4000 <= addr && addr < 0x4016:
 		// APU
 	case addr == 0x4016:
 		// Joypad 1
 	case addr == 0x4017:
 		// Joypad 2
-	case 0x2008 <= addr && addr <= PpuLastAddr:
+	case 0x2008 <= addr && addr < 0x4000:
 		addr &= 0b10_0000_0000_0111
 		b.MemWrite(addr, data)
 	default:
