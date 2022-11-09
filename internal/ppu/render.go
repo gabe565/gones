@@ -58,7 +58,7 @@ func (p *PPU) Render() *image.RGBA {
 				value := (1&lower)<<1 | (1 & upper)
 				upper >>= 1
 				lower >>= 1
-				if value == 1 {
+				if value == 0 {
 					continue outer
 				}
 				c := SystemPalette[spritePalette[value]]
