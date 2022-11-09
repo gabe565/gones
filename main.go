@@ -5,6 +5,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/callbacks"
 	"github.com/gabe565/gones/internal/console"
+	"github.com/gabe565/gones/internal/ppu"
 	"os"
 	"path/filepath"
 )
@@ -18,7 +19,7 @@ func main() {
 func run(path string, callback callbacks.CallbackHandler) error {
 	cfg := pixelgl.WindowConfig{
 		Title:  "GoNES",
-		Bounds: pixel.R(0, 0, 10*32, 10*32),
+		Bounds: pixel.R(0, 0, 3*ppu.Width, 3*ppu.Height),
 		VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)
