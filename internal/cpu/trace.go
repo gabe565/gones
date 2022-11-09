@@ -17,7 +17,7 @@ func (c *CPU) Trace() string {
 	case Implied, Indirect, Immediate, Accumulator, Relative:
 		//
 	default:
-		valAddr = c.getAbsoluteAddress(op.Mode, begin+1)
+		valAddr, _ = c.getAbsoluteAddress(op.Mode, begin+1)
 		val = c.MemRead(valAddr)
 	}
 

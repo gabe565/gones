@@ -17,7 +17,12 @@ type Instruction func(c *CPU, mode AddressingMode) error
 //
 // [ADC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#ADC
 func adc(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if pageCrossed {
+		defer func() {
+			c.Bus.Tick(1)
+		}()
+	}
 	v := c.MemRead(addr)
 	c.addAccumulator(v)
 	return nil
@@ -52,7 +57,7 @@ func ahx(c *CPU, mode AddressingMode) error {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func alr(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.setAccumulator(data & c.Accumulator)
 	return lsr(c, Accumulator)
@@ -66,7 +71,7 @@ func alr(c *CPU, mode AddressingMode) error {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func anc(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.setAccumulator(data & c.Accumulator)
 	c.Status.Set(Carry, c.Status.Has(Negative))
@@ -82,7 +87,12 @@ func anc(c *CPU, mode AddressingMode) error {
 //
 // [AND Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#AND
 func and(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if pageCrossed {
+		defer func() {
+			c.Bus.Tick(1)
+		}()
+	}
 	data := c.MemRead(addr)
 	c.setAccumulator(c.Accumulator & data)
 	return nil
@@ -101,7 +111,7 @@ func and(c *CPU, mode AddressingMode) error {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func arr(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.setAccumulator(data & c.Accumulator)
 	if err := ror(c, Accumulator); err != nil {
@@ -133,7 +143,12 @@ func asl(c *CPU, mode AddressingMode) error {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		addr = c.getOperandAddress(mode)
+		addr, pageCrossed := c.getOperandAddress(mode)
+		if pageCrossed {
+			defer func() {
+				c.Bus.Tick(1)
+			}()
+		}
 		data = c.MemRead(addr)
 	}
 	c.Status.Set(Carry, data>>7 == 1)
@@ -156,7 +171,7 @@ func asl(c *CPU, mode AddressingMode) error {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func axs(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	result := c.RegisterX & c.Accumulator
 	c.Status.Set(Carry, data <= result)
@@ -216,7 +231,7 @@ func beq(c *CPU, mode AddressingMode) error {
 //
 // [BIT Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BIT
 func bit(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.Status.Set(Zero, data&c.Accumulator == 0)
 	c.Status.Set(Negative, bitflags.Flags(data).Has(Negative))
@@ -401,7 +416,7 @@ func cpy(c *CPU, mode AddressingMode) error {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func dcp(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	data -= 1
 	c.MemWrite(addr, data)
@@ -419,7 +434,7 @@ func dcp(c *CPU, mode AddressingMode) error {
 //
 // [DEC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEC
 func dec(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	data -= 1
 	c.MemWrite(addr, data)
@@ -464,7 +479,12 @@ func dey(c *CPU, mode AddressingMode) error {
 //
 // [EOR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#EOR
 func eor(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if pageCrossed {
+		defer func() {
+			c.Bus.Tick(1)
+		}()
+	}
 	data := c.MemRead(addr)
 	c.setAccumulator(data ^ c.Accumulator)
 	return nil
@@ -479,7 +499,7 @@ func eor(c *CPU, mode AddressingMode) error {
 //
 // [INC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INC
 func inc(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	data += 1
 	c.MemWrite(addr, data)
@@ -525,7 +545,7 @@ func isb(c *CPU, mode AddressingMode) error {
 	if err := inc(c, mode); err != nil {
 		return err
 	}
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.addAccumulator(byte(-int8(data) - 1))
 	return nil
@@ -588,7 +608,12 @@ func jsr(c *CPU, mode AddressingMode) error {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func las(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if pageCrossed {
+		defer func() {
+			c.Bus.Tick(1)
+		}()
+	}
 	data := c.MemRead(addr)
 	data &= c.StackPointer
 	c.Accumulator = data
@@ -606,7 +631,12 @@ func las(c *CPU, mode AddressingMode) error {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func lax(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if pageCrossed {
+		defer func() {
+			c.Bus.Tick(1)
+		}()
+	}
 	data := c.MemRead(addr)
 	c.setAccumulator(data)
 	c.RegisterX = c.Accumulator
@@ -622,7 +652,12 @@ func lax(c *CPU, mode AddressingMode) error {
 //
 // [LDA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDA
 func lda(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if pageCrossed {
+		defer func() {
+			c.Bus.Tick(1)
+		}()
+	}
 	v := c.MemRead(addr)
 	c.setAccumulator(v)
 	return nil
@@ -637,7 +672,12 @@ func lda(c *CPU, mode AddressingMode) error {
 //
 // [LDX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDX
 func ldx(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if pageCrossed {
+		defer func() {
+			c.Bus.Tick(1)
+		}()
+	}
 	data := c.MemRead(addr)
 	c.RegisterX = data
 	c.updateZeroAndNegFlags(c.RegisterX)
@@ -653,7 +693,12 @@ func ldx(c *CPU, mode AddressingMode) error {
 //
 // [LDY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LDY
 func ldy(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if pageCrossed {
+		defer func() {
+			c.Bus.Tick(1)
+		}()
+	}
 	data := c.MemRead(addr)
 	c.RegisterY = data
 	c.updateZeroAndNegFlags(c.RegisterY)
@@ -675,7 +720,7 @@ func lsr(c *CPU, mode AddressingMode) error {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		addr = c.getOperandAddress(mode)
+		addr, _ := c.getOperandAddress(mode)
 		data = c.MemRead(addr)
 	}
 	c.Status.Set(Carry, data&1 == 1)
@@ -712,6 +757,15 @@ func lxa(c *CPU, mode AddressingMode) error {
 //
 // [NOP Instruction Reference]:
 func nop(c *CPU, mode AddressingMode) error {
+	if mode != Implied {
+		addr, pageCrossed := c.getOperandAddress(mode)
+		if pageCrossed {
+			defer func() {
+				c.Bus.Tick(1)
+			}()
+		}
+		_ = c.MemRead(addr)
+	}
 	return nil
 }
 
@@ -724,7 +778,12 @@ func nop(c *CPU, mode AddressingMode) error {
 //
 // [ORA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ORA
 func ora(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if pageCrossed {
+		defer func() {
+			c.Bus.Tick(1)
+		}()
+	}
 	data := c.MemRead(addr)
 	c.setAccumulator(data | c.Accumulator)
 	return nil
@@ -797,7 +856,7 @@ func rla(c *CPU, mode AddressingMode) error {
 	if err := rol(c, mode); err != nil {
 		return err
 	}
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.setAccumulator(data & c.Accumulator)
 	return nil
@@ -818,7 +877,7 @@ func rol(c *CPU, mode AddressingMode) error {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		addr = c.getOperandAddress(mode)
+		addr, _ := c.getOperandAddress(mode)
 		data = c.MemRead(addr)
 	}
 	prevCarry := c.Status.Has(Carry)
@@ -852,7 +911,7 @@ func ror(c *CPU, mode AddressingMode) error {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		addr = c.getOperandAddress(mode)
+		addr, _ := c.getOperandAddress(mode)
 		data = c.MemRead(addr)
 	}
 	prevCarry := c.Status.Has(Carry)
@@ -882,7 +941,7 @@ func rra(c *CPU, mode AddressingMode) error {
 	if err := ror(c, mode); err != nil {
 		return err
 	}
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.addAccumulator(data)
 	return nil
@@ -929,7 +988,7 @@ func rts(c *CPU, mode AddressingMode) error {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func sax(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.Accumulator & c.RegisterX
 	c.MemWrite(addr, data)
 	return nil
@@ -945,7 +1004,12 @@ func sax(c *CPU, mode AddressingMode) error {
 //
 // [SBC Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SBC
 func sbc(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if pageCrossed {
+		defer func() {
+			c.Bus.Tick(1)
+		}()
+	}
 	v := c.MemRead(addr)
 	c.addAccumulator(byte(-int8(v) - 1))
 	return nil
@@ -1028,7 +1092,7 @@ func slo(c *CPU, mode AddressingMode) error {
 	if err := asl(c, mode); err != nil {
 		return err
 	}
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.setAccumulator(data | c.Accumulator)
 	return nil
@@ -1045,7 +1109,7 @@ func sre(c *CPU, mode AddressingMode) error {
 	if err := lsr(c, mode); err != nil {
 		return err
 	}
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.setAccumulator(data ^ c.Accumulator)
 	return nil
@@ -1059,7 +1123,12 @@ func sre(c *CPU, mode AddressingMode) error {
 //
 // [STA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STA
 func sta(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if pageCrossed {
+		defer func() {
+			c.Bus.Tick(1)
+		}()
+	}
 	c.MemWrite(addr, c.Accumulator)
 	return nil
 }
@@ -1072,7 +1141,7 @@ func sta(c *CPU, mode AddressingMode) error {
 //
 // [STX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STX
 func stx(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	c.MemWrite(addr, c.RegisterX)
 	return nil
 }
@@ -1085,7 +1154,7 @@ func stx(c *CPU, mode AddressingMode) error {
 //
 // [STY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STY
 func sty(c *CPU, mode AddressingMode) error {
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	c.MemWrite(addr, c.RegisterY)
 	return nil
 }
@@ -1199,7 +1268,7 @@ func tya(c *CPU, mode AddressingMode) error {
 func xaa(c *CPU, mode AddressingMode) error {
 	c.Accumulator = c.RegisterX
 	c.updateZeroAndNegFlags(c.Accumulator)
-	addr := c.getOperandAddress(mode)
+	addr, _ := c.getOperandAddress(mode)
 	data := c.MemRead(addr)
 	c.setAccumulator(data & c.Accumulator)
 	return nil

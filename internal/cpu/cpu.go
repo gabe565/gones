@@ -129,7 +129,6 @@ func (c *CPU) Run() error {
 			return err
 		}
 
-		//TODO: Plus one if
 		c.Bus.Tick(uint(op.Cycles))
 
 		if prevPC == c.ProgramCounter {
