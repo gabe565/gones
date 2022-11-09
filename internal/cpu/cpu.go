@@ -96,6 +96,10 @@ var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 // Run is the main Run entrypoint.
 func (c *CPU) Run() error {
 	for {
+		if interrupt := c.Bus.ReadInterrupt(); interrupt != nil {
+			c.interrupt(interrupt)
+		}
+
 		if c.Callback != nil {
 			if err := c.Callback(c); err != nil {
 				if errors.Is(err, ErrBrk) {
@@ -116,10 +120,6 @@ func (c *CPU) Run() error {
 
 		if c.Debug {
 			fmt.Println(op)
-		}
-
-		if interrupt := c.Bus.ReadInterrupt(); interrupt != nil {
-			c.interrupt(interrupt)
 		}
 
 		if err := op.Exec(c, op.Mode); err != nil {
