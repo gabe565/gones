@@ -31,19 +31,18 @@ const (
 )
 
 func (b *Bus) MemRead(addr uint16) byte {
-	if addr <= RamLastAddr {
+	switch {
+	case addr <= RamLastAddr:
 		addr &= 0b111_1111_1111
 		return b.cpuVram[addr]
-	} else if addr <= PpuLastAddr {
-		switch addr {
-		case 0x2000, 0x2001, 0x2003, 0x2005, 0x2006, 0x4014:
-			panic(fmt.Sprintf("attempt to read from write-only PPU address $%02X", addr))
-		case 0x2007:
-			return b.ppu.Read()
-		}
+	case addr == 0x2000, addr == 0x2001, addr == 0x2003, addr == 0x2005, addr == 0x2006, addr == 0x4014:
+		panic(fmt.Sprintf("attempt to read from write-only PPU address $%02X", addr))
+	case addr == 0x2007:
+		return b.ppu.Read()
+	case 0x2008 <= addr && addr <= PpuLastAddr:
 		addr &= 0b0010_0000_0000_0111
 		return b.MemRead(addr)
-	} else {
+	default:
 		addr -= PrgRomAddr
 		if len(b.cartridge.Prg) == PrgRomMirror {
 			addr %= PrgRomMirror
@@ -53,21 +52,20 @@ func (b *Bus) MemRead(addr uint16) byte {
 }
 
 func (b *Bus) MemWrite(addr uint16, data byte) {
-	if addr <= RamLastAddr {
+	switch {
+	case addr <= RamLastAddr:
 		addr &= 0b111_1111_1111
 		b.cpuVram[addr] = data
-	} else if addr <= PpuLastAddr {
-		switch addr {
-		case 0x2000:
-			b.ppu.WriteCtrl(data)
-		case 0x2006:
-			b.ppu.WriteAddr(data)
-		case 0x2007:
-			b.ppu.Write(data)
-		}
+	case addr == 0x2000:
+		b.ppu.WriteCtrl(data)
+	case addr == 0x2006:
+		b.ppu.WriteAddr(data)
+	case addr == 0x2007:
+		b.ppu.Write(data)
+	case 0x2008 <= addr && addr <= PpuLastAddr:
 		addr &= 0b10_0000_0000_0111
 		b.MemWrite(addr, data)
-	} else {
+	default:
 		panic("Attempt to write to cartridge ROM")
 	}
 }

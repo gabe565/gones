@@ -87,14 +87,15 @@ func (p *PPU) ReadStatus() byte {
 
 func (p *PPU) Write(data byte) {
 	addr := p.addr.Get()
-	if addr <= 0x1FFF {
+	switch {
+	case addr <= 0x1FFF:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).Warn("attempt to write to CHR ROM")
-	} else if addr <= 0x2FFF {
+	case addr <= 0x2FFF:
 		addr := p.MirrorVramAddr(addr)
 		p.vram[addr] = data
-	} else if addr <= 0x3EFF {
+	case addr <= 0x3EFF:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).Error("bad PPU write")
-	} else {
+	default:
 		switch addr {
 		case 0x3f10, 0x3f14, 0x3f18, 0x3f1c:
 			addr -= 0x10
@@ -108,25 +109,26 @@ func (p *PPU) Read() byte {
 	addr := p.addr.Get()
 	p.addr.Increment(p.ctrl.VramAddrIncrement())
 
-	if addr <= 0x1FFF {
+	switch {
+	case addr <= 0x1FFF:
 		result := p.readBuf
 		p.readBuf = p.chr[addr]
 		return result
-	} else if addr <= 0x2FFF {
+	case addr <= 0x2FFF:
 		result := p.readBuf
 		addr := p.MirrorVramAddr(addr)
 		p.readBuf = p.vram[addr]
 		return result
-	} else if addr <= 0x3EFF {
+	case addr <= 0x3EFF:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).Error("bad PPU write")
 		return 0
-	} else if addr <= 0x3FFF {
+	case addr <= 0x3FFF:
 		switch addr {
 		case 0x3f10, 0x3f14, 0x3f18, 0x3f1c:
 			addr -= 0x10
 		}
 		return p.palette[addr-0x3F00]
-	} else {
+	default:
 		panic(fmt.Sprintf("unexpected access to mirrored space: $%02X", addr))
 	}
 }
