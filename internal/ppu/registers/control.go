@@ -25,7 +25,7 @@ func (c Control) VramAddrIncrement() byte {
 
 func (c Control) SprtPatternAddr() uint16 {
 	if bitflags.Flags(c).Has(SpritePatternAddr) {
-		return 32
+		return 0x1000
 	} else {
 		return 1
 	}
@@ -33,9 +33,9 @@ func (c Control) SprtPatternAddr() uint16 {
 
 func (c Control) BkndPatternAddr() uint16 {
 	if bitflags.Flags(c).Has(BackgroundPatternAddr) {
-		return 32
+		return 0x1000
 	} else {
-		return 1
+		return 0
 	}
 }
 
