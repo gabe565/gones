@@ -58,3 +58,18 @@ func (c Control) MasterSlaveSelect() byte {
 func (c Control) GenerateVblankNmi() bool {
 	return bitflags.Flags(c).Has(GenerateNmi)
 }
+
+func (c Control) NametableAddr() uint16 {
+	switch c & 0b11 {
+	case 0:
+		return 0x2000
+	case 1:
+		return 0x2400
+	case 2:
+		return 0x2800
+	case 3:
+		return 0x2c00
+	default:
+		panic("invalid control register")
+	}
+}

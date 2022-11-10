@@ -162,6 +162,10 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 func (p *PPU) Tick(cycles uint) bool {
 	p.cycles += cycles
 	if p.cycles >= 341 {
+		if p.SpriteZeroHit(cycles) {
+			p.status.Insert(registers.SpriteZeroHit)
+		}
+
 		p.cycles -= 341
 		p.scanline += 1
 
@@ -176,7 +180,7 @@ func (p *PPU) Tick(cycles uint) bool {
 		if p.scanline >= 262 {
 			p.scanline = 0
 			p.interrupt = nil
-			p.status.Remove(registers.SpriteZeroHit | registers.VblankStarted)
+			p.status.Remove(registers.SpriteZeroHit | registers.VblankStarted | registers.SpriteZeroHit)
 			return true
 		}
 	}
@@ -187,4 +191,10 @@ func (p *PPU) ReadInterrupt() *interrupts.Interrupt {
 	i := p.interrupt
 	p.interrupt = nil
 	return i
+}
+
+func (p *PPU) SpriteZeroHit(cycle uint) bool {
+	x := p.oam[3]
+	y := p.oam[0]
+	return uint16(y) == p.scanline && uint(x) <= cycle && p.mask.Has(registers.ShowSprites)
 }
