@@ -49,7 +49,6 @@ func (p *PPU) Render() *image.RGBA {
 
 		tile := p.chr[bank+uint16(tileIdx)*16 : bank+uint16(tileIdx)*16+16]
 
-	outer:
 		for y := 0; y < 8; y += 1 {
 			upper := tile[y]
 			lower := tile[y+8]
@@ -59,7 +58,7 @@ func (p *PPU) Render() *image.RGBA {
 				upper >>= 1
 				lower >>= 1
 				if value == 0 {
-					continue outer
+					continue
 				}
 				c := SystemPalette[spritePalette[value]]
 
