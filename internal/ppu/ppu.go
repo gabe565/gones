@@ -184,5 +184,7 @@ func (p *PPU) Tick(cycles uint) bool {
 }
 
 func (p *PPU) ReadInterrupt() *interrupts.Interrupt {
-	return p.interrupt
+	i := p.interrupt
+	p.interrupt = nil
+	return i
 }
