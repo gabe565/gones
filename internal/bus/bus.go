@@ -3,6 +3,7 @@ package bus
 import (
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/interrupts"
+	"github.com/gabe565/gones/internal/joypad"
 	"github.com/gabe565/gones/internal/ppu"
 )
 
@@ -10,6 +11,7 @@ func New(cart *cartridge.Cartridge) *Bus {
 	return &Bus{
 		cartridge: cart,
 		ppu:       ppu.New(cart),
+		joypad1:   &joypad.Joypad{},
 	}
 }
 
@@ -17,8 +19,9 @@ type Bus struct {
 	cpuVram   [0x800]byte
 	cartridge *cartridge.Cartridge
 	ppu       *ppu.PPU
+	joypad1   *joypad.Joypad
 	cycles    uint
-	Callback  func(*ppu.PPU)
+	Callback  func(*ppu.PPU, *joypad.Joypad)
 }
 
 func (b *Bus) MemRead(addr uint16) byte {
@@ -38,8 +41,7 @@ func (b *Bus) MemRead(addr uint16) byte {
 		// APU
 		return 0
 	case addr == 0x4016:
-		// Joypad 1
-		return 0
+		return b.joypad1.Read()
 	case addr == 0x4017:
 		// Joypad 2
 		return 0
@@ -86,7 +88,7 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 	case 0x4000 <= addr && addr < 0x4013, addr == 0x4015:
 		// APU
 	case addr == 0x4016:
-		// Joypad 1
+		b.joypad1.Write(data)
 	case addr == 0x4017:
 		// Joypad 2
 	case 0x2008 <= addr && addr < 0x4000:
@@ -101,7 +103,7 @@ func (b *Bus) Tick(cycles uint) {
 	b.cycles += cycles
 
 	if b.ppu.Tick(cycles*3) && b.Callback != nil {
-		b.Callback(b.ppu)
+		b.Callback(b.ppu, b.joypad1)
 	}
 }
 

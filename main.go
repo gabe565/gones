@@ -5,6 +5,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/callbacks"
 	"github.com/gabe565/gones/internal/console"
+	"github.com/gabe565/gones/internal/joypad"
 	"github.com/gabe565/gones/internal/ppu"
 	"image/color"
 	"os"
@@ -28,7 +29,15 @@ func run(path string, callback callbacks.CallbackHandler) error {
 		return err
 	}
 
-	c, err := console.New(path, func(ppu *ppu.PPU) {
+	c, err := console.New(path, func(ppu *ppu.PPU, joypad1 *joypad.Joypad) {
+		for button, key := range joypad.Keymap {
+			if win.JustPressed(button) {
+				joypad1.Set(key, true)
+			} else if win.JustReleased(button) {
+				joypad1.Set(key, false)
+			}
+		}
+
 		win.Clear(color.Black)
 		pic := pixel.PictureDataFromImage(ppu.Render())
 		sprite := pixel.NewSprite(pic, pic.Bounds())
