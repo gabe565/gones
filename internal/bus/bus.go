@@ -83,7 +83,7 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 			buf[k] = b.MemRead(hi + uint16(k))
 		}
 		b.ppu.WriteOamDma(buf)
-	case 0x4000 <= addr && addr < 0x4016:
+	case 0x4000 <= addr && addr < 0x4013, addr == 0x4015:
 		// APU
 	case addr == 0x4016:
 		// Joypad 1
