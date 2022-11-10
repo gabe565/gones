@@ -43,6 +43,10 @@ func run(path string, callback callbacks.CallbackHandler) error {
 		sprite := pixel.NewSprite(pic, pic.Bounds())
 		sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()).Scaled(win.Bounds().Center(), 3))
 		win.Update()
+
+		if win.Closed() {
+			os.Exit(0)
+		}
 	})
 	if err != nil {
 		return err
