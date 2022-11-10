@@ -227,7 +227,7 @@ var OpCodes = []OpCode{
 	{"ORA", 0x05, 2, 3, ZeroPage, ora},
 	{"ORA", 0x09, 2, 2, Immediate, ora},
 	{"ORA", 0x0D, 3, 4, Absolute, ora},
-	{"ORA", 0x11, 2, 5 /*f page crossed*/, IndirectY, ora},
+	{"ORA", 0x11, 2, 5 /*+1 if page crossed*/, IndirectY, ora},
 	{"ORA", 0x15, 2, 4, ZeroPageX, ora},
 	{"ORA", 0x19, 3, 4 /*+1 if page crossed*/, AbsoluteY, ora},
 	{"ORA", 0x1D, 3, 4 /*+1 if page crossed*/, AbsoluteX, ora},
