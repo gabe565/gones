@@ -143,7 +143,8 @@ func asl(c *CPU, mode AddressingMode) error {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		addr, pageCrossed := c.getOperandAddress(mode)
+		var pageCrossed bool
+		addr, pageCrossed = c.getOperandAddress(mode)
 		if pageCrossed {
 			defer func() {
 				c.Bus.Tick(1)
@@ -720,7 +721,7 @@ func lsr(c *CPU, mode AddressingMode) error {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		addr, _ := c.getOperandAddress(mode)
+		addr, _ = c.getOperandAddress(mode)
 		data = c.MemRead(addr)
 	}
 	c.Status.Set(Carry, data&1 == 1)
@@ -877,7 +878,7 @@ func rol(c *CPU, mode AddressingMode) error {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		addr, _ := c.getOperandAddress(mode)
+		addr, _ = c.getOperandAddress(mode)
 		data = c.MemRead(addr)
 	}
 	prevCarry := c.Status.Has(Carry)
@@ -911,7 +912,7 @@ func ror(c *CPU, mode AddressingMode) error {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		addr, _ := c.getOperandAddress(mode)
+		addr, _ = c.getOperandAddress(mode)
 		data = c.MemRead(addr)
 	}
 	prevCarry := c.Status.Has(Carry)
