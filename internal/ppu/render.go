@@ -1,8 +1,10 @@
 package ppu
 
 import (
+	"github.com/faiface/pixel"
 	"github.com/gabe565/gones/internal/cartridge"
 	"image"
+	"image/color"
 )
 
 const (
@@ -10,15 +12,15 @@ const (
 	Height = 240
 )
 
-func (p *PPU) Render() *image.RGBA {
-	img := image.NewRGBA(image.Rect(0, 0, Width, Height))
+func (p *PPU) Render() *pixel.PictureData {
+	pic := pixel.MakePictureData(pixel.R(0, 0, Width, Height))
 
 	main, second := p.getNametables()
 	scrollX := int(p.scroll.X)
 	scrollY := int(p.scroll.Y)
 
 	p.RenderNametable(
-		img,
+		pic,
 		main,
 		image.Rect(scrollX, scrollY, Width, Height),
 		-scrollX,
@@ -27,7 +29,7 @@ func (p *PPU) Render() *image.RGBA {
 
 	if scrollX > 0 {
 		p.RenderNametable(
-			img,
+			pic,
 			second,
 			image.Rect(0, 0, scrollX, Height),
 			Width-scrollX,
@@ -35,7 +37,7 @@ func (p *PPU) Render() *image.RGBA {
 		)
 	} else if scrollY > 0 {
 		p.RenderNametable(
-			img,
+			pic,
 			second,
 			image.Rect(0, 0, Width, scrollY),
 			0,
@@ -85,12 +87,12 @@ func (p *PPU) Render() *image.RGBA {
 					flippedY += y
 				}
 
-				img.Set(flippedX, flippedY, c)
+				setPixel(pic, flippedX, flippedY, c)
 			}
 		}
 	}
 
-	return img
+	return pic
 }
 
 func (p *PPU) bgPalette(attrTable []byte, col, row uint16) [4]byte {
@@ -131,7 +133,7 @@ func (p *PPU) spritePalette(idx byte) [4]byte {
 	}
 }
 
-func (p *PPU) RenderNametable(img *image.RGBA, nameTable []byte, viewport image.Rectangle, shiftX, shiftY int) {
+func (p *PPU) RenderNametable(pic *pixel.PictureData, nameTable []byte, viewport image.Rectangle, shiftX, shiftY int) {
 	bank := p.ctrl.BkndPatternAddr()
 
 	attrTable := nameTable[0x3C0:0x400]
@@ -157,7 +159,7 @@ func (p *PPU) RenderNametable(img *image.RGBA, nameTable []byte, viewport image.
 				pxlY := int(tileRow)*8 + y
 				point := image.Point{X: pxlX, Y: pxlY}
 				if point.In(viewport) {
-					img.Set(shiftX+pxlX, shiftY+pxlY, c)
+					setPixel(pic, shiftX+pxlX, shiftY+pxlY, c)
 				}
 			}
 		}
@@ -187,5 +189,13 @@ func (p *PPU) getNametables() ([]byte, []byte) {
 		}
 	default:
 		panic(p.mirroring.String() + " mirroring unsupported")
+	}
+}
+
+func setPixel(pic *pixel.PictureData, x, y int, c color.RGBA) {
+	y = Height - y - 1
+	offset := y*Width + x
+	if offset >= 0 && offset < len(pic.Pix) {
+		pic.Pix[offset] = c
 	}
 }

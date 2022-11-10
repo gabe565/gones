@@ -39,7 +39,7 @@ func run(path string, callback callbacks.CallbackHandler) error {
 		}
 
 		win.Clear(color.Black)
-		pic := pixel.PictureDataFromImage(ppu.Render())
+		pic := ppu.Render()
 		sprite := pixel.NewSprite(pic, pic.Bounds())
 		sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()).Scaled(win.Bounds().Center(), 3))
 		win.Update()
