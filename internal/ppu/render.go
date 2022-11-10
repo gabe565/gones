@@ -63,16 +63,21 @@ func (p *PPU) Render() *image.RGBA {
 				}
 				c := SystemPalette[spritePalette[value]]
 
-				switch [2]bool{flipHorizonal, flipVertical} {
-				case [2]bool{false, false}:
-					img.Set(int(tileX)+x, int(tileY)+y, c)
-				case [2]bool{true, false}:
-					img.Set(int(tileX)+7-x, int(tileY)+y, c)
-				case [2]bool{false, true}:
-					img.Set(int(tileX)+x, int(tileY)+7-y, c)
-				case [2]bool{true, true}:
-					img.Set(int(tileX)+7-x, int(tileY)+7-y, c)
+				flippedX := int(tileX)
+				if flipHorizonal {
+					flippedX += 7 - x
+				} else {
+					flippedX += x
 				}
+
+				flippedY := int(tileY)
+				if flipVertical {
+					flippedY += 7 - y
+				} else {
+					flippedY += y
+				}
+
+				img.Set(flippedX, flippedY, c)
 			}
 		}
 	}
