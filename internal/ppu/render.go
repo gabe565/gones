@@ -24,7 +24,7 @@ func (p *PPU) Render() *image.RGBA {
 			upper := tiles[y]
 			lower := tiles[y+8]
 
-			for x := 0; x < 8; x += 1 {
+			for x := 7; x >= 0; x -= 1 {
 				value := (1&upper)<<1 | (1 & lower)
 				upper >>= 1
 				lower >>= 1
@@ -34,7 +34,7 @@ func (p *PPU) Render() *image.RGBA {
 		}
 	}
 
-	for i := 0; i < len(p.oam); i += 4 {
+	for i := len(p.oam) - 4; i >= 0; i -= 4 {
 		tileIdx := p.oam[i+1]
 		tileX := p.oam[i+3]
 		tileY := p.oam[i]
@@ -53,7 +53,7 @@ func (p *PPU) Render() *image.RGBA {
 			upper := tile[y]
 			lower := tile[y+8]
 
-			for x := 0; x < 8; x += 1 {
+			for x := 7; x >= 0; x -= 1 {
 				value := (1&lower)<<1 | (1 & upper)
 				upper >>= 1
 				lower >>= 1
