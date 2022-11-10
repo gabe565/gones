@@ -100,7 +100,8 @@ func (p *PPU) Write(data byte) {
 		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
 			addr -= 0x10
 		}
-		p.palette[addr-0x3F00] = data
+		addr -= 0x3F00
+		p.palette[addr] = data
 	default:
 		panic(fmt.Sprintf("unexpected write to mirrored space: $%02X", addr))
 	}
@@ -129,7 +130,8 @@ func (p *PPU) Read() byte {
 		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
 			addr -= 0x10
 		}
-		return p.palette[addr-0x3F00]
+		addr -= 0x3F00
+		return p.palette[addr]
 	default:
 		panic(fmt.Sprintf("unexpected access to mirrored space: $%02X", addr))
 	}
