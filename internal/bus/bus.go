@@ -47,15 +47,12 @@ func (b *Bus) MemRead(addr uint16) byte {
 		return b.MemRead(addr)
 	case 0x4000 <= addr && addr < 0x4016:
 		// APU
-		return 0
 	case addr == 0x4016:
 		return b.Joypad1.Read()
 	case addr == 0x4017:
 		// Joypad 2
-		return 0
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled APU
-		return 0
 	default:
 		addr -= 0x8000
 		if len(b.cartridge.Prg) == 0x4000 {
@@ -63,6 +60,7 @@ func (b *Bus) MemRead(addr uint16) byte {
 		}
 		return b.cartridge.Prg[addr]
 	}
+	return 0
 }
 
 func (b *Bus) MemWrite(addr uint16, data byte) {
