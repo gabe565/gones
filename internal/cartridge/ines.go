@@ -20,10 +20,7 @@ type iNESFileHeader struct {
 
 var iNesMagic = [4]byte{'N', 'E', 'S', 0x1A}
 
-var (
-	ErrInvalidRom = errors.New("invalid ROM")
-	ErrNES2       = errors.New("NES2.0 format is not supported")
-)
+var ErrInvalidRom = errors.New("invalid ROM")
 
 func FromiNesFile(path string) (*Cartridge, error) {
 	f, err := os.Open(path)
