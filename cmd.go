@@ -29,6 +29,7 @@ func NewCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&action.Pprof, "pprof", "", "Enables pprof http listener")
+	cmd.Flags().BoolVar(&action.Trace, "trace", false, "Enable trace logging")
 
 	return cmd
 }

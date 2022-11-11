@@ -48,8 +48,8 @@ type CPU struct {
 	// Callback optional callback to Run before every tick
 	Callback Callback
 
-	// Debug enables opcode logging
-	Debug bool
+	// EnableTrace enables trace logging
+	EnableTrace bool
 }
 
 type Callback func(*CPU) error
@@ -125,8 +125,8 @@ func (c *CPU) Run(ctx context.Context) error {
 				return fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
 			}
 
-			if c.Debug {
-				fmt.Println(op)
+			if c.EnableTrace {
+				fmt.Println(c.Trace())
 			}
 
 			if err := op.Exec(c, op.Mode); err != nil {

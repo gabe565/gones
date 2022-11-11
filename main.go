@@ -23,6 +23,7 @@ func main() {
 
 type Run struct {
 	Path  string
+	Trace bool
 	Pprof string
 }
 
@@ -52,6 +53,8 @@ func (r Run) Run() error {
 	if err != nil {
 		return err
 	}
+
+	console.CPU.EnableTrace = r.Trace
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
