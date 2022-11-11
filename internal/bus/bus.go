@@ -95,11 +95,10 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 			buf[k] = b.MemRead(hi + uint16(k))
 		}
 		b.ppu.WriteOamDma(buf)
-	case 0x4000 <= addr && addr < 0x4013, addr == 0x4015:
+	case 0x4000 <= addr && addr < 0x4013, addr == 0x4015, addr == 0x4017:
 		// APU
 	case addr == 0x4016:
 		b.Controller1.Write(data)
-	case addr == 0x4017:
 		b.Controller2.Write(data)
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled
