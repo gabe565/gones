@@ -4,20 +4,28 @@ import (
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/cpu"
-	"github.com/gabe565/gones/internal/joypad"
 	"github.com/gabe565/gones/internal/ppu"
 )
 
-func New(path string, callback func(*ppu.PPU, *joypad.Joypad)) (*cpu.CPU, error) {
+type Console struct {
+	CPU *cpu.CPU
+	Bus *bus.Bus
+	PPU *ppu.PPU
+}
+
+func New(path string) (Console, error) {
+	var console Console
+
 	cart, err := cartridge.FromiNes(path)
 	if err != nil {
-		return nil, err
+		return console, err
 	}
 
-	b := bus.New(cart)
-	b.Callback = callback
+	console.PPU = ppu.New(cart)
+	console.Bus = bus.New(cart, console.PPU)
+	console.CPU = cpu.New(console.Bus)
 
-	c := cpu.New(b)
-	c.Reset()
-	return c, nil
+	console.CPU.Reset()
+
+	return console, nil
 }

@@ -1,17 +1,13 @@
 package cpu
 
 import (
-	"github.com/gabe565/gones/internal/bus"
-	"github.com/gabe565/gones/internal/cartridge"
+	"context"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestCPU_TraceFormat(t *testing.T) {
-	cart := cartridge.FromBytes([]byte{0xA2, 0x01, 0xca, 0x88, 0x00})
-	b := bus.New(cart)
-	c := New(b)
-	c.Reset()
+	c := stubCpu([]byte{0xA2, 0x01, 0xca, 0x88, 0x00})
 	traces := make([]string, 0)
 	c.Callback = func(c *CPU) error {
 		traces = append(traces, c.Trace())
@@ -20,7 +16,7 @@ func TestCPU_TraceFormat(t *testing.T) {
 	c.Accumulator = 1
 	c.RegisterX = 2
 	c.RegisterY = 3
-	err := c.Run()
+	err := c.Run(context.Background())
 	if assert.NoError(t, err) {
 		assert.EqualValues(
 			t,
@@ -41,10 +37,7 @@ func TestCPU_TraceFormat(t *testing.T) {
 }
 
 func TestCPU_Trace_MemAccess(t *testing.T) {
-	cart := cartridge.FromBytes([]byte{0x11, 0x33})
-	b := bus.New(cart)
-	c := New(b)
-	c.Reset()
+	c := stubCpu([]byte{0x11, 0x33})
 	traces := make([]string, 0)
 	c.Callback = func(c *CPU) error {
 		traces = append(traces, c.Trace())
@@ -53,7 +46,7 @@ func TestCPU_Trace_MemAccess(t *testing.T) {
 	c.MemWrite(0x33, 0)
 	c.MemWrite(0x34, 4)
 	c.MemWrite(0x400, 0xAA)
-	err := c.Run()
+	err := c.Run(context.Background())
 	if assert.NoError(t, err) {
 		assert.EqualValues(
 			t,

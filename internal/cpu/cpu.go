@@ -1,6 +1,7 @@
 package cpu
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/gabe565/gones/internal/bitflags"
@@ -45,11 +46,13 @@ type CPU struct {
 	Bus *bus.Bus
 
 	// Callback optional callback to Run before every tick
-	Callback func(c *CPU) error
+	Callback Callback
 
 	// Debug enables opcode logging
 	Debug bool
 }
+
+type Callback func(*CPU) error
 
 const (
 	// StackAddr is the memory address of the stack
@@ -94,45 +97,50 @@ func (c *CPU) interrupt(interrupt *interrupts.Interrupt) {
 var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
 // Run is the main Run entrypoint.
-func (c *CPU) Run() error {
+func (c *CPU) Run(ctx context.Context) error {
 	for {
-		if interrupt := c.Bus.ReadInterrupt(); interrupt != nil {
-			c.interrupt(interrupt)
-		}
+		select {
+		case <-ctx.Done():
+			return nil
+		default:
+			if interrupt := c.Bus.ReadInterrupt(); interrupt != nil {
+				c.interrupt(interrupt)
+			}
 
-		if c.Callback != nil {
-			if err := c.Callback(c); err != nil {
+			if c.Callback != nil {
+				if err := c.Callback(c); err != nil {
+					if errors.Is(err, ErrBrk) {
+						return nil
+					}
+					return err
+				}
+			}
+
+			code := c.MemRead(c.ProgramCounter)
+			c.ProgramCounter += 1
+			prevPC := c.ProgramCounter
+
+			op, ok := OpCodeMap[code]
+			if !ok {
+				return fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
+			}
+
+			if c.Debug {
+				fmt.Println(op)
+			}
+
+			if err := op.Exec(c, op.Mode); err != nil {
 				if errors.Is(err, ErrBrk) {
 					return nil
 				}
 				return err
 			}
-		}
 
-		code := c.MemRead(c.ProgramCounter)
-		c.ProgramCounter += 1
-		prevPC := c.ProgramCounter
+			c.Bus.Tick(uint(op.Cycles))
 
-		op, ok := OpCodeMap[code]
-		if !ok {
-			return fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
-		}
-
-		if c.Debug {
-			fmt.Println(op)
-		}
-
-		if err := op.Exec(c, op.Mode); err != nil {
-			if errors.Is(err, ErrBrk) {
-				return nil
+			if prevPC == c.ProgramCounter {
+				c.ProgramCounter += uint16(op.Len - 1)
 			}
-			return err
-		}
-
-		c.Bus.Tick(uint(op.Cycles))
-
-		if prevPC == c.ProgramCounter {
-			c.ProgramCounter += uint16(op.Len - 1)
 		}
 	}
 }

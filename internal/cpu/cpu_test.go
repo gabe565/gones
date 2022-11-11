@@ -1,18 +1,26 @@
 package cpu
 
 import (
+	"context"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/ppu"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func Test_0xa9_lda_immediate_load_data(t *testing.T) {
-	cart := cartridge.FromBytes([]byte{0xA9, 0x05, 0x00})
-	b := bus.New(cart)
-	cpu := New(b)
+func stubCpu(program []byte) *CPU {
+	cart := cartridge.FromBytes(program)
+	ppu := ppu.New(cart)
+	bus := bus.New(cart, ppu)
+	cpu := New(bus)
 	cpu.Reset()
-	if err := cpu.Run(); err != nil {
+	return cpu
+}
+
+func Test_0xa9_lda_immediate_load_data(t *testing.T) {
+	cpu := stubCpu([]byte{0xA9, 0x05, 0x00})
+	if err := cpu.Run(context.Background()); err != nil {
 		assert.NoError(t, err)
 	}
 
@@ -22,11 +30,8 @@ func Test_0xa9_lda_immediate_load_data(t *testing.T) {
 }
 
 func Test_0xa9_lda_zero_flag(t *testing.T) {
-	cart := cartridge.FromBytes([]byte{0xA9, 0x00, 0x00})
-	b := bus.New(cart)
-	cpu := New(b)
-	cpu.Reset()
-	if err := cpu.Run(); err != nil {
+	cpu := stubCpu([]byte{0xA9, 0x00, 0x00})
+	if err := cpu.Run(context.Background()); err != nil {
 		assert.NoError(t, err)
 	}
 
@@ -34,12 +39,8 @@ func Test_0xa9_lda_zero_flag(t *testing.T) {
 }
 
 func Test_0xaa_tax_move_a_to_x(t *testing.T) {
-	cart := cartridge.FromBytes([]byte{0xA9, 0x0A, 0xAA, 0x00})
-	b := bus.New(cart)
-	cpu := New(b)
-	cpu.Accumulator = 10
-	cpu.Reset()
-	if err := cpu.Run(); err != nil {
+	cpu := stubCpu([]byte{0xA9, 0x0A, 0xAA, 0x00})
+	if err := cpu.Run(context.Background()); err != nil {
 		assert.NoError(t, err)
 	}
 
@@ -47,11 +48,8 @@ func Test_0xaa_tax_move_a_to_x(t *testing.T) {
 }
 
 func Test_5_operations(t *testing.T) {
-	cart := cartridge.FromBytes([]byte{0xA9, 0xC0, 0xAA, 0xE8, 0x00})
-	b := bus.New(cart)
-	cpu := New(b)
-	cpu.Reset()
-	if err := cpu.Run(); err != nil {
+	cpu := stubCpu([]byte{0xA9, 0xC0, 0xAA, 0xE8, 0x00})
+	if err := cpu.Run(context.Background()); err != nil {
 		assert.NoError(t, err)
 	}
 
@@ -59,11 +57,8 @@ func Test_5_operations(t *testing.T) {
 }
 
 func Test_inx_overflow(t *testing.T) {
-	cart := cartridge.FromBytes([]byte{0xA9, 0xFF, 0xAA, 0xE8, 0xE8, 0x00})
-	b := bus.New(cart)
-	cpu := New(b)
-	cpu.Reset()
-	if err := cpu.Run(); err != nil {
+	cpu := stubCpu([]byte{0xA9, 0xFF, 0xAA, 0xE8, 0xE8, 0x00})
+	if err := cpu.Run(context.Background()); err != nil {
 		assert.NoError(t, err)
 	}
 
@@ -71,12 +66,9 @@ func Test_inx_overflow(t *testing.T) {
 }
 
 func Test_lda_from_memory(t *testing.T) {
-	cart := cartridge.FromBytes([]byte{0xA5, 0x10, 0x00})
-	b := bus.New(cart)
-	cpu := New(b)
+	cpu := stubCpu([]byte{0xA5, 0x10, 0x00})
 	cpu.MemWrite(0x10, 0x55)
-	cpu.Reset()
-	if err := cpu.Run(); err != nil {
+	if err := cpu.Run(context.Background()); err != nil {
 		assert.NoError(t, err)
 	}
 

@@ -7,21 +7,24 @@ import (
 	"github.com/gabe565/gones/internal/ppu"
 )
 
-func New(cart *cartridge.Cartridge) *Bus {
+func New(cart *cartridge.Cartridge, ppu *ppu.PPU) *Bus {
 	return &Bus{
-		cartridge: cart,
-		ppu:       ppu.New(cart),
-		joypad1:   &joypad.Joypad{},
+		cartridge:   cart,
+		ppu:         ppu,
+		Joypad1:     &joypad.Joypad{},
+		RenderStart: make(chan struct{}),
+		RenderDone:  make(chan struct{}),
 	}
 }
 
 type Bus struct {
-	cpuVram   [0x800]byte
-	cartridge *cartridge.Cartridge
-	ppu       *ppu.PPU
-	joypad1   *joypad.Joypad
-	cycles    uint
-	Callback  func(*ppu.PPU, *joypad.Joypad)
+	cpuVram     [0x800]byte
+	cartridge   *cartridge.Cartridge
+	ppu         *ppu.PPU
+	Joypad1     *joypad.Joypad
+	cycles      uint
+	RenderStart chan struct{}
+	RenderDone  chan struct{}
 }
 
 func (b *Bus) MemRead(addr uint16) byte {
@@ -41,7 +44,7 @@ func (b *Bus) MemRead(addr uint16) byte {
 		// APU
 		return 0
 	case addr == 0x4016:
-		return b.joypad1.Read()
+		return b.Joypad1.Read()
 	case addr == 0x4017:
 		// Joypad 2
 		return 0
@@ -88,7 +91,7 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 	case 0x4000 <= addr && addr < 0x4013, addr == 0x4015:
 		// APU
 	case addr == 0x4016:
-		b.joypad1.Write(data)
+		b.Joypad1.Write(data)
 	case addr == 0x4017:
 		// Joypad 2
 	case 0x2008 <= addr && addr < 0x4000:
@@ -102,8 +105,9 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 func (b *Bus) Tick(cycles uint) {
 	b.cycles += cycles
 
-	if b.ppu.Tick(cycles*3) && b.Callback != nil {
-		b.Callback(b.ppu, b.joypad1)
+	if b.ppu.Tick(cycles * 3) {
+		b.RenderStart <- struct{}{}
+		<-b.RenderDone
 	}
 }
 
