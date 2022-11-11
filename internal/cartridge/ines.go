@@ -18,7 +18,7 @@ type iNESFileHeader struct {
 	_        [7]byte
 }
 
-var iNesMagic = [4]byte{0x4E, 0x45, 0x53, 0x1A}
+var iNesMagic = [4]byte{'N', 'E', 'S', 0x1A}
 
 var (
 	ErrInvalidRom = errors.New("invalid ROM")
