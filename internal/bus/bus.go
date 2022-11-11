@@ -13,8 +13,6 @@ func New(cart *cartridge.Cartridge, ppu *ppu.PPU) *Bus {
 	return &Bus{
 		cartridge:   cart,
 		ppu:         ppu,
-		Joypad1:     &joypad.Joypad{},
-		Joypad2:     &joypad.Joypad{},
 		RenderStart: make(chan struct{}),
 		RenderDone:  make(chan struct{}),
 	}
@@ -24,8 +22,8 @@ type Bus struct {
 	cpuVram     [0x800]byte
 	cartridge   *cartridge.Cartridge
 	ppu         *ppu.PPU
-	Joypad1     *joypad.Joypad
-	Joypad2     *joypad.Joypad
+	Joypad1     joypad.Joypad
+	Joypad2     joypad.Joypad
 	cycles      uint
 	RenderStart chan struct{}
 	RenderDone  chan struct{}
