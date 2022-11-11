@@ -16,7 +16,7 @@ type Console struct {
 func New(path string) (Console, error) {
 	var console Console
 
-	cart, err := cartridge.FromiNes(path)
+	cart, err := cartridge.FromiNesFile(path)
 	if err != nil {
 		return console, err
 	}

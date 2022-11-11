@@ -25,7 +25,7 @@ var (
 	ErrNES2       = errors.New("NES2.0 format is not supported")
 )
 
-func FromiNes(path string) (*Cartridge, error) {
+func FromiNesFile(path string) (*Cartridge, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -34,8 +34,12 @@ func FromiNes(path string) (*Cartridge, error) {
 		_ = f.Close()
 	}(f)
 
+	return FromiNes(f)
+}
+
+func FromiNes(r io.Reader) (*Cartridge, error) {
 	var header iNESFileHeader
-	if err := binary.Read(f, binary.LittleEndian, &header); err != nil {
+	if err := binary.Read(r, binary.LittleEndian, &header); err != nil {
 		return nil, err
 	}
 
@@ -56,12 +60,12 @@ func FromiNes(path string) (*Cartridge, error) {
 	cartridge.Battery = (header.Control1 >> 1) & 1
 
 	cartridge.Prg = make([]byte, int(header.PrgCount)*consts.PrgChunkSize)
-	if _, err := io.ReadFull(f, cartridge.Prg); err != nil {
+	if _, err := io.ReadFull(r, cartridge.Prg); err != nil {
 		return nil, err
 	}
 
 	cartridge.Chr = make([]byte, int(header.ChrCount)*consts.ChrChunkSize)
-	if _, err := io.ReadFull(f, cartridge.Chr); err != nil {
+	if _, err := io.ReadFull(r, cartridge.Chr); err != nil {
 		return nil, err
 	}
 
