@@ -78,11 +78,12 @@ func (p *PPU) WriteScroll(data byte) {
 }
 
 func (p *PPU) ReadStatus() byte {
-	data := p.status
-	p.status.Remove(registers.Vblank)
+	defer func() {
+		p.status.Remove(registers.Vblank)
+	}()
 	p.addr.ResetLatch()
 	p.scroll.ResetLatch()
-	return byte(data)
+	return byte(p.status)
 }
 
 func (p *PPU) Write(data byte) {
