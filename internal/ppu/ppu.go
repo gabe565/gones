@@ -187,7 +187,7 @@ func (p *PPU) Tick(cycles uint) bool {
 		if p.scanline >= 262 {
 			p.scanline = 0
 			p.interrupt = nil
-			p.status.Remove(registers.SpriteZeroHit | registers.Vblank | registers.SpriteZeroHit)
+			p.status.Remove(registers.Vblank | registers.SpriteOverflow | registers.SpriteZeroHit)
 			return true
 		}
 	}
