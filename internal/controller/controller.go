@@ -27,15 +27,19 @@ func (j *Controller) Write(data byte) {
 }
 
 func (j *Controller) Read() byte {
-	if j.index > 7 {
+	if j.index >= 8 {
 		return 1
 	}
 
-	response := (byte(j.bits) & (1 << j.index)) >> j.index
-	if !j.strobe && j.index <= 7 {
+	var value byte
+	if j.bits.Has(1 << j.index) {
+		value = 1
+	}
+
+	if !j.strobe && j.index < 8 {
 		j.index += 1
 	}
-	return response
+	return value
 }
 
 func (j *Controller) Set(button bitflags.Flags, status bool) {
