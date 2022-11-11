@@ -341,7 +341,7 @@ func clc(c *CPU, mode AddressingMode) error {
 //
 // [CLC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLC
 func cld(c *CPU, mode AddressingMode) error {
-	c.Status.Remove(DecimalMode)
+	c.Status.Remove(Decimal)
 	return nil
 }
 
@@ -1036,7 +1036,7 @@ func sec(c *CPU, mode AddressingMode) error {
 //
 // [SED Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SED
 func sed(c *CPU, mode AddressingMode) error {
-	c.Status.Insert(DecimalMode)
+	c.Status.Insert(Decimal)
 	return nil
 }
 

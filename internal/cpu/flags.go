@@ -17,7 +17,7 @@ const (
 	Carry bitflags.Flags = 1 << iota
 	Zero
 	InterruptDisable
-	DecimalMode
+	Decimal
 	Break
 	Break2
 	Overflow
