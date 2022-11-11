@@ -5,7 +5,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/console"
-	"github.com/gabe565/gones/internal/joypad"
+	"github.com/gabe565/gones/internal/controller"
 	"github.com/gabe565/gones/internal/ppu"
 	log "github.com/sirupsen/logrus"
 	"image/color"
@@ -74,11 +74,11 @@ func (r Run) Run() error {
 				return nil
 			}
 
-			for button, key := range joypad.Keymap {
+			for button, key := range controller.Keymap {
 				if win.JustPressed(button) {
-					console.Bus.Joypad1.Set(key, true)
+					console.Bus.Controller1.Set(key, true)
 				} else if win.JustReleased(button) {
-					console.Bus.Joypad1.Set(key, false)
+					console.Bus.Controller1.Set(key, false)
 				}
 			}
 

@@ -1,4 +1,4 @@
-package joypad
+package controller
 
 import (
 	"github.com/faiface/pixel/pixelgl"

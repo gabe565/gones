@@ -3,8 +3,8 @@ package bus
 import (
 	"fmt"
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/controller"
 	"github.com/gabe565/gones/internal/interrupts"
-	"github.com/gabe565/gones/internal/joypad"
 	"github.com/gabe565/gones/internal/ppu"
 	log "github.com/sirupsen/logrus"
 )
@@ -22,8 +22,8 @@ type Bus struct {
 	cpuVram     [0x800]byte
 	cartridge   *cartridge.Cartridge
 	ppu         *ppu.PPU
-	Joypad1     joypad.Joypad
-	Joypad2     joypad.Joypad
+	Controller1 controller.Controller
+	Controller2 controller.Controller
 	cycles      uint
 	RenderStart chan struct{}
 	RenderDone  chan struct{}
@@ -48,9 +48,9 @@ func (b *Bus) MemRead(addr uint16) byte {
 	case 0x4000 <= addr && addr < 0x4016:
 		// APU
 	case addr == 0x4016:
-		return b.Joypad1.Read()
+		return b.Controller1.Read()
 	case addr == 0x4017:
-		return b.Joypad2.Read()
+		return b.Controller2.Read()
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled APU
 	default:
@@ -98,9 +98,9 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 	case 0x4000 <= addr && addr < 0x4013, addr == 0x4015:
 		// APU
 	case addr == 0x4016:
-		b.Joypad1.Write(data)
+		b.Controller1.Write(data)
 	case addr == 0x4017:
-		b.Joypad2.Write(data)
+		b.Controller2.Write(data)
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled
 	default:

@@ -1,4 +1,4 @@
-package joypad
+package controller
 
 import "github.com/gabe565/gones/internal/bitflags"
 
@@ -13,20 +13,20 @@ const (
 	Right
 )
 
-type Joypad struct {
+type Controller struct {
 	strobe bool
 	index  byte
 	bits   bitflags.Flags
 }
 
-func (j *Joypad) Write(data byte) {
+func (j *Controller) Write(data byte) {
 	j.strobe = data&1 == 1
 	if j.strobe {
 		j.index = 0
 	}
 }
 
-func (j *Joypad) Read() byte {
+func (j *Controller) Read() byte {
 	if j.index > 7 {
 		return 1
 	}
@@ -38,6 +38,6 @@ func (j *Joypad) Read() byte {
 	return response
 }
 
-func (j *Joypad) Set(button bitflags.Flags, status bool) {
+func (j *Controller) Set(button bitflags.Flags, status bool) {
 	j.bits.Set(button, status)
 }
