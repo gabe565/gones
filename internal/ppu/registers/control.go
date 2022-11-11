@@ -1,6 +1,9 @@
 package registers
 
-import "github.com/gabe565/gones/internal/bitflags"
+import (
+	"github.com/gabe565/gones/internal/bitflags"
+	log "github.com/sirupsen/logrus"
+)
 
 type Control bitflags.Flags
 
@@ -70,6 +73,7 @@ func (c Control) NametableAddr() uint16 {
 	case 3:
 		return 0x2c00
 	default:
-		panic("invalid control register")
+		log.Panic("invalid control register")
+		return 0
 	}
 }

@@ -1,6 +1,9 @@
 package cpu
 
-import "fmt"
+import (
+	"fmt"
+	log "github.com/sirupsen/logrus"
+)
 
 // OpCode defines an opcode and its parameters.
 //
@@ -286,7 +289,8 @@ func init() {
 	codes := make(map[byte]OpCode)
 	for _, opcode := range OpCodes {
 		if _, ok := codes[opcode.Code]; ok {
-			panic(fmt.Sprintf("duplicate opcode: $%02X", opcode.Code))
+			log.WithField("code", fmt.Sprintf("%02X", opcode.Code)).
+				Panic("duplicate opcode")
 		}
 		codes[opcode.Code] = opcode
 	}

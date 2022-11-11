@@ -2,6 +2,7 @@ package cpu
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"strings"
 )
 
@@ -49,7 +50,7 @@ func (c *CPU) Trace() string {
 			addr := uint16(int8(addr)) + begin + 2
 			trace += fmt.Sprintf("$%04X", addr)
 		default:
-			panic(fmt.Sprintf("unexpected addressing mode %s has len 2. code %02X", op.Mode, op.Code))
+			log.Panicf("unexpected addressing mode %s has len 2. code %02X", op.Mode, op.Code)
 		}
 	case 3:
 		addrLo := c.MemRead(begin + 1)
@@ -83,7 +84,7 @@ func (c *CPU) Trace() string {
 		case AbsoluteY:
 			trace += fmt.Sprintf("$%04X,Y @ %04X = %02X", addr, valAddr, val)
 		default:
-			panic(fmt.Sprintf("unexpected addressing mode %s has len 3. code %02X", op.Mode, op.Code))
+			log.Panicf("unexpected addressing mode %s has len 3. code %02X", op.Mode, op.Code)
 		}
 	}
 

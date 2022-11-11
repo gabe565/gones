@@ -1,10 +1,12 @@
 package bus
 
 import (
+	"fmt"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/joypad"
 	"github.com/gabe565/gones/internal/ppu"
+	log "github.com/sirupsen/logrus"
 )
 
 func New(cart *cartridge.Cartridge, ppu *ppu.PPU) *Bus {
@@ -70,7 +72,8 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 	case addr == 0x2001:
 		b.ppu.WriteMask(data)
 	case addr == 0x2002:
-		panic("attempt to write to PPU status register")
+		log.WithField("address", fmt.Sprintf("%02X", addr)).
+			Error("attempt to write to PPU status register")
 	case addr == 0x2003:
 		b.ppu.WriteOamAddr(data)
 	case addr == 0x2004:
@@ -98,7 +101,8 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 		addr &= 0b10_0000_0000_0111
 		b.MemWrite(addr, data)
 	default:
-		panic("Attempt to write to cartridge ROM")
+		log.WithField("address", fmt.Sprintf("%02X", addr)).
+			Error("attempt to write to cartridge ROM")
 	}
 }
 

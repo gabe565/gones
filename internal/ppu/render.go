@@ -3,6 +3,7 @@ package ppu
 import (
 	"github.com/faiface/pixel"
 	"github.com/gabe565/gones/internal/cartridge"
+	log "github.com/sirupsen/logrus"
 	"image"
 	"image/color"
 )
@@ -111,7 +112,7 @@ func (p *PPU) bgPalette(attrTable []byte, col, row uint16) [4]byte {
 	case [2]byte{1, 1}:
 		paletteIdx >>= 6
 	default:
-		panic("invalid bg palette")
+		log.Panic("invalid bg palette")
 	}
 	paletteIdx &= 0b11
 
@@ -189,7 +190,8 @@ func (p *PPU) getNametables() ([]byte, []byte) {
 			return p.vram[0x400:0x800], p.vram[:0x400]
 		}
 	default:
-		panic(p.mirroring.String() + " mirroring unsupported")
+		log.Panic(p.mirroring.String() + " mirroring unsupported")
+		return []byte{}, []byte{}
 	}
 }
 
