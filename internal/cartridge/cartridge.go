@@ -8,7 +8,7 @@ type Cartridge struct {
 	Sram    []byte
 	Mapper  byte
 	Mirror  Mirror
-	Battery byte
+	Battery bool
 }
 
 func New() *Cartridge {
