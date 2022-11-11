@@ -97,6 +97,7 @@ func (p *PPU) Write(data byte) {
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).
 			Error("bad PPU write")
 	case addr < 0x4000:
+		addr &= 0x3F1F
 		switch addr {
 		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
 			addr -= 0x10
@@ -129,6 +130,7 @@ func (p *PPU) Read() byte {
 			Error("bad PPU write")
 		return 0
 	case addr < 0x4000:
+		addr &= 0x3F1F
 		switch addr {
 		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
 			addr -= 0x10
