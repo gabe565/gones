@@ -14,31 +14,30 @@ const (
 )
 
 type Joypad struct {
-	strobe       bool
-	buttonIdx    byte
-	buttonStatus bitflags.Flags
+	strobe bool
+	index  byte
+	bits   bitflags.Flags
 }
 
 func (j *Joypad) Write(data byte) {
 	j.strobe = data&1 == 1
 	if j.strobe {
-		j.buttonIdx = 0
+		j.index = 0
 	}
 }
 
 func (j *Joypad) Read() byte {
-	if j.buttonIdx > 7 {
+	if j.index > 7 {
 		return 1
 	}
 
-	status := byte(j.buttonStatus)
-	response := (status & (1 << j.buttonIdx)) >> j.buttonIdx
-	if !j.strobe && j.buttonIdx <= 7 {
-		j.buttonIdx += 1
+	response := (byte(j.bits) & (1 << j.index)) >> j.index
+	if !j.strobe && j.index <= 7 {
+		j.index += 1
 	}
 	return response
 }
 
 func (j *Joypad) Set(button bitflags.Flags, status bool) {
-	j.buttonStatus.Set(button, status)
+	j.bits.Set(button, status)
 }
