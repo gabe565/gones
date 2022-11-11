@@ -32,7 +32,7 @@ type Bus struct {
 func (b *Bus) MemRead(addr uint16) byte {
 	switch {
 	case addr < 0x2000:
-		addr &= 0b111_1111_1111
+		addr &= 0x07FF
 		return b.cpuVram[addr]
 	case addr == 0x2000, addr == 0x2001, addr == 0x2003, addr == 0x2005, addr == 0x2006, addr == 0x4014:
 		return 0
@@ -51,7 +51,7 @@ func (b *Bus) MemRead(addr uint16) byte {
 		// Joypad 2
 		return 0
 	case 0x2008 <= addr && addr < 0x4000:
-		addr &= 0b0010_0000_0000_0111
+		addr &= 0x2007
 		return b.MemRead(addr)
 	default:
 		addr -= 0x8000
@@ -65,7 +65,7 @@ func (b *Bus) MemRead(addr uint16) byte {
 func (b *Bus) MemWrite(addr uint16, data byte) {
 	switch {
 	case addr < 0x2000:
-		addr &= 0b111_1111_1111
+		addr &= 0x07FF
 		b.cpuVram[addr] = data
 	case addr == 0x2000:
 		b.ppu.WriteCtrl(data)
@@ -98,7 +98,7 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 	case addr == 0x4017:
 		// Joypad 2
 	case 0x2008 <= addr && addr < 0x4000:
-		addr &= 0b10_0000_0000_0111
+		addr &= 0x2007
 		b.MemWrite(addr, data)
 	default:
 		log.WithField("address", fmt.Sprintf("%02X", addr)).

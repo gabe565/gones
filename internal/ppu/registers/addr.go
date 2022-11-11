@@ -22,7 +22,7 @@ func (r *AddrRegister) Update(data byte) {
 	}
 
 	if v := r.Get(); v > 0x3FFF {
-		r.Set(v & 0b11_1111_1111_1111)
+		r.Set(v & 0x3FFF)
 	}
 	r.LoPtr = !r.LoPtr
 }
@@ -35,7 +35,7 @@ func (r *AddrRegister) Increment(inc byte) {
 	}
 
 	if v := r.Get(); v > 0x3FFF {
-		r.Set(v & 0b11_1111_1111_1111)
+		r.Set(v & 0x3FFF)
 	}
 }
 
