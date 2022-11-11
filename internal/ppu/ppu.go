@@ -64,8 +64,7 @@ func (p *PPU) WriteOam(data byte) {
 
 func (p *PPU) WriteOamDma(data [0x100]byte) {
 	for _, data := range data {
-		p.oam[p.oamAddr] = data
-		p.oamAddr += 1
+		p.WriteOam(data)
 	}
 }
 
