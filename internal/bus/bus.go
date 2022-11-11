@@ -14,6 +14,7 @@ func New(cart *cartridge.Cartridge, ppu *ppu.PPU) *Bus {
 		cartridge:   cart,
 		ppu:         ppu,
 		Joypad1:     &joypad.Joypad{},
+		Joypad2:     &joypad.Joypad{},
 		RenderStart: make(chan struct{}),
 		RenderDone:  make(chan struct{}),
 	}
@@ -24,6 +25,7 @@ type Bus struct {
 	cartridge   *cartridge.Cartridge
 	ppu         *ppu.PPU
 	Joypad1     *joypad.Joypad
+	Joypad2     *joypad.Joypad
 	cycles      uint
 	RenderStart chan struct{}
 	RenderDone  chan struct{}
@@ -50,7 +52,7 @@ func (b *Bus) MemRead(addr uint16) byte {
 	case addr == 0x4016:
 		return b.Joypad1.Read()
 	case addr == 0x4017:
-		// Joypad 2
+		return b.Joypad2.Read()
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled APU
 	default:
@@ -100,7 +102,7 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 	case addr == 0x4016:
 		b.Joypad1.Write(data)
 	case addr == 0x4017:
-		// Joypad 2
+		b.Joypad2.Write(data)
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled
 	default:
