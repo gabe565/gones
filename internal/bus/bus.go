@@ -118,6 +118,6 @@ func (b *Bus) Tick(cycles uint) {
 	}
 }
 
-func (b *Bus) ReadInterrupt() *interrupts.Interrupt {
-	return b.ppu.ReadInterrupt()
+func (b *Bus) GetInterruptCh() <-chan *interrupts.Interrupt {
+	return b.ppu.GetInterruptCh()
 }

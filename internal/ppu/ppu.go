@@ -11,8 +11,9 @@ import (
 
 func New(cart *cartridge.Cartridge) *PPU {
 	return &PPU{
-		chr:       cart.Chr,
-		mirroring: cart.Mirror,
+		chr:         cart.Chr,
+		mirroring:   cart.Mirror,
+		interruptCh: make(chan *interrupts.Interrupt, 1),
 	}
 }
 
@@ -30,9 +31,9 @@ type PPU struct {
 	oam     [0x100]byte
 	palette [0x20]byte
 
-	scanline  uint16
-	cycles    uint
-	interrupt *interrupts.Interrupt
+	scanline    uint16
+	cycles      uint
+	interruptCh chan *interrupts.Interrupt
 
 	readBuf byte
 }
@@ -45,7 +46,7 @@ func (p *PPU) WriteCtrl(data byte) {
 	beforeNmi := p.ctrl.HasEnableNMI()
 	p.ctrl = registers.Control(data)
 	if !beforeNmi && p.ctrl.HasEnableNMI() && p.status.Has(registers.Vblank) {
-		p.interrupt = &interrupts.NMI
+		p.interruptCh <- &interrupts.NMI
 	}
 }
 
@@ -180,13 +181,12 @@ func (p *PPU) Tick(cycles uint) bool {
 			p.status.Insert(registers.Vblank)
 			p.status.Remove(registers.SpriteZeroHit)
 			if p.ctrl.HasEnableNMI() {
-				p.interrupt = &interrupts.NMI
+				p.interruptCh <- &interrupts.NMI
 			}
 		}
 
 		if p.scanline >= 262 {
 			p.scanline = 0
-			p.interrupt = nil
 			p.status.Remove(registers.Vblank | registers.SpriteOverflow | registers.SpriteZeroHit)
 			return true
 		}
@@ -194,14 +194,12 @@ func (p *PPU) Tick(cycles uint) bool {
 	return false
 }
 
-func (p *PPU) ReadInterrupt() *interrupts.Interrupt {
-	i := p.interrupt
-	p.interrupt = nil
-	return i
-}
-
 func (p *PPU) SpriteZeroHit(cycle uint) bool {
 	x := p.oam[3]
 	y := p.oam[0]
 	return uint16(y) == p.scanline && uint(x) <= cycle && p.mask.Has(registers.SpriteEnable)
+}
+
+func (p *PPU) GetInterruptCh() <-chan *interrupts.Interrupt {
+	return p.interruptCh
 }

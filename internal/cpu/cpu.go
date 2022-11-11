@@ -98,15 +98,15 @@ var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
 // Run is the main Run entrypoint.
 func (c *CPU) Run(ctx context.Context) error {
+	interruptCh := c.Bus.GetInterruptCh()
+
 	for {
 		select {
 		case <-ctx.Done():
 			return nil
+		case interrupt := <-interruptCh:
+			c.interrupt(interrupt)
 		default:
-			if interrupt := c.Bus.ReadInterrupt(); interrupt != nil {
-				c.interrupt(interrupt)
-			}
-
 			if c.Callback != nil {
 				if err := c.Callback(c); err != nil {
 					if errors.Is(err, ErrBrk) {
