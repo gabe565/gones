@@ -17,7 +17,11 @@ func main() {
 	}
 }
 
-func run(path string) error {
+type Run struct {
+	Path string
+}
+
+func (r Run) Run() error {
 	cfg := pixelgl.WindowConfig{
 		Title:  "GoNES",
 		Bounds: pixel.R(0, 0, 3*ppu.Width, 3*ppu.Height),
@@ -28,7 +32,7 @@ func run(path string) error {
 		return err
 	}
 
-	c, err := console.New(path, func(ppu *ppu.PPU, joypad1 *joypad.Joypad) {
+	c, err := console.New(r.Path, func(ppu *ppu.PPU, joypad1 *joypad.Joypad) {
 		for button, key := range joypad.Keymap {
 			if win.JustPressed(button) {
 				joypad1.Set(key, true)
@@ -52,7 +56,7 @@ func run(path string) error {
 	}
 	c.Reset()
 
-	win.SetTitle(filepath.Base(path) + " | GoNES")
+	win.SetTitle(filepath.Base(r.Path) + " | GoNES")
 
 	if err := c.Run(); err != nil {
 		return err
