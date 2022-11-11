@@ -6,7 +6,10 @@ import (
 	"github.com/gabe565/gones/internal/console"
 	"github.com/gabe565/gones/internal/joypad"
 	"github.com/gabe565/gones/internal/ppu"
+	log "github.com/sirupsen/logrus"
 	"image/color"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"path/filepath"
 )
@@ -18,10 +21,20 @@ func main() {
 }
 
 type Run struct {
-	Path string
+	Path  string
+	Pprof string
 }
 
 func (r Run) Run() error {
+	if r.Pprof != "" {
+		go func() {
+			log.WithField("address", r.Pprof).Info("starting pprof")
+			if err := http.ListenAndServe(r.Pprof, nil); err != nil {
+				log.WithError(err).Error("failed to start pprof")
+			}
+		}()
+	}
+
 	cfg := pixelgl.WindowConfig{
 		Title:  "GoNES",
 		Bounds: pixel.R(0, 0, 3*ppu.Width, 3*ppu.Height),

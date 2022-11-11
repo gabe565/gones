@@ -27,5 +27,8 @@ func NewCommand() *cobra.Command {
 			return err
 		},
 	}
+
+	cmd.Flags().StringVar(&action.Pprof, "pprof", "", "Enables pprof http listener")
+
 	return cmd
 }
