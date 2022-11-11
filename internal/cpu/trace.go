@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+var skipRead = []uint16{
+	0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x4016, 0x4017,
+}
+
 func (c *CPU) Trace() string {
 	code := c.MemRead(c.ProgramCounter)
 	op := OpCodeMap[code]
@@ -19,7 +23,17 @@ func (c *CPU) Trace() string {
 		//
 	default:
 		valAddr, _ = c.getAbsoluteAddress(op.Mode, begin+1)
-		val = c.MemRead(valAddr)
+
+		var skip bool
+		for _, skipAddr := range skipRead {
+			if valAddr == skipAddr {
+				skip = true
+				break
+			}
+		}
+		if !skip {
+			val = c.MemRead(valAddr)
+		}
 	}
 
 	var trace string
