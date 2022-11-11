@@ -42,6 +42,9 @@ func (b *Bus) MemRead(addr uint16) byte {
 		return b.ppu.ReadOam()
 	case addr == 0x2007:
 		return b.ppu.Read()
+	case 0x2008 <= addr && addr < 0x4000:
+		addr &= 0x2007
+		return b.MemRead(addr)
 	case 0x4000 <= addr && addr < 0x4016:
 		// APU
 		return 0
@@ -50,9 +53,9 @@ func (b *Bus) MemRead(addr uint16) byte {
 	case addr == 0x4017:
 		// Joypad 2
 		return 0
-	case 0x2008 <= addr && addr < 0x4000:
-		addr &= 0x2007
-		return b.MemRead(addr)
+	case addr <= 0x4018 && addr < 0x4020:
+		// Disabled APU
+		return 0
 	default:
 		addr -= 0x8000
 		if len(b.cartridge.Prg) == 0x4000 {
@@ -84,6 +87,9 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 		b.ppu.WriteAddr(data)
 	case addr == 0x2007:
 		b.ppu.Write(data)
+	case 0x2008 <= addr && addr < 0x4000:
+		addr &= 0x2007
+		b.MemWrite(addr, data)
 	case addr == 0x4014:
 		var buf [256]byte
 		hi := uint16(data) << 8
@@ -97,9 +103,8 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 		b.Joypad1.Write(data)
 	case addr == 0x4017:
 		// Joypad 2
-	case 0x2008 <= addr && addr < 0x4000:
-		addr &= 0x2007
-		b.MemWrite(addr, data)
+	case addr <= 0x4018 && addr < 0x4020:
+		// Disabled
 	default:
 		log.WithField("address", fmt.Sprintf("%02X", addr)).
 			Error("attempt to write to cartridge ROM")
