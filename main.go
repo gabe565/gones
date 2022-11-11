@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/gabe565/gones/internal/callbacks"
 	"github.com/gabe565/gones/internal/console"
 	"github.com/gabe565/gones/internal/joypad"
 	"github.com/gabe565/gones/internal/ppu"
@@ -18,7 +17,7 @@ func main() {
 	}
 }
 
-func run(path string, callback callbacks.CallbackHandler) error {
+func run(path string) error {
 	cfg := pixelgl.WindowConfig{
 		Title:  "GoNES",
 		Bounds: pixel.R(0, 0, 3*ppu.Width, 3*ppu.Height),
@@ -54,10 +53,6 @@ func run(path string, callback callbacks.CallbackHandler) error {
 	c.Reset()
 
 	win.SetTitle(filepath.Base(path) + " | GoNES")
-
-	if callback != nil {
-		c.Callback = callback(win)
-	}
 
 	if err := c.Run(); err != nil {
 		return err
