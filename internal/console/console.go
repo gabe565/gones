@@ -16,5 +16,8 @@ func New(path string, callback func(*ppu.PPU, *joypad.Joypad)) (*cpu.CPU, error)
 
 	b := bus.New(cart)
 	b.Callback = callback
-	return cpu.New(b), nil
+
+	c := cpu.New(b)
+	c.Reset()
+	return c, nil
 }

@@ -70,7 +70,6 @@ func (r Run) Run() error {
 		return err
 	}
 
-	c.Reset()
 	if err := c.Run(); err != nil {
 		return err
 	}
