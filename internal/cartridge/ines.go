@@ -45,16 +45,9 @@ func FromiNes(r io.Reader) (*Cartridge, error) {
 	}
 
 	cartridge := New()
-
-	mapper1 := header.Control1 >> 4
-	mapper2 := header.Control2 >> 4
-	cartridge.Mapper = mapper1 | mapper2<<4
-
-	mirror1 := header.Control1 & 1
-	mirror2 := (header.Control1 >> 3) & 1
-	cartridge.Mirror = Mirror(mirror2<<1 | mirror1)
-
-	cartridge.Battery = (header.Control1>>1)&1 == 1
+	cartridge.Mapper = getMapper(header.Control1, header.Control2)
+	cartridge.Mirror = getMirror(header.Control1)
+	cartridge.Battery = hasBattery(header.Control1)
 
 	cartridge.Prg = make([]byte, int(header.PrgCount)*consts.PrgChunkSize)
 	if _, err := io.ReadFull(r, cartridge.Prg); err != nil {
@@ -71,4 +64,20 @@ func FromiNes(r io.Reader) (*Cartridge, error) {
 	}
 
 	return cartridge, nil
+}
+
+func getMapper(data1, data2 byte) byte {
+	mapper1 := data1 >> 4
+	mapper2 := data2 >> 4
+	return mapper2<<4 | mapper1
+}
+
+func getMirror(data byte) Mirror {
+	mirror1 := data & 1
+	mirror2 := (data >> 3) & 1
+	return Mirror(mirror2<<1 | mirror1)
+}
+
+func hasBattery(data byte) bool {
+	return (data>>1)&1 == 1
 }
