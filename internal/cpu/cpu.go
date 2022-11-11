@@ -116,6 +116,10 @@ func (c *CPU) Run(ctx context.Context) error {
 				}
 			}
 
+			if c.EnableTrace {
+				fmt.Println(c.Trace())
+			}
+
 			code := c.MemRead(c.ProgramCounter)
 			c.ProgramCounter += 1
 			prevPC := c.ProgramCounter
@@ -123,10 +127,6 @@ func (c *CPU) Run(ctx context.Context) error {
 			op, ok := OpCodeMap[code]
 			if !ok {
 				return fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
-			}
-
-			if c.EnableTrace {
-				fmt.Println(c.Trace())
 			}
 
 			if err := op.Exec(c, op.Mode); err != nil {
