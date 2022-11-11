@@ -45,6 +45,8 @@ func (r Run) Run() error {
 		return err
 	}
 
+	win.SetTitle(filepath.Base(r.Path) + " | GoNES")
+
 	c, err := console.New(r.Path, func(ppu *ppu.PPU, joypad1 *joypad.Joypad) {
 		for button, key := range joypad.Keymap {
 			if win.JustPressed(button) {
@@ -67,10 +69,8 @@ func (r Run) Run() error {
 	if err != nil {
 		return err
 	}
+
 	c.Reset()
-
-	win.SetTitle(filepath.Base(r.Path) + " | GoNES")
-
 	if err := c.Run(); err != nil {
 		return err
 	}
