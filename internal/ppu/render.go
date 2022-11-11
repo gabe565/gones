@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	Width  = 256
-	Height = 240
+	Width         = 256
+	Height        = 240
+	TrimmedHeight = Height - 8 - 8
 )
 
 func (p *PPU) Render() *pixel.PictureData {

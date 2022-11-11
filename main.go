@@ -37,7 +37,7 @@ func (r Run) Run() error {
 
 	cfg := pixelgl.WindowConfig{
 		Title:  "GoNES",
-		Bounds: pixel.R(0, 0, 3*ppu.Width, 3*ppu.Height),
+		Bounds: pixel.R(0, 0, 3*ppu.Width, 3*ppu.TrimmedHeight),
 		VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)
