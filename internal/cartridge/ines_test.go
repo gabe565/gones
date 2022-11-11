@@ -49,8 +49,7 @@ func Test_getMirror(t *testing.T) {
 
 func Test_getMapper(t *testing.T) {
 	type args struct {
-		data1 byte
-		data2 byte
+		data [2]byte
 	}
 	tests := []struct {
 		name string
@@ -58,13 +57,13 @@ func Test_getMapper(t *testing.T) {
 		want byte
 	}{
 		{"0", args{}, 0},
-		{"1", args{0b10000, 0}, 1},
-		{"2", args{0b100000, 0}, 2},
-		{"40", args{0b10000000, 0b100000}, 40},
+		{"1", args{[2]byte{0b10000}}, 1},
+		{"2", args{[2]byte{0b100000}}, 2},
+		{"40", args{[2]byte{0b10000000, 0b100000}}, 40},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getMapper(tt.args.data1, tt.args.data2); got != tt.want {
+			if got := getMapper(tt.args.data); got != tt.want {
 				t.Errorf("getMapper() = %v, want %v", got, tt.want)
 			}
 		})

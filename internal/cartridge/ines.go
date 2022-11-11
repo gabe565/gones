@@ -12,8 +12,7 @@ type iNESFileHeader struct {
 	Magic    [4]byte
 	PrgCount byte
 	ChrCount byte
-	Control1 byte
-	Control2 byte
+	Control  [2]byte
 	RAMCount byte
 	_        [7]byte
 }
@@ -45,9 +44,9 @@ func FromiNes(r io.Reader) (*Cartridge, error) {
 	}
 
 	cartridge := New()
-	cartridge.Mapper = getMapper(header.Control1, header.Control2)
-	cartridge.Mirror = getMirror(header.Control1)
-	cartridge.Battery = hasBattery(header.Control1)
+	cartridge.Mapper = getMapper(header.Control)
+	cartridge.Mirror = getMirror(header.Control[0])
+	cartridge.Battery = hasBattery(header.Control[0])
 
 	cartridge.Prg = make([]byte, int(header.PrgCount)*consts.PrgChunkSize)
 	if _, err := io.ReadFull(r, cartridge.Prg); err != nil {
@@ -66,9 +65,9 @@ func FromiNes(r io.Reader) (*Cartridge, error) {
 	return cartridge, nil
 }
 
-func getMapper(data1, data2 byte) byte {
-	mapper1 := data1 >> 4
-	mapper2 := data2 >> 4
+func getMapper(data [2]byte) byte {
+	mapper1 := data[0] >> 4
+	mapper2 := data[1] >> 4
 	return mapper2<<4 | mapper1
 }
 
