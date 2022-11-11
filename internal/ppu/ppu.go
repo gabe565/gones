@@ -90,13 +90,13 @@ func (p *PPU) Write(data byte) {
 	case addr < 0x2000:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).
 			Error("attempt to write to cartridge ROM")
-	case addr < 0x3000:
+	case 0x2000 <= addr && addr < 0x3000:
 		addr := p.MirrorVramAddr(addr)
 		p.vram[addr] = data
-	case addr < 0x3F00:
+	case 0x3000 <= addr && addr < 0x3F00:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).
 			Error("bad PPU write")
-	case addr < 0x4000:
+	case 0x3F00 <= addr && addr < 0x4000:
 		addr &= 0x3F1F
 		switch addr {
 		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
@@ -120,16 +120,16 @@ func (p *PPU) Read() byte {
 		result := p.readBuf
 		p.readBuf = p.chr[addr]
 		return result
-	case addr < 0x3000:
+	case 0x2000 <= addr && addr < 0x3000:
 		result := p.readBuf
 		addr := p.MirrorVramAddr(addr)
 		p.readBuf = p.vram[addr]
 		return result
-	case addr < 0x3F00:
+	case 0x3000 <= addr && addr < 0x3F00:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).
 			Error("bad PPU write")
 		return 0
-	case addr < 0x4000:
+	case 0x3F00 <= addr && addr < 0x4000:
 		addr &= 0x3F1F
 		switch addr {
 		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
