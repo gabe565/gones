@@ -42,9 +42,9 @@ func (p *PPU) WriteAddr(data byte) {
 }
 
 func (p *PPU) WriteCtrl(data byte) {
-	beforeNmi := p.ctrl.GenerateVblankNmi()
+	beforeNmi := p.ctrl.HasEnableNMI()
 	p.ctrl = registers.Control(data)
-	if !beforeNmi && p.ctrl.GenerateVblankNmi() && p.status.Has(registers.VblankStarted) {
+	if !beforeNmi && p.ctrl.HasEnableNMI() && p.status.Has(registers.Vblank) {
 		p.interrupt = &interrupts.NMI
 	}
 }
@@ -79,7 +79,7 @@ func (p *PPU) WriteScroll(data byte) {
 
 func (p *PPU) ReadStatus() byte {
 	data := p.status
-	p.status.Remove(registers.VblankStarted)
+	p.status.Remove(registers.Vblank)
 	p.addr.ResetLatch()
 	p.scroll.ResetLatch()
 	return byte(data)
@@ -108,12 +108,12 @@ func (p *PPU) Write(data byte) {
 		log.WithField("address", fmt.Sprintf("%02X", addr)).
 			Error("unexpected write to mirrored space")
 	}
-	p.addr.Increment(p.ctrl.VramAddrIncrement())
+	p.addr.Increment(p.ctrl.VramAddr())
 }
 
 func (p *PPU) Read() byte {
 	addr := p.addr.Get()
-	p.addr.Increment(p.ctrl.VramAddrIncrement())
+	p.addr.Increment(p.ctrl.VramAddr())
 
 	switch {
 	case addr < 0x2000:
@@ -176,9 +176,9 @@ func (p *PPU) Tick(cycles uint) bool {
 		p.scanline += 1
 
 		if p.scanline == 241 {
-			p.status.Insert(registers.VblankStarted)
+			p.status.Insert(registers.Vblank)
 			p.status.Remove(registers.SpriteZeroHit)
-			if p.ctrl.GenerateVblankNmi() {
+			if p.ctrl.HasEnableNMI() {
 				p.interrupt = &interrupts.NMI
 			}
 		}
@@ -186,7 +186,7 @@ func (p *PPU) Tick(cycles uint) bool {
 		if p.scanline >= 262 {
 			p.scanline = 0
 			p.interrupt = nil
-			p.status.Remove(registers.SpriteZeroHit | registers.VblankStarted | registers.SpriteZeroHit)
+			p.status.Remove(registers.SpriteZeroHit | registers.Vblank | registers.SpriteZeroHit)
 			return true
 		}
 	}
@@ -202,5 +202,5 @@ func (p *PPU) ReadInterrupt() *interrupts.Interrupt {
 func (p *PPU) SpriteZeroHit(cycle uint) bool {
 	x := p.oam[3]
 	y := p.oam[0]
-	return uint16(y) == p.scanline && uint(x) <= cycle && p.mask.Has(registers.ShowSprites)
+	return uint16(y) == p.scanline && uint(x) <= cycle && p.mask.Has(registers.SpriteEnable)
 }

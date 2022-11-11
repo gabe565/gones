@@ -128,7 +128,7 @@ func TestPPU_VramMirror(t *testing.T) {
 func TestPPU_StatusResetsVblank(t *testing.T) {
 	var ppu PPU
 	ppu.chr = make([]byte, 2048)
-	ppu.status.Insert(registers.VblankStarted)
+	ppu.status.Insert(registers.Vblank)
 	assert.EqualValues(t, 1, ppu.ReadStatus()>>7)
 	assert.EqualValues(t, 0, ppu.ReadStatus()>>7)
 }

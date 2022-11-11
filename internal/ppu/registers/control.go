@@ -10,32 +10,32 @@ type Control bitflags.Flags
 const (
 	Nametable1 bitflags.Flags = 1 << iota
 	Nametable2
-	VramAddIncrement
-	SpritePatternAddr
-	BackgroundPatternAddr
-	SpriteSize
+	IncrementMode
+	SpriteTileSelect
+	BgTileSelect
+	SpriteHeight
 	MasterSlaveSelect
-	GenerateNmi
+	EnableNMI
 )
 
-func (c Control) VramAddrIncrement() byte {
-	if bitflags.Flags(c).Has(VramAddIncrement) {
+func (c Control) VramAddr() byte {
+	if bitflags.Flags(c).Has(IncrementMode) {
 		return 32
 	} else {
 		return 1
 	}
 }
 
-func (c Control) SprtPatternAddr() uint16 {
-	if bitflags.Flags(c).Has(SpritePatternAddr) {
+func (c Control) SpriteTileAddr() uint16 {
+	if bitflags.Flags(c).Has(SpriteTileSelect) {
 		return 0x1000
 	} else {
 		return 1
 	}
 }
 
-func (c Control) BkndPatternAddr() uint16 {
-	if bitflags.Flags(c).Has(BackgroundPatternAddr) {
+func (c Control) BgTileAddr() uint16 {
+	if bitflags.Flags(c).Has(BgTileSelect) {
 		return 0x1000
 	} else {
 		return 0
@@ -43,7 +43,7 @@ func (c Control) BkndPatternAddr() uint16 {
 }
 
 func (c Control) SpriteSize() byte {
-	if bitflags.Flags(c).Has(SpriteSize) {
+	if bitflags.Flags(c).Has(SpriteHeight) {
 		return 16
 	} else {
 		return 8
@@ -58,8 +58,8 @@ func (c Control) MasterSlaveSelect() byte {
 	}
 }
 
-func (c Control) GenerateVblankNmi() bool {
-	return bitflags.Flags(c).Has(GenerateNmi)
+func (c Control) HasEnableNMI() bool {
+	return bitflags.Flags(c).Has(EnableNMI)
 }
 
 func (c Control) NametableAddr() uint16 {

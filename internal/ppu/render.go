@@ -58,7 +58,7 @@ func (p *PPU) Render() *pixel.PictureData {
 		paletteIdx := p.oam[i+2] & 0b11
 		spritePalette := p.spritePalette(paletteIdx)
 
-		bank := p.ctrl.SprtPatternAddr()
+		bank := p.ctrl.SpriteTileAddr()
 
 		tile := p.chr[bank+uint16(tileIdx)*16 : bank+uint16(tileIdx)*16+16]
 
@@ -136,7 +136,7 @@ func (p *PPU) spritePalette(idx byte) [4]byte {
 }
 
 func (p *PPU) RenderNametable(pic *pixel.PictureData, nameTable []byte, viewport image.Rectangle, shiftX, shiftY int) {
-	bank := p.ctrl.BkndPatternAddr()
+	bank := p.ctrl.BgTileAddr()
 
 	attrTable := nameTable[0x3C0:0x400]
 
