@@ -170,6 +170,25 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 
 func (p *PPU) Tick(cycles uint) bool {
 	p.cycles += cycles
+
+	if p.cycles == 257 {
+		size := int(p.ctrl.SpriteSize())
+		var count uint
+		for i := 0; i < len(p.oam)/4; i += 1 {
+			i := i * 4
+			tileY := p.oam[i]
+			row := int(p.scanline) - int(tileY)
+			if row < 0 || row >= size {
+				continue
+			}
+			count += 1
+		}
+		count &= 0b1111
+		if count == 8 {
+			p.status.Insert(registers.SpriteOverflow)
+		}
+	}
+
 	if p.cycles >= 341 {
 		if p.SpriteZeroHit(cycles) {
 			p.status.Insert(registers.SpriteZeroHit)
