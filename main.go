@@ -12,6 +12,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"os"
+	"os/signal"
 	"path/filepath"
 )
 
@@ -63,6 +64,14 @@ func (r Run) Run() error {
 	go func() {
 		err := console.CPU.Run(ctx)
 		errCh <- err
+	}()
+
+	go func() {
+		ch := make(chan os.Signal, 1)
+		signal.Notify(ch, os.Interrupt)
+		for range ch {
+			cancel()
+		}
 	}()
 
 	for {
