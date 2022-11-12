@@ -1,0 +1,40 @@
+name: Build
+
+on: push
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install apt dependencies
+        run: sudo apt-get install libgl1-mesa-dev xorg-dev
+      - name: Lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          args: --timeout=5m
+          skip-build-cache: true
+          skip-pkg-cache: true
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install apt dependencies
+        run: sudo apt-get install libgl1-mesa-dev xorg-dev
+      - name: Test
+        run: go test ./...
