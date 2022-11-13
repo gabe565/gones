@@ -50,15 +50,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: linux_amd64
+          - platform: linux-amd64
             runs-on: ubuntu-latest
             pre-build: sudo apt-get install libgl1-mesa-dev xorg-dev
-          - platform: darwin_amd64
+          - platform: darwin-amd64
             runs-on: macos-12
-          - platform: darwin_arm64
+          - platform: darwin-arm64
             runs-on: macos-12
             envs: GOARCH=arm64
-          - platform: windows_amd64
+          - platform: windows-amd64
             runs-on: windows-latest
             extension: .exe
     steps:
@@ -111,7 +111,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: linux_arm64
+          - platform: linux-arm64
             docker-platform: linux/arm64/v8
             pre-build: sudo apt-get install libgl1-mesa-dev xorg-dev
     steps:
