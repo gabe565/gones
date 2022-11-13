@@ -1,6 +1,9 @@
 name: Build
 
-on: push
+on:
+  push: {}
+  schedule:
+    - cron: '41 8 5 * *'
 
 jobs:
   lint:
