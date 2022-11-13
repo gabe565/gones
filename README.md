@@ -68,6 +68,13 @@ Eventually, this will be configurable in the UI.
 
 ### Other
 
+| Action | Key |
+|--------|-----|
+| Reset  | R   |
+
+
+#### Debugging
+
 | Action                                            | Key |
 |---------------------------------------------------|-----|
 | Toggle step debugging                             | `   |

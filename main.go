@@ -93,6 +93,10 @@ func (r Run) Run() error {
 				console.Bus.Controller2.Set(button, win.Pressed(key))
 			}
 
+			if win.JustPressed(controller.Reset) {
+				console.CPU.Reset()
+			}
+
 			if win.JustPressed(controller.ToggleDebug) && !console.CPU.EnableDebug || debugNextRender {
 				if !debugNextRender {
 					log.Info("Enable step debug")
