@@ -17,8 +17,9 @@ Eventually, binaries will be attached to releases.
 For now, binaries can be downloaded from CI build artifacts.
 1. Go to [the build action](https://github.com/gabe565/gones/actions/workflows/build.yml?query=branch%3Amain+is%3Asuccess).
 2. Click the latest build job.
-3. Scroll down to "Artifacts" and download `dist`.
-4. Run the binary for your OS in the downloaded zip file!
+3. Scroll down to "Artifacts".
+4. Download the artifact for your operating system/architecture.
+5. A zip file will be downloaded containing GoNES!
 
 ### From Source
 
