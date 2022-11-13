@@ -94,7 +94,7 @@ func (r Run) Run() error {
 			}
 
 			if win.JustPressed(controller.Reset) {
-				console.CPU.Reset()
+				console.CPU.ResetCh <- struct{}{}
 			}
 
 			if win.JustPressed(controller.ToggleDebug) && !console.CPU.EnableDebug || debugNextRender {

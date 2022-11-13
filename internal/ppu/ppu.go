@@ -223,3 +223,13 @@ func (p *PPU) SpriteZeroHit(cycle uint) bool {
 func (p *PPU) GetInterruptCh() <-chan *interrupts.Interrupt {
 	return p.interruptCh
 }
+
+func (p *PPU) Reset() {
+	p.cycles = 0
+	p.scanline = 0
+	p.WriteCtrl(0)
+	p.WriteMask(0)
+	p.WriteOamAddr(0)
+	p.addr = registers.AddrRegister{}
+	p.scroll = registers.Scroll{}
+}

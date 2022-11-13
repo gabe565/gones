@@ -16,6 +16,7 @@ func New(b *bus.Bus) *CPU {
 		StackPointer: StackReset,
 		Bus:          b,
 		DebugCh:      make(chan struct{}),
+		ResetCh:      make(chan struct{}, 1),
 	}
 }
 
@@ -57,6 +58,9 @@ type CPU struct {
 
 	// DebugCh if EnableDebug is true, blocks next instruction until input is received
 	DebugCh chan struct{}
+
+	// ResetCh queues a reset
+	ResetCh chan struct{}
 }
 
 type Callback func(*CPU) error
@@ -71,12 +75,10 @@ const (
 
 // Reset resets the CPU and sets ProgramCounter to the value of the [Reset] Vector.
 func (c *CPU) Reset() {
-	c.Accumulator = 0
-	c.RegisterX = 0
-	c.Status = DefaultStatus
-	c.StackPointer = StackReset
-
 	c.ProgramCounter = c.MemRead16(consts.ResetAddr)
+	c.StackPointer = StackReset
+	c.Status = DefaultStatus
+	c.Bus.Reset()
 }
 
 // Load loads a program into PRG memory
@@ -113,6 +115,8 @@ func (c *CPU) Run(ctx context.Context) error {
 			return nil
 		case interrupt := <-interruptCh:
 			c.interrupt(interrupt)
+		case <-c.ResetCh:
+			c.Reset()
 		default:
 			if c.Callback != nil {
 				if err := c.Callback(c); err != nil {
