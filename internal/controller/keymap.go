@@ -30,6 +30,8 @@ var Player2Keymap = map[pixelgl.Button]bitflags.Flags{
 const (
 	Reset = pixelgl.KeyR
 
+	FastForward = pixelgl.KeyF
+
 	ToggleTrace = pixelgl.KeyTab
 	ToggleDebug = pixelgl.KeyGraveAccent
 	StepFrame   = pixelgl.Key1

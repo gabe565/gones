@@ -97,6 +97,12 @@ func (r Run) Run() error {
 				console.CPU.ResetCh <- struct{}{}
 			}
 
+			if win.JustPressed(controller.FastForward) {
+				win.SetVSync(false)
+			} else if win.JustReleased(controller.FastForward) {
+				win.SetVSync(true)
+			}
+
 			if win.JustPressed(controller.ToggleDebug) && !console.CPU.EnableDebug || debugNextRender {
 				if !debugNextRender {
 					log.Info("Enable step debug")

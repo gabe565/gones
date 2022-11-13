@@ -68,9 +68,11 @@ Eventually, this will be configurable in the UI.
 
 ### Other
 
-| Action | Key |
-|--------|-----|
-| Reset  | R   |
+| Action       | Key      |
+|--------------|----------|
+| Fast Forward | F (Hold) |
+| Reset        | R        |
+
 
 
 #### Debugging
