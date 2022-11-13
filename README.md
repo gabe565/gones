@@ -49,9 +49,9 @@ Eventually, this will be configurable in the UI.
 
 | Button     | Key         |
 |------------|-------------|
-| A          | A           |
-| B          | S           |
-| Directions | Arrow Keys  |
+| A          | N           |
+| B          | M           |
+| Directions | WASD        |
 | Start      | Enter       |
 | Select     | Right Shift |
 

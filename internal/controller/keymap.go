@@ -5,13 +5,13 @@ import (
 	"github.com/gabe565/gones/internal/bitflags"
 )
 
-var Keymap = map[pixelgl.Button]bitflags.Flags{
-	pixelgl.KeyUp:         Up,
-	pixelgl.KeyRight:      Right,
-	pixelgl.KeyDown:       Down,
-	pixelgl.KeyLeft:       Left,
+var Player1Keymap = map[pixelgl.Button]bitflags.Flags{
+	pixelgl.KeyW:          Up,
+	pixelgl.KeyD:          Right,
+	pixelgl.KeyS:          Down,
+	pixelgl.KeyA:          Left,
 	pixelgl.KeyEnter:      Start,
 	pixelgl.KeyRightShift: Select,
-	pixelgl.KeyA:          ButtonA,
-	pixelgl.KeyS:          ButtonB,
+	pixelgl.KeyN:          ButtonA,
+	pixelgl.KeyM:          ButtonB,
 }

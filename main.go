@@ -83,7 +83,7 @@ func (r Run) Run() error {
 				return nil
 			}
 
-			for button, key := range controller.Keymap {
+			for button, key := range controller.Player1Keymap {
 				if win.JustPressed(button) {
 					console.Bus.Controller1.Set(key, true)
 				} else if win.JustReleased(button) {
