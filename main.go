@@ -83,20 +83,12 @@ func (r Run) Run() error {
 				return nil
 			}
 
-			for button, key := range controller.Player1Keymap {
-				if win.JustPressed(button) {
-					console.Bus.Controller1.Set(key, true)
-				} else if win.JustReleased(button) {
-					console.Bus.Controller1.Set(key, false)
-				}
+			for key, button := range controller.Player1Keymap {
+				console.Bus.Controller1.Set(button, win.Pressed(key))
 			}
 
-			for button, key := range controller.Player2Keymap {
-				if win.JustPressed(button) {
-					console.Bus.Controller2.Set(key, true)
-				} else if win.JustReleased(button) {
-					console.Bus.Controller2.Set(key, false)
-				}
+			for key, button := range controller.Player2Keymap {
+				console.Bus.Controller2.Set(button, win.Pressed(key))
 			}
 
 			win.Clear(color.Black)
