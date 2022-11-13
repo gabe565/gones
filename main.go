@@ -91,6 +91,14 @@ func (r Run) Run() error {
 				}
 			}
 
+			for button, key := range controller.Player2Keymap {
+				if win.JustPressed(button) {
+					console.Bus.Controller2.Set(key, true)
+				} else if win.JustReleased(button) {
+					console.Bus.Controller2.Set(key, false)
+				}
+			}
+
 			win.Clear(color.Black)
 			pic := console.PPU.Render()
 			console.Bus.RenderDone <- struct{}{}

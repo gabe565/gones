@@ -57,7 +57,13 @@ Eventually, this will be configurable in the UI.
 
 ### Player 2
 
-Player 2 controller is implemented, but still undecided on keybinds.
+| Button     | Key               |
+|------------|-------------------|
+| A          | Num Pad 2         |
+| B          | Num Pad 3         |
+| Directions | Home/Del/End/PgDn |
+| Start      | Num Pad Enter     |
+| Select     | Num Pad Plus      |
 
 ## Milestones
 
@@ -75,7 +81,8 @@ Player 2 controller is implemented, but still undecided on keybinds.
   - Video output implemented using [faiface/pixel](https://github.com/faiface/pixel), but menu options need to be added.
 - [x] Basic controller support
   - [x] Player 1
-  - [x] Player 2 (implemented, but need to decide on keybinds)
+  - [x] Player 2
+  - [ ] External controllers
 - [ ] APU implementation (audio)
   - Planning to use [faiface/beep](https://github.com/faiface/beep)
 - [ ] Save games

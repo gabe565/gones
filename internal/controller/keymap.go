@@ -15,3 +15,14 @@ var Player1Keymap = map[pixelgl.Button]bitflags.Flags{
 	pixelgl.KeyN:          ButtonA,
 	pixelgl.KeyM:          ButtonB,
 }
+
+var Player2Keymap = map[pixelgl.Button]bitflags.Flags{
+	pixelgl.KeyHome:     Up,
+	pixelgl.KeyPageDown: Right,
+	pixelgl.KeyEnd:      Down,
+	pixelgl.KeyDelete:   Left,
+	pixelgl.KeyKPEnter:  Start,
+	pixelgl.KeyKPAdd:    Select,
+	pixelgl.KeyKP2:      ButtonA,
+	pixelgl.KeyKP3:      ButtonB,
+}
