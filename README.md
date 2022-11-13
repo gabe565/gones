@@ -66,6 +66,16 @@ Eventually, this will be configurable in the UI.
 | Start      | Num Pad Enter     |
 | Select     | Num Pad Plus      |
 
+### Other
+
+| Action                                            | Key |
+|---------------------------------------------------|-----|
+| Toggle step debugging                             | `   |
+| Toggle stdout trace log (when step debug enabled) | Tab |
+| Step to next frame                                | 1   |
+| Run to next render                                | 2   |
+
+
 ## Milestones
 
 - [x] CPU implementation

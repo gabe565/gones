@@ -15,6 +15,7 @@ func New(b *bus.Bus) *CPU {
 		Status:       DefaultStatus,
 		StackPointer: StackReset,
 		Bus:          b,
+		DebugCh:      make(chan struct{}),
 	}
 }
 
@@ -50,6 +51,12 @@ type CPU struct {
 
 	// EnableTrace enables trace logging
 	EnableTrace bool
+
+	// EnableDebug enables step debugging
+	EnableDebug bool
+
+	// DebugCh if EnableDebug is true, blocks next instruction until input is received
+	DebugCh chan struct{}
 }
 
 type Callback func(*CPU) error
@@ -114,6 +121,10 @@ func (c *CPU) Run(ctx context.Context) error {
 					}
 					return err
 				}
+			}
+
+			if c.EnableDebug {
+				<-c.DebugCh
 			}
 
 			if c.EnableTrace {

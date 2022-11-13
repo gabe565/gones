@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"time"
 )
 
 func main() {
@@ -74,6 +75,7 @@ func (r Run) Run() error {
 		}
 	}()
 
+	var debugNextRender bool
 	for {
 		select {
 		case err := <-errCh:
@@ -89,6 +91,47 @@ func (r Run) Run() error {
 
 			for key, button := range controller.Player2Keymap {
 				console.Bus.Controller2.Set(button, win.Pressed(key))
+			}
+
+			if win.JustPressed(controller.ToggleDebug) && !console.CPU.EnableDebug || debugNextRender {
+				if !debugNextRender {
+					log.Info("Enable step debug")
+				}
+				debugNextRender = false
+				console.CPU.EnableDebug = true
+				go func() {
+					defer func() {
+						console.CPU.EnableDebug = false
+						console.CPU.DebugCh <- struct{}{}
+					}()
+					for {
+						select {
+						case <-ctx.Done():
+							return
+						default:
+							if win.Closed() {
+								return
+							}
+
+							win.UpdateInputWait(time.Millisecond)
+
+							if win.JustPressed(controller.ToggleDebug) {
+								win.UpdateInput()
+								console.CPU.EnableTrace = false
+								log.Info("Disable step debug")
+								return
+							} else if win.JustPressed(controller.StepFrame) || win.Repeated(controller.StepFrame) {
+								console.CPU.DebugCh <- struct{}{}
+							} else if win.JustPressed(controller.RunToRender) || win.Repeated(controller.RunToRender) {
+								debugNextRender = true
+								return
+							} else if win.JustPressed(controller.ToggleTrace) {
+								log.Info("Toggle trace logs")
+								console.CPU.EnableTrace = !console.CPU.EnableTrace
+							}
+						}
+					}
+				}()
 			}
 
 			win.Clear(color.Black)

@@ -26,3 +26,10 @@ var Player2Keymap = map[pixelgl.Button]bitflags.Flags{
 	pixelgl.KeyKP2:      ButtonA,
 	pixelgl.KeyKP3:      ButtonB,
 }
+
+const (
+	ToggleTrace = pixelgl.KeyTab
+	ToggleDebug = pixelgl.KeyGraveAccent
+	StepFrame   = pixelgl.Key1
+	RunToRender = pixelgl.Key2
+)
