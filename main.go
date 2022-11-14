@@ -19,6 +19,7 @@ func main() {
 type Run struct {
 	Path  string
 	Trace bool
+	Scale float64
 }
 
 func (r Run) Run() error {
@@ -29,7 +30,7 @@ func (r Run) Run() error {
 		return err
 	}
 
-	ebiten.SetWindowSize(3*ppu.Width, 3*ppu.TrimmedHeight)
+	ebiten.SetWindowSize(int(r.Scale*ppu.Width), int(r.Scale*ppu.TrimmedHeight))
 	ebiten.SetWindowTitle(filepath.Base(r.Path) + " | GoNES")
 	ebiten.SetScreenFilterEnabled(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)

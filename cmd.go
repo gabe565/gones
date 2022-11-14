@@ -31,6 +31,7 @@ func NewCommand() *cobra.Command {
 	}
 
 	cmd.Flags().BoolVar(&action.Trace, "trace", false, "Enable trace logging")
+	cmd.Flags().Float64Var(&action.Scale, "scale", 3, "Default UI scale")
 	pprof.Flag(cmd)
 
 	return cmd
