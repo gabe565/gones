@@ -10,12 +10,14 @@ func New() *FPS {
 		quit:   make(chan struct{}),
 	}
 	go func() {
-		select {
-		case <-ticker.C:
-			fps.fps = fps.count
-			fps.count = 0
-		case <-fps.quit:
-			return
+		for {
+			select {
+			case <-ticker.C:
+				fps.fps = fps.count
+				fps.count = 0
+			case <-fps.quit:
+				return
+			}
 		}
 	}()
 	return fps
