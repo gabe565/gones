@@ -2,8 +2,6 @@ package bus
 
 import (
 	"fmt"
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/controller"
 	"github.com/gabe565/gones/internal/ppu"
@@ -15,14 +13,13 @@ func New(cart *cartridge.Cartridge, ppu *ppu.PPU) *Bus {
 		cartridge: cart,
 		ppu:       ppu,
 		Controller1: controller.Controller{
-			Keymap:   controller.Player1Keymap,
-			Joystick: pixelgl.Joystick1,
+			Keymap:    controller.Player1Keymap,
+			GamepadID: 0,
 		},
 		Controller2: controller.Controller{
-			Keymap:   controller.Player2Keymap,
-			Joystick: pixelgl.Joystick2,
+			Keymap:    controller.Player2Keymap,
+			GamepadID: 1,
 		},
-		Render: make(chan *pixel.PictureData),
 	}
 }
 
@@ -32,7 +29,6 @@ type Bus struct {
 	ppu         *ppu.PPU
 	Controller1 controller.Controller
 	Controller2 controller.Controller
-	Render      chan *pixel.PictureData
 }
 
 func (b *Bus) MemRead(addr uint16) byte {

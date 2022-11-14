@@ -1,52 +1,52 @@
 package controller
 
 import (
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/bitflags"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
-type Keymap map[pixelgl.Button]bitflags.Flags
+type Keymap map[ebiten.Key]bitflags.Flags
 
-var Player1Keymap = map[pixelgl.Button]bitflags.Flags{
-	pixelgl.KeyW:          Up,
-	pixelgl.KeyD:          Right,
-	pixelgl.KeyS:          Down,
-	pixelgl.KeyA:          Left,
-	pixelgl.KeyEnter:      Start,
-	pixelgl.KeyRightShift: Select,
-	pixelgl.KeyN:          ButtonA,
-	pixelgl.KeyM:          ButtonB,
+var Player1Keymap = Keymap{
+	ebiten.KeyW:          Up,
+	ebiten.KeyD:          Right,
+	ebiten.KeyS:          Down,
+	ebiten.KeyA:          Left,
+	ebiten.KeyEnter:      Start,
+	ebiten.KeyShiftRight: Select,
+	ebiten.KeyN:          ButtonA,
+	ebiten.KeyM:          ButtonB,
 }
 
-var Player2Keymap = map[pixelgl.Button]bitflags.Flags{
-	pixelgl.KeyHome:     Up,
-	pixelgl.KeyPageDown: Right,
-	pixelgl.KeyEnd:      Down,
-	pixelgl.KeyDelete:   Left,
-	pixelgl.KeyKPEnter:  Start,
-	pixelgl.KeyKPAdd:    Select,
-	pixelgl.KeyKP2:      ButtonA,
-	pixelgl.KeyKP3:      ButtonB,
+var Player2Keymap = Keymap{
+	ebiten.KeyHome:     Up,
+	ebiten.KeyPageDown: Right,
+	ebiten.KeyEnd:      Down,
+	ebiten.KeyDelete:   Left,
+	ebiten.KeyKPEnter:  Start,
+	ebiten.KeyKPAdd:    Select,
+	ebiten.KeyKP2:      ButtonA,
+	ebiten.KeyKP3:      ButtonB,
 }
 
-var Joystick = map[pixelgl.GamepadButton]bitflags.Flags{
-	pixelgl.ButtonDpadUp:    Up,
-	pixelgl.ButtonDpadRight: Right,
-	pixelgl.ButtonDpadDown:  Down,
-	pixelgl.ButtonDpadLeft:  Left,
-	pixelgl.ButtonStart:     Start,
-	pixelgl.ButtonGuide:     Select,
-	pixelgl.ButtonA:         ButtonA,
-	pixelgl.ButtonB:         ButtonB,
+var Joystick = map[bitflags.Flags]ebiten.StandardGamepadButton{
+	Up:      ebiten.StandardGamepadButtonLeftTop,
+	Right:   ebiten.StandardGamepadButtonLeftRight,
+	Down:    ebiten.StandardGamepadButtonLeftBottom,
+	Left:    ebiten.StandardGamepadButtonLeftLeft,
+	Start:   ebiten.StandardGamepadButtonCenterRight,
+	Select:  ebiten.StandardGamepadButtonCenterLeft,
+	ButtonA: ebiten.StandardGamepadButtonRightRight,
+	ButtonB: ebiten.StandardGamepadButtonRightBottom,
 }
 
 const (
-	Reset = pixelgl.KeyR
+	Reset = ebiten.KeyR
 
-	FastForward = pixelgl.KeyF
+	FastForward = ebiten.KeyF
 
-	ToggleTrace = pixelgl.KeyTab
-	ToggleDebug = pixelgl.KeyGraveAccent
-	StepFrame   = pixelgl.Key1
-	RunToRender = pixelgl.Key2
+	ToggleTrace = ebiten.KeyTab
+	ToggleDebug = ebiten.KeyGraveAccent
+	StepFrame   = ebiten.Key1
+	RunToRender = ebiten.Key2
 )

@@ -2,12 +2,12 @@ package ppu
 
 import (
 	"fmt"
-	"github.com/faiface/pixel"
 	"github.com/gabe565/gones/internal/bitflags"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
+	"image"
 )
 
 func New(cart *cartridge.Cartridge) *PPU {
@@ -15,7 +15,7 @@ func New(cart *cartridge.Cartridge) *PPU {
 		chr:         cart.Chr,
 		mirroring:   cart.Mirror,
 		interruptCh: make(chan interrupts.Interrupt, 1),
-		Picture:     pixel.MakePictureData(pixel.R(0, 0, Width, Height)),
+		Image:       image.NewRGBA(image.Rect(0, 0, Width, Height)),
 	}
 }
 
@@ -38,7 +38,7 @@ type PPU struct {
 	interruptCh chan interrupts.Interrupt
 
 	readBuf byte
-	Picture *pixel.PictureData
+	Image   *image.RGBA
 }
 
 func (p *PPU) WriteAddr(data byte) {

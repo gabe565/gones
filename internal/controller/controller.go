@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/bitflags"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 const (
@@ -21,8 +21,8 @@ type Controller struct {
 	index  byte
 	bits   bitflags.Flags
 
-	Keymap   Keymap
-	Joystick pixelgl.Joystick
+	Keymap    Keymap
+	GamepadID ebiten.GamepadID
 }
 
 func (j *Controller) Write(data byte) {
@@ -52,14 +52,13 @@ func (j *Controller) Set(button bitflags.Flags, status bool) {
 	j.bits.Set(button, status)
 }
 
-func (j *Controller) UpdateInput(win *pixelgl.Window) {
-	if j.Joystick != 0 && win.JoystickPresent(j.Joystick) {
-		for key, button := range Joystick {
-			j.Set(button, win.JoystickPressed(j.Joystick, key))
-		}
-	} else {
-		for key, button := range j.Keymap {
-			j.Set(button, win.Pressed(key))
-		}
+func (j *Controller) UpdateInput() {
+	for key, button := range j.Keymap {
+		keyPressed := ebiten.IsKeyPressed(key)
+		gamepadPressed := ebiten.IsGamepadButtonPressed(
+			j.GamepadID,
+			ebiten.GamepadButton(Joystick[button]),
+		)
+		j.Set(button, keyPressed || gamepadPressed)
 	}
 }

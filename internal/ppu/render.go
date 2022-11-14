@@ -1,28 +1,27 @@
 package ppu
 
 import (
-	"github.com/faiface/pixel"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
 	"image"
-	"image/color"
 )
 
 const (
 	Width         = 256
 	Height        = 240
-	TrimmedHeight = Height - 8 - 8
+	TrimHeight    = 8
+	TrimmedHeight = Height - 2*TrimHeight
 )
 
-func (p *PPU) Render() *pixel.PictureData {
+func (p *PPU) Render() *image.RGBA {
 	main, second := p.getNametables()
 	scrollX := int(p.scroll.X)
 	scrollY := int(p.scroll.Y)
 
 	if p.mask.Has(registers.BackgroundEnable) {
 		p.RenderNametable(
-			p.Picture,
+			p.Image,
 			main,
 			image.Rect(scrollX, scrollY, Width, Height),
 			-scrollX,
@@ -31,7 +30,7 @@ func (p *PPU) Render() *pixel.PictureData {
 
 		if scrollX > 0 {
 			p.RenderNametable(
-				p.Picture,
+				p.Image,
 				second,
 				image.Rect(0, 0, scrollX, Height),
 				Width-scrollX,
@@ -39,7 +38,7 @@ func (p *PPU) Render() *pixel.PictureData {
 			)
 		} else if scrollY > 0 {
 			p.RenderNametable(
-				p.Picture,
+				p.Image,
 				second,
 				image.Rect(0, 0, Width, scrollY),
 				0,
@@ -50,7 +49,7 @@ func (p *PPU) Render() *pixel.PictureData {
 		c := SystemPalette[p.palette[0]]
 		for y := 0; y < Height; y += 1 {
 			for x := 0; x < Width; x += 1 {
-				setPixel(p.Picture, x, y, c)
+				p.Image.Set(x, y, c)
 			}
 		}
 	}
@@ -98,13 +97,13 @@ func (p *PPU) Render() *pixel.PictureData {
 						flippedY += y
 					}
 
-					setPixel(p.Picture, flippedX, flippedY, c)
+					p.Image.Set(flippedX, flippedY, c)
 				}
 			}
 		}
 	}
 
-	return p.Picture
+	return p.Image
 }
 
 func (p *PPU) bgPalette(attrTable []byte, col, row uint16) [4]byte {
@@ -145,7 +144,7 @@ func (p *PPU) spritePalette(idx byte) [4]byte {
 	}
 }
 
-func (p *PPU) RenderNametable(pic *pixel.PictureData, nameTable []byte, viewport image.Rectangle, shiftX, shiftY int) {
+func (p *PPU) RenderNametable(img *image.RGBA, nameTable []byte, viewport image.Rectangle, shiftX, shiftY int) {
 	bank := p.ctrl.BgTileAddr()
 
 	attrTable := nameTable[0x3C0:0x400]
@@ -171,7 +170,7 @@ func (p *PPU) RenderNametable(pic *pixel.PictureData, nameTable []byte, viewport
 				pxlY := int(tileRow)*8 + y
 				point := image.Point{X: pxlX, Y: pxlY}
 				if point.In(viewport) {
-					setPixel(pic, shiftX+pxlX, shiftY+pxlY, c)
+					img.Set(shiftX+pxlX, shiftY+pxlY, c)
 				}
 			}
 		}
@@ -202,13 +201,5 @@ func (p *PPU) getNametables() ([]byte, []byte) {
 	default:
 		log.Panic(p.mirroring.String() + " mirroring unsupported")
 		return []byte{}, []byte{}
-	}
-}
-
-func setPixel(pic *pixel.PictureData, x, y int, c color.RGBA) {
-	y = Height - y - 1
-	offset := y*Width + x
-	if offset >= 0 && offset < len(pic.Pix) {
-		pic.Pix[offset] = c
 	}
 }

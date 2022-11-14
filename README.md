@@ -98,13 +98,12 @@ Eventually, this will be configurable in the UI.
   - PPU emulation is still rough. Games that rely on certain quirks of the
     original PPU will not work.
 - [x] GUI
-  - Video output implemented using [faiface/pixel](https://github.com/faiface/pixel), but menu options need to be added.
+  - Rendering works, but menu options need to be added.
 - [x] Basic controller support
   - [x] Player 1
   - [x] Player 2
   - [ ] External controllers
 - [ ] APU implementation (audio)
-  - Planning to use [faiface/beep](https://github.com/faiface/beep)
 - [ ] Save games
 - [ ] Save states
 - [ ] Preferences (remap controllers, video config, sound config, etc)

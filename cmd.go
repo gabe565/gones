@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/pprof"
 	"github.com/spf13/cobra"
 )
@@ -27,11 +26,7 @@ func NewCommand() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var err error
-			pixelgl.Run(func() {
-				err = action.Run()
-			})
-			return err
+			return action.Run()
 		},
 	}
 

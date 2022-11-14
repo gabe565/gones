@@ -3,11 +3,13 @@ package console
 import (
 	"errors"
 	"fmt"
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/cpu"
 	"github.com/gabe565/gones/internal/ppu"
+	"github.com/hajimehoshi/ebiten/v2"
+	"image"
+	"image/color"
 )
 
 type Console struct {
@@ -16,14 +18,15 @@ type Console struct {
 	PPU *ppu.PPU
 
 	EnableTrace bool
+	Debug       Debug
 }
 
-func New(path string) (Console, error) {
+func New(path string) (*Console, error) {
 	var console Console
 
 	cart, err := cartridge.FromiNesFile(path)
 	if err != nil {
-		return console, err
+		return &console, err
 	}
 
 	console.PPU = ppu.New(cart)
@@ -32,7 +35,7 @@ func New(path string) (Console, error) {
 
 	console.CPU.Reset()
 
-	return console, nil
+	return &console, nil
 }
 
 var ErrRender = errors.New("render triggered")
@@ -68,7 +71,45 @@ func (c *Console) Reset() {
 	c.PPU.Reset()
 }
 
-func (c *Console) UpdateInput(win *pixelgl.Window) {
-	c.Bus.Controller1.UpdateInput(win)
-	c.Bus.Controller2.UpdateInput(win)
+func (c *Console) Layout(_, _ int) (int, int) {
+	return ppu.Width, ppu.TrimmedHeight
+}
+
+func (c *Console) Update() error {
+	c.CheckInput()
+
+	if c.Debug == DebugWait {
+		return nil
+	}
+
+	for {
+		if err := c.Step(); err != nil {
+			if errors.Is(err, ErrRender) {
+				break
+			}
+			return err
+		}
+
+		if c.Debug == DebugStepFrame {
+			break
+		}
+	}
+
+	if c.Debug != DebugDisabled {
+		c.Debug = DebugWait
+	}
+
+	return nil
+}
+
+func (c *Console) Draw(screen *ebiten.Image) {
+	screen.Fill(color.Black)
+	img := c.PPU.Render()
+	cropped := img.SubImage(image.Rect(
+		0,
+		ppu.TrimHeight,
+		ppu.Width,
+		ppu.Height-ppu.TrimHeight,
+	))
+	screen.DrawImage(ebiten.NewImageFromImage(cropped), nil)
 }
