@@ -16,15 +16,13 @@ const (
 )
 
 func (p *PPU) Render() *pixel.PictureData {
-	pic := pixel.MakePictureData(pixel.R(0, 0, Width, Height))
-
 	main, second := p.getNametables()
 	scrollX := int(p.scroll.X)
 	scrollY := int(p.scroll.Y)
 
 	if p.mask.Has(registers.BackgroundEnable) {
 		p.RenderNametable(
-			pic,
+			p.Picture,
 			main,
 			image.Rect(scrollX, scrollY, Width, Height),
 			-scrollX,
@@ -33,7 +31,7 @@ func (p *PPU) Render() *pixel.PictureData {
 
 		if scrollX > 0 {
 			p.RenderNametable(
-				pic,
+				p.Picture,
 				second,
 				image.Rect(0, 0, scrollX, Height),
 				Width-scrollX,
@@ -41,7 +39,7 @@ func (p *PPU) Render() *pixel.PictureData {
 			)
 		} else if scrollY > 0 {
 			p.RenderNametable(
-				pic,
+				p.Picture,
 				second,
 				image.Rect(0, 0, Width, scrollY),
 				0,
@@ -52,7 +50,7 @@ func (p *PPU) Render() *pixel.PictureData {
 		c := SystemPalette[p.palette[0]]
 		for y := 0; y < Height; y += 1 {
 			for x := 0; x < Width; x += 1 {
-				setPixel(pic, x, y, c)
+				setPixel(p.Picture, x, y, c)
 			}
 		}
 	}
@@ -100,13 +98,13 @@ func (p *PPU) Render() *pixel.PictureData {
 						flippedY += y
 					}
 
-					setPixel(pic, flippedX, flippedY, c)
+					setPixel(p.Picture, flippedX, flippedY, c)
 				}
 			}
 		}
 	}
 
-	return pic
+	return p.Picture
 }
 
 func (p *PPU) bgPalette(attrTable []byte, col, row uint16) [4]byte {

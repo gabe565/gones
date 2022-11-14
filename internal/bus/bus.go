@@ -2,6 +2,7 @@ package bus
 
 import (
 	"fmt"
+	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/controller"
@@ -22,8 +23,7 @@ func New(cart *cartridge.Cartridge, ppu *ppu.PPU) *Bus {
 			Keymap:   controller.Player2Keymap,
 			Joystick: pixelgl.Joystick2,
 		},
-		RenderStart: make(chan struct{}),
-		RenderDone:  make(chan struct{}),
+		Render: make(chan *pixel.PictureData),
 	}
 }
 
@@ -34,8 +34,7 @@ type Bus struct {
 	Controller1 controller.Controller
 	Controller2 controller.Controller
 	cycles      uint
-	RenderStart chan struct{}
-	RenderDone  chan struct{}
+	Render      chan *pixel.PictureData
 }
 
 func (b *Bus) MemRead(addr uint16) byte {
@@ -121,8 +120,7 @@ func (b *Bus) Tick(cycles uint) {
 	b.cycles += cycles
 
 	if b.ppu.Tick(cycles * 3) {
-		b.RenderStart <- struct{}{}
-		<-b.RenderDone
+		b.Render <- b.ppu.Render()
 	}
 }
 

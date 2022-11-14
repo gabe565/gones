@@ -72,7 +72,7 @@ func (r Run) Run() error {
 		select {
 		case err := <-errCh:
 			return err
-		case <-console.Bus.RenderStart:
+		case pic := <-console.Bus.Render:
 			if win.Closed() {
 				return nil
 			}
@@ -132,9 +132,6 @@ func (r Run) Run() error {
 			}
 
 			win.Clear(color.Black)
-			pic := console.PPU.Render()
-			console.Bus.RenderDone <- struct{}{}
-
 			sprite := pixel.NewSprite(pic, pic.Bounds())
 			sprite.Draw(win, pixel.IM.Moved(win.Bounds().Center()).Scaled(win.Bounds().Center(), 3))
 			win.Update()
