@@ -27,6 +27,17 @@ var Player2Keymap = map[pixelgl.Button]bitflags.Flags{
 	pixelgl.KeyKP3:      ButtonB,
 }
 
+var Joystick = map[pixelgl.GamepadButton]bitflags.Flags{
+	pixelgl.ButtonDpadUp:    Up,
+	pixelgl.ButtonDpadRight: Right,
+	pixelgl.ButtonDpadDown:  Down,
+	pixelgl.ButtonDpadLeft:  Left,
+	pixelgl.ButtonStart:     Start,
+	pixelgl.ButtonGuide:     Select,
+	pixelgl.ButtonA:         ButtonA,
+	pixelgl.ButtonB:         ButtonB,
+}
+
 const (
 	Reset = pixelgl.KeyR
 
