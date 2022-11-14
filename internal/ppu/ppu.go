@@ -174,7 +174,8 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 func (p *PPU) Tick(cycles uint) bool {
 	p.cycles += cycles
 
-	if p.cycles == 257 {
+	switch {
+	case p.cycles == 257:
 		size := int(p.ctrl.SpriteSize())
 		var count uint
 		for i := 0; i < len(p.oam)/4; i += 1 {
@@ -190,9 +191,7 @@ func (p *PPU) Tick(cycles uint) bool {
 		if count == 8 {
 			p.status.Insert(registers.SpriteOverflow)
 		}
-	}
-
-	if p.cycles > 340 {
+	case p.cycles > 340:
 		if p.SpriteZeroHit(p.cycles) {
 			p.status.Insert(registers.SpriteZeroHit)
 		}
@@ -200,15 +199,14 @@ func (p *PPU) Tick(cycles uint) bool {
 		p.cycles -= 340
 		p.scanline += 1
 
-		if p.scanline == 241 {
+		switch {
+		case p.scanline == 241:
 			p.status.Insert(registers.Vblank)
 			p.status.Remove(registers.SpriteZeroHit)
 			if p.ctrl.HasEnableNMI() {
 				p.interruptCh <- &interrupts.NMI
 			}
-		}
-
-		if p.scanline >= 262 {
+		case p.scanline >= 262:
 			p.scanline = 0
 			p.status.Remove(registers.Vblank | registers.SpriteOverflow | registers.SpriteZeroHit)
 			return true
