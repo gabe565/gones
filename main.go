@@ -32,6 +32,7 @@ func (r Run) Run() error {
 	ebiten.SetWindowSize(3*ppu.Width, 3*ppu.TrimmedHeight)
 	ebiten.SetWindowTitle(filepath.Base(r.Path) + " | GoNES")
 	ebiten.SetScreenFilterEnabled(false)
+	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 
 	return ebiten.RunGame(c)
 }
