@@ -48,6 +48,13 @@ func (p *PPU) Render() *pixel.PictureData {
 				Height-scrollY,
 			)
 		}
+	} else {
+		c := SystemPalette[p.palette[0]]
+		for y := 0; y < Height; y += 1 {
+			for x := 0; x < Width; x += 1 {
+				setPixel(pic, x, y, c)
+			}
+		}
 	}
 
 	if p.mask.Has(registers.SpriteEnable) {
