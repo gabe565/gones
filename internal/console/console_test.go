@@ -2,7 +2,6 @@ package console
 
 import (
 	"bufio"
-	"context"
 	_ "embed"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
@@ -20,31 +19,32 @@ func Test_nestest(t *testing.T) {
 		return
 	}
 
-	var console Console
+	var c Console
 
-	console.PPU = ppu.New(cart)
-	console.Bus = bus.New(cart, console.PPU)
-	console.CPU = cpu.New(console.Bus)
+	c.PPU = ppu.New(cart)
+	c.Bus = bus.New(cart, c.PPU)
+	c.CPU = cpu.New(c.Bus)
 
-	console.CPU.Reset()
-	console.CPU.ProgramCounter = 0xC000
+	c.CPU.Reset()
+	c.CPU.ProgramCounter = 0xC000
 
 	scanner := bufio.NewScanner(strings.NewReader(nestest.Log))
-	console.CPU.Callback = func(c *cpu.CPU) error {
-		trace := c.Trace()
+
+	for {
+		trace := c.CPU.Trace()
 
 		scanner.Scan()
 
-		switch c.ProgramCounter {
+		switch c.CPU.ProgramCounter {
 		//TODO: Remove this after APU is supported
 		case 0xC68B, 0xC690, 0xC695, 0xC69A, 0xC69F:
-			return nil
+			return
 		//TODO: Check if these should be ignored.
 		// They get logged by our trace, but seem to be missing from nestest.log
 		// 0x1 is *ISB
 		// 0x4 is final BRK
 		case 0x1, 0x4:
-			return nil
+			return
 		}
 
 		expected := scanner.Text()
@@ -55,13 +55,15 @@ func Test_nestest(t *testing.T) {
 		}
 
 		assert.EqualValues(t, expected, trace)
-		return nil
+
+		if _, err := c.CPU.Step(); err != nil {
+			if assert.ErrorIs(t, err, cpu.ErrBrk) {
+				break
+			}
+			return
+		}
 	}
 
-	if err := console.CPU.Run(context.Background()); !assert.NoError(t, err) {
-		return
-	}
-
-	assert.EqualValues(t, 0, console.CPU.MemRead(0x2))
-	assert.EqualValues(t, 0, console.CPU.MemRead(0x3))
+	assert.EqualValues(t, 0, c.CPU.MemRead(0x2))
+	assert.EqualValues(t, 0, c.CPU.MemRead(0x3))
 }

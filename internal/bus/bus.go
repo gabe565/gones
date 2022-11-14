@@ -6,7 +6,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/controller"
-	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/ppu"
 	log "github.com/sirupsen/logrus"
 )
@@ -33,7 +32,6 @@ type Bus struct {
 	ppu         *ppu.PPU
 	Controller1 controller.Controller
 	Controller2 controller.Controller
-	cycles      uint
 	Render      chan *pixel.PictureData
 }
 
@@ -114,20 +112,4 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 		log.WithField("address", fmt.Sprintf("%02X", addr)).
 			Error("attempt to write to cartridge ROM")
 	}
-}
-
-func (b *Bus) Tick(cycles uint) {
-	b.cycles += cycles
-
-	if b.ppu.Tick(cycles * 3) {
-		b.Render <- b.ppu.Render()
-	}
-}
-
-func (b *Bus) GetInterruptCh() <-chan *interrupts.Interrupt {
-	return b.ppu.GetInterruptCh()
-}
-
-func (b *Bus) Reset() {
-	b.ppu.Reset()
 }

@@ -20,7 +20,7 @@ func adc(c *CPU, mode AddressingMode) error {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Bus.Tick(1)
+			c.Cycles += 1
 		}()
 	}
 	v := c.MemRead(addr)
@@ -90,7 +90,7 @@ func and(c *CPU, mode AddressingMode) error {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Bus.Tick(1)
+			c.Cycles += 1
 		}()
 	}
 	data := c.MemRead(addr)
@@ -147,7 +147,7 @@ func asl(c *CPU, mode AddressingMode) error {
 		addr, pageCrossed = c.getOperandAddress(mode)
 		if pageCrossed {
 			defer func() {
-				c.Bus.Tick(1)
+				c.Cycles += 1
 			}()
 		}
 		data = c.MemRead(addr)
@@ -483,7 +483,7 @@ func eor(c *CPU, mode AddressingMode) error {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Bus.Tick(1)
+			c.Cycles += 1
 		}()
 	}
 	data := c.MemRead(addr)
@@ -612,7 +612,7 @@ func las(c *CPU, mode AddressingMode) error {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Bus.Tick(1)
+			c.Cycles += 1
 		}()
 	}
 	data := c.MemRead(addr)
@@ -635,7 +635,7 @@ func lax(c *CPU, mode AddressingMode) error {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Bus.Tick(1)
+			c.Cycles += 1
 		}()
 	}
 	data := c.MemRead(addr)
@@ -656,7 +656,7 @@ func lda(c *CPU, mode AddressingMode) error {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Bus.Tick(1)
+			c.Cycles += 1
 		}()
 	}
 	v := c.MemRead(addr)
@@ -676,7 +676,7 @@ func ldx(c *CPU, mode AddressingMode) error {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Bus.Tick(1)
+			c.Cycles += 1
 		}()
 	}
 	data := c.MemRead(addr)
@@ -697,7 +697,7 @@ func ldy(c *CPU, mode AddressingMode) error {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Bus.Tick(1)
+			c.Cycles += 1
 		}()
 	}
 	data := c.MemRead(addr)
@@ -762,7 +762,7 @@ func nop(c *CPU, mode AddressingMode) error {
 		addr, pageCrossed := c.getOperandAddress(mode)
 		if pageCrossed {
 			defer func() {
-				c.Bus.Tick(1)
+				c.Cycles += 1
 			}()
 		}
 		_ = c.MemRead(addr)
@@ -782,7 +782,7 @@ func ora(c *CPU, mode AddressingMode) error {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Bus.Tick(1)
+			c.Cycles += 1
 		}()
 	}
 	data := c.MemRead(addr)
@@ -1008,7 +1008,7 @@ func sbc(c *CPU, mode AddressingMode) error {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Bus.Tick(1)
+			c.Cycles += 1
 		}()
 	}
 	v := c.MemRead(addr)
@@ -1127,7 +1127,7 @@ func sta(c *CPU, mode AddressingMode) error {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Bus.Tick(1)
+			c.Cycles += 1
 		}()
 	}
 	c.MemWrite(addr, c.Accumulator)

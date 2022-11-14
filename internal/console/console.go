@@ -1,6 +1,9 @@
 package console
 
 import (
+	"errors"
+	"fmt"
+	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/cpu"
@@ -11,6 +14,8 @@ type Console struct {
 	CPU *cpu.CPU
 	Bus *bus.Bus
 	PPU *ppu.PPU
+
+	EnableTrace bool
 }
 
 func New(path string) (Console, error) {
@@ -28,4 +33,42 @@ func New(path string) (Console, error) {
 	console.CPU.Reset()
 
 	return console, nil
+}
+
+var ErrRender = errors.New("render triggered")
+
+func (c *Console) Step() error {
+	if c.EnableTrace {
+		fmt.Println(c.CPU.Trace())
+	}
+
+	cycles, err := c.CPU.Step()
+	if err != nil {
+		return err
+	}
+
+	render := c.PPU.Tick(cycles * 3)
+
+	select {
+	case interrupt := <-c.PPU.Interrupt():
+		c.CPU.Interrupt <- interrupt
+	default:
+		//
+	}
+
+	if render {
+		return ErrRender
+	}
+
+	return nil
+}
+
+func (c *Console) Reset() {
+	c.CPU.Reset()
+	c.PPU.Reset()
+}
+
+func (c *Console) UpdateInput(win *pixelgl.Window) {
+	c.Bus.Controller1.UpdateInput(win)
+	c.Bus.Controller2.UpdateInput(win)
 }

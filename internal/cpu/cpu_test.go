@@ -1,7 +1,6 @@
 package cpu
 
 import (
-	"context"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/ppu"
@@ -20,8 +19,13 @@ func stubCpu(program []byte) *CPU {
 
 func Test_0xa9_lda_immediate_load_data(t *testing.T) {
 	cpu := stubCpu([]byte{0xA9, 0x05, 0x00})
-	if err := cpu.Run(context.Background()); err != nil {
-		assert.NoError(t, err)
+	for {
+		if _, err := cpu.Step(); err != nil {
+			if assert.ErrorIs(t, err, ErrBrk) {
+				break
+			}
+			return
+		}
 	}
 
 	assert.EqualValues(t, 0x05, cpu.Accumulator)
@@ -31,8 +35,13 @@ func Test_0xa9_lda_immediate_load_data(t *testing.T) {
 
 func Test_0xa9_lda_zero_flag(t *testing.T) {
 	cpu := stubCpu([]byte{0xA9, 0x00, 0x00})
-	if err := cpu.Run(context.Background()); err != nil {
-		assert.NoError(t, err)
+	for {
+		if _, err := cpu.Step(); err != nil {
+			if assert.ErrorIs(t, err, ErrBrk) {
+				break
+			}
+			return
+		}
 	}
 
 	assert.EqualValues(t, 0b10, cpu.Status&0b0000_0010)
@@ -40,8 +49,13 @@ func Test_0xa9_lda_zero_flag(t *testing.T) {
 
 func Test_0xaa_tax_move_a_to_x(t *testing.T) {
 	cpu := stubCpu([]byte{0xA9, 0x0A, 0xAA, 0x00})
-	if err := cpu.Run(context.Background()); err != nil {
-		assert.NoError(t, err)
+	for {
+		if _, err := cpu.Step(); err != nil {
+			if assert.ErrorIs(t, err, ErrBrk) {
+				break
+			}
+			return
+		}
 	}
 
 	assert.EqualValues(t, 10, cpu.RegisterX)
@@ -49,8 +63,13 @@ func Test_0xaa_tax_move_a_to_x(t *testing.T) {
 
 func Test_5_operations(t *testing.T) {
 	cpu := stubCpu([]byte{0xA9, 0xC0, 0xAA, 0xE8, 0x00})
-	if err := cpu.Run(context.Background()); err != nil {
-		assert.NoError(t, err)
+	for {
+		if _, err := cpu.Step(); err != nil {
+			if assert.ErrorIs(t, err, ErrBrk) {
+				break
+			}
+			return
+		}
 	}
 
 	assert.EqualValues(t, 0xC1, cpu.RegisterX)
@@ -58,8 +77,13 @@ func Test_5_operations(t *testing.T) {
 
 func Test_inx_overflow(t *testing.T) {
 	cpu := stubCpu([]byte{0xA9, 0xFF, 0xAA, 0xE8, 0xE8, 0x00})
-	if err := cpu.Run(context.Background()); err != nil {
-		assert.NoError(t, err)
+	for {
+		if _, err := cpu.Step(); err != nil {
+			if assert.ErrorIs(t, err, ErrBrk) {
+				break
+			}
+			return
+		}
 	}
 
 	assert.EqualValues(t, 1, cpu.RegisterX)
@@ -68,8 +92,13 @@ func Test_inx_overflow(t *testing.T) {
 func Test_lda_from_memory(t *testing.T) {
 	cpu := stubCpu([]byte{0xA5, 0x10, 0x00})
 	cpu.MemWrite(0x10, 0x55)
-	if err := cpu.Run(context.Background()); err != nil {
-		assert.NoError(t, err)
+	for {
+		if _, err := cpu.Step(); err != nil {
+			if assert.ErrorIs(t, err, ErrBrk) {
+				break
+			}
+			return
+		}
 	}
 
 	assert.EqualValues(t, 0x55, cpu.Accumulator)

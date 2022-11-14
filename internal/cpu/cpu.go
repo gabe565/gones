@@ -1,7 +1,6 @@
 package cpu
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"github.com/gabe565/gones/internal/bitflags"
@@ -15,8 +14,7 @@ func New(b *bus.Bus) *CPU {
 		Status:       DefaultStatus,
 		StackPointer: StackReset,
 		Bus:          b,
-		DebugCh:      make(chan struct{}),
-		ResetCh:      make(chan struct{}, 1),
+		Interrupt:    make(chan interrupts.Interrupt, 1),
 	}
 }
 
@@ -47,20 +45,9 @@ type CPU struct {
 	// Bus Main memory bus
 	Bus *bus.Bus
 
-	// Callback optional callback to Run before every tick
-	Callback Callback
+	Cycles uint
 
-	// EnableTrace enables trace logging
-	EnableTrace bool
-
-	// EnableDebug enables step debugging
-	EnableDebug bool
-
-	// DebugCh if EnableDebug is true, blocks next instruction until input is received
-	DebugCh chan struct{}
-
-	// ResetCh queues a reset
-	ResetCh chan struct{}
+	Interrupt chan interrupts.Interrupt
 }
 
 type Callback func(*CPU) error
@@ -78,7 +65,6 @@ func (c *CPU) Reset() {
 	c.ProgramCounter = c.MemRead16(consts.ResetAddr)
 	c.StackPointer = StackReset
 	c.Status = DefaultStatus
-	c.Bus.Reset()
 }
 
 // Load loads a program into PRG memory
@@ -89,7 +75,7 @@ func (c *CPU) Load(program []byte) {
 	c.MemWrite16(consts.ResetAddr, consts.PrgRomAddr)
 }
 
-func (c *CPU) interrupt(interrupt *interrupts.Interrupt) {
+func (c *CPU) interrupt(interrupt interrupts.Interrupt) {
 	c.stackPush16(c.ProgramCounter)
 	status := c.Status
 	status.Set(Break, interrupt.Mask&Break == 1)
@@ -98,64 +84,39 @@ func (c *CPU) interrupt(interrupt *interrupts.Interrupt) {
 	c.stackPush(byte(status))
 	c.Status.Insert(InterruptDisable)
 
-	c.Bus.Tick(uint(interrupt.Cycles))
+	c.Cycles += uint(interrupt.Cycles)
 	c.ProgramCounter = c.MemRead16(interrupt.VectorAddr)
 }
 
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
 var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
-// Run is the main Run entrypoint.
-func (c *CPU) Run(ctx context.Context) error {
-	interruptCh := c.Bus.GetInterruptCh()
+// Step steps through the next instruction
+func (c *CPU) Step() (uint, error) {
+	cycles := c.Cycles
 
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-		case interrupt := <-interruptCh:
-			c.interrupt(interrupt)
-		case <-c.ResetCh:
-			c.Reset()
-		default:
-			if c.Callback != nil {
-				if err := c.Callback(c); err != nil {
-					if errors.Is(err, ErrBrk) {
-						return nil
-					}
-					return err
-				}
-			}
-
-			if c.EnableDebug {
-				<-c.DebugCh
-			}
-
-			if c.EnableTrace {
-				fmt.Println(c.Trace())
-			}
-
-			code := c.MemRead(c.ProgramCounter)
-			c.ProgramCounter += 1
-			prevPC := c.ProgramCounter
-
-			op, ok := OpCodeMap[code]
-			if !ok {
-				return fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
-			}
-
-			if err := op.Exec(c, op.Mode); err != nil {
-				if errors.Is(err, ErrBrk) {
-					return nil
-				}
-				return err
-			}
-
-			c.Bus.Tick(uint(op.Cycles))
-
-			if prevPC == c.ProgramCounter {
-				c.ProgramCounter += uint16(op.Len - 1)
-			}
-		}
+	if len(c.Interrupt) > 0 {
+		c.interrupt(<-c.Interrupt)
 	}
+
+	code := c.MemRead(c.ProgramCounter)
+	c.ProgramCounter += 1
+	prevPC := c.ProgramCounter
+
+	op, ok := OpCodeMap[code]
+	if !ok {
+		return 0, fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
+	}
+
+	if err := op.Exec(c, op.Mode); err != nil {
+		return 0, err
+	}
+
+	c.Cycles += uint(op.Cycles)
+
+	if prevPC == c.ProgramCounter {
+		c.ProgramCounter += uint16(op.Len - 1)
+	}
+
+	return c.Cycles - cycles, nil
 }
