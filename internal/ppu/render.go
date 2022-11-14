@@ -3,6 +3,7 @@ package ppu
 import (
 	"github.com/faiface/pixel"
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
 	"image"
 	"image/color"
@@ -21,75 +22,79 @@ func (p *PPU) Render() *pixel.PictureData {
 	scrollX := int(p.scroll.X)
 	scrollY := int(p.scroll.Y)
 
-	p.RenderNametable(
-		pic,
-		main,
-		image.Rect(scrollX, scrollY, Width, Height),
-		-scrollX,
-		-scrollY,
-	)
+	if p.mask.Has(registers.BackgroundEnable) {
+		p.RenderNametable(
+			pic,
+			main,
+			image.Rect(scrollX, scrollY, Width, Height),
+			-scrollX,
+			-scrollY,
+		)
 
-	if scrollX > 0 {
-		p.RenderNametable(
-			pic,
-			second,
-			image.Rect(0, 0, scrollX, Height),
-			Width-scrollX,
-			0,
-		)
-	} else if scrollY > 0 {
-		p.RenderNametable(
-			pic,
-			second,
-			image.Rect(0, 0, Width, scrollY),
-			0,
-			Height-scrollY,
-		)
+		if scrollX > 0 {
+			p.RenderNametable(
+				pic,
+				second,
+				image.Rect(0, 0, scrollX, Height),
+				Width-scrollX,
+				0,
+			)
+		} else if scrollY > 0 {
+			p.RenderNametable(
+				pic,
+				second,
+				image.Rect(0, 0, Width, scrollY),
+				0,
+				Height-scrollY,
+			)
+		}
 	}
 
-	for i := len(p.oam) - 4; i >= 0; i -= 4 {
-		tileIdx := p.oam[i+1]
-		tileX := p.oam[i+3]
-		tileY := p.oam[i]
+	if p.mask.Has(registers.SpriteEnable) {
+		for i := len(p.oam) - 4; i >= 0; i -= 4 {
+			tileIdx := p.oam[i+1]
+			tileX := p.oam[i+3]
+			tileY := p.oam[i]
 
-		flipVertical := p.oam[i+2]>>7&1 == 1
-		flipHorizonal := p.oam[i+2]>>6&1 == 1
+			flipVertical := p.oam[i+2]>>7&1 == 1
+			flipHorizonal := p.oam[i+2]>>6&1 == 1
 
-		paletteIdx := p.oam[i+2] & 0b11
-		spritePalette := p.spritePalette(paletteIdx)
+			paletteIdx := p.oam[i+2] & 0b11
+			spritePalette := p.spritePalette(paletteIdx)
 
-		bank := p.ctrl.SpriteTileAddr()
+			bank := p.ctrl.SpriteTileAddr()
 
-		tile := p.chr[bank+uint16(tileIdx)*16 : bank+uint16(tileIdx)*16+16]
+			tile := p.chr[bank+uint16(tileIdx)*16 : bank+uint16(tileIdx)*16+16]
 
-		for y := 0; y < 8; y += 1 {
-			upper := tile[y]
-			lower := tile[y+8]
+			for y := 0; y < 8; y += 1 {
+				upper := tile[y]
+				lower := tile[y+8]
 
-			for x := 7; x >= 0; x -= 1 {
-				value := (1&lower)<<1 | (1 & upper)
-				upper >>= 1
-				lower >>= 1
-				if value == 0 {
-					continue
+				for x := 7; x >= 0; x -= 1 {
+					value := (1&lower)<<1 | (1 & upper)
+					upper >>= 1
+					lower >>= 1
+					if value == 0 {
+						continue
+					}
+					c := SystemPalette[spritePalette[value]]
+
+					flippedX := int(tileX)
+					if flipHorizonal {
+						flippedX += 7 - x
+					} else {
+						flippedX += x
+					}
+
+					flippedY := int(tileY)
+					if flipVertical {
+						flippedY += 7 - y
+					} else {
+						flippedY += y
+					}
+
+					setPixel(pic, flippedX, flippedY, c)
 				}
-				c := SystemPalette[spritePalette[value]]
-
-				flippedX := int(tileX)
-				if flipHorizonal {
-					flippedX += 7 - x
-				} else {
-					flippedX += x
-				}
-
-				flippedY := int(tileY)
-				if flipVertical {
-					flippedY += 7 - y
-				} else {
-					flippedY += y
-				}
-
-				setPixel(pic, flippedX, flippedY, c)
 			}
 		}
 	}
