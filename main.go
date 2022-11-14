@@ -6,10 +6,10 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/console"
 	"github.com/gabe565/gones/internal/controller"
+	"github.com/gabe565/gones/internal/pprof"
 	"github.com/gabe565/gones/internal/ppu"
 	log "github.com/sirupsen/logrus"
 	"image/color"
-	"net/http"
 	_ "net/http/pprof"
 	"os"
 	"os/signal"
@@ -26,18 +26,10 @@ func main() {
 type Run struct {
 	Path  string
 	Trace bool
-	Pprof string
 }
 
 func (r Run) Run() error {
-	if r.Pprof != "" {
-		go func() {
-			log.WithField("address", r.Pprof).Info("starting pprof")
-			if err := http.ListenAndServe(r.Pprof, nil); err != nil {
-				log.WithError(err).Error("failed to start pprof")
-			}
-		}()
-	}
+	pprof.Spawn()
 
 	cfg := pixelgl.WindowConfig{
 		Title:  "GoNES",

@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/gabe565/gones/internal/pprof"
 	"github.com/spf13/cobra"
 )
 
@@ -34,8 +35,8 @@ func NewCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&action.Pprof, "pprof", "", "Enables pprof http listener")
 	cmd.Flags().BoolVar(&action.Trace, "trace", false, "Enable trace logging")
+	pprof.Flag(cmd)
 
 	return cmd
 }
