@@ -19,3 +19,9 @@ var NMI = Interrupt{
 	VectorAddr: 0xFFFA,
 	Mask:       0b00100000,
 }
+
+var IRQ = Interrupt{
+	Name:       "IRQ",
+	Cycles:     2,
+	VectorAddr: 0xFFFE,
+}
