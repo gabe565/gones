@@ -47,7 +47,11 @@ func (c *Console) Step() error {
 		return err
 	}
 
-	render := c.PPU.Tick(cycles * 3)
+	for i := uint(0); i < cycles*3; i += 1 {
+		if c.PPU.Step() {
+			err = ErrRender
+		}
+	}
 
 	select {
 	case interrupt := <-c.PPU.Interrupt():
@@ -56,11 +60,7 @@ func (c *Console) Step() error {
 		//
 	}
 
-	if render {
-		return ErrRender
-	}
-
-	return nil
+	return err
 }
 
 func (c *Console) Reset() {

@@ -171,8 +171,8 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 	return addr
 }
 
-func (p *PPU) Tick(cycles uint) bool {
-	p.cycles += cycles
+func (p *PPU) Step() bool {
+	p.cycles += 1
 
 	switch {
 	case p.cycles == 257:
@@ -196,7 +196,7 @@ func (p *PPU) Tick(cycles uint) bool {
 			p.status.Insert(registers.SpriteZeroHit)
 		}
 
-		p.cycles -= 340
+		p.cycles = 0
 		p.scanline += 1
 
 		switch {
