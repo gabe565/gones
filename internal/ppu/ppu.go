@@ -192,12 +192,12 @@ func (p *PPU) Tick(cycles uint) bool {
 		}
 	}
 
-	if p.cycles >= 341 {
+	if p.cycles > 340 {
 		if p.SpriteZeroHit(p.cycles) {
 			p.status.Insert(registers.SpriteZeroHit)
 		}
 
-		p.cycles -= 341
+		p.cycles -= 340
 		p.scanline += 1
 
 		if p.scanline == 241 {
