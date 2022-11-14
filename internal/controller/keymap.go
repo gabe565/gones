@@ -5,6 +5,8 @@ import (
 	"github.com/gabe565/gones/internal/bitflags"
 )
 
+type Keymap map[pixelgl.Button]bitflags.Flags
+
 var Player1Keymap = map[pixelgl.Button]bitflags.Flags{
 	pixelgl.KeyW:          Up,
 	pixelgl.KeyD:          Right,

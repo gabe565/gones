@@ -2,6 +2,7 @@ package bus
 
 import (
 	"fmt"
+	"github.com/faiface/pixel/pixelgl"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/controller"
 	"github.com/gabe565/gones/internal/interrupts"
@@ -11,8 +12,16 @@ import (
 
 func New(cart *cartridge.Cartridge, ppu *ppu.PPU) *Bus {
 	return &Bus{
-		cartridge:   cart,
-		ppu:         ppu,
+		cartridge: cart,
+		ppu:       ppu,
+		Controller1: controller.Controller{
+			Keymap:   controller.Player1Keymap,
+			Joystick: pixelgl.Joystick1,
+		},
+		Controller2: controller.Controller{
+			Keymap:   controller.Player2Keymap,
+			Joystick: pixelgl.Joystick2,
+		},
 		RenderStart: make(chan struct{}),
 		RenderDone:  make(chan struct{}),
 	}

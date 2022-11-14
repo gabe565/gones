@@ -1,6 +1,9 @@
 package controller
 
-import "github.com/gabe565/gones/internal/bitflags"
+import (
+	"github.com/faiface/pixel/pixelgl"
+	"github.com/gabe565/gones/internal/bitflags"
+)
 
 const (
 	ButtonA = 1 << iota
@@ -17,6 +20,9 @@ type Controller struct {
 	strobe bool
 	index  byte
 	bits   bitflags.Flags
+
+	Keymap   Keymap
+	Joystick pixelgl.Joystick
 }
 
 func (j *Controller) Write(data byte) {
@@ -44,4 +50,16 @@ func (j *Controller) Read() byte {
 
 func (j *Controller) Set(button bitflags.Flags, status bool) {
 	j.bits.Set(button, status)
+}
+
+func (j *Controller) UpdateInput(win *pixelgl.Window) {
+	if j.Joystick != 0 && win.JoystickPresent(j.Joystick) {
+		for key, button := range Joystick {
+			j.Set(button, win.JoystickPressed(j.Joystick, key))
+		}
+	} else {
+		for key, button := range j.Keymap {
+			j.Set(button, win.Pressed(key))
+		}
+	}
 }

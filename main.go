@@ -85,25 +85,8 @@ func (r Run) Run() error {
 				return nil
 			}
 
-			if win.JoystickPresent(pixelgl.Joystick1) {
-				for key, button := range controller.Joystick {
-					console.Bus.Controller1.Set(button, win.JoystickPressed(pixelgl.Joystick1, key))
-				}
-			} else {
-				for key, button := range controller.Player1Keymap {
-					console.Bus.Controller1.Set(button, win.Pressed(key))
-				}
-			}
-
-			if win.JoystickPresent(pixelgl.Joystick2) {
-				for key, button := range controller.Joystick {
-					console.Bus.Controller2.Set(button, win.JoystickPressed(pixelgl.Joystick2, key))
-				}
-			} else {
-				for key, button := range controller.Player2Keymap {
-					console.Bus.Controller2.Set(button, win.Pressed(key))
-				}
-			}
+			console.Bus.Controller1.UpdateInput(win)
+			console.Bus.Controller2.UpdateInput(win)
 
 			if win.JustPressed(controller.Reset) {
 				console.CPU.ResetCh <- struct{}{}
