@@ -8,7 +8,6 @@ import (
 	"github.com/gabe565/gones/internal/cpu"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
-	"image/color"
 )
 
 type Console struct {
@@ -102,8 +101,6 @@ func (c *Console) Update() error {
 }
 
 func (c *Console) Draw(screen *ebiten.Image) {
-	screen.Fill(color.Black)
-
 	img := ebiten.NewImageFromImage(c.PPU.Render())
 	var op ebiten.DrawImageOptions
 	op.GeoM.Translate(0, -ppu.TrimHeight)
