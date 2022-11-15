@@ -40,7 +40,7 @@ jobs:
       - name: Install apt dependencies
         run: sudo apt-get install libgl1-mesa-dev xorg-dev
       - name: Test
-        run: go test ./...
+        run: xvfb-run go test ./...
 
   build-native:
     name: Build Natively (${{ matrix.platform }})
