@@ -43,7 +43,8 @@ var Joystick = map[bitflags.Flags]ebiten.StandardGamepadButton{
 const (
 	Reset = ebiten.KeyR
 
-	FastForward = ebiten.KeyF
+	FastForward      = ebiten.KeyF
+	ToggleFullscreen = ebiten.KeyF11
 
 	ToggleTrace = ebiten.KeyTab
 	ToggleDebug = ebiten.KeyGraveAccent

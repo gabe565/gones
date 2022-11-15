@@ -44,4 +44,8 @@ func (c *Console) CheckInput() {
 			c.Debug = DebugRunRender
 		}
 	}
+
+	if inpututil.IsKeyJustPressed(controller.ToggleFullscreen) {
+		ebiten.SetFullscreen(!ebiten.IsFullscreen())
+	}
 }
