@@ -55,6 +55,8 @@ Eventually, this will be configurable in the UI.
 | Directions | WASD        |
 | Start      | Enter       |
 | Select     | Right Shift |
+| A (Turbo)  | J           |
+| B (Turbo)  | K           |
 
 ### Player 2
 
@@ -65,6 +67,8 @@ Eventually, this will be configurable in the UI.
 | Directions | Home/Del/End/PgDn |
 | Start      | Num Pad Enter     |
 | Select     | Num Pad Plus      |
+| A (Turbo)  | Num Pad 5         |
+| B (Turbo)  | Num Pad 6         |
 
 ### Other
 

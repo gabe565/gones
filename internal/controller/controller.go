@@ -21,7 +21,8 @@ type Controller struct {
 	index  byte
 	bits   bitflags.Flags
 
-	Keymap Keymap
+	Keymap Keymap[ebiten.Key]
+	turbo  uint8
 }
 
 func (j *Controller) Write(data byte) {
@@ -47,13 +48,22 @@ func (j *Controller) Read() byte {
 	return value
 }
 
-func (j *Controller) Set(button bitflags.Flags, status bool) {
-	j.bits.Set(button, status)
-}
-
 func (j *Controller) UpdateInput() {
-	for key, button := range j.Keymap {
+	for key, button := range j.Keymap.Regular {
 		keyPressed := ebiten.IsKeyPressed(key)
-		j.Set(button, keyPressed)
+		j.bits.Set(button, keyPressed)
+	}
+
+	var turboPressed bool
+	for key, button := range j.Keymap.Turbo {
+		if ebiten.IsKeyPressed(key) && !j.bits.Has(button) {
+			turboPressed = true
+			j.bits.Set(button, j.turbo%6 < 3)
+		}
+	}
+	if turboPressed {
+		j.turbo += 1
+	} else {
+		j.turbo = 0
 	}
 }
