@@ -29,7 +29,7 @@ func (c Control) SpriteTileAddr() uint16 {
 	if bitflags.Flags(c).Has(SpriteTileSelect) {
 		return 0x1000
 	} else {
-		return 1
+		return 0
 	}
 }
 
