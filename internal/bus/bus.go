@@ -13,12 +13,10 @@ func New(cart *cartridge.Cartridge, ppu *ppu.PPU) *Bus {
 		cartridge: cart,
 		ppu:       ppu,
 		Controller1: controller.Controller{
-			Keymap:    controller.Player1Keymap,
-			GamepadID: 0,
+			Keymap: controller.Player1Keymap,
 		},
 		Controller2: controller.Controller{
-			Keymap:    controller.Player2Keymap,
-			GamepadID: 1,
+			Keymap: controller.Player2Keymap,
 		},
 	}
 }

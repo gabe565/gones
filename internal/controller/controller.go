@@ -21,8 +21,7 @@ type Controller struct {
 	index  byte
 	bits   bitflags.Flags
 
-	Keymap    Keymap
-	GamepadID ebiten.GamepadID
+	Keymap Keymap
 }
 
 func (j *Controller) Write(data byte) {
@@ -55,10 +54,6 @@ func (j *Controller) Set(button bitflags.Flags, status bool) {
 func (j *Controller) UpdateInput() {
 	for key, button := range j.Keymap {
 		keyPressed := ebiten.IsKeyPressed(key)
-		gamepadPressed := ebiten.IsGamepadButtonPressed(
-			j.GamepadID,
-			ebiten.GamepadButton(Joystick[button]),
-		)
-		j.Set(button, keyPressed || gamepadPressed)
+		j.Set(button, keyPressed)
 	}
 }
