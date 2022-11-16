@@ -48,7 +48,7 @@ Eventually, this will be configurable in the UI.
 
 ### Player 1
 
-| Button     | Key         |
+| Nintendo   | Emulator    |
 |------------|-------------|
 | A          | N           |
 | B          | M           |
@@ -60,7 +60,7 @@ Eventually, this will be configurable in the UI.
 
 ### Player 2
 
-| Button     | Key               |
+| Nintendo   | Emulator          |
 |------------|-------------------|
 | A          | Num Pad 2         |
 | B          | Num Pad 3         |
