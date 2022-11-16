@@ -2,7 +2,6 @@ package registers
 
 import (
 	"github.com/gabe565/gones/internal/bitflags"
-	log "github.com/sirupsen/logrus"
 )
 
 type Control bitflags.Flags
@@ -63,17 +62,5 @@ func (c Control) HasEnableNMI() bool {
 }
 
 func (c Control) NametableAddr() uint16 {
-	switch c & 0b11 {
-	case 0:
-		return 0x2000
-	case 1:
-		return 0x2400
-	case 2:
-		return 0x2800
-	case 3:
-		return 0x2c00
-	default:
-		log.Panic("invalid control register")
-		return 0
-	}
+	return 0x2000 | uint16(c)&0b11<<10
 }
