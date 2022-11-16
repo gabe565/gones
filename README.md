@@ -78,8 +78,6 @@ Eventually, this will be configurable in the UI.
 | Reset             | R        |
 | Toggle Fullscreen | F11      |
 
-
-
 #### Debugging
 
 | Action                                            | Key |
@@ -88,7 +86,6 @@ Eventually, this will be configurable in the UI.
 | Toggle stdout trace log (when step debug enabled) | Tab |
 | Step to next frame                                | 1   |
 | Run to next render                                | 2   |
-
 
 ## Milestones
 
