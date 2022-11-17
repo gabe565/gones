@@ -4,7 +4,6 @@ import (
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
-	"image"
 )
 
 const (
@@ -22,7 +21,6 @@ func (p *PPU) Render() []byte {
 	if p.Mask.Has(registers.BackgroundEnable) {
 		p.RenderNametable(
 			main,
-			image.Rect(scrollX, scrollY, Width, Height),
 			-scrollX,
 			-scrollY,
 		)
@@ -30,14 +28,12 @@ func (p *PPU) Render() []byte {
 		if scrollX > 0 {
 			p.RenderNametable(
 				second,
-				image.Rect(0, 0, scrollX, Height),
 				Width-scrollX,
 				0,
 			)
 		} else if scrollY > 0 {
 			p.RenderNametable(
 				second,
-				image.Rect(0, 0, Width, scrollY),
 				0,
 				Height-scrollY,
 			)
@@ -141,7 +137,7 @@ func (p *PPU) spritePalette(idx byte) [4]byte {
 	}
 }
 
-func (p *PPU) RenderNametable(nameTable []byte, viewport image.Rectangle, shiftX, shiftY int) {
+func (p *PPU) RenderNametable(nameTable []byte, shiftX, shiftY int) {
 	bank := p.Ctrl.BgTileAddr()
 
 	attrTable := nameTable[0x3C0:0x400]
@@ -163,12 +159,9 @@ func (p *PPU) RenderNametable(nameTable []byte, viewport image.Rectangle, shiftX
 				lower >>= 1
 				c := SystemPalette[palette[value]]
 
-				pxlX := int(tileCol)*8 + x
-				pxlY := int(tileRow)*8 + y - TrimHeight
-				point := image.Point{X: pxlX, Y: pxlY}
-				if point.In(viewport) {
-					p.image.Set(shiftX+pxlX, shiftY+pxlY, c)
-				}
+				pxlX := int(tileCol)*8 + x + shiftX
+				pxlY := int(tileRow)*8 + y + shiftY - TrimHeight
+				p.image.Set(pxlX, pxlY, c)
 			}
 		}
 	}
