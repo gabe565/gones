@@ -1,12 +1,15 @@
 package main
 
 import (
+	"errors"
 	"github.com/gabe565/gones/internal/console"
 	"github.com/gabe565/gones/internal/pprof"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
+	log "github.com/sirupsen/logrus"
 	_ "net/http/pprof"
 	"os"
+	"os/signal"
 	"path/filepath"
 )
 
@@ -29,11 +32,24 @@ func (r Run) Run() error {
 	if err != nil {
 		return err
 	}
+	go func() {
+		ch := make(chan os.Signal, 1)
+		signal.Notify(ch, os.Interrupt)
+		for range ch {
+			log.Info("Exiting...")
+			c.CloseOnUpdate = true
+		}
+	}()
 
 	ebiten.SetWindowSize(int(r.Scale*ppu.Width), int(r.Scale*ppu.TrimmedHeight))
 	ebiten.SetWindowTitle(filepath.Base(r.Path) + " | GoNES")
 	ebiten.SetScreenFilterEnabled(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
+	ebiten.SetWindowClosingHandled(true)
 
-	return ebiten.RunGame(c)
+	if err := ebiten.RunGame(c); err != nil && !errors.Is(err, console.ErrExit) {
+		return err
+	}
+
+	return nil
 }

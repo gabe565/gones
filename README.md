@@ -108,10 +108,9 @@ Eventually, this will be configurable in the UI.
   - [x] Player 2
   - [ ] External controllers
 - [ ] APU implementation (audio)
-- [ ] Save games
+- [x] Save file for games with batteries
 - [x] Save states
 - [ ] Preferences (remap controllers, video config, sound config, etc)
-- [ ] Battery support
 - [ ] Cheats
 
 ## References

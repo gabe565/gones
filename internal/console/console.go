@@ -8,7 +8,10 @@ import (
 	"github.com/gabe565/gones/internal/cpu"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
+	"os"
 )
+
+var ErrExit = errors.New("exit")
 
 type Console struct {
 	CPU *cpu.CPU
@@ -17,8 +20,9 @@ type Console struct {
 
 	cartridge *cartridge.Cartridge
 
-	enableTrace bool
-	debug       Debug
+	CloseOnUpdate bool
+	enableTrace   bool
+	debug         Debug
 }
 
 func New(path string) (*Console, error) {
@@ -30,6 +34,11 @@ func New(path string) (*Console, error) {
 	}
 
 	console.cartridge = cart
+	if cart.Battery {
+		if err := console.LoadSram(); err != nil && !errors.Is(err, os.ErrNotExist) {
+			return &console, err
+		}
+	}
 
 	console.PPU = ppu.New(cart)
 	console.Bus = bus.New(cart, console.PPU)
@@ -38,6 +47,15 @@ func New(path string) (*Console, error) {
 	console.CPU.Reset()
 
 	return &console, nil
+}
+
+func (c *Console) Close() error {
+	if c.cartridge.Battery {
+		if err := c.SaveSram(); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 var ErrRender = errors.New("render triggered")
@@ -78,6 +96,13 @@ func (c *Console) Layout(_, _ int) (int, int) {
 }
 
 func (c *Console) Update() error {
+	if ebiten.IsWindowBeingClosed() || c.CloseOnUpdate {
+		if err := c.Close(); err != nil {
+			return err
+		}
+		return ErrExit
+	}
+
 	c.CheckInput()
 
 	if c.debug == DebugWait {

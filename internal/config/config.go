@@ -28,3 +28,12 @@ func GetStatesDir() (string, error) {
 
 	return filepath.Join(configDir, "states"), nil
 }
+
+func GetSramDir() (string, error) {
+	configDir, err := GetDir()
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(configDir, "sav"), nil
+}
