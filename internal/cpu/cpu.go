@@ -108,9 +108,7 @@ func (c *CPU) Step() (uint, error) {
 		return 0, fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
 	}
 
-	if err := op.Exec(c, op.Mode); err != nil {
-		return 0, err
-	}
+	op.Exec(c, op.Mode)
 
 	c.Cycles += uint(op.Cycles)
 
