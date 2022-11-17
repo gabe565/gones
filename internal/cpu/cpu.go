@@ -78,8 +78,8 @@ func (c *CPU) Load(program []byte) {
 func (c *CPU) interrupt(interrupt interrupts.Interrupt) {
 	c.stackPush16(c.ProgramCounter)
 	status := c.Status
-	status.Set(Break, interrupt.Mask&Break == 1)
-	status.Set(Break2, interrupt.Mask&Break2 == 1)
+	status.Remove(Break)
+	status.Insert(Break2)
 
 	c.stackPush(byte(status))
 	c.Status.Insert(InterruptDisable)
