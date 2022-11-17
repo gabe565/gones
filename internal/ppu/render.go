@@ -14,14 +14,13 @@ const (
 	TrimmedHeight = Height - 2*TrimHeight
 )
 
-func (p *PPU) Render() *image.RGBA {
+func (p *PPU) Render() []byte {
 	main, second := p.getNametables()
 	scrollX := int(p.Scroll.X)
 	scrollY := int(p.Scroll.Y)
 
 	if p.Mask.Has(registers.BackgroundEnable) {
 		p.RenderNametable(
-			p.image,
 			main,
 			image.Rect(scrollX, scrollY, Width, Height),
 			-scrollX,
@@ -30,7 +29,6 @@ func (p *PPU) Render() *image.RGBA {
 
 		if scrollX > 0 {
 			p.RenderNametable(
-				p.image,
 				second,
 				image.Rect(0, 0, scrollX, Height),
 				Width-scrollX,
@@ -38,7 +36,6 @@ func (p *PPU) Render() *image.RGBA {
 			)
 		} else if scrollY > 0 {
 			p.RenderNametable(
-				p.image,
 				second,
 				image.Rect(0, 0, Width, scrollY),
 				0,
@@ -47,7 +44,7 @@ func (p *PPU) Render() *image.RGBA {
 		}
 	} else {
 		c := SystemPalette[p.Palette[0]]
-		for y := 0; y < Height; y += 1 {
+		for y := 0; y < TrimmedHeight; y += 1 {
 			for x := 0; x < Width; x += 1 {
 				p.image.Set(x, y, c)
 			}
@@ -90,7 +87,7 @@ func (p *PPU) Render() *image.RGBA {
 						flippedX += x
 					}
 
-					flippedY := int(tileY)
+					flippedY := int(tileY) - TrimHeight
 					if flipVertical {
 						flippedY += 7 - y
 					} else {
@@ -103,7 +100,7 @@ func (p *PPU) Render() *image.RGBA {
 		}
 	}
 
-	return p.image
+	return p.image.Pix
 }
 
 func (p *PPU) bgPalette(attrTable []byte, col, row uint16) [4]byte {
@@ -144,7 +141,7 @@ func (p *PPU) spritePalette(idx byte) [4]byte {
 	}
 }
 
-func (p *PPU) RenderNametable(img *image.RGBA, nameTable []byte, viewport image.Rectangle, shiftX, shiftY int) {
+func (p *PPU) RenderNametable(nameTable []byte, viewport image.Rectangle, shiftX, shiftY int) {
 	bank := p.Ctrl.BgTileAddr()
 
 	attrTable := nameTable[0x3C0:0x400]
@@ -167,10 +164,10 @@ func (p *PPU) RenderNametable(img *image.RGBA, nameTable []byte, viewport image.
 				c := SystemPalette[palette[value]]
 
 				pxlX := int(tileCol)*8 + x
-				pxlY := int(tileRow)*8 + y
+				pxlY := int(tileRow)*8 + y - TrimHeight
 				point := image.Point{X: pxlX, Y: pxlY}
 				if point.In(viewport) {
-					img.Set(shiftX+pxlX, shiftY+pxlY, c)
+					p.image.Set(shiftX+pxlX, shiftY+pxlY, c)
 				}
 			}
 		}

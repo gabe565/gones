@@ -137,10 +137,8 @@ func (c *Console) Update() error {
 }
 
 func (c *Console) Draw(screen *ebiten.Image) {
-	img := ebiten.NewImageFromImage(c.PPU.Render())
-	var op ebiten.DrawImageOptions
-	op.GeoM.Translate(0, -ppu.TrimHeight)
-	screen.DrawImage(img, &op)
+	pix := c.PPU.Render()
+	screen.WritePixels(pix)
 }
 
 func (c *Console) CloseOnUpdate() {

@@ -15,7 +15,7 @@ func New(cart *cartridge.Cartridge, mapper cartridge.Mapper) *PPU {
 		cartridge:   cart,
 		mapper:      mapper,
 		interruptCh: make(chan interrupts.Interrupt, 1),
-		image:       image.NewRGBA(image.Rect(0, 0, Width, Height)),
+		image:       image.NewRGBA(image.Rect(0, 0, Width, TrimmedHeight)),
 	}
 }
 
