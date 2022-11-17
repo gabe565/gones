@@ -1,8 +1,14 @@
 package cartridge
 
-import "github.com/gabe565/gones/internal/consts"
+import (
+	"crypto/md5"
+	"fmt"
+	"github.com/gabe565/gones/internal/consts"
+)
 
 type Cartridge struct {
+	hash string
+
 	Prg     []byte
 	Chr     []byte
 	Sram    []byte
@@ -19,6 +25,7 @@ func New() *Cartridge {
 
 func FromBytes(b []byte) *Cartridge {
 	cart := New()
+	cart.hash = fmt.Sprintf("%x", md5.Sum(b))
 
 	cart.Prg = make([]byte, consts.PrgRomAddr, consts.PrgChunkSize*2)
 	cart.Prg = append(cart.Prg, b...)

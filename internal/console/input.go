@@ -8,8 +8,7 @@ import (
 )
 
 func (c *Console) CheckInput() {
-	c.Bus.Controller1.UpdateInput()
-	c.Bus.Controller2.UpdateInput()
+	c.Bus.UpdateInput()
 
 	if ebiten.IsKeyPressed(controller.Reset) {
 		c.Reset()
@@ -22,30 +21,42 @@ func (c *Console) CheckInput() {
 	}
 
 	if inpututil.IsKeyJustPressed(controller.ToggleDebug) {
-		if c.Debug == DebugDisabled {
+		if c.debug == DebugDisabled {
 			log.Info("Enable step debug")
-			c.Debug = DebugWait
+			c.debug = DebugWait
 		} else {
 			log.Info("Disable step debug")
-			c.EnableTrace = false
-			c.Debug = DebugDisabled
+			c.enableTrace = false
+			c.debug = DebugDisabled
 		}
 	}
 
-	if c.Debug != DebugDisabled {
+	if c.debug != DebugDisabled {
 		if inpututil.IsKeyJustPressed(controller.ToggleTrace) {
 			log.Info("Toggle trace logs")
-			c.EnableTrace = !c.EnableTrace
+			c.enableTrace = !c.enableTrace
 		}
 		if inpututil.IsKeyJustPressed(controller.StepFrame) || inpututil.KeyPressDuration(controller.StepFrame) > 30 {
-			c.Debug = DebugStepFrame
+			c.debug = DebugStepFrame
 		}
 		if inpututil.IsKeyJustPressed(controller.RunToRender) || inpututil.KeyPressDuration(controller.RunToRender) > 30 {
-			c.Debug = DebugRunRender
+			c.debug = DebugRunRender
 		}
 	}
 
 	if inpututil.IsKeyJustPressed(controller.ToggleFullscreen) {
 		ebiten.SetFullscreen(!ebiten.IsFullscreen())
+	}
+
+	if inpututil.IsKeyJustPressed(controller.SaveState1) {
+		if err := c.SaveState(1); err != nil {
+			log.WithError(err).Error("Failed to save state")
+		}
+	}
+
+	if inpututil.IsKeyJustPressed(controller.LoadState1) {
+		if err := c.LoadState(1); err != nil {
+			log.WithError(err).Error("Failed to load state")
+		}
 	}
 }

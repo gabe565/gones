@@ -12,28 +12,28 @@ func New(cart *cartridge.Cartridge, ppu *ppu.PPU) *Bus {
 	return &Bus{
 		cartridge: cart,
 		ppu:       ppu,
-		Controller1: controller.Controller{
+		controller1: controller.Controller{
 			Keymap: controller.Player1Keymap,
 		},
-		Controller2: controller.Controller{
+		controller2: controller.Controller{
 			Keymap: controller.Player2Keymap,
 		},
 	}
 }
 
 type Bus struct {
-	cpuVram     [0x800]byte
+	CpuVram     [0x800]byte
 	cartridge   *cartridge.Cartridge
 	ppu         *ppu.PPU
-	Controller1 controller.Controller
-	Controller2 controller.Controller
+	controller1 controller.Controller
+	controller2 controller.Controller
 }
 
 func (b *Bus) MemRead(addr uint16) byte {
 	switch {
 	case addr < 0x2000:
 		addr &= 0x07FF
-		return b.cpuVram[addr]
+		return b.CpuVram[addr]
 	case addr == 0x2000, addr == 0x2001, addr == 0x2003, addr == 0x2005, addr == 0x2006, addr == 0x4014:
 		return 0
 	case addr == 0x2002:
@@ -48,9 +48,9 @@ func (b *Bus) MemRead(addr uint16) byte {
 	case 0x4000 <= addr && addr < 0x4016:
 		// APU
 	case addr == 0x4016:
-		return b.Controller1.Read()
+		return b.controller1.Read()
 	case addr == 0x4017:
-		return b.Controller2.Read()
+		return b.controller2.Read()
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled APU
 	default:
@@ -67,7 +67,7 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 	switch {
 	case addr < 0x2000:
 		addr &= 0x07FF
-		b.cpuVram[addr] = data
+		b.CpuVram[addr] = data
 	case addr == 0x2000:
 		b.ppu.WriteCtrl(data)
 	case addr == 0x2001:
@@ -98,12 +98,17 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 	case 0x4000 <= addr && addr < 0x4013, addr == 0x4015, addr == 0x4017:
 		// APU
 	case addr == 0x4016:
-		b.Controller1.Write(data)
-		b.Controller2.Write(data)
+		b.controller1.Write(data)
+		b.controller2.Write(data)
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled
 	default:
 		log.WithField("address", fmt.Sprintf("%02X", addr)).
 			Error("attempt to write to cartridge ROM")
 	}
+}
+
+func (b *Bus) UpdateInput() {
+	b.controller1.UpdateInput()
+	b.controller2.UpdateInput()
 }

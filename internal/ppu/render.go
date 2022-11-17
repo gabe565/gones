@@ -16,12 +16,12 @@ const (
 
 func (p *PPU) Render() *image.RGBA {
 	main, second := p.getNametables()
-	scrollX := int(p.scroll.X)
-	scrollY := int(p.scroll.Y)
+	scrollX := int(p.Scroll.X)
+	scrollY := int(p.Scroll.Y)
 
-	if p.mask.Has(registers.BackgroundEnable) {
+	if p.Mask.Has(registers.BackgroundEnable) {
 		p.RenderNametable(
-			p.Image,
+			p.image,
 			main,
 			image.Rect(scrollX, scrollY, Width, Height),
 			-scrollX,
@@ -30,7 +30,7 @@ func (p *PPU) Render() *image.RGBA {
 
 		if scrollX > 0 {
 			p.RenderNametable(
-				p.Image,
+				p.image,
 				second,
 				image.Rect(0, 0, scrollX, Height),
 				Width-scrollX,
@@ -38,7 +38,7 @@ func (p *PPU) Render() *image.RGBA {
 			)
 		} else if scrollY > 0 {
 			p.RenderNametable(
-				p.Image,
+				p.image,
 				second,
 				image.Rect(0, 0, Width, scrollY),
 				0,
@@ -46,27 +46,27 @@ func (p *PPU) Render() *image.RGBA {
 			)
 		}
 	} else {
-		c := SystemPalette[p.palette[0]]
+		c := SystemPalette[p.Palette[0]]
 		for y := 0; y < Height; y += 1 {
 			for x := 0; x < Width; x += 1 {
-				p.Image.Set(x, y, c)
+				p.image.Set(x, y, c)
 			}
 		}
 	}
 
-	if p.mask.Has(registers.SpriteEnable) {
-		for i := len(p.oam) - 4; i >= 0; i -= 4 {
-			tileIdx := p.oam[i+1]
-			tileX := p.oam[i+3]
-			tileY := p.oam[i]
+	if p.Mask.Has(registers.SpriteEnable) {
+		for i := len(p.Oam) - 4; i >= 0; i -= 4 {
+			tileIdx := p.Oam[i+1]
+			tileX := p.Oam[i+3]
+			tileY := p.Oam[i]
 
-			flipVertical := p.oam[i+2]>>7&1 == 1
-			flipHorizonal := p.oam[i+2]>>6&1 == 1
+			flipVertical := p.Oam[i+2]>>7&1 == 1
+			flipHorizonal := p.Oam[i+2]>>6&1 == 1
 
-			paletteIdx := p.oam[i+2] & 0b11
+			paletteIdx := p.Oam[i+2] & 0b11
 			spritePalette := p.spritePalette(paletteIdx)
 
-			bank := p.ctrl.SpriteTileAddr()
+			bank := p.Ctrl.SpriteTileAddr()
 
 			tile := p.chr[bank+uint16(tileIdx)*16 : bank+uint16(tileIdx)*16+16]
 
@@ -97,13 +97,13 @@ func (p *PPU) Render() *image.RGBA {
 						flippedY += y
 					}
 
-					p.Image.Set(flippedX, flippedY, c)
+					p.image.Set(flippedX, flippedY, c)
 				}
 			}
 		}
 	}
 
-	return p.Image
+	return p.image
 }
 
 func (p *PPU) bgPalette(attrTable []byte, col, row uint16) [4]byte {
@@ -127,10 +127,10 @@ func (p *PPU) bgPalette(attrTable []byte, col, row uint16) [4]byte {
 
 	paletteStart := paletteIdx*4 + 1
 	return [4]byte{
-		p.palette[0],
-		p.palette[paletteStart],
-		p.palette[paletteStart+1],
-		p.palette[paletteStart+2],
+		p.Palette[0],
+		p.Palette[paletteStart],
+		p.Palette[paletteStart+1],
+		p.Palette[paletteStart+2],
 	}
 }
 
@@ -138,14 +138,14 @@ func (p *PPU) spritePalette(idx byte) [4]byte {
 	start := idx*4 + 0x11
 	return [4]byte{
 		9,
-		p.palette[start],
-		p.palette[start+1],
-		p.palette[start+2],
+		p.Palette[start],
+		p.Palette[start+1],
+		p.Palette[start+2],
 	}
 }
 
 func (p *PPU) RenderNametable(img *image.RGBA, nameTable []byte, viewport image.Rectangle, shiftX, shiftY int) {
-	bank := p.ctrl.BgTileAddr()
+	bank := p.Ctrl.BgTileAddr()
 
 	attrTable := nameTable[0x3C0:0x400]
 
@@ -183,20 +183,20 @@ func (p *PPU) getNametables() ([]byte, []byte) {
 		nametableAddr uint16
 	}
 
-	switch (match{p.mirroring, p.ctrl.NametableAddr()}) {
+	switch (match{p.mirroring, p.Ctrl.NametableAddr()}) {
 	case match{cartridge.Vertical, 0x2000},
 		match{cartridge.Vertical, 0x2800},
 		match{cartridge.Horizontal, 0x2000},
 		match{cartridge.Horizontal, 0x2400}:
 		{
-			return p.vram[:0x400], p.vram[0x400:0x800]
+			return p.Vram[:0x400], p.Vram[0x400:0x800]
 		}
 	case match{cartridge.Vertical, 0x2400},
 		match{cartridge.Vertical, 0x2C00},
 		match{cartridge.Horizontal, 0x2800},
 		match{cartridge.Horizontal, 0x2C00}:
 		{
-			return p.vram[0x400:0x800], p.vram[:0x400]
+			return p.Vram[0x400:0x800], p.Vram[:0x400]
 		}
 	default:
 		log.Panic(p.mirroring.String() + " mirroring unsupported")

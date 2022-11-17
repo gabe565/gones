@@ -1,8 +1,10 @@
 package cartridge
 
 import (
+	"crypto/md5"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"github.com/gabe565/gones/internal/consts"
 	"io"
 	"os"
@@ -30,10 +32,12 @@ func FromiNesFile(path string) (*Cartridge, error) {
 		_ = f.Close()
 	}(f)
 
-	return FromiNes(f)
+	cartridge, err := FromiNes(f)
+
+	return cartridge, err
 }
 
-func FromiNes(r io.Reader) (*Cartridge, error) {
+func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 	var header iNESFileHeader
 	if err := binary.Read(r, binary.LittleEndian, &header); err != nil {
 		return nil, err
@@ -61,6 +65,15 @@ func FromiNes(r io.Reader) (*Cartridge, error) {
 	if header.ChrCount == 0 {
 		cartridge.Chr = make([]byte, consts.ChrChunkSize)
 	}
+
+	if _, err := r.Seek(0, io.SeekStart); err != nil {
+		return cartridge, err
+	}
+	md5 := md5.New()
+	if _, err := io.Copy(md5, r); err != nil {
+		return cartridge, err
+	}
+	cartridge.hash = fmt.Sprintf("%x", md5.Sum(nil))
 
 	return cartridge, nil
 }

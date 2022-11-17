@@ -13,7 +13,7 @@ func New(b *bus.Bus) *CPU {
 	return &CPU{
 		Status:       DefaultStatus,
 		StackPointer: StackReset,
-		Bus:          b,
+		bus:          b,
 		Interrupt:    make(chan interrupts.Interrupt, 1),
 	}
 }
@@ -42,8 +42,8 @@ type CPU struct {
 	// RegisterY Register Y
 	RegisterY byte
 
-	// Bus Main memory bus
-	Bus *bus.Bus
+	// bus Main memory bus
+	bus *bus.Bus
 
 	Cycles uint
 

@@ -2,12 +2,12 @@ package cpu
 
 // MemRead reads byte from memory.
 func (c *CPU) MemRead(addr uint16) byte {
-	return c.Bus.MemRead(addr)
+	return c.bus.MemRead(addr)
 }
 
 // MemWrite writes byte to memory.
 func (c *CPU) MemWrite(addr uint16, data byte) {
-	c.Bus.MemWrite(addr, data)
+	c.bus.MemWrite(addr, data)
 }
 
 // MemRead16 reads two bytes from memory.

@@ -74,6 +74,8 @@ Eventually, this will be configurable in the UI.
 
 | Action            | Key      |
 |-------------------|----------|
+| Save State        | F1       |
+| Load State        | F5       |
 | Fast Forward      | F (Hold) |
 | Reset             | R        |
 | Toggle Fullscreen | F11      |
@@ -107,7 +109,7 @@ Eventually, this will be configurable in the UI.
   - [ ] External controllers
 - [ ] APU implementation (audio)
 - [ ] Save games
-- [ ] Save states
+- [x] Save states
 - [ ] Preferences (remap controllers, video config, sound config, etc)
 - [ ] Battery support
 - [ ] Cheats

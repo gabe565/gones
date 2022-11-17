@@ -64,6 +64,9 @@ var Joystick = Keymap[ebiten.StandardGamepadButton]{
 const (
 	Reset = ebiten.KeyR
 
+	SaveState1 = ebiten.KeyF1
+	LoadState1 = ebiten.KeyF5
+
 	FastForward      = ebiten.KeyF
 	ToggleFullscreen = ebiten.KeyF11
 

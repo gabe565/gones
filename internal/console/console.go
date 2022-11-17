@@ -15,8 +15,10 @@ type Console struct {
 	Bus *bus.Bus
 	PPU *ppu.PPU
 
-	EnableTrace bool
-	Debug       Debug
+	cartridge *cartridge.Cartridge
+
+	enableTrace bool
+	debug       Debug
 }
 
 func New(path string) (*Console, error) {
@@ -26,6 +28,8 @@ func New(path string) (*Console, error) {
 	if err != nil {
 		return &console, err
 	}
+
+	console.cartridge = cart
 
 	console.PPU = ppu.New(cart)
 	console.Bus = bus.New(cart, console.PPU)
@@ -39,7 +43,7 @@ func New(path string) (*Console, error) {
 var ErrRender = errors.New("render triggered")
 
 func (c *Console) Step() error {
-	if c.EnableTrace {
+	if c.enableTrace {
 		fmt.Println(c.CPU.Trace())
 	}
 
@@ -76,7 +80,7 @@ func (c *Console) Layout(_, _ int) (int, int) {
 func (c *Console) Update() error {
 	c.CheckInput()
 
-	if c.Debug == DebugWait {
+	if c.debug == DebugWait {
 		return nil
 	}
 
@@ -88,13 +92,13 @@ func (c *Console) Update() error {
 			return err
 		}
 
-		if c.Debug == DebugStepFrame {
+		if c.debug == DebugStepFrame {
 			break
 		}
 	}
 
-	if c.Debug != DebugDisabled {
-		c.Debug = DebugWait
+	if c.debug != DebugDisabled {
+		c.debug = DebugWait
 	}
 
 	return nil

@@ -15,55 +15,55 @@ func New(cart *cartridge.Cartridge) *PPU {
 		chr:         cart.Chr,
 		mirroring:   cart.Mirror,
 		interruptCh: make(chan interrupts.Interrupt, 1),
-		Image:       image.NewRGBA(image.Rect(0, 0, Width, Height)),
+		image:       image.NewRGBA(image.Rect(0, 0, Width, Height)),
 	}
 }
 
 type PPU struct {
 	chr       []byte
 	mirroring cartridge.Mirror
-	ctrl      registers.Control
-	mask      bitflags.Flags
-	scroll    registers.Scroll
-	status    bitflags.Flags
-	addr      registers.AddrRegister
-	vram      [0x800]byte
+	Ctrl      registers.Control
+	Mask      bitflags.Flags
+	Scroll    registers.Scroll
+	Status    bitflags.Flags
+	Addr      registers.AddrRegister
+	Vram      [0x800]byte
 
-	oamAddr byte
-	oam     [0x100]byte
-	palette [0x20]byte
+	OamAddr byte
+	Oam     [0x100]byte
+	Palette [0x20]byte
 
-	scanline    uint16
-	cycles      uint
+	Scanline    uint16
+	Cycles      uint
 	interruptCh chan interrupts.Interrupt
 
-	readBuf byte
-	Image   *image.RGBA
+	ReadBuf byte
+	image   *image.RGBA
 }
 
 func (p *PPU) WriteAddr(data byte) {
-	p.addr.Update(data)
+	p.Addr.Update(data)
 }
 
 func (p *PPU) WriteCtrl(data byte) {
-	beforeNmi := p.ctrl.HasEnableNMI()
-	p.ctrl = registers.Control(data)
-	if !beforeNmi && p.ctrl.HasEnableNMI() && p.status.Has(registers.Vblank) {
+	beforeNmi := p.Ctrl.HasEnableNMI()
+	p.Ctrl = registers.Control(data)
+	if !beforeNmi && p.Ctrl.HasEnableNMI() && p.Status.Has(registers.Vblank) {
 		p.interruptCh <- interrupts.NMI
 	}
 }
 
 func (p *PPU) WriteMask(data byte) {
-	p.mask = bitflags.Flags(data)
+	p.Mask = bitflags.Flags(data)
 }
 
 func (p *PPU) WriteOamAddr(data byte) {
-	p.oamAddr = data
+	p.OamAddr = data
 }
 
 func (p *PPU) WriteOam(data byte) {
-	p.oam[p.oamAddr] = data
-	p.oamAddr += 1
+	p.Oam[p.OamAddr] = data
+	p.OamAddr += 1
 }
 
 func (p *PPU) WriteOamDma(data [0x100]byte) {
@@ -73,31 +73,31 @@ func (p *PPU) WriteOamDma(data [0x100]byte) {
 }
 
 func (p *PPU) ReadOam() byte {
-	return p.oam[p.oamAddr]
+	return p.Oam[p.OamAddr]
 }
 
 func (p *PPU) WriteScroll(data byte) {
-	p.scroll.Write(data)
+	p.Scroll.Write(data)
 }
 
 func (p *PPU) ReadStatus() byte {
 	defer func() {
-		p.status.Remove(registers.Vblank)
+		p.Status.Remove(registers.Vblank)
 	}()
-	p.addr.ResetLatch()
-	p.scroll.ResetLatch()
-	return byte(p.status)
+	p.Addr.ResetLatch()
+	p.Scroll.ResetLatch()
+	return byte(p.Status)
 }
 
 func (p *PPU) Write(data byte) {
-	addr := p.addr.Get()
+	addr := p.Addr.Get()
 	switch {
 	case addr < 0x2000:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).
 			Error("attempt to write to cartridge ROM")
 	case 0x2000 <= addr && addr < 0x3000:
 		addr := p.MirrorVramAddr(addr)
-		p.vram[addr] = data
+		p.Vram[addr] = data
 	case 0x3000 <= addr && addr < 0x3F00:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).
 			Error("bad PPU write")
@@ -108,27 +108,27 @@ func (p *PPU) Write(data byte) {
 			addr -= 0x10
 		}
 		addr -= 0x3F00
-		p.palette[addr] = data
+		p.Palette[addr] = data
 	default:
 		log.WithField("address", fmt.Sprintf("%02X", addr)).
 			Error("unexpected write to mirrored space")
 	}
-	p.addr.Increment(p.ctrl.VramAddr())
+	p.Addr.Increment(p.Ctrl.VramAddr())
 }
 
 func (p *PPU) Read() byte {
-	addr := p.addr.Get()
-	p.addr.Increment(p.ctrl.VramAddr())
+	addr := p.Addr.Get()
+	p.Addr.Increment(p.Ctrl.VramAddr())
 
 	switch {
 	case addr < 0x2000:
-		result := p.readBuf
-		p.readBuf = p.chr[addr]
+		result := p.ReadBuf
+		p.ReadBuf = p.chr[addr]
 		return result
 	case 0x2000 <= addr && addr < 0x3000:
-		result := p.readBuf
+		result := p.ReadBuf
 		addr := p.MirrorVramAddr(addr)
-		p.readBuf = p.vram[addr]
+		p.ReadBuf = p.Vram[addr]
 		return result
 	case 0x3000 <= addr && addr < 0x3F00:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).
@@ -141,7 +141,7 @@ func (p *PPU) Read() byte {
 			addr -= 0x10
 		}
 		addr -= 0x3F00
-		return p.palette[addr]
+		return p.Palette[addr]
 	default:
 		log.WithField("address", fmt.Sprintf("%02X", addr)).
 			Error("unexpected access to mirrored space")
@@ -172,12 +172,12 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 }
 
 func (p *PPU) updateSpriteOverflow() {
-	size := int(p.ctrl.SpriteSize())
+	size := int(p.Ctrl.SpriteSize())
 	var count uint
-	for i := 0; i < len(p.oam)/4; i += 1 {
+	for i := 0; i < len(p.Oam)/4; i += 1 {
 		i := i * 4
-		tileY := p.oam[i]
-		row := int(p.scanline) - int(tileY)
+		tileY := p.Oam[i]
+		row := int(p.Scanline) - int(tileY)
 		if row < 0 || row >= size {
 			continue
 		}
@@ -185,34 +185,34 @@ func (p *PPU) updateSpriteOverflow() {
 	}
 	count &= 0b1111
 	if count == 8 {
-		p.status.Insert(registers.SpriteOverflow)
+		p.Status.Insert(registers.SpriteOverflow)
 	}
 }
 
 func (p *PPU) Step() bool {
-	p.cycles += 1
+	p.Cycles += 1
 
 	switch {
-	case p.cycles == 257:
+	case p.Cycles == 257:
 		p.updateSpriteOverflow()
-	case p.cycles > 340:
-		if p.SpriteZeroHit(p.cycles) {
-			p.status.Insert(registers.SpriteZeroHit)
+	case p.Cycles > 340:
+		if p.SpriteZeroHit(p.Cycles) {
+			p.Status.Insert(registers.SpriteZeroHit)
 		}
 
-		p.cycles = 0
-		p.scanline += 1
+		p.Cycles = 0
+		p.Scanline += 1
 
 		switch {
-		case p.scanline == 241:
-			p.status.Insert(registers.Vblank)
-			p.status.Remove(registers.SpriteZeroHit)
-			if p.ctrl.HasEnableNMI() {
+		case p.Scanline == 241:
+			p.Status.Insert(registers.Vblank)
+			p.Status.Remove(registers.SpriteZeroHit)
+			if p.Ctrl.HasEnableNMI() {
 				p.interruptCh <- interrupts.NMI
 			}
-		case p.scanline >= 262:
-			p.scanline = 0
-			p.status.Remove(registers.Vblank | registers.SpriteOverflow | registers.SpriteZeroHit)
+		case p.Scanline >= 262:
+			p.Scanline = 0
+			p.Status.Remove(registers.Vblank | registers.SpriteOverflow | registers.SpriteZeroHit)
 			return true
 		}
 	}
@@ -220,19 +220,19 @@ func (p *PPU) Step() bool {
 }
 
 func (p *PPU) SpriteZeroHit(cycle uint) bool {
-	x := p.oam[3]
-	y := p.oam[0]
-	return uint16(y) == p.scanline && uint(x) <= cycle && p.mask.Has(registers.SpriteEnable)
+	x := p.Oam[3]
+	y := p.Oam[0]
+	return uint16(y) == p.Scanline && uint(x) <= cycle && p.Mask.Has(registers.SpriteEnable)
 }
 
 func (p *PPU) Reset() {
-	p.cycles = 0
-	p.scanline = 0
+	p.Cycles = 0
+	p.Scanline = 0
 	p.WriteCtrl(0)
 	p.WriteMask(0)
 	p.WriteOamAddr(0)
-	p.addr = registers.AddrRegister{}
-	p.scroll = registers.Scroll{}
+	p.Addr = registers.AddrRegister{}
+	p.Scroll = registers.Scroll{}
 }
 
 func (p *PPU) Interrupt() <-chan interrupts.Interrupt {
