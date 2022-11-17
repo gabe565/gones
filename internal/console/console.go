@@ -139,3 +139,7 @@ func (c *Console) Draw(screen *ebiten.Image) {
 func (c *Console) CloseOnUpdate() {
 	c.closeOnUpdate = true
 }
+
+func (c *Console) SetTrace(v bool) {
+	c.enableTrace = v
+}

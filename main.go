@@ -41,6 +41,8 @@ func (r Run) Run() error {
 		}
 	}()
 
+	c.SetTrace(r.Trace)
+
 	ebiten.SetWindowSize(int(r.Scale*ppu.Width), int(r.Scale*ppu.TrimmedHeight))
 	ebiten.SetWindowTitle(filepath.Base(r.Path) + " | GoNES")
 	ebiten.SetScreenFilterEnabled(false)
