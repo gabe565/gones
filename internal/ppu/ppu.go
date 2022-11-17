@@ -10,24 +10,25 @@ import (
 	"image"
 )
 
-func New(cart *cartridge.Cartridge) *PPU {
+func New(cart *cartridge.Cartridge, mapper cartridge.Mapper) *PPU {
 	return &PPU{
-		chr:         cart.Chr,
-		mirroring:   cart.Mirror,
+		cartridge:   cart,
+		mapper:      mapper,
 		interruptCh: make(chan interrupts.Interrupt, 1),
 		image:       image.NewRGBA(image.Rect(0, 0, Width, Height)),
 	}
 }
 
 type PPU struct {
-	chr       []byte
-	mirroring cartridge.Mirror
-	Ctrl      registers.Control
-	Mask      bitflags.Flags
-	Scroll    registers.Scroll
-	Status    bitflags.Flags
-	Addr      registers.AddrRegister
-	Vram      [0x800]byte
+	cartridge *cartridge.Cartridge
+	mapper    cartridge.Mapper
+
+	Ctrl   registers.Control
+	Mask   bitflags.Flags
+	Scroll registers.Scroll
+	Status bitflags.Flags
+	Addr   registers.AddrRegister
+	Vram   [0x800]byte
 
 	OamAddr byte
 	Oam     [0x100]byte
@@ -123,7 +124,7 @@ func (p *PPU) Read() byte {
 	switch {
 	case addr < 0x2000:
 		result := p.ReadBuf
-		p.ReadBuf = p.chr[addr]
+		p.ReadBuf = p.mapper.Read(addr)
 		return result
 	case 0x2000 <= addr && addr < 0x3000:
 		result := p.ReadBuf
@@ -154,7 +155,7 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 	addr -= 0x2000
 	nameTable := addr / 0x400
 
-	switch p.mirroring {
+	switch p.cartridge.Mirror {
 	case cartridge.Vertical:
 		switch nameTable {
 		case 2, 3:

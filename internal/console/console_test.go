@@ -21,8 +21,8 @@ func Test_nestest(t *testing.T) {
 
 	var c Console
 
-	c.PPU = ppu.New(cart)
 	mapper, err := cartridge.NewMapper(cart)
+	c.PPU = ppu.New(cart, mapper)
 	if !assert.NoError(t, err) {
 		return
 	}
