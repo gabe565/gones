@@ -55,7 +55,7 @@ func (p *PPU) Render() []byte {
 		for i := len(p.Oam) - 4; i >= 0; i -= 4 {
 			tileIdx := p.Oam[i+1]
 			tileX := p.Oam[i+3]
-			tileY := p.Oam[i]
+			tileY := p.Oam[i] + 1
 
 			flipVertical := p.Oam[i+2]>>7&1 == 1
 			flipHorizonal := p.Oam[i+2]>>6&1 == 1
