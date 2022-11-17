@@ -19,7 +19,7 @@ type Console struct {
 	PPU *ppu.PPU
 
 	Cartridge *cartridge.Cartridge
-	mapper    cartridge.Mapper
+	Mapper    cartridge.Mapper
 
 	closeOnUpdate bool
 	enableTrace   bool
@@ -36,7 +36,7 @@ func New(path string) (*Console, error) {
 
 	console.Cartridge = cart
 
-	console.mapper, err = cartridge.NewMapper(cart)
+	console.Mapper, err = cartridge.NewMapper(cart)
 	if err != nil {
 		return &console, err
 	}
@@ -47,8 +47,8 @@ func New(path string) (*Console, error) {
 		}
 	}
 
-	console.PPU = ppu.New(cart, console.mapper)
-	console.Bus = bus.New(console.mapper, console.PPU)
+	console.PPU = ppu.New(cart, console.Mapper)
+	console.Bus = bus.New(console.Mapper, console.PPU)
 	console.CPU = cpu.New(console.Bus)
 
 	console.CPU.Reset()

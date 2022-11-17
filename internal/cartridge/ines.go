@@ -52,8 +52,8 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 	cartridge.Mirror = getMirror(header.Control[0])
 	cartridge.Battery = hasBattery(header.Control[0])
 
-	cartridge.Prg = make([]byte, int(header.PrgCount)*consts.PrgChunkSize)
-	if _, err := io.ReadFull(r, cartridge.Prg); err != nil {
+	cartridge.prg = make([]byte, int(header.PrgCount)*consts.PrgChunkSize)
+	if _, err := io.ReadFull(r, cartridge.prg); err != nil {
 		return nil, err
 	}
 
