@@ -1,7 +1,6 @@
 package cpu
 
 import (
-	"errors"
 	"github.com/gabe565/gones/internal/bitflags"
 )
 
@@ -279,8 +278,6 @@ func bpl(c *CPU, mode AddressingMode) error {
 	return nil
 }
 
-var ErrBrk = errors.New("break")
-
 // brk - Force Interrupt
 //
 // The BRK instruction forces the generation of an interrupt request.
@@ -292,7 +289,16 @@ var ErrBrk = errors.New("break")
 //
 // [BRK Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BRK
 func brk(c *CPU, mode AddressingMode) error {
-	return ErrBrk
+	c.stackPush16(c.ProgramCounter)
+	c.Status.Insert(Break | Break2)
+	if err := php(c, mode); err != nil {
+		return err
+	}
+	if err := sei(c, mode); err != nil {
+		return err
+	}
+	c.ProgramCounter = c.MemRead16(0xFFFE)
+	return nil
 }
 
 // bvc - Branch if Overflow Clear

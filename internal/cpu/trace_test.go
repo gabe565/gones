@@ -13,11 +13,11 @@ func TestCPU_TraceFormat(t *testing.T) {
 	c.RegisterY = 3
 	for {
 		traces = append(traces, c.Trace())
-		if _, err := c.Step(); err != nil {
-			if assert.ErrorIs(t, err, ErrBrk) {
-				break
-			}
+		if _, err := c.Step(); !assert.NoError(t, err) {
 			return
+		}
+		if c.Status.Has(Break) {
+			break
 		}
 	}
 
@@ -46,11 +46,11 @@ func TestCPU_Trace_MemAccess(t *testing.T) {
 	c.MemWrite(0x400, 0xAA)
 	for {
 		traces = append(traces, c.Trace())
-		if _, err := c.Step(); err != nil {
-			if assert.ErrorIs(t, err, ErrBrk) {
-				break
-			}
+		if _, err := c.Step(); !assert.NoError(t, err) {
 			return
+		}
+		if c.Status.Has(Break) {
+			break
 		}
 	}
 

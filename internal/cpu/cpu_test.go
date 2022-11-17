@@ -21,11 +21,11 @@ func stubCpu(program []byte) *CPU {
 func Test_0xa9_lda_immediate_load_data(t *testing.T) {
 	cpu := stubCpu([]byte{0xA9, 0x05, 0x00})
 	for {
-		if _, err := cpu.Step(); err != nil {
-			if assert.ErrorIs(t, err, ErrBrk) {
-				break
-			}
+		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return
+		}
+		if cpu.Status.Has(Break) {
+			break
 		}
 	}
 
@@ -37,11 +37,11 @@ func Test_0xa9_lda_immediate_load_data(t *testing.T) {
 func Test_0xa9_lda_zero_flag(t *testing.T) {
 	cpu := stubCpu([]byte{0xA9, 0x00, 0x00})
 	for {
-		if _, err := cpu.Step(); err != nil {
-			if assert.ErrorIs(t, err, ErrBrk) {
-				break
-			}
+		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return
+		}
+		if cpu.Status.Has(Break) {
+			break
 		}
 	}
 
@@ -51,11 +51,11 @@ func Test_0xa9_lda_zero_flag(t *testing.T) {
 func Test_0xaa_tax_move_a_to_x(t *testing.T) {
 	cpu := stubCpu([]byte{0xA9, 0x0A, 0xAA, 0x00})
 	for {
-		if _, err := cpu.Step(); err != nil {
-			if assert.ErrorIs(t, err, ErrBrk) {
-				break
-			}
+		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return
+		}
+		if cpu.Status.Has(Break) {
+			break
 		}
 	}
 
@@ -65,11 +65,11 @@ func Test_0xaa_tax_move_a_to_x(t *testing.T) {
 func Test_5_operations(t *testing.T) {
 	cpu := stubCpu([]byte{0xA9, 0xC0, 0xAA, 0xE8, 0x00})
 	for {
-		if _, err := cpu.Step(); err != nil {
-			if assert.ErrorIs(t, err, ErrBrk) {
-				break
-			}
+		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return
+		}
+		if cpu.Status.Has(Break) {
+			break
 		}
 	}
 
@@ -79,11 +79,11 @@ func Test_5_operations(t *testing.T) {
 func Test_inx_overflow(t *testing.T) {
 	cpu := stubCpu([]byte{0xA9, 0xFF, 0xAA, 0xE8, 0xE8, 0x00})
 	for {
-		if _, err := cpu.Step(); err != nil {
-			if assert.ErrorIs(t, err, ErrBrk) {
-				break
-			}
+		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return
+		}
+		if cpu.Status.Has(Break) {
+			break
 		}
 	}
 
@@ -94,11 +94,11 @@ func Test_lda_from_memory(t *testing.T) {
 	cpu := stubCpu([]byte{0xA5, 0x10, 0x00})
 	cpu.MemWrite(0x10, 0x55)
 	for {
-		if _, err := cpu.Step(); err != nil {
-			if assert.ErrorIs(t, err, ErrBrk) {
-				break
-			}
+		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return
+		}
+		if cpu.Status.Has(Break) {
+			break
 		}
 	}
 

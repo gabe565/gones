@@ -60,11 +60,11 @@ func Test_nestest(t *testing.T) {
 
 		assert.EqualValues(t, expected, trace)
 
-		if _, err := c.CPU.Step(); err != nil {
-			if assert.ErrorIs(t, err, cpu.ErrBrk) {
-				break
-			}
+		if _, err := c.CPU.Step(); !assert.NoError(t, err) {
 			return
+		}
+		if c.CPU.Status.Has(cpu.Break) {
+			break
 		}
 	}
 
