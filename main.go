@@ -20,9 +20,10 @@ func main() {
 }
 
 type Run struct {
-	Path  string
-	Trace bool
-	Scale float64
+	Path       string
+	Trace      bool
+	Scale      float64
+	Fullscreen bool
 }
 
 func (r Run) Run() error {
@@ -48,6 +49,7 @@ func (r Run) Run() error {
 	ebiten.SetScreenFilterEnabled(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowClosingHandled(true)
+	ebiten.SetFullscreen(r.Fullscreen)
 
 	if err := ebiten.RunGame(c); err != nil && !errors.Is(err, console.ErrExit) {
 		return err
