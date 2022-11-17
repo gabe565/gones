@@ -37,7 +37,7 @@ func (r Run) Run() error {
 		signal.Notify(ch, os.Interrupt)
 		for range ch {
 			log.Info("Exiting...")
-			c.CloseOnUpdate = true
+			c.CloseOnUpdate()
 		}
 	}()
 

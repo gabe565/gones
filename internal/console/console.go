@@ -20,7 +20,7 @@ type Console struct {
 
 	cartridge *cartridge.Cartridge
 
-	CloseOnUpdate bool
+	closeOnUpdate bool
 	enableTrace   bool
 	debug         Debug
 }
@@ -96,7 +96,7 @@ func (c *Console) Layout(_, _ int) (int, int) {
 }
 
 func (c *Console) Update() error {
-	if ebiten.IsWindowBeingClosed() || c.CloseOnUpdate {
+	if ebiten.IsWindowBeingClosed() || c.closeOnUpdate {
 		if err := c.Close(); err != nil {
 			return err
 		}
@@ -134,4 +134,8 @@ func (c *Console) Draw(screen *ebiten.Image) {
 	var op ebiten.DrawImageOptions
 	op.GeoM.Translate(0, -ppu.TrimHeight)
 	screen.DrawImage(img, &op)
+}
+
+func (c *Console) CloseOnUpdate() {
+	c.closeOnUpdate = true
 }
