@@ -1,7 +1,9 @@
 package cartridge
 
 import (
+	"bytes"
 	"crypto/md5"
+	"encoding/gob"
 	"fmt"
 	"github.com/gabe565/gones/internal/consts"
 )
@@ -35,4 +37,19 @@ func FromBytes(b []byte) *Cartridge {
 	cart.Chr = make([]byte, consts.ChrChunkSize)
 
 	return cart
+}
+
+func (c *Cartridge) GobEncode() ([]byte, error) {
+	var b bytes.Buffer
+	if c.Battery {
+		type Cartridge struct {
+			Sram []byte
+		}
+
+		c := Cartridge{Sram: c.Sram}
+		if err := gob.NewEncoder(&b).Encode(&c); err != nil {
+			return b.Bytes(), err
+		}
+	}
+	return b.Bytes(), nil
 }

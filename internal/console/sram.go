@@ -8,7 +8,7 @@ import (
 )
 
 func (c *Console) SaveSram() error {
-	path, err := c.cartridge.SramPath()
+	path, err := c.Cartridge.SramPath()
 	if err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func (c *Console) SaveSram() error {
 		_ = f.Close()
 	}(f)
 
-	if _, err := f.Write(c.cartridge.Sram); err != nil {
+	if _, err := f.Write(c.Cartridge.Sram); err != nil {
 		return err
 	}
 
@@ -39,7 +39,7 @@ func (c *Console) SaveSram() error {
 }
 
 func (c *Console) LoadSram() error {
-	path, err := c.cartridge.SramPath()
+	path, err := c.Cartridge.SramPath()
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (c *Console) LoadSram() error {
 
 	log.WithField("file", path).Info("Loading save from disk")
 
-	if _, err := f.Read(c.cartridge.Sram); err != nil {
+	if _, err := f.Read(c.Cartridge.Sram); err != nil {
 		return err
 	}
 

@@ -18,7 +18,7 @@ type Console struct {
 	Bus *bus.Bus
 	PPU *ppu.PPU
 
-	cartridge *cartridge.Cartridge
+	Cartridge *cartridge.Cartridge
 
 	closeOnUpdate bool
 	enableTrace   bool
@@ -33,7 +33,7 @@ func New(path string) (*Console, error) {
 		return &console, err
 	}
 
-	console.cartridge = cart
+	console.Cartridge = cart
 	if cart.Battery {
 		if err := console.LoadSram(); err != nil && !errors.Is(err, os.ErrNotExist) {
 			return &console, err
@@ -50,7 +50,7 @@ func New(path string) (*Console, error) {
 }
 
 func (c *Console) Close() error {
-	if c.cartridge.Battery {
+	if c.Cartridge.Battery {
 		if err := c.SaveSram(); err != nil {
 			return err
 		}
