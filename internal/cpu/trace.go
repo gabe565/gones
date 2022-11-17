@@ -19,7 +19,7 @@ func (c *CPU) Trace() string {
 	var valAddr uint16
 	var val byte
 	switch op.Mode {
-	case Implied, Indirect, Immediate, Accumulator, Relative:
+	case Implied, Immediate, Accumulator, Relative:
 		//
 	default:
 		valAddr, _ = c.getAbsoluteAddress(op.Mode, begin+1)
@@ -76,15 +76,7 @@ func (c *CPU) Trace() string {
 
 		switch op.Mode {
 		case Indirect:
-			var indirect uint16
-			if addr&0x00FF == 0x00FF {
-				lo := c.MemRead(addr)
-				hi := c.MemRead(addr & 0xFF00)
-				indirect = uint16(hi)<<8 | uint16(lo)
-			} else {
-				indirect = c.MemRead16(addr)
-			}
-			trace += fmt.Sprintf("($%04X) = %04X", addr, indirect)
+			trace += fmt.Sprintf("($%04X) = %04X", addr, valAddr)
 		case Implied, Relative:
 			trace += fmt.Sprintf("$%04X", addr)
 		case Absolute:

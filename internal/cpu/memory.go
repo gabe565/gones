@@ -17,6 +17,26 @@ func (c *CPU) MemRead16(pos uint16) uint16 {
 	return hi<<8 | lo
 }
 
+// MemRead16Bug reads two bytes from memory, emulating a 6502 bug.
+//
+// JMP ($xxyy), or JMP indirect, does not advance pages if the lower eight bits
+// of the specified address is $FF; the upper eight bits are fetched from $xx00,
+// 255 bytes earlier, instead of the expected following byte.
+//
+// See [JMP Instruction Reference] and [NESdev CPU Errata].
+//
+// [JMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JMP
+// [NESDev CPU Errata]:https://www.nesdev.org/wiki/Errata#CPU
+func (c *CPU) MemRead16Bug(pos uint16) uint16 {
+	if pos&0x00FF == 0x00FF {
+		lo := uint16(c.MemRead(pos))
+		hi := uint16(c.MemRead(pos & 0xFF00))
+		return hi<<8 | lo
+	} else {
+		return c.MemRead16(pos)
+	}
+}
+
 // MemWrite16 writes two bytes to memory.
 func (c *CPU) MemWrite16(pos uint16, data uint16) {
 	hi := byte(data >> 8)

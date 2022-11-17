@@ -52,6 +52,9 @@ func (c *CPU) getAbsoluteAddress(mode AddressingMode, addr uint16) (uint16, bool
 		base := c.MemRead16(addr)
 		addr := base + uint16(c.RegisterY)
 		return addr, crossedPage(base, addr)
+	case Indirect:
+		base := c.MemRead16(addr)
+		return c.MemRead16Bug(base), false
 	case IndirectX:
 		base := c.MemRead(addr)
 

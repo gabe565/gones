@@ -525,27 +525,8 @@ func isb(c *CPU, mode AddressingMode) {
 //
 // [JMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JMP
 func jmp(c *CPU, mode AddressingMode) {
-	addr := c.MemRead16(c.ProgramCounter)
-
-	switch mode {
-	case Absolute:
-		c.ProgramCounter = addr
-	case Indirect:
-		// 6502 bug mode with page boundary:
-		// If address $3000 contains $40, $30FF contains $80, and $3100 contains $50,
-		// the result of JMP ($30FF) will be a transfer of control to $4080
-		// rather than $5080 as expected
-		// i.e. the 6502 took the low byte of the address from $30FF and the high byte from $3000
-		var indirect uint16
-		if addr&0x00FF == 0x00FF {
-			lo := c.MemRead(addr)
-			hi := c.MemRead(addr & 0xFF00)
-			indirect = uint16(hi)<<8 | uint16(lo)
-		} else {
-			indirect = c.MemRead16(addr)
-		}
-		c.ProgramCounter = indirect
-	}
+	addr, _ := c.getOperandAddress(mode)
+	c.ProgramCounter = addr
 }
 
 // jsr - Jump to Subroutine
