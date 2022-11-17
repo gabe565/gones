@@ -8,10 +8,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func New(cart *cartridge.Cartridge, ppu *ppu.PPU) *Bus {
+func New(mapper cartridge.Mapper, ppu *ppu.PPU) *Bus {
 	return &Bus{
-		cartridge: cart,
-		ppu:       ppu,
+		mapper: mapper,
+		ppu:    ppu,
 		controller1: controller.Controller{
 			Keymap: controller.Player1Keymap,
 		},
@@ -23,7 +23,7 @@ func New(cart *cartridge.Cartridge, ppu *ppu.PPU) *Bus {
 
 type Bus struct {
 	CpuVram     [0x800]byte
-	cartridge   *cartridge.Cartridge
+	mapper      cartridge.Mapper
 	ppu         *ppu.PPU
 	controller1 controller.Controller
 	controller2 controller.Controller
@@ -54,11 +54,7 @@ func (b *Bus) MemRead(addr uint16) byte {
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled APU
 	default:
-		addr -= 0x8000
-		if len(b.cartridge.Prg) == 0x4000 {
-			addr %= 0x4000
-		}
-		return b.cartridge.Prg[addr]
+		return b.mapper.Read(addr)
 	}
 	return 0
 }
@@ -103,8 +99,7 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled
 	default:
-		log.WithField("address", fmt.Sprintf("%02X", addr)).
-			Error("attempt to write to cartridge ROM")
+		b.mapper.Write(addr, data)
 	}
 }
 

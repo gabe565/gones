@@ -94,8 +94,9 @@ Eventually, this will be configurable in the UI.
 - [x] CPU implementation
   - CPU is stable, and `nestest.nes` passes.
 - [x] Cartridge implementation
+  - [x] Support for mappers
   - [ ] Common mappers implemented
-    - Currently only mapper 0 is supported.
+    - Supported mappers: 0, 2
 - [x] PPU implementation (graphics)
   - [x] Background rendering 
   - [x] Sprite rendering

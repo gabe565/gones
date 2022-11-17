@@ -22,7 +22,11 @@ func Test_nestest(t *testing.T) {
 	var c Console
 
 	c.PPU = ppu.New(cart)
-	c.Bus = bus.New(cart, c.PPU)
+	mapper, err := cartridge.NewMapper(cart)
+	if !assert.NoError(t, err) {
+		return
+	}
+	c.Bus = bus.New(mapper, c.PPU)
 	c.CPU = cpu.New(c.Bus)
 
 	c.CPU.Reset()
