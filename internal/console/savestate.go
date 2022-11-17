@@ -2,6 +2,7 @@ package console
 
 import (
 	"encoding/gob"
+	"errors"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
@@ -16,6 +17,10 @@ func (c *Console) SaveState(num uint8) error {
 	log.WithField("file", path).Info("Saving state")
 
 	if err := os.MkdirAll(filepath.Dir(path), 0777); err != nil {
+		return err
+	}
+
+	if err := os.Rename(path, path+".bak"); err != nil && !errors.Is(err, os.ErrNotExist) {
 		return err
 	}
 
