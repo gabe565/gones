@@ -34,21 +34,19 @@ func Test_nestest(t *testing.T) {
 
 	scanner := bufio.NewScanner(strings.NewReader(nestest.Log))
 
-	for {
+	for scanner.Scan() {
 		trace := c.CPU.Trace()
-
-		scanner.Scan()
 
 		switch c.CPU.ProgramCounter {
 		//TODO: Remove this after APU is supported
 		case 0xC68B, 0xC690, 0xC695, 0xC69A, 0xC69F:
-			return
+			continue
 		//TODO: Check if these should be ignored.
 		// They get logged by our trace, but seem to be missing from nestest.log
 		// 0x1 is *ISB
 		// 0x4 is final BRK
 		case 0x1, 0x4:
-			return
+			continue
 		}
 
 		expected := scanner.Text()
@@ -66,6 +64,9 @@ func Test_nestest(t *testing.T) {
 		if c.CPU.Status.Has(cpu.Break) {
 			break
 		}
+	}
+	if !assert.NoError(t, scanner.Err()) {
+		return
 	}
 
 	assert.EqualValues(t, 0, c.CPU.MemRead(0x2))
