@@ -80,7 +80,7 @@ func (c *CPU) Trace() string {
 		case Implied, Relative:
 			trace += fmt.Sprintf("$%04X", addr)
 		case Absolute:
-			if op.Mnemonic == "JMP" {
+			if op.Code == 0x4C { // JMP
 				trace += fmt.Sprintf("$%04X", valAddr)
 			} else {
 				trace += fmt.Sprintf("$%04X = %02X", valAddr, val)
