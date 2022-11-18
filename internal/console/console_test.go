@@ -41,12 +41,6 @@ func Test_nestest(t *testing.T) {
 		//TODO: Remove this after APU is supported
 		case 0xC68B, 0xC690, 0xC695, 0xC69A, 0xC69F:
 			continue
-		//TODO: Check if these should be ignored.
-		// They get logged by our trace, but seem to be missing from nestest.log
-		// 0x1 is *ISB
-		// 0x4 is final BRK
-		case 0x1, 0x4:
-			continue
 		}
 
 		expected := scanner.Text()
