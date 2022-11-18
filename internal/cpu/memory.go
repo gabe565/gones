@@ -11,9 +11,9 @@ func (c *CPU) MemWrite(addr uint16, data byte) {
 }
 
 // MemRead16 reads two bytes from memory.
-func (c *CPU) MemRead16(pos uint16) uint16 {
-	lo := uint16(c.MemRead(pos))
-	hi := uint16(c.MemRead(pos + 1))
+func (c *CPU) MemRead16(addr uint16) uint16 {
+	lo := uint16(c.MemRead(addr))
+	hi := uint16(c.MemRead(addr + 1))
 	return hi<<8 | lo
 }
 
@@ -27,22 +27,22 @@ func (c *CPU) MemRead16(pos uint16) uint16 {
 //
 // [JMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JMP
 // [NESDev CPU Errata]:https://www.nesdev.org/wiki/Errata#CPU
-func (c *CPU) MemRead16Bug(pos uint16) uint16 {
-	if pos&0x00FF == 0x00FF {
-		lo := uint16(c.MemRead(pos))
-		hi := uint16(c.MemRead(pos & 0xFF00))
+func (c *CPU) MemRead16Bug(addr uint16) uint16 {
+	if addr&0x00FF == 0x00FF {
+		lo := uint16(c.MemRead(addr))
+		hi := uint16(c.MemRead(addr & 0xFF00))
 		return hi<<8 | lo
 	} else {
-		return c.MemRead16(pos)
+		return c.MemRead16(addr)
 	}
 }
 
 // MemWrite16 writes two bytes to memory.
-func (c *CPU) MemWrite16(pos uint16, data uint16) {
+func (c *CPU) MemWrite16(addr uint16, data uint16) {
 	hi := byte(data >> 8)
 	lo := byte(data & 0xFF)
-	c.MemWrite(pos, lo)
-	c.MemWrite(pos+1, hi)
+	c.MemWrite(addr, lo)
+	c.MemWrite(addr+1, hi)
 }
 
 func (c *CPU) stackPush(data byte) {
