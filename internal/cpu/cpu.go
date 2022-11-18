@@ -103,8 +103,8 @@ func (c *CPU) Step() (uint, error) {
 	c.ProgramCounter += 1
 	prevPC := c.ProgramCounter
 
-	op, ok := OpCodeMap[code]
-	if !ok {
+	op := OpCodes[code]
+	if op.Exec == nil {
 		return 0, fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
 	}
 

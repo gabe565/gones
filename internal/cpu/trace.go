@@ -12,7 +12,10 @@ var skipRead = []uint16{
 
 func (c *CPU) Trace() string {
 	code := c.MemRead(c.ProgramCounter)
-	op := OpCodeMap[code]
+	op := OpCodes[code]
+	if op.Exec == nil {
+		return ""
+	}
 
 	begin := c.ProgramCounter
 	hexDump := []uint16{uint16(code)}
