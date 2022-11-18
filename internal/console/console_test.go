@@ -33,8 +33,10 @@ func Test_nestest(t *testing.T) {
 	c.CPU.ProgramCounter = 0xC000
 
 	scanner := bufio.NewScanner(strings.NewReader(nestest.Log))
-
+	var checkedLines uint
 	for scanner.Scan() {
+		checkedLines += 1
+
 		trace := c.CPU.Trace()
 
 		switch c.CPU.ProgramCounter {
@@ -63,6 +65,7 @@ func Test_nestest(t *testing.T) {
 		return
 	}
 
+	assert.EqualValues(t, strings.Count(nestest.Log, "\n"), checkedLines)
 	assert.EqualValues(t, 0, c.CPU.MemRead(0x2))
 	assert.EqualValues(t, 0, c.CPU.MemRead(0x3))
 }
