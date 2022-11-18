@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 )
 
 func main() {
@@ -45,7 +46,7 @@ func (r Run) Run() error {
 	c.SetTrace(r.Trace)
 
 	ebiten.SetWindowSize(int(r.Scale*ppu.Width), int(r.Scale*ppu.TrimmedHeight))
-	ebiten.SetWindowTitle(filepath.Base(r.Path) + " | GoNES")
+	ebiten.SetWindowTitle(strings.TrimSuffix(filepath.Base(r.Path), filepath.Ext(r.Path)) + " | GoNES")
 	ebiten.SetScreenFilterEnabled(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowClosingHandled(true)
