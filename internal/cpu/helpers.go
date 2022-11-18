@@ -5,7 +5,7 @@ import "github.com/gabe565/gones/internal/bitflags"
 // updateZeroAndNegFlags updates zero and negative flags
 func (c *CPU) updateZeroAndNegFlags(result byte) {
 	c.Status.Set(Zero, result == 0)
-	c.Status.Set(Negative, bitflags.Flags(result).Has(Negative))
+	c.Status.Set(Negative, bitflags.Flags(result).Intersects(Negative))
 }
 
 func (c *CPU) branch(condition bool) {
@@ -42,7 +42,7 @@ func (c *CPU) setAccumulator(v byte) {
 
 func (c *CPU) addAccumulator(data byte) {
 	sum := uint16(c.Accumulator) + uint16(data)
-	if c.Status.Has(Carry) {
+	if c.Status.Intersects(Carry) {
 		sum += 1
 	}
 

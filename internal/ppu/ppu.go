@@ -49,7 +49,7 @@ func (p *PPU) WriteAddr(data byte) {
 func (p *PPU) WriteCtrl(data byte) {
 	beforeNmi := p.Ctrl.HasEnableNMI()
 	p.Ctrl = registers.Control(data)
-	if !beforeNmi && p.Ctrl.HasEnableNMI() && p.Status.Has(registers.Vblank) {
+	if !beforeNmi && p.Ctrl.HasEnableNMI() && p.Status.Intersects(registers.Vblank) {
 		p.interruptCh <- interrupts.NMI
 	}
 }
@@ -223,7 +223,7 @@ func (p *PPU) Step() bool {
 func (p *PPU) SpriteZeroHit(cycle uint) bool {
 	x := p.Oam[3]
 	y := p.Oam[0]
-	return uint16(y) == p.Scanline && uint(x) <= cycle && p.Mask.Has(registers.SpriteEnable)
+	return uint16(y) == p.Scanline && uint(x) <= cycle && p.Mask.Intersects(registers.SpriteEnable)
 }
 
 func (p *PPU) Reset() {

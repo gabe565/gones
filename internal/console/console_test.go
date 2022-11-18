@@ -57,7 +57,7 @@ func Test_nestest(t *testing.T) {
 		if _, err := c.CPU.Step(); !assert.NoError(t, err) {
 			return
 		}
-		if c.CPU.Status.Has(cpu.Break) {
+		if c.CPU.Status.Intersects(cpu.Break) {
 			break
 		}
 	}

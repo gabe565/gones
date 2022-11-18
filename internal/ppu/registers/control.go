@@ -18,7 +18,7 @@ const (
 )
 
 func (c Control) VramAddr() byte {
-	if bitflags.Flags(c).Has(IncrementMode) {
+	if bitflags.Flags(c).Intersects(IncrementMode) {
 		return 32
 	} else {
 		return 1
@@ -26,7 +26,7 @@ func (c Control) VramAddr() byte {
 }
 
 func (c Control) SpriteTileAddr() uint16 {
-	if bitflags.Flags(c).Has(SpriteTileSelect) {
+	if bitflags.Flags(c).Intersects(SpriteTileSelect) {
 		return 0x1000
 	} else {
 		return 0
@@ -34,7 +34,7 @@ func (c Control) SpriteTileAddr() uint16 {
 }
 
 func (c Control) BgTileAddr() uint16 {
-	if bitflags.Flags(c).Has(BgTileSelect) {
+	if bitflags.Flags(c).Intersects(BgTileSelect) {
 		return 0x1000
 	} else {
 		return 0
@@ -42,7 +42,7 @@ func (c Control) BgTileAddr() uint16 {
 }
 
 func (c Control) SpriteSize() byte {
-	if bitflags.Flags(c).Has(SpriteHeight) {
+	if bitflags.Flags(c).Intersects(SpriteHeight) {
 		return 16
 	} else {
 		return 8
@@ -50,7 +50,7 @@ func (c Control) SpriteSize() byte {
 }
 
 func (c Control) MasterSlaveSelect() byte {
-	if bitflags.Flags(c).Has(MasterSlaveSelect) {
+	if bitflags.Flags(c).Intersects(MasterSlaveSelect) {
 		return 1
 	} else {
 		return 0
@@ -58,7 +58,7 @@ func (c Control) MasterSlaveSelect() byte {
 }
 
 func (c Control) HasEnableNMI() bool {
-	return bitflags.Flags(c).Has(EnableNMI)
+	return bitflags.Flags(c).Intersects(EnableNMI)
 }
 
 func (c Control) NametableAddr() uint16 {

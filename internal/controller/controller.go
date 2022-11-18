@@ -38,7 +38,7 @@ func (j *Controller) Read() byte {
 	}
 
 	var value byte
-	if j.bits.Has(1 << j.index) {
+	if j.bits.Intersects(1 << j.index) {
 		value = 1
 	}
 
@@ -56,7 +56,7 @@ func (j *Controller) UpdateInput() {
 
 	var turboPressed bool
 	for key, button := range j.Keymap.Turbo {
-		if ebiten.IsKeyPressed(key) && !j.bits.Has(button) {
+		if ebiten.IsKeyPressed(key) && !j.bits.Intersects(button) {
 			turboPressed = true
 			j.bits.Set(button, j.turbo%6 < 3)
 		}

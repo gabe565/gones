@@ -18,7 +18,7 @@ func (p *PPU) Render() []byte {
 	scrollX := int(p.Scroll.X)
 	scrollY := int(p.Scroll.Y)
 
-	if p.Mask.Has(registers.BackgroundEnable) {
+	if p.Mask.Intersects(registers.BackgroundEnable) {
 		p.RenderNametable(
 			main,
 			-scrollX,
@@ -47,7 +47,7 @@ func (p *PPU) Render() []byte {
 		}
 	}
 
-	if p.Mask.Has(registers.SpriteEnable) {
+	if p.Mask.Intersects(registers.SpriteEnable) {
 		for i := len(p.Oam) - 4; i >= 0; i -= 4 {
 			tileIdx := p.Oam[i+1]
 			tileX := p.Oam[i+3]
