@@ -12,4 +12,8 @@ const (
 
 	// ResetAddr is the memory address for the Reset Interrupt Vector.
 	ResetAddr = 0xFFFC
+
+	CpuFrequency = 1789772
+
+	AudioSampleRate = 48000
 )

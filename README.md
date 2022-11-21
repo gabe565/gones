@@ -108,7 +108,7 @@ Eventually, this will be configurable in the UI.
   - [x] Player 1
   - [x] Player 2
   - [ ] External controllers
-- [ ] APU implementation (audio)
+- [x] APU implementation (audio)
 - [x] Save file for games with batteries
 - [x] Save states
 - [ ] Preferences (remap controllers, video config, sound config, etc)

@@ -48,6 +48,8 @@ type CPU struct {
 	Cycles uint
 
 	Interrupt chan interrupts.Interrupt
+
+	Stall uint8
 }
 
 type Callback func(*CPU) error
@@ -93,6 +95,12 @@ var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
 // Step steps through the next instruction
 func (c *CPU) Step() (uint, error) {
+	if c.Stall > 0 {
+		c.Stall -= 1
+		c.Cycles += 1
+		return 1, nil
+	}
+
 	cycles := c.Cycles
 
 	if len(c.Interrupt) > 0 {
@@ -117,4 +125,8 @@ func (c *CPU) Step() (uint, error) {
 	}
 
 	return c.Cycles - cycles, nil
+}
+
+func (c *CPU) AddStall(stall uint8) {
+	c.Stall += stall
 }

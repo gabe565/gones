@@ -2,15 +2,17 @@ package bus
 
 import (
 	"fmt"
+	"github.com/gabe565/gones/internal/apu"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/controller"
 	"github.com/gabe565/gones/internal/ppu"
 	log "github.com/sirupsen/logrus"
 )
 
-func New(mapper cartridge.Mapper, ppu *ppu.PPU) *Bus {
+func New(mapper cartridge.Mapper, ppu *ppu.PPU, apu *apu.APU) *Bus {
 	return &Bus{
 		mapper: mapper,
+		apu:    apu,
 		ppu:    ppu,
 		controller1: controller.Controller{
 			Keymap: controller.Player1Keymap,
@@ -24,6 +26,7 @@ func New(mapper cartridge.Mapper, ppu *ppu.PPU) *Bus {
 type Bus struct {
 	CpuVram     [0x800]byte
 	mapper      cartridge.Mapper
+	apu         *apu.APU
 	ppu         *ppu.PPU
 	controller1 controller.Controller
 	controller2 controller.Controller
@@ -46,13 +49,13 @@ func (b *Bus) MemRead(addr uint16) byte {
 		addr &= 0x2007
 		return b.MemRead(addr)
 	case 0x4000 <= addr && addr < 0x4016:
-		// APU
+		return b.apu.ReadMem(addr)
 	case addr == 0x4016:
 		return b.controller1.Read()
 	case addr == 0x4017:
 		return b.controller2.Read()
 	case addr <= 0x4018 && addr < 0x4020:
-		// Disabled APU
+		// Disabled
 	default:
 		return b.mapper.Read(addr)
 	}
@@ -92,7 +95,7 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 		}
 		b.ppu.WriteOamDma(buf)
 	case 0x4000 <= addr && addr < 0x4013, addr == 0x4015, addr == 0x4017:
-		// APU
+		b.apu.WriteMem(addr, data)
 	case addr == 0x4016:
 		b.controller1.Write(data)
 		b.controller2.Write(data)

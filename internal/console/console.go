@@ -3,12 +3,16 @@ package console
 import (
 	"errors"
 	"fmt"
+	"github.com/gabe565/gones/internal/apu"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/cpu"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
 	"os"
+	"time"
 )
 
 var ErrExit = errors.New("exit")
@@ -17,10 +21,13 @@ type Console struct {
 	CPU *cpu.CPU
 	Bus *bus.Bus
 	PPU *ppu.PPU
+	APU *apu.APU
 
 	Cartridge *cartridge.Cartridge
 	Mapper    cartridge.Mapper
 
+	audioCtx      *audio.Context
+	player        *audio.Player
 	closeOnUpdate bool
 	enableTrace   bool
 	debug         Debug
@@ -48,10 +55,20 @@ func New(path string) (*Console, error) {
 	}
 
 	console.PPU = ppu.New(cart, console.Mapper)
-	console.Bus = bus.New(console.Mapper, console.PPU)
+	console.APU = apu.New()
+	console.Bus = bus.New(console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)
+	console.APU.SetCpu(console.CPU)
 
 	console.CPU.Reset()
+
+	console.audioCtx = audio.NewContext(consts.AudioSampleRate)
+	console.player, err = console.audioCtx.NewPlayer(console.APU)
+	if err != nil {
+		return &console, err
+	}
+	console.player.SetBufferSize(time.Second / 60)
+	console.player.Play()
 
 	return &console, nil
 }
@@ -87,7 +104,15 @@ func (c *Console) Step() error {
 	case interrupt := <-c.PPU.Interrupt():
 		c.CPU.Interrupt <- interrupt
 	default:
-		//
+	}
+
+	for i := uint(0); i < cycles; i += 1 {
+		if interrupt := c.APU.Step(); interrupt != nil {
+			select {
+			case c.CPU.Interrupt <- *interrupt:
+			default:
+			}
+		}
 	}
 
 	return err
@@ -96,6 +121,7 @@ func (c *Console) Step() error {
 func (c *Console) Reset() {
 	c.CPU.Reset()
 	c.PPU.Reset()
+	c.APU.Reset()
 }
 
 func (c *Console) Layout(_, _ int) (int, int) {

@@ -1,6 +1,7 @@
 package cpu
 
 import (
+	"github.com/gabe565/gones/internal/apu"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/ppu"
@@ -12,8 +13,10 @@ func stubCpu(program []byte) *CPU {
 	cart := cartridge.FromBytes(program)
 	mapper := cartridge.NewMapper2(cart)
 	ppu := ppu.New(cart, mapper)
-	bus := bus.New(mapper, ppu)
+	apu := apu.New()
+	bus := bus.New(mapper, ppu, apu)
 	cpu := New(bus)
+	apu.SetCpu(cpu)
 	cpu.Reset()
 	return cpu
 }

@@ -3,6 +3,7 @@ package console
 import (
 	"bufio"
 	_ "embed"
+	"github.com/gabe565/gones/internal/apu"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/cpu"
@@ -26,8 +27,10 @@ func Test_nestest(t *testing.T) {
 	if !assert.NoError(t, err) {
 		return
 	}
-	c.Bus = bus.New(mapper, c.PPU)
+	c.APU = apu.New()
+	c.Bus = bus.New(mapper, c.PPU, c.APU)
 	c.CPU = cpu.New(c.Bus)
+	c.APU.SetCpu(c.CPU)
 
 	c.CPU.Reset()
 	c.CPU.ProgramCounter = 0xC000
