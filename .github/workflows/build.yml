@@ -113,7 +113,6 @@ jobs:
         include:
           - platform: linux-arm64
             docker-platform: linux/arm64/v8
-            pre-build: sudo apt-get install libgl1-mesa-dev xorg-dev
     steps:
       - name: Checkout
         uses: actions/checkout@v3
