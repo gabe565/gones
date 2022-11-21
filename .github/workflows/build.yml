@@ -5,6 +5,18 @@ on:
   schedule:
     - cron: '41 8 5 * *'
 
+env:
+  LINUX_DEPENDENCIES: >
+    libasound2-dev
+    libc6-dev
+    libgl1-mesa-dev
+    libglu1-mesa-dev
+    libxcursor-dev
+    libxi-dev
+    libxinerama-dev
+    libxrandr-dev
+    libxxf86vm-dev
+
 jobs:
   lint:
     name: Lint
@@ -18,7 +30,7 @@ jobs:
           go-version-file: go.mod
           cache: true
       - name: Install apt dependencies
-        run: sudo apt-get install libgl1-mesa-dev xorg-dev
+        run: sudo apt-get install $LINUX_DEPENDENCIES
       - name: Lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -38,7 +50,7 @@ jobs:
           go-version-file: go.mod
           cache: true
       - name: Install apt dependencies
-        run: sudo apt-get install libgl1-mesa-dev xorg-dev
+        run: sudo apt-get install $LINUX_DEPENDENCIES
       - name: Test
         run: xvfb-run go test ./...
 
@@ -52,7 +64,7 @@ jobs:
         include:
           - platform: linux-amd64
             runs-on: ubuntu-latest
-            pre-build: sudo apt-get install libgl1-mesa-dev xorg-dev
+            pre-build: sudo apt-get install $LINUX_DEPENDENCIES
           - platform: darwin-amd64
             runs-on: macos-12
           - platform: darwin-arm64
