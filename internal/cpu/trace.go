@@ -11,7 +11,7 @@ var skipRead = []uint16{
 }
 
 func (c *CPU) Trace() string {
-	code := c.MemRead(c.ProgramCounter)
+	code := c.ReadMem(c.ProgramCounter)
 	op := OpCodes[code]
 	if op.Exec == nil {
 		return ""
@@ -35,7 +35,7 @@ func (c *CPU) Trace() string {
 			}
 		}
 		if !skip {
-			val = c.MemRead(valAddr)
+			val = c.ReadMem(valAddr)
 		}
 	}
 
@@ -46,7 +46,7 @@ func (c *CPU) Trace() string {
 			trace += "A "
 		}
 	case 2:
-		addr := c.MemRead(begin + 1)
+		addr := c.ReadMem(begin + 1)
 		hexDump = append(hexDump, uint16(addr))
 
 		switch op.Mode {
@@ -70,12 +70,12 @@ func (c *CPU) Trace() string {
 			log.Panicf("unexpected addressing mode %s has len 2. code %02X", op.Mode, op.Code)
 		}
 	case 3:
-		addrLo := c.MemRead(begin + 1)
+		addrLo := c.ReadMem(begin + 1)
 		hexDump = append(hexDump, uint16(addrLo))
-		addrHi := c.MemRead(begin + 2)
+		addrHi := c.ReadMem(begin + 2)
 		hexDump = append(hexDump, uint16(addrHi))
 
-		addr := c.MemRead16(begin + 1)
+		addr := c.ReadMem16(begin + 1)
 
 		switch op.Mode {
 		case Indirect:

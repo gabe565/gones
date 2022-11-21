@@ -64,7 +64,7 @@ const (
 
 // Reset resets the CPU and sets ProgramCounter to the value of the [Reset] Vector.
 func (c *CPU) Reset() {
-	c.ProgramCounter = c.MemRead16(consts.ResetAddr)
+	c.ProgramCounter = c.ReadMem16(consts.ResetAddr)
 	c.StackPointer = StackReset
 	c.Status = DefaultStatus
 }
@@ -72,9 +72,9 @@ func (c *CPU) Reset() {
 // Load loads a program into PRG memory
 func (c *CPU) Load(program []byte) {
 	for k, v := range program {
-		c.MemWrite(consts.PrgRomAddr+uint16(k), v)
+		c.WriteMem(consts.PrgRomAddr+uint16(k), v)
 	}
-	c.MemWrite16(consts.ResetAddr, consts.PrgRomAddr)
+	c.WriteMem16(consts.ResetAddr, consts.PrgRomAddr)
 }
 
 func (c *CPU) interrupt(interrupt interrupts.Interrupt) {
@@ -87,7 +87,7 @@ func (c *CPU) interrupt(interrupt interrupts.Interrupt) {
 	c.Status.Insert(InterruptDisable)
 
 	c.Cycles += uint(interrupt.Cycles)
-	c.ProgramCounter = c.MemRead16(interrupt.VectorAddr)
+	c.ProgramCounter = c.ReadMem16(interrupt.VectorAddr)
 }
 
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
@@ -107,7 +107,7 @@ func (c *CPU) Step() (uint, error) {
 		c.interrupt(<-c.Interrupt)
 	}
 
-	code := c.MemRead(c.ProgramCounter)
+	code := c.ReadMem(c.ProgramCounter)
 	c.ProgramCounter += 1
 	prevPC := c.ProgramCounter
 

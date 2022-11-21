@@ -1,7 +1,7 @@
 package apu
 
 type CPU interface {
-	MemRead(uint16) byte
+	ReadMem(uint16) byte
 	AddStall(uint8)
 }
 
@@ -77,7 +77,7 @@ func (d *DMC) stepTimer() {
 func (d *DMC) stepReader() {
 	if d.CurrLen > 0 && d.BitCount == 0 {
 		d.cpu.AddStall(4)
-		d.ShiftRegister = d.cpu.MemRead(d.CurrAddr)
+		d.ShiftRegister = d.cpu.ReadMem(d.CurrAddr)
 		d.BitCount = 8
 		d.CurrAddr += 1
 		if d.CurrAddr == 0 {

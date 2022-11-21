@@ -12,7 +12,7 @@ func (c *CPU) branch(condition bool) {
 	if condition {
 		c.Cycles += 1
 
-		jump := int8(c.MemRead(c.ProgramCounter))
+		jump := int8(c.ReadMem(c.ProgramCounter))
 		jumpAddr := c.ProgramCounter + 1 + uint16(jump)
 
 		if (c.ProgramCounter+1)&0xFF0 != jumpAddr {
@@ -30,7 +30,7 @@ func (c *CPU) compare(mode AddressingMode, rhs byte) {
 			c.Cycles += 1
 		}()
 	}
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.Status.Set(Carry, data <= rhs)
 	c.updateZeroAndNegFlags(rhs - data)
 }

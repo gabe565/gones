@@ -41,9 +41,9 @@ func TestCPU_TraceFormat(t *testing.T) {
 func TestCPU_Trace_MemAccess(t *testing.T) {
 	c := stubCpu([]byte{0x11, 0x33})
 	traces := make([]string, 0)
-	c.MemWrite(0x33, 0)
-	c.MemWrite(0x34, 4)
-	c.MemWrite(0x400, 0xAA)
+	c.WriteMem(0x33, 0)
+	c.WriteMem(0x34, 4)
+	c.WriteMem(0x400, 0xAA)
 	for {
 		traces = append(traces, c.Trace())
 		if _, err := c.Step(); !assert.NoError(t, err) {

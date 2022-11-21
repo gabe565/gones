@@ -95,7 +95,7 @@ func Test_inx_overflow(t *testing.T) {
 
 func Test_lda_from_memory(t *testing.T) {
 	cpu := stubCpu([]byte{0xA5, 0x10, 0x00})
-	cpu.MemWrite(0x10, 0x55)
+	cpu.WriteMem(0x10, 0x55)
 	for {
 		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return

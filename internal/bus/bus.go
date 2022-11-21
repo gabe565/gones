@@ -32,7 +32,7 @@ type Bus struct {
 	controller2 controller.Controller
 }
 
-func (b *Bus) MemRead(addr uint16) byte {
+func (b *Bus) ReadMem(addr uint16) byte {
 	switch {
 	case addr < 0x2000:
 		addr &= 0x07FF
@@ -47,7 +47,7 @@ func (b *Bus) MemRead(addr uint16) byte {
 		return b.ppu.Read()
 	case 0x2008 <= addr && addr < 0x4000:
 		addr &= 0x2007
-		return b.MemRead(addr)
+		return b.ReadMem(addr)
 	case 0x4000 <= addr && addr < 0x4016:
 		return b.apu.ReadMem(addr)
 	case addr == 0x4016:
@@ -62,7 +62,7 @@ func (b *Bus) MemRead(addr uint16) byte {
 	return 0
 }
 
-func (b *Bus) MemWrite(addr uint16, data byte) {
+func (b *Bus) WriteMem(addr uint16, data byte) {
 	switch {
 	case addr < 0x2000:
 		addr &= 0x07FF
@@ -86,12 +86,12 @@ func (b *Bus) MemWrite(addr uint16, data byte) {
 		b.ppu.Write(data)
 	case 0x2008 <= addr && addr < 0x4000:
 		addr &= 0x2007
-		b.MemWrite(addr, data)
+		b.WriteMem(addr, data)
 	case addr == 0x4014:
 		var buf [256]byte
 		hi := uint16(data) << 8
 		for k := range buf {
-			buf[k] = b.MemRead(hi + uint16(k))
+			buf[k] = b.ReadMem(hi + uint16(k))
 		}
 		b.ppu.WriteOamDma(buf)
 	case 0x4000 <= addr && addr < 0x4013, addr == 0x4015, addr == 0x4017:

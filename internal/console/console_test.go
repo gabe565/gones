@@ -69,6 +69,6 @@ func Test_nestest(t *testing.T) {
 	}
 
 	assert.EqualValues(t, strings.Count(nestest.Log, "\n"), checkedLines)
-	assert.EqualValues(t, 0, c.CPU.MemRead(0x2))
-	assert.EqualValues(t, 0, c.CPU.MemRead(0x3))
+	assert.EqualValues(t, 0, c.CPU.ReadMem(0x2))
+	assert.EqualValues(t, 0, c.CPU.ReadMem(0x3))
 }

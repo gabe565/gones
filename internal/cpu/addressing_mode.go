@@ -35,38 +35,38 @@ const (
 func (c *CPU) getAbsoluteAddress(mode AddressingMode, addr uint16) (uint16, bool) {
 	switch mode {
 	case ZeroPage:
-		return uint16(c.MemRead(addr)), false
+		return uint16(c.ReadMem(addr)), false
 	case Absolute:
-		return c.MemRead16(addr), false
+		return c.ReadMem16(addr), false
 	case ZeroPageX:
-		pos := c.MemRead(addr)
+		pos := c.ReadMem(addr)
 		return uint16(pos + c.RegisterX), false
 	case ZeroPageY:
-		pos := c.MemRead(addr)
+		pos := c.ReadMem(addr)
 		return uint16(pos + c.RegisterY), false
 	case AbsoluteX:
-		base := c.MemRead16(addr)
+		base := c.ReadMem16(addr)
 		addr := base + uint16(c.RegisterX)
 		return addr, crossedPage(base, addr)
 	case AbsoluteY:
-		base := c.MemRead16(addr)
+		base := c.ReadMem16(addr)
 		addr := base + uint16(c.RegisterY)
 		return addr, crossedPage(base, addr)
 	case Indirect:
-		base := c.MemRead16(addr)
-		return c.MemRead16Bug(base), false
+		base := c.ReadMem16(addr)
+		return c.ReadMem16Bug(base), false
 	case IndirectX:
-		base := c.MemRead(addr)
+		base := c.ReadMem(addr)
 
 		ptr := base + c.RegisterX
-		lo := c.MemRead(uint16(ptr))
-		hi := c.MemRead(uint16(ptr + 1))
+		lo := c.ReadMem(uint16(ptr))
+		hi := c.ReadMem(uint16(ptr + 1))
 		return uint16(hi)<<8 | uint16(lo), false
 	case IndirectY:
-		base := c.MemRead(addr)
+		base := c.ReadMem(addr)
 
-		lo := c.MemRead(uint16(base))
-		hi := c.MemRead(uint16(byte(base) + 1))
+		lo := c.ReadMem(uint16(base))
+		hi := c.ReadMem(uint16(byte(base) + 1))
 		derefBase := uint16(hi)<<8 | uint16(lo)
 		addr := derefBase + uint16(c.RegisterY)
 		return addr, crossedPage(derefBase, addr)

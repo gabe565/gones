@@ -22,7 +22,7 @@ func adc(c *CPU, mode AddressingMode) {
 			c.Cycles += 1
 		}()
 	}
-	v := c.MemRead(addr)
+	v := c.ReadMem(addr)
 	c.addAccumulator(v)
 }
 
@@ -37,13 +37,13 @@ func ahx(c *CPU, mode AddressingMode) {
 	var pos uint16
 	switch mode {
 	case IndirectY:
-		pos = uint16(c.MemRead(c.ProgramCounter))
+		pos = uint16(c.ReadMem(c.ProgramCounter))
 	case AbsoluteY:
 		pos = c.ProgramCounter
 	}
-	addr := c.MemRead16(pos) + uint16(c.RegisterY)
+	addr := c.ReadMem16(pos) + uint16(c.RegisterY)
 	data := c.Accumulator & c.RegisterX & uint8(addr>>8)
-	c.MemWrite(addr, data)
+	c.WriteMem(addr, data)
 }
 
 // alr - Undocumented Opcode
@@ -55,7 +55,7 @@ func ahx(c *CPU, mode AddressingMode) {
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func alr(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.setAccumulator(data & c.Accumulator)
 	lsr(c, Accumulator)
 }
@@ -69,7 +69,7 @@ func alr(c *CPU, mode AddressingMode) {
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func anc(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.setAccumulator(data & c.Accumulator)
 	c.Status.Set(Carry, c.Status.Intersects(Negative))
 }
@@ -89,7 +89,7 @@ func and(c *CPU, mode AddressingMode) {
 			c.Cycles += 1
 		}()
 	}
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.setAccumulator(c.Accumulator & data)
 }
 
@@ -107,7 +107,7 @@ func and(c *CPU, mode AddressingMode) {
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func arr(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.setAccumulator(data & c.Accumulator)
 	ror(c, Accumulator)
 
@@ -142,14 +142,14 @@ func asl(c *CPU, mode AddressingMode) {
 				c.Cycles += 1
 			}()
 		}
-		data = c.MemRead(addr)
+		data = c.ReadMem(addr)
 	}
 	c.Status.Set(Carry, data>>7 == 1)
 	data = data << 1
 	if mode == Accumulator {
 		c.setAccumulator(data)
 	} else {
-		c.MemWrite(addr, data)
+		c.WriteMem(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
 }
@@ -164,7 +164,7 @@ func asl(c *CPU, mode AddressingMode) {
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func axs(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	result := c.RegisterX & c.Accumulator
 	c.Status.Set(Carry, data <= result)
 	result -= 1
@@ -220,7 +220,7 @@ func beq(c *CPU, mode AddressingMode) {
 // [BIT Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BIT
 func bit(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.Status.Set(Zero, data&c.Accumulator == 0)
 	c.Status.Set(Negative, bitflags.Flags(data).Intersects(Negative))
 	c.Status.Set(Overflow, bitflags.Flags(data).Intersects(Overflow))
@@ -277,7 +277,7 @@ func brk(c *CPU, mode AddressingMode) {
 	c.Status.Insert(Break | Break2)
 	php(c, mode)
 	sei(c, mode)
-	c.ProgramCounter = c.MemRead16(0xFFFE)
+	c.ProgramCounter = c.ReadMem16(0xFFFE)
 }
 
 // bvc - Branch if Overflow Clear
@@ -394,9 +394,9 @@ func cpy(c *CPU, mode AddressingMode) {
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func dcp(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	data -= 1
-	c.MemWrite(addr, data)
+	c.WriteMem(addr, data)
 	c.Status.Set(Carry, data <= c.Accumulator)
 	c.updateZeroAndNegFlags(c.Accumulator - data)
 }
@@ -411,9 +411,9 @@ func dcp(c *CPU, mode AddressingMode) {
 // [DEC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEC
 func dec(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	data -= 1
-	c.MemWrite(addr, data)
+	c.WriteMem(addr, data)
 	c.updateZeroAndNegFlags(data)
 }
 
@@ -458,7 +458,7 @@ func eor(c *CPU, mode AddressingMode) {
 			c.Cycles += 1
 		}()
 	}
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.setAccumulator(data ^ c.Accumulator)
 }
 
@@ -472,9 +472,9 @@ func eor(c *CPU, mode AddressingMode) {
 // [INC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INC
 func inc(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	data += 1
-	c.MemWrite(addr, data)
+	c.WriteMem(addr, data)
 	c.updateZeroAndNegFlags(data)
 }
 
@@ -513,7 +513,7 @@ func iny(c *CPU, mode AddressingMode) {
 func isb(c *CPU, mode AddressingMode) {
 	inc(c, mode)
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.addAccumulator(byte(-int8(data) - 1))
 }
 
@@ -539,7 +539,7 @@ func jmp(c *CPU, mode AddressingMode) {
 // [JSR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JSR
 func jsr(c *CPU, mode AddressingMode) {
 	c.stackPush16(c.ProgramCounter + 1)
-	addr := c.MemRead16(c.ProgramCounter)
+	addr := c.ReadMem16(c.ProgramCounter)
 	c.ProgramCounter = addr
 }
 
@@ -558,7 +558,7 @@ func las(c *CPU, mode AddressingMode) {
 			c.Cycles += 1
 		}()
 	}
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	data &= c.StackPointer
 	c.Accumulator = data
 	c.RegisterX = data
@@ -580,7 +580,7 @@ func lax(c *CPU, mode AddressingMode) {
 			c.Cycles += 1
 		}()
 	}
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.setAccumulator(data)
 	c.RegisterX = c.Accumulator
 }
@@ -600,7 +600,7 @@ func lda(c *CPU, mode AddressingMode) {
 			c.Cycles += 1
 		}()
 	}
-	v := c.MemRead(addr)
+	v := c.ReadMem(addr)
 	c.setAccumulator(v)
 }
 
@@ -619,7 +619,7 @@ func ldx(c *CPU, mode AddressingMode) {
 			c.Cycles += 1
 		}()
 	}
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.RegisterX = data
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
@@ -639,7 +639,7 @@ func ldy(c *CPU, mode AddressingMode) {
 			c.Cycles += 1
 		}()
 	}
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.RegisterY = data
 	c.updateZeroAndNegFlags(c.RegisterY)
 }
@@ -660,14 +660,14 @@ func lsr(c *CPU, mode AddressingMode) {
 		data = c.Accumulator
 	} else {
 		addr, _ = c.getOperandAddress(mode)
-		data = c.MemRead(addr)
+		data = c.ReadMem(addr)
 	}
 	c.Status.Set(Carry, data&1 == 1)
 	data >>= 1
 	if mode == Accumulator {
 		c.setAccumulator(data)
 	} else {
-		c.MemWrite(addr, data)
+		c.WriteMem(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
 }
@@ -700,7 +700,7 @@ func nop(c *CPU, mode AddressingMode) {
 				c.Cycles += 1
 			}()
 		}
-		_ = c.MemRead(addr)
+		_ = c.ReadMem(addr)
 	}
 }
 
@@ -719,7 +719,7 @@ func ora(c *CPU, mode AddressingMode) {
 			c.Cycles += 1
 		}()
 	}
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.setAccumulator(data | c.Accumulator)
 }
 
@@ -785,7 +785,7 @@ func plp(c *CPU, mode AddressingMode) {
 func rla(c *CPU, mode AddressingMode) {
 	rol(c, mode)
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.setAccumulator(data & c.Accumulator)
 }
 
@@ -805,7 +805,7 @@ func rol(c *CPU, mode AddressingMode) {
 		data = c.Accumulator
 	} else {
 		addr, _ = c.getOperandAddress(mode)
-		data = c.MemRead(addr)
+		data = c.ReadMem(addr)
 	}
 	prevCarry := c.Status.Intersects(Carry)
 
@@ -817,7 +817,7 @@ func rol(c *CPU, mode AddressingMode) {
 	if mode == Accumulator {
 		c.setAccumulator(data)
 	} else {
-		c.MemWrite(addr, data)
+		c.WriteMem(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
 }
@@ -838,7 +838,7 @@ func ror(c *CPU, mode AddressingMode) {
 		data = c.Accumulator
 	} else {
 		addr, _ = c.getOperandAddress(mode)
-		data = c.MemRead(addr)
+		data = c.ReadMem(addr)
 	}
 	prevCarry := c.Status.Intersects(Carry)
 
@@ -850,7 +850,7 @@ func ror(c *CPU, mode AddressingMode) {
 	if mode == Accumulator {
 		c.setAccumulator(data)
 	} else {
-		c.MemWrite(addr, data)
+		c.WriteMem(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
 }
@@ -865,7 +865,7 @@ func ror(c *CPU, mode AddressingMode) {
 func rra(c *CPU, mode AddressingMode) {
 	ror(c, mode)
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.addAccumulator(data)
 }
 
@@ -910,7 +910,7 @@ func rts(c *CPU, mode AddressingMode) {
 func sax(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
 	data := c.Accumulator & c.RegisterX
-	c.MemWrite(addr, data)
+	c.WriteMem(addr, data)
 }
 
 // sbc - Subtract with Carry
@@ -929,7 +929,7 @@ func sbc(c *CPU, mode AddressingMode) {
 			c.Cycles += 1
 		}()
 	}
-	v := c.MemRead(addr)
+	v := c.ReadMem(addr)
 	c.addAccumulator(byte(-int8(v) - 1))
 }
 
@@ -975,9 +975,9 @@ func sei(c *CPU, mode AddressingMode) {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func shx(c *CPU, mode AddressingMode) {
-	addr := c.MemRead16(c.ProgramCounter) + uint16(c.RegisterY)
+	addr := c.ReadMem16(c.ProgramCounter) + uint16(c.RegisterY)
 	data := c.RegisterX & (uint8(addr>>8) + 1)
-	c.MemWrite(addr, data)
+	c.WriteMem(addr, data)
 }
 
 // shy - Undocumented Opcode
@@ -989,9 +989,9 @@ func shx(c *CPU, mode AddressingMode) {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func shy(c *CPU, mode AddressingMode) {
-	addr := c.MemRead16(c.ProgramCounter) + uint16(c.RegisterX)
+	addr := c.ReadMem16(c.ProgramCounter) + uint16(c.RegisterX)
 	data := c.RegisterY & (uint8(addr>>8) + 1)
-	c.MemWrite(addr, data)
+	c.WriteMem(addr, data)
 }
 
 // slo - Undocumented Opcode
@@ -1004,7 +1004,7 @@ func shy(c *CPU, mode AddressingMode) {
 func slo(c *CPU, mode AddressingMode) {
 	asl(c, mode)
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.setAccumulator(data | c.Accumulator)
 }
 
@@ -1018,7 +1018,7 @@ func slo(c *CPU, mode AddressingMode) {
 func sre(c *CPU, mode AddressingMode) {
 	lsr(c, mode)
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.setAccumulator(data ^ c.Accumulator)
 }
 
@@ -1036,7 +1036,7 @@ func sta(c *CPU, mode AddressingMode) {
 			c.Cycles += 1
 		}()
 	}
-	c.MemWrite(addr, c.Accumulator)
+	c.WriteMem(addr, c.Accumulator)
 }
 
 // stx - Store X Register
@@ -1048,7 +1048,7 @@ func sta(c *CPU, mode AddressingMode) {
 // [STX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STX
 func stx(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
-	c.MemWrite(addr, c.RegisterX)
+	c.WriteMem(addr, c.RegisterX)
 }
 
 // sty - Store Y Register
@@ -1060,7 +1060,7 @@ func stx(c *CPU, mode AddressingMode) {
 // [STY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STY
 func sty(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
-	c.MemWrite(addr, c.RegisterY)
+	c.WriteMem(addr, c.RegisterY)
 }
 
 // tas - Undocumented Opcode
@@ -1075,9 +1075,9 @@ func sty(c *CPU, mode AddressingMode) {
 func tas(c *CPU, mode AddressingMode) {
 	data := c.Accumulator & c.RegisterX
 	c.StackPointer = data
-	addr := c.MemRead16(c.ProgramCounter) + uint16(c.RegisterY)
+	addr := c.ReadMem16(c.ProgramCounter) + uint16(c.RegisterY)
 	data = (uint8(addr>>8) + 1) & c.StackPointer
-	c.MemWrite(addr, data)
+	c.WriteMem(addr, data)
 }
 
 // tax - Transfer Accumulator to X
@@ -1166,6 +1166,6 @@ func xaa(c *CPU, mode AddressingMode) {
 	c.Accumulator = c.RegisterX
 	c.updateZeroAndNegFlags(c.Accumulator)
 	addr, _ := c.getOperandAddress(mode)
-	data := c.MemRead(addr)
+	data := c.ReadMem(addr)
 	c.setAccumulator(data & c.Accumulator)
 }
