@@ -112,11 +112,11 @@ func (a *APU) ReadMem(addr uint16) byte {
 
 func (a *APU) Reset() {
 	a.clearBuf()
-	a.Square[0] = Square{}
-	a.Square[1] = Square{}
+	a.Square[0] = Square{Channel: 1}
+	a.Square[1] = Square{Channel: 2}
 	a.Triangle = Triangle{}
-	a.Noise = Noise{}
-	a.DMC = DMC{}
+	a.Noise = Noise{ShiftRegister: 1}
+	a.DMC = DMC{cpu: a.DMC.cpu}
 }
 
 func (a *APU) Step() *interrupts.Interrupt {
