@@ -46,7 +46,6 @@ func (p *Square) Write(addr uint16, data byte) {
 		p.EnvelopeEnabled = data>>4&1 == 0
 		p.Volume = data & 0xF
 		p.EnvelopePeriod = data & 0xF
-		p.EnvelopeStart = true
 	case 0x4001, 0x4005:
 		p.SweepEnabled = data>>7&1 == 1
 		p.SweepPeriod = data>>4&7 + 1
