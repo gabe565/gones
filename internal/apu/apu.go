@@ -19,10 +19,10 @@ var pulses [31]float32
 var tnds [203]float32
 
 func init() {
-	for i := 0; i < len(pulses); i++ {
+	for i := range pulses {
 		pulses[i] = 95.52 / (8128.0/float32(i) + 100)
 	}
-	for i := 0; i < len(tnds); i++ {
+	for i := range tnds {
 		tnds[i] = 163.67 / (24329.0/float32(i) + 100)
 	}
 }
