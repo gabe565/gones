@@ -15,15 +15,15 @@ var lengths = []byte{
 	12, 16, 24, 18, 48, 20, 96, 22, 192, 24, 72, 26, 16, 28, 32, 30,
 }
 
-var pulses [31]float32
-var tnds [203]float32
+var squareTable [31]float32
+var tndTable [203]float32
 
 func init() {
-	for i := range pulses {
-		pulses[i] = 95.52 / (8128.0/float32(i) + 100)
+	for i := range squareTable {
+		squareTable[i] = 95.52 / (8128.0/float32(i) + 100)
 	}
-	for i := range tnds {
-		tnds[i] = 163.67 / (24329.0/float32(i) + 100)
+	for i := range tndTable {
+		tndTable[i] = 163.67 / (24329.0/float32(i) + 100)
 	}
 }
 
@@ -209,12 +209,12 @@ func (a *APU) stepLength() {
 func (a *APU) output() []byte {
 	p1 := a.Square[0].output()
 	p2 := a.Square[1].output()
-	pulseOut := pulses[p1+p2]
+	pulseOut := squareTable[p1+p2]
 
 	t := a.Triangle.output()
 	n := a.Noise.output()
 	d := a.DMC.output()
-	tndOut := tnds[3*t+2*n+d]
+	tndOut := tndTable[3*t+2*n+d]
 
 	out := int16((pulseOut + tndOut) * a.Volume * 32767)
 	return []byte{
