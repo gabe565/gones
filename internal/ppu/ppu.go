@@ -94,8 +94,7 @@ func (p *PPU) Write(data byte) {
 	addr := p.Addr.Get()
 	switch {
 	case addr < 0x2000:
-		log.WithField("address", fmt.Sprintf("$%02X", addr)).
-			Error("attempt to write to cartridge ROM")
+		p.mapper.Write(addr, data)
 	case 0x2000 <= addr && addr < 0x3000:
 		addr := p.MirrorVramAddr(addr)
 		p.Vram[addr] = data
