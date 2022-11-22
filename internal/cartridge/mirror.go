@@ -9,4 +9,6 @@ const (
 	Vertical
 	_
 	FourScreen
+	SingleLower
+	SingleUpper
 )

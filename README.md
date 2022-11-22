@@ -96,9 +96,9 @@ Eventually, this will be configurable in the UI.
 - [x] Cartridge implementation
   - [x] Support for mappers
   - [ ] Common mappers implemented
-    - Supported mappers: 0, 2
+    - Supported mappers: 0, 1, 2
 - [x] PPU implementation (graphics)
-  - [x] Background rendering 
+  - [x] Background rendering
   - [x] Sprite rendering
   - PPU emulation is still rough. Games that rely on certain quirks of the
     original PPU will not work.

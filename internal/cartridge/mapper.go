@@ -17,6 +17,8 @@ func NewMapper(cartridge *Cartridge) (Mapper, error) {
 	switch cartridge.Mapper {
 	case 0, 2:
 		return NewMapper2(cartridge), nil
+	case 1:
+		return NewMapper1(cartridge), nil
 	default:
 		return nil, fmt.Errorf("%w: %d", ErrUnsupportedMapper, cartridge.Mapper)
 	}
