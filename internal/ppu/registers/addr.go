@@ -1,44 +1,38 @@
 package registers
 
 type AddrRegister struct {
-	Hi, Lo byte
-	LoPtr  bool
+	Value uint16
+	// Latch will write hi when false, lo when true
+	Latch bool
 }
 
 func (r *AddrRegister) Get() uint16 {
-	return uint16(r.Hi)<<8 | uint16(r.Lo)
+	return r.Value
 }
 
 func (r *AddrRegister) Set(data uint16) {
-	r.Hi = uint8(data >> 8)
-	r.Lo = uint8(data & 0xFF)
+	r.Value = data & 0x3FFF
 }
 
-func (r *AddrRegister) Update(data byte) {
-	if r.LoPtr {
-		r.Lo = data
+func (r *AddrRegister) Write(data byte) {
+	if r.Latch {
+		// Lo
+		r.Value &= 0xFF00
+		r.Value |= uint16(data)
 	} else {
-		r.Hi = data
+		// Hi
+		r.Value &= 0x00FF
+		r.Value |= uint16(data) << 8
 	}
-
-	if v := r.Get(); v > 0x3FFF {
-		r.Set(v & 0x3FFF)
-	}
-	r.LoPtr = !r.LoPtr
+	r.Value &= 0x3FFF
+	r.Latch = !r.Latch
 }
 
 func (r *AddrRegister) Increment(inc byte) {
-	lo := r.Lo
-	r.Lo += inc
-	if lo > r.Lo {
-		r.Hi += 1
-	}
-
-	if v := r.Get(); v > 0x3FFF {
-		r.Set(v & 0x3FFF)
-	}
+	r.Value += uint16(inc)
+	r.Value &= 0x3FFF
 }
 
 func (r *AddrRegister) ResetLatch() {
-	r.LoPtr = false
+	r.Latch = false
 }

@@ -43,7 +43,7 @@ type PPU struct {
 }
 
 func (p *PPU) WriteAddr(data byte) {
-	p.Addr.Update(data)
+	p.Addr.Write(data)
 }
 
 func (p *PPU) WriteCtrl(data byte) {
