@@ -57,7 +57,7 @@ func (b *Bus) ReadMem(addr uint16) byte {
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled
 	default:
-		return b.mapper.Read(addr)
+		return b.mapper.ReadMem(addr)
 	}
 	return 0
 }
@@ -102,7 +102,7 @@ func (b *Bus) WriteMem(addr uint16, data byte) {
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled
 	default:
-		b.mapper.Write(addr, data)
+		b.mapper.WriteMem(addr, data)
 	}
 }
 

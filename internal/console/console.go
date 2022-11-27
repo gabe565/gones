@@ -54,7 +54,7 @@ func New(path string) (*Console, error) {
 		}
 	}
 
-	console.PPU = ppu.New(cart, console.Mapper)
+	console.PPU = ppu.New(console.Mapper)
 	console.APU = apu.New()
 	console.Bus = bus.New(console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)

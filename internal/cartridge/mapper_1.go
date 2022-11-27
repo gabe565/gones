@@ -29,7 +29,9 @@ type Mapper1 struct {
 
 func (m *Mapper1) Step() {}
 
-func (m *Mapper1) Read(addr uint16) byte {
+func (m *Mapper1) Cartridge() *Cartridge { return m.cartridge }
+
+func (m *Mapper1) ReadMem(addr uint16) byte {
 	switch {
 	case addr < 0x2000:
 		bank := addr / 0x1000
@@ -49,7 +51,7 @@ func (m *Mapper1) Read(addr uint16) byte {
 	}
 }
 
-func (m *Mapper1) Write(addr uint16, data byte) {
+func (m *Mapper1) WriteMem(addr uint16, data byte) {
 	switch {
 	case addr < 0x2000:
 		bank := addr / 0x1000

@@ -4,12 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gabe565/gones/internal/bitflags"
-	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/interrupts"
+	"github.com/gabe565/gones/internal/memory"
 )
 
-func New(b *bus.Bus) *CPU {
+func New(b memory.ReadWrite) *CPU {
 	return &CPU{
 		Status:       DefaultStatus,
 		StackPointer: StackReset,
@@ -43,7 +43,7 @@ type CPU struct {
 	RegisterY byte
 
 	// bus Main memory bus
-	bus *bus.Bus
+	bus memory.ReadWrite
 
 	Cycles uint
 

@@ -3,11 +3,12 @@ package cartridge
 import (
 	"errors"
 	"fmt"
+	"github.com/gabe565/gones/internal/memory"
 )
 
 type Mapper interface {
-	Read(addr uint16) byte
-	Write(addr uint16, data byte)
+	memory.ReadWrite
+	Cartridge() *Cartridge
 	Step()
 }
 

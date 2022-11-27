@@ -61,7 +61,7 @@ func (p *PPU) Render() []byte {
 
 			bank := p.Ctrl.SpriteTileAddr()
 
-			tile := p.cartridge.Chr[bank+uint16(tileIdx)*16 : bank+uint16(tileIdx)*16+16]
+			tile := p.mapper.Cartridge().Chr[bank+uint16(tileIdx)*16 : bank+uint16(tileIdx)*16+16]
 
 			for y := 0; y < 8; y += 1 {
 				upper := tile[y]
@@ -146,7 +146,7 @@ func (p *PPU) RenderNametable(nameTable []byte, shiftX, shiftY int) {
 		tileCol := i % 32
 		tileRow := i / 32
 		tileIdx := uint16(nameTable[i])
-		tile := p.cartridge.Chr[(bank + tileIdx*16):(bank + tileIdx*16 + 16)]
+		tile := p.mapper.Cartridge().Chr[(bank + tileIdx*16):(bank + tileIdx*16 + 16)]
 		palette := p.bgPalette(attrTable, tileCol, tileRow)
 
 		for y := 0; y < 8; y += 1 {
@@ -173,7 +173,7 @@ func (p *PPU) getNametables() ([]byte, []byte) {
 		nametableAddr uint16
 	}
 
-	switch (match{p.cartridge.Mirror, p.Ctrl.NametableAddr()}) {
+	switch (match{p.mapper.Cartridge().Mirror, p.Ctrl.NametableAddr()}) {
 	case match{cartridge.Vertical, 0x2000},
 		match{cartridge.Vertical, 0x2800},
 		match{cartridge.Horizontal, 0x2000},
@@ -189,7 +189,7 @@ func (p *PPU) getNametables() ([]byte, []byte) {
 			return p.Vram[0x400:0x800], p.Vram[:0x400]
 		}
 	default:
-		log.Panic(p.cartridge.Mirror.String() + " mirroring unsupported")
+		log.Panic(p.mapper.Cartridge().Mirror.String() + " mirroring unsupported")
 		return []byte{}, []byte{}
 	}
 }

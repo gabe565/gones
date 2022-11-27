@@ -1,7 +1,9 @@
 package apu
 
+import "github.com/gabe565/gones/internal/memory"
+
 type CPU interface {
-	ReadMem(uint16) byte
+	memory.Read
 	AddStall(uint8)
 }
 
