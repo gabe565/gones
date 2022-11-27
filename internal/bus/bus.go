@@ -32,6 +32,7 @@ type Bus struct {
 	controller2 controller.Controller
 }
 
+// ReadMem reads a byte from memory.
 func (b *Bus) ReadMem(addr uint16) byte {
 	switch {
 	case addr < 0x2000:
@@ -62,6 +63,7 @@ func (b *Bus) ReadMem(addr uint16) byte {
 	return 0
 }
 
+// WriteMem writes a byte to memory.
 func (b *Bus) WriteMem(addr uint16, data byte) {
 	switch {
 	case addr < 0x2000:
@@ -104,6 +106,21 @@ func (b *Bus) WriteMem(addr uint16, data byte) {
 	default:
 		b.mapper.WriteMem(addr, data)
 	}
+}
+
+// ReadMem16 reads two bytes from memory.
+func (b *Bus) ReadMem16(addr uint16) uint16 {
+	lo := uint16(b.ReadMem(addr))
+	hi := uint16(b.ReadMem(addr + 1))
+	return hi<<8 | lo
+}
+
+// WriteMem16 writes two bytes to memory.
+func (b *Bus) WriteMem16(addr uint16, data uint16) {
+	hi := byte(data >> 8)
+	lo := byte(data & 0xFF)
+	b.WriteMem(addr, lo)
+	b.WriteMem(addr+1, hi)
 }
 
 func (b *Bus) UpdateInput() {

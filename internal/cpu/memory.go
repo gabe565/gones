@@ -12,9 +12,7 @@ func (c *CPU) WriteMem(addr uint16, data byte) {
 
 // ReadMem16 reads two bytes from memory.
 func (c *CPU) ReadMem16(addr uint16) uint16 {
-	lo := uint16(c.ReadMem(addr))
-	hi := uint16(c.ReadMem(addr + 1))
-	return hi<<8 | lo
+	return c.bus.ReadMem16(addr)
 }
 
 // ReadMem16Bug reads two bytes from memory, emulating a 6502 bug.
@@ -29,20 +27,17 @@ func (c *CPU) ReadMem16(addr uint16) uint16 {
 // [NESDev CPU Errata]:https://www.nesdev.org/wiki/Errata#CPU
 func (c *CPU) ReadMem16Bug(addr uint16) uint16 {
 	if addr&0x00FF == 0x00FF {
-		lo := uint16(c.ReadMem(addr))
-		hi := uint16(c.ReadMem(addr & 0xFF00))
+		lo := uint16(c.bus.ReadMem(addr))
+		hi := uint16(c.bus.ReadMem(addr & 0xFF00))
 		return hi<<8 | lo
 	} else {
-		return c.ReadMem16(addr)
+		return c.bus.ReadMem16(addr)
 	}
 }
 
 // WriteMem16 writes two bytes to memory.
 func (c *CPU) WriteMem16(addr uint16, data uint16) {
-	hi := byte(data >> 8)
-	lo := byte(data & 0xFF)
-	c.WriteMem(addr, lo)
-	c.WriteMem(addr+1, hi)
+	c.bus.WriteMem16(addr, data)
 }
 
 func (c *CPU) stackPush(data byte) {

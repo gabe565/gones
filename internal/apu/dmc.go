@@ -3,7 +3,7 @@ package apu
 import "github.com/gabe565/gones/internal/memory"
 
 type CPU interface {
-	memory.Read
+	memory.Read8
 	AddStall(uint8)
 }
 

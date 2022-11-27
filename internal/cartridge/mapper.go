@@ -7,7 +7,7 @@ import (
 )
 
 type Mapper interface {
-	memory.ReadWrite
+	memory.ReadWrite8
 	Cartridge() *Cartridge
 	Step()
 }
