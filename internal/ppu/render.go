@@ -4,6 +4,7 @@ import (
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
+	"image"
 )
 
 const (
@@ -13,7 +14,7 @@ const (
 	TrimmedHeight = Height - 2*TrimHeight
 )
 
-func (p *PPU) Render() []byte {
+func (p *PPU) Render() *image.RGBA {
 	main, second := p.getNametables()
 	scrollX := int(p.Scroll.X)
 	scrollY := int(p.Scroll.Y)
@@ -96,7 +97,7 @@ func (p *PPU) Render() []byte {
 		}
 	}
 
-	return p.image.Pix
+	return p.image
 }
 
 func (p *PPU) bgPalette(attrTable []byte, col, row uint16) [4]byte {

@@ -163,8 +163,8 @@ func (c *Console) Update() error {
 }
 
 func (c *Console) Draw(screen *ebiten.Image) {
-	pix := c.PPU.Render()
-	screen.WritePixels(pix)
+	img := c.PPU.Render()
+	screen.WritePixels(img.Pix)
 }
 
 func (c *Console) CloseOnUpdate() {
