@@ -54,13 +54,12 @@ func run(cmd *cobra.Command, args []string) error {
 
 	config := cmd.Context().Value(ConfigKey).(*Config)
 
-	if len(args) < 1 {
-		return errors.New("No ROM provided")
+	if len(args) > 0 {
+		config.Path = args[0]
 	}
-	config.Path = args[0]
 	cmd.SilenceUsage = true
 
-	c, err := console.New(config.Path)
+	c, err := newConsole(config.Path)
 	if err != nil {
 		return err
 	}

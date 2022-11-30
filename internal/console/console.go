@@ -33,16 +33,10 @@ type Console struct {
 	debug         Debug
 }
 
-func New(path string) (*Console, error) {
-	var console Console
+func New(cart *cartridge.Cartridge) (*Console, error) {
+	console := Console{Cartridge: cart}
 
-	cart, err := cartridge.FromiNesFile(path)
-	if err != nil {
-		return &console, err
-	}
-
-	console.Cartridge = cart
-
+	var err error
 	console.Mapper, err = cartridge.NewMapper(cart)
 	if err != nil {
 		return &console, err
