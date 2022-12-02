@@ -3,7 +3,7 @@ module github.com/gabe565/gones
 go 1.19
 
 require (
-	github.com/hajimehoshi/ebiten/v2 v2.4.12
+	github.com/hajimehoshi/ebiten/v2 v2.4.13
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
