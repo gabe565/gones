@@ -21,12 +21,12 @@ func New(mapper cartridge.Mapper) *PPU {
 type PPU struct {
 	mapper cartridge.Mapper
 
-	Ctrl   registers.Control
-	Mask   bitflags.Flags
-	Scroll registers.Scroll
-	Status bitflags.Flags
-	Addr   registers.AddrRegister
-	Vram   [0x800]byte
+	Ctrl    registers.Control
+	Mask    bitflags.Flags
+	Status  bitflags.Flags
+	Addr    registers.AddrRegister
+	TmpAddr registers.AddrRegister
+	Vram    [0x800]byte
 
 	OamAddr byte
 	Oam     [0x100]byte
@@ -76,7 +76,8 @@ func (p *PPU) ReadOam() byte {
 }
 
 func (p *PPU) WriteScroll(data byte) {
-	p.Scroll.Write(data)
+	p.TmpAddr.WriteScroll(data)
+	p.Addr.FineX = p.TmpAddr.FineX
 }
 
 func (p *PPU) ReadStatus() byte {
@@ -84,7 +85,6 @@ func (p *PPU) ReadStatus() byte {
 		p.Status.Remove(registers.Vblank)
 	}()
 	p.Addr.ResetLatch()
-	p.Scroll.ResetLatch()
 	return byte(p.Status)
 }
 
@@ -230,7 +230,6 @@ func (p *PPU) Reset() {
 	p.WriteMask(0)
 	p.WriteOamAddr(0)
 	p.Addr = registers.AddrRegister{}
-	p.Scroll = registers.Scroll{}
 }
 
 func (p *PPU) Interrupt() <-chan interrupts.Interrupt {

@@ -16,8 +16,8 @@ const (
 
 func (p *PPU) Render() *image.RGBA {
 	main, second := p.getNametables()
-	scrollX := int(p.Scroll.X)
-	scrollY := int(p.Scroll.Y)
+	scrollX := int(p.TmpAddr.CoarseX<<3 | p.TmpAddr.FineX)
+	scrollY := int(p.TmpAddr.CoarseY<<3 | p.TmpAddr.FineY)
 
 	if p.Mask.Intersects(registers.BackgroundEnable) {
 		p.RenderNametable(
