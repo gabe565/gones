@@ -41,12 +41,17 @@ type PPU struct {
 }
 
 func (p *PPU) WriteAddr(data byte) {
-	p.Addr.Write(data)
+	p.TmpAddr.Write(data)
+	if !p.TmpAddr.Latch {
+		p.Addr = p.TmpAddr
+	}
 }
 
 func (p *PPU) WriteCtrl(data byte) {
 	beforeNmi := p.Ctrl.HasEnableNMI()
 	p.Ctrl = registers.Control(data)
+	p.TmpAddr.NametableX = bitflags.Flags(p.Ctrl).Intersects(registers.CtrlNametableX)
+	p.TmpAddr.NametableY = bitflags.Flags(p.Ctrl).Intersects(registers.CtrlNametableY)
 	if !beforeNmi && p.Ctrl.HasEnableNMI() && p.Status.Intersects(registers.Vblank) {
 		p.interruptCh <- interrupts.NMI
 	}
@@ -230,6 +235,7 @@ func (p *PPU) Reset() {
 	p.WriteMask(0)
 	p.WriteOamAddr(0)
 	p.Addr = registers.AddrRegister{}
+	p.TmpAddr = registers.AddrRegister{}
 }
 
 func (p *PPU) Interrupt() <-chan interrupts.Interrupt {

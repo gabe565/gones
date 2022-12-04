@@ -7,8 +7,8 @@ import (
 type Control bitflags.Flags
 
 const (
-	Nametable1 bitflags.Flags = 1 << iota
-	Nametable2
+	CtrlNametableX bitflags.Flags = 1 << iota
+	CtrlNametableY
 	IncrementMode
 	SpriteTileSelect
 	BgTileSelect
