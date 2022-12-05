@@ -145,7 +145,7 @@ func (p *PPU) Read() byte {
 		return result
 	case 0x3000 <= addr && addr < 0x3F00:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).
-			Error("bad PPU write")
+			Error("bad PPU read")
 		return 0
 	case 0x3F00 <= addr && addr < 0x4000:
 		addr &= 0x3F1F
