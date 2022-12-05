@@ -43,7 +43,7 @@ func (p *PPU) Render() *image.RGBA {
 		c := SystemPalette[p.Palette[0]]
 		for y := 0; y < TrimmedHeight; y += 1 {
 			for x := 0; x < Width; x += 1 {
-				p.image.Set(x, y, c)
+				p.image.SetRGBA(x, y, c)
 			}
 		}
 	}
@@ -91,7 +91,7 @@ func (p *PPU) Render() *image.RGBA {
 						flippedY += y
 					}
 
-					p.image.Set(flippedX, flippedY, c)
+					p.image.SetRGBA(flippedX, flippedY, c)
 				}
 			}
 		}
@@ -162,7 +162,7 @@ func (p *PPU) RenderNametable(nameTable []byte, shiftX, shiftY int) {
 
 				pxlX := int(tileCol)*8 + x + shiftX
 				pxlY := int(tileRow)*8 + y + shiftY - TrimHeight
-				p.image.Set(pxlX, pxlY, c)
+				p.image.SetRGBA(pxlX, pxlY, c)
 			}
 		}
 	}
