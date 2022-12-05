@@ -7,8 +7,7 @@ type Mirror byte
 const (
 	Horizontal Mirror = iota
 	Vertical
-	_
-	FourScreen
 	SingleLower
 	SingleUpper
+	FourScreen
 )

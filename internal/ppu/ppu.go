@@ -162,26 +162,19 @@ func (p *PPU) Read() byte {
 	}
 }
 
-func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
-	addr &= 0x2FFF
-	addr -= 0x2000
-	nameTable := addr / 0x400
+var MirrorLookup = [...][4]uint16{
+	cartridge.Horizontal:  {0, 0, 1, 1},
+	cartridge.Vertical:    {0, 1, 0, 1},
+	cartridge.SingleLower: {0, 0, 0, 0},
+	cartridge.SingleUpper: {1, 1, 1, 1},
+	cartridge.FourScreen:  {0, 1, 2, 3},
+}
 
-	switch p.mapper.Cartridge().Mirror {
-	case cartridge.Vertical:
-		switch nameTable {
-		case 2, 3:
-			return addr - 0x800
-		}
-	case cartridge.Horizontal:
-		switch nameTable {
-		case 1, 2:
-			return addr - 0x400
-		case 3:
-			return addr - 0x800
-		}
-	}
-	return addr
+func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
+	addr &= 0xFFF
+	nameTable := addr / 0x400
+	offset := addr % 0x400
+	return offset + 0x400*MirrorLookup[p.mapper.Cartridge().Mirror][nameTable]
 }
 
 func (p *PPU) updateSpriteOverflow() {

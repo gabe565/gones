@@ -85,9 +85,10 @@ func getMapper(data [2]byte) byte {
 }
 
 func getMirror(data byte) Mirror {
-	mirror1 := data & 1
-	mirror2 := (data >> 3) & 1
-	return Mirror(mirror2<<1 | mirror1)
+	if data>>3&1 == 1 {
+		return FourScreen
+	}
+	return Mirror(data & 1)
 }
 
 func hasBattery(data byte) bool {

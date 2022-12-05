@@ -10,25 +10,18 @@ func _() {
 	var x [1]struct{}
 	_ = x[Horizontal-0]
 	_ = x[Vertical-1]
-	_ = x[FourScreen-3]
+	_ = x[SingleLower-2]
+	_ = x[SingleUpper-3]
+	_ = x[FourScreen-4]
 }
 
-const (
-	_Mirror_name_0 = "HorizontalVertical"
-	_Mirror_name_1 = "FourScreen"
-)
+const _Mirror_name = "HorizontalVerticalSingleLowerSingleUpperFourScreen"
 
-var (
-	_Mirror_index_0 = [...]uint8{0, 10, 18}
-)
+var _Mirror_index = [...]uint8{0, 10, 18, 29, 40, 50}
 
 func (i Mirror) String() string {
-	switch {
-	case i <= 1:
-		return _Mirror_name_0[_Mirror_index_0[i]:_Mirror_index_0[i+1]]
-	case i == 3:
-		return _Mirror_name_1
-	default:
+	if i >= Mirror(len(_Mirror_index)-1) {
 		return "Mirror(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
+	return _Mirror_name[_Mirror_index[i]:_Mirror_index[i+1]]
 }
