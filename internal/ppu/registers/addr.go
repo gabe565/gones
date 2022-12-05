@@ -11,10 +11,7 @@ type AddrRegister struct {
 	CoarseY    byte
 	NametableX bool
 	NametableY bool
-	FineX      byte
 	FineY      byte
-	// Latch will write hi when false, lo when true
-	Latch bool
 }
 
 func (r *AddrRegister) Get() uint16 {
@@ -36,33 +33,23 @@ func (r *AddrRegister) Set(data uint16) {
 	r.FineY = byte(data >> 12 & 7)
 }
 
-func (r *AddrRegister) Write(data byte) {
-	v := r.Get()
-	if r.Latch {
-		// Lo
-		r.Set(v&0xFF00 | uint16(data))
-	} else {
-		// Hi
-		r.Set(uint16(data)<<8 | v&0xFF)
-	}
-	r.Latch = !r.Latch
+func (r *AddrRegister) WriteHi(data byte) {
+	r.Set(uint16(data)<<8 | r.Get()&0xFF)
 }
 
-func (r *AddrRegister) WriteScroll(data byte) {
-	if r.Latch {
-		r.CoarseY = data >> 3
-		r.FineY = data & 7
-	} else {
-		r.CoarseX = data >> 3
-		r.FineX = data & 7
-	}
-	r.Latch = !r.Latch
+func (r *AddrRegister) WriteLo(data byte) {
+	r.Set(r.Get()&0xFF00 | uint16(data))
+}
+
+func (r *AddrRegister) WriteScrollY(data byte) {
+	r.CoarseY = data >> 3
+	r.FineY = data & 7
+}
+
+func (r *AddrRegister) WriteScrollX(data byte) {
+	r.CoarseX = data >> 3
 }
 
 func (r *AddrRegister) Increment(inc byte) {
 	r.Set(r.Get() + uint16(inc))
-}
-
-func (r *AddrRegister) ResetLatch() {
-	r.Latch = false
 }

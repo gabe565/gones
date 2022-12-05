@@ -21,12 +21,14 @@ func New(mapper cartridge.Mapper) *PPU {
 type PPU struct {
 	mapper cartridge.Mapper
 
-	Ctrl    registers.Control
-	Mask    bitflags.Flags
-	Status  bitflags.Flags
-	Addr    registers.AddrRegister
-	TmpAddr registers.AddrRegister
-	Vram    [0x800]byte
+	Ctrl      registers.Control
+	Mask      bitflags.Flags
+	Status    bitflags.Flags
+	Addr      registers.AddrRegister
+	TmpAddr   registers.AddrRegister
+	AddrLatch bool
+	FineX     byte
+	Vram      [0x800]byte
 
 	OamAddr byte
 	Oam     [0x100]byte
@@ -41,10 +43,13 @@ type PPU struct {
 }
 
 func (p *PPU) WriteAddr(data byte) {
-	p.TmpAddr.Write(data)
-	if !p.TmpAddr.Latch {
+	if p.AddrLatch {
+		p.TmpAddr.WriteLo(data)
 		p.Addr = p.TmpAddr
+	} else {
+		p.TmpAddr.WriteHi(data)
 	}
+	p.AddrLatch = !p.AddrLatch
 }
 
 func (p *PPU) WriteCtrl(data byte) {
@@ -81,15 +86,20 @@ func (p *PPU) ReadOam() byte {
 }
 
 func (p *PPU) WriteScroll(data byte) {
-	p.TmpAddr.WriteScroll(data)
-	p.Addr.FineX = p.TmpAddr.FineX
+	if p.AddrLatch {
+		p.TmpAddr.WriteScrollY(data)
+	} else {
+		p.TmpAddr.WriteScrollX(data)
+		p.FineX = data & 7
+	}
+	p.AddrLatch = !p.AddrLatch
 }
 
 func (p *PPU) ReadStatus() byte {
 	defer func() {
 		p.Status.Remove(registers.Vblank)
 	}()
-	p.Addr.ResetLatch()
+	p.AddrLatch = false
 	return byte(p.Status)
 }
 
@@ -236,6 +246,7 @@ func (p *PPU) Reset() {
 	p.WriteOamAddr(0)
 	p.Addr = registers.AddrRegister{}
 	p.TmpAddr = registers.AddrRegister{}
+	p.AddrLatch = false
 }
 
 func (p *PPU) Interrupt() <-chan interrupts.Interrupt {
