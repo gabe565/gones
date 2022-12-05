@@ -133,16 +133,20 @@ func (p *PPU) Read() byte {
 	addr := p.Addr.Get()
 	p.Addr.Increment(p.Ctrl.VramAddr())
 
+	val := p.ReadAddr(addr)
+	if addr < 0x3000 {
+		val, p.ReadBuf = p.ReadBuf, val
+	}
+	return val
+}
+
+func (p *PPU) ReadAddr(addr uint16) byte {
 	switch {
 	case addr < 0x2000:
-		result := p.ReadBuf
-		p.ReadBuf = p.mapper.ReadMem(addr)
-		return result
+		return p.mapper.ReadMem(addr)
 	case 0x2000 <= addr && addr < 0x3000:
-		result := p.ReadBuf
 		addr := p.MirrorVramAddr(addr)
-		p.ReadBuf = p.Vram[addr]
-		return result
+		return p.Vram[addr]
 	case 0x3000 <= addr && addr < 0x3F00:
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).
 			Error("bad PPU read")
