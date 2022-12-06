@@ -107,7 +107,7 @@ func (p *PPU) ReadStatus() byte {
 }
 
 func (p *PPU) Write(data byte) {
-	addr := p.Addr.Get()
+	addr := p.Addr.Get() & 0x3FFF
 	switch {
 	case addr < 0x2000:
 		p.mapper.WriteMem(addr, data)
@@ -127,7 +127,7 @@ func (p *PPU) Write(data byte) {
 }
 
 func (p *PPU) Read() byte {
-	addr := p.Addr.Get()
+	addr := p.Addr.Get() & 0x3FFF
 	p.Addr.Increment(p.Ctrl.VramAddr())
 
 	val := p.ReadAddr(addr)
