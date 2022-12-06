@@ -39,6 +39,10 @@ type PPU struct {
 
 	ReadBuf byte
 	image   *image.RGBA
+
+	BgTile     BgTile
+	SpriteData SpriteData
+	OddFrame   bool
 }
 
 func (p *PPU) WriteAddr(data byte) {
@@ -114,13 +118,7 @@ func (p *PPU) Write(data byte) {
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).
 			Error("bad PPU write")
 	case 0x3F00 <= addr && addr < 0x4000:
-		addr &= 0x3F1F
-		switch addr {
-		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
-			addr -= 0x10
-		}
-		addr -= 0x3F00
-		p.Palette[addr] = data
+		p.writePalette(addr-0x3F00, data)
 	default:
 		log.WithField("address", fmt.Sprintf("%02X", addr)).
 			Error("unexpected write to mirrored space")
@@ -151,13 +149,7 @@ func (p *PPU) ReadAddr(addr uint16) byte {
 			Error("bad PPU read")
 		return 0
 	case 0x3F00 <= addr && addr < 0x4000:
-		addr &= 0x3F1F
-		switch addr {
-		case 0x3F10, 0x3F14, 0x3F18, 0x3F1C:
-			addr -= 0x10
-		}
-		addr -= 0x3F00
-		return p.Palette[addr]
+		return p.readPalette(addr - 0x3F00)
 	default:
 		log.WithField("address", fmt.Sprintf("%02X", addr)).
 			Error("unexpected access to mirrored space")
@@ -180,51 +172,100 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 	return offset + 0x400*MirrorLookup[p.mapper.Cartridge().Mirror][nameTable]
 }
 
-func (p *PPU) updateSpriteOverflow() {
-	size := int(p.Ctrl.SpriteSize())
-	var count uint
-	for i := 0; i < len(p.Oam)/4; i += 1 {
-		i := i * 4
-		tileY := p.Oam[i]
-		row := int(p.Scanline) - int(tileY)
-		if row < 0 || row >= size {
-			continue
+func (p *PPU) tick() {
+	if p.Mask.Intersects(registers.BackgroundEnable | registers.SpriteEnable) {
+		if p.OddFrame && p.Scanline == 261 && p.Cycles == 339 {
+			p.Cycles = 0
+			p.Scanline = 0
+			p.OddFrame = !p.OddFrame
+			return
 		}
-		count += 1
 	}
-	count &= 0b1111
-	if count == 8 {
-		p.Status.Insert(registers.SpriteOverflow)
+
+	p.Cycles += 1
+
+	if p.Cycles > 340 {
+		p.Cycles = 0
+		p.Scanline += 1
+		if p.Scanline > 261 {
+			p.Scanline = 0
+			p.OddFrame = !p.OddFrame
+		}
 	}
 }
 
 func (p *PPU) Step() bool {
-	p.Cycles += 1
+	p.tick()
 
-	switch {
-	case p.Cycles == 257:
-		p.updateSpriteOverflow()
-	case p.Cycles > 340:
-		if p.SpriteZeroHit(p.Cycles) {
-			p.Status.Insert(registers.SpriteZeroHit)
+	renderingEnabled := p.Mask.Intersects(registers.BackgroundEnable | registers.SpriteEnable)
+	preLine := p.Scanline == 261
+	visibleLine := p.Scanline < 240
+	renderLine := preLine || visibleLine
+	preFetchCycle := p.Cycles >= 321 && p.Cycles <= 336
+	visibleCycle := p.Cycles >= 1 && p.Cycles <= 256
+	fetchCycle := preFetchCycle || visibleCycle
+
+	if renderingEnabled {
+		// Background
+		if visibleLine && visibleCycle {
+			p.renderPixel()
 		}
 
-		p.Cycles = 0
-		p.Scanline += 1
+		if renderLine && fetchCycle {
+			p.BgTile.Data <<= 4
 
-		switch {
-		case p.Scanline == 241:
-			p.Status.Insert(registers.Vblank)
-			p.Status.Remove(registers.SpriteZeroHit)
-			if p.Ctrl.HasEnableNMI() {
-				p.interruptCh <- interrupts.NMI
+			switch p.Cycles % 8 {
+			case 1:
+				p.fetchNametableByte()
+			case 3:
+				p.fetchAttrTableByte()
+			case 5:
+				p.fetchLoTileByte()
+			case 7:
+				p.fetchHiTileByte()
+			case 0:
+				p.storeTileData()
 			}
-		case p.Scanline >= 262:
-			p.Scanline = 0
-			p.Status.Remove(registers.Vblank | registers.SpriteOverflow | registers.SpriteZeroHit)
-			return true
+		}
+
+		if preLine && p.Cycles >= 280 && p.Cycles <= 304 {
+			p.copyAddrY()
+		}
+
+		if renderLine {
+			if fetchCycle && p.Cycles%8 == 0 {
+				p.incrementX()
+			}
+			if p.Cycles == 256 {
+				p.incrementY()
+			}
+			if p.Cycles == 257 {
+				p.copyAddrX()
+			}
+		}
+
+		// Sprite
+		if p.Cycles == 257 {
+			if visibleLine {
+				p.evaluateSprites()
+			} else {
+				p.SpriteData.Count = 0
+			}
 		}
 	}
+
+	if p.Scanline == 241 && p.Cycles == 1 {
+		p.Status.Insert(registers.Vblank)
+		if p.Ctrl.HasEnableNMI() {
+			p.interrupt = &interrupts.NMI
+		}
+	}
+
+	if preLine && p.Cycles == 1 {
+		p.Status.Remove(registers.Vblank | registers.SpriteOverflow | registers.SpriteZeroHit)
+		return true
+	}
+
 	return false
 }
 
@@ -242,6 +283,9 @@ func (p *PPU) Reset() {
 	p.WriteOamAddr(0)
 	p.Addr = registers.AddrRegister{}
 	p.TmpAddr = registers.AddrRegister{}
+	p.BgTile = BgTile{}
+	p.SpriteData = SpriteData{}
+	p.OddFrame = false
 	p.AddrLatch = false
 }
 
@@ -250,4 +294,18 @@ func (p *PPU) Interrupt() *interrupts.Interrupt {
 		p.interrupt = nil
 	}()
 	return p.interrupt
+}
+
+func (p *PPU) readPalette(addr uint16) byte {
+	if addr >= 16 && addr%4 == 0 {
+		addr -= 16
+	}
+	return p.Palette[addr]
+}
+
+func (p *PPU) writePalette(addr uint16, data byte) {
+	if addr >= 16 && addr%4 == 0 {
+		addr -= 16
+	}
+	p.Palette[addr] = data
 }

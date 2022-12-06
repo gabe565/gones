@@ -154,7 +154,7 @@ func (c *Console) Update() error {
 }
 
 func (c *Console) Draw(screen *ebiten.Image) {
-	img := c.PPU.Render()
+	img := c.PPU.Image()
 	screen.WritePixels(img.Pix)
 }
 

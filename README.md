@@ -100,8 +100,6 @@ Eventually, this will be configurable in the UI.
 - [x] PPU implementation (graphics)
   - [x] Background rendering
   - [x] Sprite rendering
-  - PPU emulation is still rough. Games that rely on certain quirks of the
-    original PPU will not work.
 - [x] GUI
   - Rendering works, but menu options need to be added.
 - [x] Basic controller support
