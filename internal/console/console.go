@@ -93,11 +93,8 @@ func (c *Console) Step() error {
 			err = ErrRender
 		}
 	}
-
-	select {
-	case interrupt := <-c.PPU.Interrupt():
-		c.CPU.Interrupt <- interrupt
-	default:
+	if interrupt := c.PPU.Interrupt(); interrupt != nil {
+		c.CPU.Interrupt <- *interrupt
 	}
 
 	for i := uint(0); i < cycles; i += 1 {

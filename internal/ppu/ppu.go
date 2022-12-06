@@ -12,9 +12,8 @@ import (
 
 func New(mapper cartridge.Mapper) *PPU {
 	return &PPU{
-		mapper:      mapper,
-		interruptCh: make(chan interrupts.Interrupt, 1),
-		image:       image.NewRGBA(image.Rect(0, 0, Width, TrimmedHeight)),
+		mapper: mapper,
+		image:  image.NewRGBA(image.Rect(0, 0, Width, TrimmedHeight)),
 	}
 }
 
@@ -34,9 +33,9 @@ type PPU struct {
 	Oam     [0x100]byte
 	Palette [0x20]byte
 
-	Scanline    uint16
-	Cycles      uint
-	interruptCh chan interrupts.Interrupt
+	Scanline  uint16
+	Cycles    uint
+	interrupt *interrupts.Interrupt
 
 	ReadBuf byte
 	image   *image.RGBA
@@ -58,7 +57,7 @@ func (p *PPU) WriteCtrl(data byte) {
 	p.TmpAddr.NametableX = bitflags.Flags(p.Ctrl).Intersects(registers.CtrlNametableX)
 	p.TmpAddr.NametableY = bitflags.Flags(p.Ctrl).Intersects(registers.CtrlNametableY)
 	if !beforeNmi && p.Ctrl.HasEnableNMI() && p.Status.Intersects(registers.Vblank) {
-		p.interruptCh <- interrupts.NMI
+		p.interrupt = &interrupts.NMI
 	}
 }
 
@@ -246,6 +245,9 @@ func (p *PPU) Reset() {
 	p.AddrLatch = false
 }
 
-func (p *PPU) Interrupt() <-chan interrupts.Interrupt {
-	return p.interruptCh
+func (p *PPU) Interrupt() *interrupts.Interrupt {
+	defer func() {
+		p.interrupt = nil
+	}()
+	return p.interrupt
 }
