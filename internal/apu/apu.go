@@ -27,11 +27,10 @@ func init() {
 }
 
 func New() *APU {
-	sampleRate := consts.CpuFrequency / float64(consts.AudioSampleRate)
 	return &APU{
 		Enabled:    true,
 		Volume:     1,
-		SampleRate: sampleRate,
+		SampleRate: consts.CpuFrequency / float64(consts.AudioSampleRate),
 
 		Square: [2]Square{{Channel: 1}, {Channel: 2}},
 		Noise:  Noise{ShiftRegister: 1},
