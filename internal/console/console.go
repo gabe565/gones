@@ -61,7 +61,7 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 	if err != nil {
 		return &console, err
 	}
-	console.player.SetBufferSize(time.Second / 60)
+	console.player.SetBufferSize(time.Second / 50)
 	console.player.Play()
 
 	return &console, nil
