@@ -233,18 +233,21 @@ func (a *APU) clearBuf() {
 	}
 }
 
-func (a *APU) Read(p []byte) (n int, err error) {
-	for i := 0; i < len(p); i += 1 {
-		var output byte
+func (a *APU) Read(p []byte) (int, error) {
+	var count int
 
+	for i := range p {
 		select {
-		case output = <-a.buf:
+		case p[i] = <-a.buf:
+			count += 1
 		default:
+			if count == 0 {
+				p[i] = 0
+			} else {
+				p[i] = p[i%count]
+			}
 		}
-
-		p[i] = output
-		n += 1
 	}
 
-	return n, nil
+	return len(p), nil
 }
