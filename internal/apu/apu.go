@@ -5,7 +5,6 @@ import (
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/interrupts"
 	log "github.com/sirupsen/logrus"
-	"sync"
 )
 
 const FrameCounterRate = consts.CpuFrequency / 240.0
@@ -58,7 +57,6 @@ type APU struct {
 	InterruptInhibit bool
 
 	buf chan byte
-	mu  sync.Mutex
 }
 
 func (a *APU) WriteMem(addr uint16, data byte) {
@@ -226,9 +224,6 @@ func (a *APU) output() []byte {
 }
 
 func (a *APU) clearBuf() {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
 	for {
 		select {
 		case <-a.buf:
@@ -239,9 +234,6 @@ func (a *APU) clearBuf() {
 }
 
 func (a *APU) Read(p []byte) (n int, err error) {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
 	for i := 0; i < len(p); i += 1 {
 		var output byte
 
