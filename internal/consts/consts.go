@@ -15,5 +15,5 @@ const (
 
 	CpuFrequency = 1789772
 
-	AudioSampleRate = 48000
+	AudioSampleRate = 44100
 )
