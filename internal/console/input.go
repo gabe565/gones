@@ -30,10 +30,12 @@ func (c *Console) CheckInput() {
 		if c.debug == DebugDisabled {
 			log.Info("Enable step debug")
 			c.debug = DebugWait
+			c.APU.Enabled = false
 		} else {
 			log.Info("Disable step debug")
 			c.enableTrace = false
 			c.debug = DebugDisabled
+			c.APU.Enabled = true
 		}
 	}
 
