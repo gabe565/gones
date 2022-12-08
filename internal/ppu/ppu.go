@@ -269,12 +269,6 @@ func (p *PPU) Step() bool {
 	return false
 }
 
-func (p *PPU) SpriteZeroHit(cycle uint) bool {
-	x := p.Oam[3]
-	y := p.Oam[0]
-	return uint16(y) == p.Scanline && uint(x) <= cycle && p.Mask.Intersects(registers.SpriteEnable)
-}
-
 func (p *PPU) Reset() {
 	p.Cycles = 0
 	p.Scanline = 0
