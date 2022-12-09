@@ -1,12 +1,11 @@
 package controller
 
 import (
-	"github.com/gabe565/gones/internal/bitflags"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 const (
-	ButtonA = 1 << iota
+	ButtonA = iota
 	ButtonB
 	Select
 	Start
@@ -17,9 +16,9 @@ const (
 )
 
 type Controller struct {
-	strobe bool
-	index  byte
-	bits   bitflags.Flags
+	strobe  bool
+	index   byte
+	buttons [8]bool
 
 	Keymap Keymap[ebiten.Key]
 	turbo  uint8
@@ -38,7 +37,7 @@ func (j *Controller) Read() byte {
 	}
 
 	var value byte
-	if j.bits.Intersects(1 << j.index) {
+	if j.buttons[j.index] {
 		value = 1
 	}
 
@@ -51,14 +50,14 @@ func (j *Controller) Read() byte {
 func (j *Controller) UpdateInput() {
 	for key, button := range j.Keymap.Regular {
 		keyPressed := ebiten.IsKeyPressed(key)
-		j.bits.Set(button, keyPressed)
+		j.buttons[button] = keyPressed
 	}
 
 	var turboPressed bool
 	for key, button := range j.Keymap.Turbo {
-		if ebiten.IsKeyPressed(key) && !j.bits.Intersects(button) {
+		if ebiten.IsKeyPressed(key) && !j.buttons[button] {
 			turboPressed = true
-			j.bits.Set(button, j.turbo%6 < 3)
+			j.buttons[button] = j.turbo%6 < 3
 		}
 	}
 	if turboPressed {

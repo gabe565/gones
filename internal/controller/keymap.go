@@ -1,17 +1,16 @@
 package controller
 
 import (
-	"github.com/gabe565/gones/internal/bitflags"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Keymap[T ebiten.Key | ebiten.StandardGamepadButton] struct {
-	Regular map[T]bitflags.Flags
-	Turbo   map[T]bitflags.Flags
+	Regular map[T]uint8
+	Turbo   map[T]uint8
 }
 
 var Player1Keymap = Keymap[ebiten.Key]{
-	Regular: map[ebiten.Key]bitflags.Flags{
+	Regular: map[ebiten.Key]uint8{
 		ebiten.KeyW:          Up,
 		ebiten.KeyD:          Right,
 		ebiten.KeyS:          Down,
@@ -21,14 +20,14 @@ var Player1Keymap = Keymap[ebiten.Key]{
 		ebiten.KeyN:          ButtonA,
 		ebiten.KeyM:          ButtonB,
 	},
-	Turbo: map[ebiten.Key]bitflags.Flags{
+	Turbo: map[ebiten.Key]uint8{
 		ebiten.KeyJ: ButtonA,
 		ebiten.KeyK: ButtonB,
 	},
 }
 
 var Player2Keymap = Keymap[ebiten.Key]{
-	Regular: map[ebiten.Key]bitflags.Flags{
+	Regular: map[ebiten.Key]uint8{
 		ebiten.KeyHome:     Up,
 		ebiten.KeyPageDown: Right,
 		ebiten.KeyEnd:      Down,
@@ -38,14 +37,14 @@ var Player2Keymap = Keymap[ebiten.Key]{
 		ebiten.KeyKP2:      ButtonA,
 		ebiten.KeyKP3:      ButtonB,
 	},
-	Turbo: map[ebiten.Key]bitflags.Flags{
+	Turbo: map[ebiten.Key]uint8{
 		ebiten.KeyKP5: ButtonA,
 		ebiten.KeyKP6: ButtonB,
 	},
 }
 
 var Joystick = Keymap[ebiten.StandardGamepadButton]{
-	Regular: map[ebiten.StandardGamepadButton]bitflags.Flags{
+	Regular: map[ebiten.StandardGamepadButton]uint8{
 		ebiten.StandardGamepadButtonLeftTop:     Up,
 		ebiten.StandardGamepadButtonLeftRight:   Right,
 		ebiten.StandardGamepadButtonLeftBottom:  Down,
@@ -55,7 +54,7 @@ var Joystick = Keymap[ebiten.StandardGamepadButton]{
 		ebiten.StandardGamepadButtonRightRight:  ButtonA,
 		ebiten.StandardGamepadButtonRightBottom: ButtonB,
 	},
-	Turbo: map[ebiten.StandardGamepadButton]bitflags.Flags{
+	Turbo: map[ebiten.StandardGamepadButton]uint8{
 		ebiten.StandardGamepadButtonRightTop:  ButtonA,
 		ebiten.StandardGamepadButtonRightLeft: ButtonB,
 	},
