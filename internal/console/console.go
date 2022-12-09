@@ -12,6 +12,7 @@ import (
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"time"
 )
@@ -166,4 +167,13 @@ func (c *Console) CloseOnUpdate() {
 
 func (c *Console) SetTrace(v bool) {
 	c.enableTrace = v
+}
+
+func (c *Console) SetDebug(v bool) {
+	if v {
+		log.Info("Enable step debug")
+		c.debug = DebugWait
+	} else {
+		c.debug = DebugDisabled
+	}
 }

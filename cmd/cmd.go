@@ -23,6 +23,7 @@ const (
 
 type Config struct {
 	Path       string
+	Debug      bool
 	Trace      bool
 	Scale      float64
 	Fullscreen bool
@@ -37,6 +38,7 @@ func New(version string) *cobra.Command {
 		RunE:    run,
 	}
 
+	cmd.Flags().BoolVar(&config.Debug, "debug", false, "Start with step debugging enabled")
 	cmd.Flags().BoolVar(&config.Trace, "trace", false, "Enable trace logging")
 	cmd.Flags().Float64Var(&config.Scale, "scale", 3, "Default UI scale")
 	cmd.Flags().BoolVarP(&config.Fullscreen, "fullscreen", "f", false, "Start in fullscreen")
@@ -73,6 +75,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}()
 
 	c.SetTrace(config.Trace)
+	c.SetDebug(config.Debug)
 
 	ebiten.SetWindowSize(int(config.Scale*ppu.Width), int(config.Scale*ppu.TrimmedHeight))
 	ebiten.SetWindowTitle(strings.TrimSuffix(filepath.Base(config.Path), filepath.Ext(config.Path)) + " | GoNES")
