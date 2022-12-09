@@ -1,7 +1,6 @@
 package apu
 
 import (
-	"github.com/gabe565/gones/internal/bitflags"
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/interrupts"
 	log "github.com/sirupsen/logrus"
@@ -16,6 +15,14 @@ var lengths = []byte{
 
 var squareTable [31]float32
 var tndTable [203]float32
+
+const (
+	StatusPulse1 = 1 << iota
+	StatusPulse2
+	StatusTriangle
+	StatusNoise
+	StatusDMC
+)
 
 func init() {
 	for i := range squareTable {
@@ -71,11 +78,11 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 	case 0x4010 <= addr && addr <= 0x4013:
 		a.DMC.Write(addr, data)
 	case addr == 0x4015:
-		a.Square[0].SetEnabled(data&1 == 1)
-		a.Square[1].SetEnabled(data&2 == 2)
-		a.Triangle.SetEnabled(data&4 == 4)
-		a.Noise.SetEnabled(data&8 == 8)
-		a.DMC.SetEnabled(data&16 == 16)
+		a.Square[0].SetEnabled(data&StatusPulse1 != 0)
+		a.Square[1].SetEnabled(data&StatusPulse2 != 0)
+		a.Triangle.SetEnabled(data&StatusTriangle != 0)
+		a.Noise.SetEnabled(data&StatusNoise != 0)
+		a.DMC.SetEnabled(data&StatusDMC != 0)
 	case addr == 0x4017:
 		a.FramePeriod = 4 + data>>7&1
 		a.InterruptInhibit = data>>6&1 == 1
@@ -92,15 +99,23 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 func (a *APU) ReadMem(addr uint16) byte {
 	switch addr {
 	case 0x4015:
-		var data bitflags.Flags
-		data.Set(1<<0, a.Square[0].LengthValue > 0)
-		data.Set(1<<1, a.Square[1].LengthValue > 0)
-		data.Set(1<<2, a.Triangle.LengthValue > 0)
-		data.Set(1<<3, a.Noise.LengthValue > 0)
-		data.Set(1<<4, a.DMC.CurrLen > 0)
-		data.Set(1<<6, false)
-		data.Set(1<<7, false)
-		return byte(data)
+		var data byte
+		if a.Square[0].LengthValue > 0 {
+			data |= StatusPulse1
+		}
+		if a.Square[1].LengthValue > 0 {
+			data |= StatusPulse2
+		}
+		if a.Triangle.LengthValue > 0 {
+			data |= StatusTriangle
+		}
+		if a.Noise.LengthValue > 0 {
+			data |= StatusNoise
+		}
+		if a.DMC.CurrLen > 0 {
+			data |= StatusDMC
+		}
+		return data
 	default:
 		log.Fatalf("invalid APU read from $%04X", addr)
 		return 0
