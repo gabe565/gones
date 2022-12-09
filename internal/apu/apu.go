@@ -117,7 +117,6 @@ func (a *APU) ReadMem(addr uint16) byte {
 		}
 		return data
 	default:
-		log.Fatalf("invalid APU read from $%04X", addr)
 		return 0
 	}
 }
