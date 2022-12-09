@@ -3,7 +3,6 @@ package ppu
 import (
 	"fmt"
 	"github.com/gabe565/gones/internal/cartridge"
-	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
 	"image"
@@ -32,9 +31,10 @@ type PPU struct {
 	Oam     [0x100]byte
 	Palette [0x20]byte
 
-	Scanline  uint16
-	Cycles    uint
-	interrupt *interrupts.Interrupt
+	Scanline uint16
+	Cycles   uint
+
+	nmiOccurred bool
 
 	ReadBuf byte
 	image   *image.RGBA
@@ -59,8 +59,8 @@ func (p *PPU) WriteCtrl(data byte) {
 	p.Ctrl.Set(data)
 	p.TmpAddr.NametableX = p.Ctrl.NametableX
 	p.TmpAddr.NametableY = p.Ctrl.NametableY
-	if !beforeNmi && p.Ctrl.EnableNMI && p.Status.Vblank {
-		p.interrupt = &interrupts.NMI
+	if !beforeNmi && p.Status.Vblank && p.Ctrl.EnableNMI {
+		p.nmiOccurred = true
 	}
 }
 
@@ -98,11 +98,11 @@ func (p *PPU) WriteScroll(data byte) {
 }
 
 func (p *PPU) ReadStatus() byte {
-	defer func() {
-		p.Status.Vblank = false
-	}()
+	status := p.Status.Get()
+	p.Status.Vblank = false
+	p.nmiOccurred = false
 	p.AddrLatch = false
-	return p.Status.Get()
+	return status
 }
 
 func (p *PPU) Write(data byte) {
@@ -256,7 +256,7 @@ func (p *PPU) Step() bool {
 	if p.Scanline == 241 && p.Cycles == 1 {
 		p.Status.Vblank = true
 		if p.Ctrl.EnableNMI {
-			p.interrupt = &interrupts.NMI
+			p.nmiOccurred = true
 		}
 	}
 
@@ -284,11 +284,12 @@ func (p *PPU) Reset() {
 	p.AddrLatch = false
 }
 
-func (p *PPU) Interrupt() *interrupts.Interrupt {
-	defer func() {
-		p.interrupt = nil
-	}()
-	return p.interrupt
+func (p *PPU) NMI() bool {
+	if p.nmiOccurred && p.Ctrl.EnableNMI {
+		p.nmiOccurred = false
+		return true
+	}
+	return false
 }
 
 func (p *PPU) readPalette(addr uint16) byte {

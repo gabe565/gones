@@ -8,6 +8,7 @@ import (
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/cpu"
+	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
@@ -93,16 +94,17 @@ func (c *Console) Step() error {
 			err = ErrRender
 		}
 	}
-	if interrupt := c.PPU.Interrupt(); interrupt != nil {
-		c.CPU.Interrupt <- *interrupt
+	if nmi := c.PPU.NMI(); nmi {
+		c.CPU.Interrupt <- interrupts.NMI
 	}
 
 	for i := uint(0); i < cycles; i += 1 {
-		if interrupt := c.APU.Step(); interrupt != nil {
-			select {
-			case c.CPU.Interrupt <- *interrupt:
-			default:
-			}
+		c.APU.Step()
+	}
+	if irq := c.APU.IRQ(); irq {
+		select {
+		case c.CPU.Interrupt <- interrupts.IRQ:
+		default:
 		}
 	}
 

@@ -2,7 +2,6 @@ package apu
 
 import (
 	"github.com/gabe565/gones/internal/consts"
-	"github.com/gabe565/gones/internal/interrupts"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -61,6 +60,8 @@ type APU struct {
 	FrameValue  byte
 
 	InterruptInhibit bool
+
+	irqOccurred bool
 
 	buf chan byte
 }
@@ -130,9 +131,7 @@ func (a *APU) Reset() {
 	a.DMC = DMC{cpu: a.DMC.cpu}
 }
 
-func (a *APU) Step() *interrupts.Interrupt {
-	var interrupt *interrupts.Interrupt
-
+func (a *APU) Step() {
 	cycle1 := a.Cycle
 	a.Cycle += 1
 	cycle2 := a.Cycle
@@ -142,7 +141,7 @@ func (a *APU) Step() *interrupts.Interrupt {
 	f1 := int(float32(cycle1) / FrameCounterRate)
 	f2 := int(float32(cycle2) / FrameCounterRate)
 	if f1 != f2 {
-		interrupt = a.stepFrameCounter()
+		a.stepFrameCounter()
 	}
 
 	s1 := int(float64(cycle1) / a.SampleRate)
@@ -150,15 +149,21 @@ func (a *APU) Step() *interrupts.Interrupt {
 	if s1 != s2 && a.Enabled {
 		a.sendSample()
 	}
-
-	return interrupt
 }
 
 func (a *APU) SetCpu(c CPU) {
 	a.DMC.cpu = c
 }
 
-func (a *APU) stepFrameCounter() *interrupts.Interrupt {
+func (a *APU) IRQ() bool {
+	if a.irqOccurred {
+		a.irqOccurred = false
+		return true
+	}
+	return false
+}
+
+func (a *APU) stepFrameCounter() {
 	switch a.FramePeriod {
 	case 4, 5:
 		a.FrameValue += 1
@@ -175,11 +180,10 @@ func (a *APU) stepFrameCounter() *interrupts.Interrupt {
 			a.stepSweep()
 			a.stepLength()
 			if a.FramePeriod == 4 && !a.InterruptInhibit {
-				return &interrupts.IRQ
+				a.irqOccurred = true
 			}
 		}
 	}
-	return nil
 }
 
 func (a *APU) sendSample() {
