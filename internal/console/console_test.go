@@ -41,22 +41,20 @@ func Test_nestest(t *testing.T) {
 	for scanner.Scan() {
 		checkedLines += 1
 
-		trace := c.CPU.Trace()
-
 		switch c.CPU.ProgramCounter {
 		//TODO: Remove this after APU is supported
 		case 0xC68B, 0xC690, 0xC695, 0xC69A, 0xC69F:
-			continue
+		default:
+			trace := c.CPU.Trace()
+			expected := scanner.Text()
+
+			//TODO: Remove this after adding PPU and CYC to trace
+			if len(expected) > 73 {
+				expected = expected[:73]
+			}
+
+			assert.EqualValues(t, expected, trace)
 		}
-
-		expected := scanner.Text()
-
-		//TODO: Remove this after adding PPU and CYC to trace
-		if len(expected) > 73 {
-			expected = expected[:73]
-		}
-
-		assert.EqualValues(t, expected, trace)
 
 		if err := c.Step(); !assert.NoError(t, err) {
 			return
