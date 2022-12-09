@@ -56,11 +56,11 @@ func (p *PPU) WriteAddr(data byte) {
 }
 
 func (p *PPU) WriteCtrl(data byte) {
-	beforeNmi := p.Ctrl.HasEnableNMI()
-	p.Ctrl = registers.Control(data)
-	p.TmpAddr.NametableX = bitflags.Flags(p.Ctrl).Intersects(registers.CtrlNametableX)
-	p.TmpAddr.NametableY = bitflags.Flags(p.Ctrl).Intersects(registers.CtrlNametableY)
-	if !beforeNmi && p.Ctrl.HasEnableNMI() && p.Status.Intersects(registers.Vblank) {
+	beforeNmi := p.Ctrl.EnableNMI
+	p.Ctrl.Set(data)
+	p.TmpAddr.NametableX = p.Ctrl.NametableX
+	p.TmpAddr.NametableY = p.Ctrl.NametableY
+	if !beforeNmi && p.Ctrl.EnableNMI && p.Status.Intersects(registers.Vblank) {
 		p.interrupt = &interrupts.NMI
 	}
 }
@@ -256,7 +256,7 @@ func (p *PPU) Step() bool {
 
 	if p.Scanline == 241 && p.Cycles == 1 {
 		p.Status.Insert(registers.Vblank)
-		if p.Ctrl.HasEnableNMI() {
+		if p.Ctrl.EnableNMI {
 			p.interrupt = &interrupts.NMI
 		}
 	}

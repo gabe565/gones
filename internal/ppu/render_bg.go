@@ -1,7 +1,6 @@
 package ppu
 
 import (
-	"github.com/gabe565/gones/internal/bitflags"
 	"github.com/gabe565/gones/internal/ppu/registers"
 )
 
@@ -39,7 +38,7 @@ func (p *PPU) fetchAttrTableByte() {
 
 func (p *PPU) fetchLoTileByte() {
 	addr := uint16(p.BgTile.NametableByte)<<4 + uint16(p.Addr.FineY)
-	if bitflags.Flags(p.Ctrl).Intersects(registers.BgTileSelect) {
+	if p.Ctrl.BgTileSelect {
 		addr += 1 << 12
 	}
 	p.BgTile.LoByte = p.ReadAddr(addr)
@@ -47,7 +46,7 @@ func (p *PPU) fetchLoTileByte() {
 
 func (p *PPU) fetchHiTileByte() {
 	addr := uint16(p.BgTile.NametableByte)<<4 + uint16(p.Addr.FineY) + 8
-	if bitflags.Flags(p.Ctrl).Intersects(registers.BgTileSelect) {
+	if p.Ctrl.BgTileSelect {
 		addr += 1 << 12
 	}
 	p.BgTile.HiByte = p.ReadAddr(addr)

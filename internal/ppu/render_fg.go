@@ -1,7 +1,6 @@
 package ppu
 
 import (
-	"github.com/gabe565/gones/internal/bitflags"
 	"github.com/gabe565/gones/internal/ppu/registers"
 )
 
@@ -52,7 +51,7 @@ func (p *PPU) fetchSpritePattern(i, row int) uint32 {
 	attributes := p.Oam[i*4+2]
 	var addr uint16
 
-	if bitflags.Flags(p.Ctrl).Intersects(registers.SpriteHeight) {
+	if p.Ctrl.SpriteHeight {
 		if attributes&0x80 == 0x80 {
 			row = 15 - row
 		}
