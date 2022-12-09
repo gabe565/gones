@@ -1,6 +1,7 @@
 package console
 
 import (
+	"compress/gzip"
 	"encoding/gob"
 	"errors"
 	log "github.com/sirupsen/logrus"
@@ -32,7 +33,16 @@ func (c *Console) SaveState(num uint8) error {
 		_ = f.Close()
 	}(f)
 
-	if err := gob.NewEncoder(f).Encode(c); err != nil {
+	gzw := gzip.NewWriter(f)
+	defer func() {
+		_ = gzw.Close()
+	}()
+
+	if err := gob.NewEncoder(gzw).Encode(c); err != nil {
+		return err
+	}
+
+	if err := gzw.Close(); err != nil {
 		return err
 	}
 
@@ -55,7 +65,19 @@ func (c *Console) LoadState(num uint8) error {
 		_ = f.Close()
 	}(f)
 
-	if err := gob.NewDecoder(f).Decode(c); err != nil {
+	gzr, err := gzip.NewReader(f)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = gzr.Close()
+	}()
+
+	if err := gob.NewDecoder(gzr).Decode(c); err != nil {
+		return err
+	}
+
+	if err := gzr.Close(); err != nil {
 		return err
 	}
 

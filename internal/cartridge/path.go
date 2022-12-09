@@ -22,6 +22,6 @@ func (c *Cartridge) StatePath(num uint8) (string, error) {
 		return "", err
 	}
 
-	stateName := fmt.Sprintf("%s.%d.state", c.hash, num)
+	stateName := fmt.Sprintf("%s.%d.state.gz", c.hash, num)
 	return filepath.Join(statesDir, stateName), nil
 }
