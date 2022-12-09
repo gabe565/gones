@@ -1,9 +1,33 @@
 package registers
 
-import "github.com/gabe565/gones/internal/bitflags"
+type Status struct {
+	SpriteOverflow bool
+	SpriteZeroHit  bool
+	Vblank         bool
+}
 
 const (
-	SpriteOverflow bitflags.Flags = 1 << (iota + 5)
-	SpriteZeroHit
-	Vblank
+	StatusSpriteOverflow = 1 << (iota + 5)
+	StatusSpriteZeroHit
+	StatusVblank
 )
+
+func (s *Status) Set(data byte) {
+	s.SpriteOverflow = data&StatusSpriteOverflow != 0
+	s.SpriteZeroHit = data&StatusSpriteZeroHit != 0
+	s.Vblank = data&StatusVblank != 0
+}
+
+func (s *Status) Get() byte {
+	var v byte
+	if s.SpriteOverflow {
+		v |= StatusSpriteOverflow
+	}
+	if s.SpriteZeroHit {
+		v |= StatusSpriteZeroHit
+	}
+	if s.Vblank {
+		v |= StatusVblank
+	}
+	return v
+}

@@ -1,9 +1,5 @@
 package ppu
 
-import (
-	"github.com/gabe565/gones/internal/ppu/registers"
-)
-
 const MaxSprites = 8
 
 type SpriteData struct {
@@ -40,7 +36,7 @@ func (p *PPU) evaluateSprites() {
 
 	if count > 8 {
 		count = 8
-		p.Status.Insert(registers.SpriteOverflow)
+		p.Status.SpriteOverflow = true
 	}
 
 	p.SpriteData.Count = count

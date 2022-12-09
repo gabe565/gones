@@ -1,7 +1,6 @@
 package ppu
 
 import (
-	"github.com/gabe565/gones/internal/ppu/registers"
 	"image"
 )
 
@@ -45,7 +44,7 @@ func (p *PPU) renderPixel() {
 		colorIdx = bgPixel
 	default:
 		if p.SpriteData.Indexes[i] == 0 && x < 255 {
-			p.Status.Insert(registers.SpriteZeroHit)
+			p.Status.SpriteZeroHit = true
 		}
 		if p.SpriteData.Priorities[i] == 0 {
 			colorIdx = sprite | 0x10

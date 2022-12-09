@@ -2,7 +2,6 @@ package ppu
 
 import (
 	"github.com/gabe565/gones/internal/cartridge"
-	"github.com/gabe565/gones/internal/ppu/registers"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -134,7 +133,7 @@ func TestPPU_VramMirror(t *testing.T) {
 
 func TestPPU_StatusResetsVblank(t *testing.T) {
 	ppu, _ := stubPpu()
-	ppu.Status.Insert(registers.Vblank)
+	ppu.Status.Vblank = true
 	assert.EqualValues(t, 1, ppu.ReadStatus()>>7)
 	assert.EqualValues(t, 0, ppu.ReadStatus()>>7)
 }

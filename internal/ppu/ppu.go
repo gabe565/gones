@@ -2,7 +2,6 @@ package ppu
 
 import (
 	"fmt"
-	"github.com/gabe565/gones/internal/bitflags"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/ppu/registers"
@@ -22,7 +21,7 @@ type PPU struct {
 
 	Ctrl      registers.Control
 	Mask      registers.Mask
-	Status    bitflags.Flags
+	Status    registers.Status
 	Addr      registers.AddrRegister
 	TmpAddr   registers.AddrRegister
 	AddrLatch bool
@@ -60,7 +59,7 @@ func (p *PPU) WriteCtrl(data byte) {
 	p.Ctrl.Set(data)
 	p.TmpAddr.NametableX = p.Ctrl.NametableX
 	p.TmpAddr.NametableY = p.Ctrl.NametableY
-	if !beforeNmi && p.Ctrl.EnableNMI && p.Status.Intersects(registers.Vblank) {
+	if !beforeNmi && p.Ctrl.EnableNMI && p.Status.Vblank {
 		p.interrupt = &interrupts.NMI
 	}
 }
@@ -100,10 +99,10 @@ func (p *PPU) WriteScroll(data byte) {
 
 func (p *PPU) ReadStatus() byte {
 	defer func() {
-		p.Status.Remove(registers.Vblank)
+		p.Status.Vblank = false
 	}()
 	p.AddrLatch = false
-	return byte(p.Status)
+	return p.Status.Get()
 }
 
 func (p *PPU) Write(data byte) {
@@ -255,14 +254,16 @@ func (p *PPU) Step() bool {
 	}
 
 	if p.Scanline == 241 && p.Cycles == 1 {
-		p.Status.Insert(registers.Vblank)
+		p.Status.Vblank = true
 		if p.Ctrl.EnableNMI {
 			p.interrupt = &interrupts.NMI
 		}
 	}
 
 	if preLine && p.Cycles == 1 {
-		p.Status.Remove(registers.Vblank | registers.SpriteOverflow | registers.SpriteZeroHit)
+		p.Status.Vblank = false
+		p.Status.SpriteOverflow = false
+		p.Status.SpriteZeroHit = false
 		return true
 	}
 
