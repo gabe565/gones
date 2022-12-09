@@ -22,8 +22,8 @@ type PPU struct {
 	Ctrl      registers.Control
 	Mask      registers.Mask
 	Status    registers.Status
-	Addr      registers.AddrRegister
-	TmpAddr   registers.AddrRegister
+	Addr      registers.Address
+	TmpAddr   registers.Address
 	AddrLatch bool
 	FineX     byte
 	Vram      [0x800]byte
@@ -276,8 +276,8 @@ func (p *PPU) Reset() {
 	p.WriteCtrl(0)
 	p.WriteMask(0)
 	p.WriteOamAddr(0)
-	p.Addr = registers.AddrRegister{}
-	p.TmpAddr = registers.AddrRegister{}
+	p.Addr = registers.Address{}
+	p.TmpAddr = registers.Address{}
 	p.BgTile = BgTile{}
 	p.SpriteData = SpriteData{}
 	p.OddFrame = false
