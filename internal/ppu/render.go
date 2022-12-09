@@ -10,6 +10,7 @@ const (
 	Height        = 240
 	TrimHeight    = 8
 	TrimmedHeight = Height - 2*TrimHeight
+	Attenuate     = 0.746
 )
 
 func (p *PPU) Image() *image.RGBA {
@@ -59,5 +60,21 @@ func (p *PPU) renderPixel() {
 	}
 
 	c := SystemPalette[colorIdx]
+	// Don't attenuate $xE or $xF (black)
+	if colorIdx&0xE != 0xE {
+		if p.Mask.Intersects(registers.EmphasizeRed) {
+			c.G = uint8(float64(c.G) * Attenuate)
+			c.B = uint8(float64(c.B) * Attenuate)
+		}
+		if p.Mask.Intersects(registers.EmphasizeGreen) {
+			c.R = uint8(float64(c.R) * Attenuate)
+			c.B = uint8(float64(c.B) * Attenuate)
+		}
+		if p.Mask.Intersects(registers.EmphasizeBlue) {
+			c.R = uint8(float64(c.R) * Attenuate)
+			c.G = uint8(float64(c.G) * Attenuate)
+		}
+	}
+
 	p.image.SetRGBA(x, y-8, c)
 }
