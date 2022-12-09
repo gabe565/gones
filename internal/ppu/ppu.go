@@ -118,7 +118,7 @@ func (p *PPU) Write(data byte) {
 		log.WithField("address", fmt.Sprintf("$%02X", addr)).
 			Error("bad PPU write")
 	case 0x3F00 <= addr && addr < 0x4000:
-		p.writePalette(addr-0x3F00, data)
+		p.writePalette(addr%32, data)
 	default:
 		log.WithField("address", fmt.Sprintf("%02X", addr)).
 			Error("unexpected write to mirrored space")
@@ -149,7 +149,7 @@ func (p *PPU) ReadAddr(addr uint16) byte {
 			Error("bad PPU read")
 		return 0
 	case 0x3F00 <= addr && addr < 0x4000:
-		return p.readPalette(addr - 0x3F00)
+		return p.readPalette(addr % 32)
 	default:
 		log.WithField("address", fmt.Sprintf("%02X", addr)).
 			Error("unexpected access to mirrored space")
