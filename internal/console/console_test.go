@@ -20,15 +20,16 @@ func Test_nestest(t *testing.T) {
 		return
 	}
 
-	var c Console
+	c := Console{Cartridge: cart}
 
-	mapper, err := cartridge.NewMapper(cart)
-	c.PPU = ppu.New(mapper)
+	c.Mapper, err = cartridge.NewMapper(cart)
 	if !assert.NoError(t, err) {
 		return
 	}
+
+	c.PPU = ppu.New(c.Mapper)
 	c.APU = apu.New()
-	c.Bus = bus.New(mapper, c.PPU, c.APU)
+	c.Bus = bus.New(c.Mapper, c.PPU, c.APU)
 	c.CPU = cpu.New(c.Bus)
 	c.APU.SetCpu(c.CPU)
 
@@ -57,7 +58,7 @@ func Test_nestest(t *testing.T) {
 
 		assert.EqualValues(t, expected, trace)
 
-		if _, err := c.CPU.Step(); !assert.NoError(t, err) {
+		if err := c.Step(); !assert.NoError(t, err) {
 			return
 		}
 		if c.CPU.Status.Break {
@@ -69,6 +70,6 @@ func Test_nestest(t *testing.T) {
 	}
 
 	assert.EqualValues(t, strings.Count(nestest.Log, "\n"), checkedLines)
-	assert.EqualValues(t, 0, c.CPU.ReadMem(0x2))
-	assert.EqualValues(t, 0, c.CPU.ReadMem(0x3))
+	assert.EqualValues(t, 0, c.Bus.ReadMem(0x2))
+	assert.EqualValues(t, 0, c.Bus.ReadMem(0x3))
 }
