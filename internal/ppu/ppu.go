@@ -21,7 +21,7 @@ type PPU struct {
 	mapper cartridge.Mapper
 
 	Ctrl      registers.Control
-	Mask      bitflags.Flags
+	Mask      registers.Mask
 	Status    bitflags.Flags
 	Addr      registers.AddrRegister
 	TmpAddr   registers.AddrRegister
@@ -66,7 +66,7 @@ func (p *PPU) WriteCtrl(data byte) {
 }
 
 func (p *PPU) WriteMask(data byte) {
-	p.Mask = bitflags.Flags(data)
+	p.Mask.Set(data)
 }
 
 func (p *PPU) WriteOamAddr(data byte) {
@@ -173,7 +173,7 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 }
 
 func (p *PPU) tick() {
-	if p.Mask.Intersects(registers.BackgroundEnable | registers.SpriteEnable) {
+	if p.Mask.BackgroundEnable || p.Mask.SpriteEnable {
 		if p.OddFrame && p.Scanline == 261 && p.Cycles == 339 {
 			p.Cycles = 0
 			p.Scanline = 0
@@ -197,7 +197,7 @@ func (p *PPU) tick() {
 func (p *PPU) Step() bool {
 	p.tick()
 
-	renderingEnabled := p.Mask.Intersects(registers.BackgroundEnable | registers.SpriteEnable)
+	renderingEnabled := p.Mask.BackgroundEnable || p.Mask.SpriteEnable
 	preLine := p.Scanline == 261
 	visibleLine := p.Scanline < 240
 	renderLine := preLine || visibleLine

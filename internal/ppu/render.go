@@ -22,12 +22,12 @@ func (p *PPU) renderPixel() {
 	y := int(p.Scanline)
 
 	bgPixel := p.bgPixel()
-	if x < 8 && !p.Mask.Intersects(registers.BgLeftColEnable) {
+	if x < 8 && !p.Mask.BgLeftColEnable {
 		bgPixel = 0
 	}
 
 	i, sprite := p.spritePixel()
-	if x < 8 && !p.Mask.Intersects(registers.SpriteLeftColEnable) {
+	if x < 8 && !p.Mask.SpriteLeftColEnable {
 		sprite = 0
 	}
 
@@ -55,22 +55,22 @@ func (p *PPU) renderPixel() {
 	}
 
 	colorIdx = p.readPalette(uint16(colorIdx)) % 64
-	if p.Mask.Intersects(registers.Grayscale) {
+	if p.Mask.Grayscale {
 		colorIdx &= 0x30
 	}
 
 	c := SystemPalette[colorIdx]
 	// Don't attenuate $xE or $xF (black)
 	if colorIdx&0xE != 0xE {
-		if p.Mask.Intersects(registers.EmphasizeRed) {
+		if p.Mask.EmphasizeRed {
 			c.G = uint8(float64(c.G) * Attenuate)
 			c.B = uint8(float64(c.B) * Attenuate)
 		}
-		if p.Mask.Intersects(registers.EmphasizeGreen) {
+		if p.Mask.EmphasizeGreen {
 			c.R = uint8(float64(c.R) * Attenuate)
 			c.B = uint8(float64(c.B) * Attenuate)
 		}
-		if p.Mask.Intersects(registers.EmphasizeBlue) {
+		if p.Mask.EmphasizeBlue {
 			c.R = uint8(float64(c.R) * Attenuate)
 			c.G = uint8(float64(c.G) * Attenuate)
 		}

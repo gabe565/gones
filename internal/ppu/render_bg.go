@@ -1,9 +1,5 @@
 package ppu
 
-import (
-	"github.com/gabe565/gones/internal/ppu/registers"
-)
-
 type BgTile struct {
 	NametableByte byte
 	AttrByte      byte
@@ -104,7 +100,7 @@ func (p *PPU) copyAddrY() {
 }
 
 func (p *PPU) bgPixel() byte {
-	if !p.Mask.Intersects(registers.BackgroundEnable) {
+	if !p.Mask.BackgroundEnable {
 		return 0
 	}
 

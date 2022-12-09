@@ -95,7 +95,7 @@ func (p *PPU) fetchSpritePattern(i, row int) uint32 {
 }
 
 func (p *PPU) spritePixel() (byte, byte) {
-	if !p.Mask.Intersects(registers.SpriteEnable) {
+	if !p.Mask.SpriteEnable {
 		return 0, 0
 	}
 
