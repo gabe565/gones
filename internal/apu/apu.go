@@ -35,7 +35,7 @@ func New() *APU {
 		Square: [2]Square{{Channel: 1}, {Channel: 2}},
 		Noise:  Noise{ShiftRegister: 1},
 
-		buf: make(chan byte, 10*4*consts.AudioSampleRate/50),
+		buf: make(chan byte, 10*4*consts.AudioSampleRate/60),
 	}
 }
 
@@ -236,20 +236,24 @@ func (a *APU) clearBuf() {
 }
 
 func (a *APU) Read(p []byte) (int, error) {
-	var count int
+	var n int
 
+loop:
 	for i := range p {
 		select {
 		case p[i] = <-a.buf:
-			count += 1
+			n += 1
 		default:
-			if count == 0 {
-				p[i] = 0
-			} else {
-				p[i] = p[i%count]
-			}
+			break loop
 		}
 	}
 
-	return len(p), nil
+	if n == 0 {
+		for i := range p {
+			p[i] = 0
+		}
+		n = len(p)
+	}
+
+	return n, nil
 }
