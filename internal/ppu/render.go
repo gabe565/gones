@@ -53,6 +53,11 @@ func (p *PPU) renderPixel() {
 		}
 	}
 
-	c := SystemPalette[p.readPalette(uint16(colorIdx))%64]
+	colorIdx = p.readPalette(uint16(colorIdx)) % 64
+	if p.Mask.Intersects(registers.Grayscale) {
+		colorIdx &= 0x30
+	}
+
+	c := SystemPalette[colorIdx]
 	p.image.SetRGBA(x, y-8, c)
 }
