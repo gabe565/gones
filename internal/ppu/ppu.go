@@ -130,8 +130,10 @@ func (p *PPU) Read() byte {
 	p.Addr.Increment(p.Ctrl.VramAddr())
 
 	val := p.ReadAddr(addr)
-	if addr < 0x3000 {
+	if addr%0x4000 < 0x3F00 {
 		val, p.ReadBuf = p.ReadBuf, val
+	} else if addr < 0x4000 {
+		p.ReadBuf = p.ReadAddr(addr - 0x1000)
 	}
 	return val
 }
