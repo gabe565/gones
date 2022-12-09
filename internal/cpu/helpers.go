@@ -1,11 +1,9 @@
 package cpu
 
-import "github.com/gabe565/gones/internal/bitflags"
-
 // updateZeroAndNegFlags updates zero and negative flags
 func (c *CPU) updateZeroAndNegFlags(result byte) {
-	c.Status.Set(Zero, result == 0)
-	c.Status.Set(Negative, bitflags.Flags(result).Intersects(Negative))
+	c.Status.Zero = result == 0
+	c.Status.Negative = result&Negative != 0
 }
 
 func (c *CPU) branch(condition bool) {
@@ -31,7 +29,7 @@ func (c *CPU) compare(mode AddressingMode, rhs byte) {
 		}()
 	}
 	data := c.ReadMem(addr)
-	c.Status.Set(Carry, data <= rhs)
+	c.Status.Carry = data <= rhs
 	c.updateZeroAndNegFlags(rhs - data)
 }
 
@@ -42,15 +40,15 @@ func (c *CPU) setAccumulator(v byte) {
 
 func (c *CPU) addAccumulator(data byte) {
 	sum := uint16(c.Accumulator) + uint16(data)
-	if c.Status.Intersects(Carry) {
+	if c.Status.Carry {
 		sum += 1
 	}
 
 	carry := sum > 0xFF
-	c.Status.Set(Carry, carry)
+	c.Status.Carry = carry
 
 	result := byte(sum)
-	c.Status.Set(Overflow, (data^result)&(result^c.Accumulator)&0x80 != 0)
+	c.Status.Overflow = (data^result)&(result^c.Accumulator)&0x80 != 0
 
 	c.setAccumulator(result)
 }

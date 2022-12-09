@@ -3,7 +3,6 @@ package cpu
 import (
 	"errors"
 	"fmt"
-	"github.com/gabe565/gones/internal/bitflags"
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/memory"
@@ -31,7 +30,7 @@ type CPU struct {
 	StackPointer byte
 
 	// Status Processor Status
-	Status bitflags.Flags
+	Status Status
 
 	// Accumulator Register A
 	Accumulator byte
@@ -80,11 +79,11 @@ func (c *CPU) Load(program []byte) {
 func (c *CPU) interrupt(interrupt interrupts.Interrupt) {
 	c.stackPush16(c.ProgramCounter)
 	status := c.Status
-	status.Remove(Break)
-	status.Insert(Break2)
+	status.Break = false
+	status.Break2 = true
 
-	c.stackPush(byte(status))
-	c.Status.Insert(InterruptDisable)
+	c.stackPush(status.Get())
+	c.Status.InterruptDisable = true
 
 	c.Cycles += uint(interrupt.Cycles)
 	c.ProgramCounter = c.ReadMem16(interrupt.VectorAddr)

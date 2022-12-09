@@ -27,14 +27,14 @@ func Test_0xa9_lda_immediate_load_data(t *testing.T) {
 		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return
 		}
-		if cpu.Status.Intersects(Break) {
+		if cpu.Status.Break {
 			break
 		}
 	}
 
 	assert.EqualValues(t, 0x05, cpu.Accumulator)
-	assert.EqualValues(t, 0, cpu.Status&0b0000_0010)
-	assert.EqualValues(t, 0, cpu.Status&0b1000_0010)
+	assert.EqualValues(t, 0, cpu.Status.Get()&0b0000_0010)
+	assert.EqualValues(t, 0, cpu.Status.Get()&0b1000_0010)
 }
 
 func Test_0xa9_lda_zero_flag(t *testing.T) {
@@ -43,12 +43,12 @@ func Test_0xa9_lda_zero_flag(t *testing.T) {
 		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return
 		}
-		if cpu.Status.Intersects(Break) {
+		if cpu.Status.Break {
 			break
 		}
 	}
 
-	assert.EqualValues(t, 0b10, cpu.Status&0b0000_0010)
+	assert.EqualValues(t, 0b10, cpu.Status.Get()&0b0000_0010)
 }
 
 func Test_0xaa_tax_move_a_to_x(t *testing.T) {
@@ -57,7 +57,7 @@ func Test_0xaa_tax_move_a_to_x(t *testing.T) {
 		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return
 		}
-		if cpu.Status.Intersects(Break) {
+		if cpu.Status.Break {
 			break
 		}
 	}
@@ -71,7 +71,7 @@ func Test_5_operations(t *testing.T) {
 		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return
 		}
-		if cpu.Status.Intersects(Break) {
+		if cpu.Status.Break {
 			break
 		}
 	}
@@ -85,7 +85,7 @@ func Test_inx_overflow(t *testing.T) {
 		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return
 		}
-		if cpu.Status.Intersects(Break) {
+		if cpu.Status.Break {
 			break
 		}
 	}
@@ -100,7 +100,7 @@ func Test_lda_from_memory(t *testing.T) {
 		if _, err := cpu.Step(); !assert.NoError(t, err) {
 			return
 		}
-		if cpu.Status.Intersects(Break) {
+		if cpu.Status.Break {
 			break
 		}
 	}

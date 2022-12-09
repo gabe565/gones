@@ -110,7 +110,7 @@ func (c *CPU) Trace() string {
 		c.Accumulator,
 		c.RegisterX,
 		c.RegisterY,
-		c.Status,
+		c.Status.Get(),
 		c.StackPointer,
 	)
 	return final

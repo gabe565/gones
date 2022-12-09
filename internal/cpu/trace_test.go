@@ -16,7 +16,7 @@ func TestCPU_TraceFormat(t *testing.T) {
 		if _, err := c.Step(); !assert.NoError(t, err) {
 			return
 		}
-		if c.Status.Intersects(Break) {
+		if c.Status.Break {
 			break
 		}
 	}
@@ -49,7 +49,7 @@ func TestCPU_Trace_MemAccess(t *testing.T) {
 		if _, err := c.Step(); !assert.NoError(t, err) {
 			return
 		}
-		if c.Status.Intersects(Break) {
+		if c.Status.Break {
 			break
 		}
 	}
