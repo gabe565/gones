@@ -61,9 +61,9 @@ func (m *Mapper2) WriteMem(addr uint16, data byte) {
 		addr -= 0x6000
 		m.cartridge.Sram[addr] = data
 	case 0x8000 <= addr:
-		addr := uint(addr)
-		addr %= m.PrgBanks
-		m.PrgBank1 = addr
+		data := uint(data)
+		data %= m.PrgBanks
+		m.PrgBank1 = data
 	default:
 		log.Fatalf("invalid mapper 2 write to $%04X", addr)
 	}
