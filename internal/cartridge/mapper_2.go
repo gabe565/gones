@@ -33,6 +33,7 @@ func (m *Mapper2) ReadMem(addr uint16) byte {
 	case addr < 0x2000:
 		return m.cartridge.Chr[addr]
 	case 0x6000 <= addr && addr < 0x8000:
+		addr := uint(addr)
 		addr -= 0x6000
 		return m.cartridge.Sram[addr]
 	case 0x8000 <= addr && addr < 0xC000:
