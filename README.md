@@ -50,25 +50,25 @@ Eventually, this will be configurable in the UI.
 
 | Nintendo   | Emulator    |
 |------------|-------------|
-| A          | N           |
-| B          | M           |
+| A          | M           |
+| B          | N           |
 | Directions | WASD        |
 | Start      | Enter       |
 | Select     | Right Shift |
-| A (Turbo)  | J           |
-| B (Turbo)  | K           |
+| A (Turbo)  | K           |
+| B (Turbo)  | J           |
 
 ### Player 2
 
 | Nintendo   | Emulator          |
 |------------|-------------------|
-| A          | Num Pad 2         |
-| B          | Num Pad 3         |
+| A          | Num Pad 3         |
+| B          | Num Pad 2         |
 | Directions | Home/Del/End/PgDn |
 | Start      | Num Pad Enter     |
 | Select     | Num Pad Plus      |
-| A (Turbo)  | Num Pad 5         |
-| B (Turbo)  | Num Pad 6         |
+| A (Turbo)  | Num Pad 6         |
+| B (Turbo)  | Num Pad 5         |
 
 ### Other
 

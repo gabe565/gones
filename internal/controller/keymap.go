@@ -17,12 +17,12 @@ var Player1Keymap = Keymap[ebiten.Key]{
 		ebiten.KeyA:          Left,
 		ebiten.KeyEnter:      Start,
 		ebiten.KeyShiftRight: Select,
-		ebiten.KeyN:          ButtonA,
-		ebiten.KeyM:          ButtonB,
+		ebiten.KeyM:          ButtonA,
+		ebiten.KeyN:          ButtonB,
 	},
 	Turbo: map[ebiten.Key]uint8{
-		ebiten.KeyJ: ButtonA,
-		ebiten.KeyK: ButtonB,
+		ebiten.KeyK: ButtonA,
+		ebiten.KeyJ: ButtonB,
 	},
 }
 
@@ -34,12 +34,12 @@ var Player2Keymap = Keymap[ebiten.Key]{
 		ebiten.KeyDelete:   Left,
 		ebiten.KeyKPEnter:  Start,
 		ebiten.KeyKPAdd:    Select,
-		ebiten.KeyKP2:      ButtonA,
-		ebiten.KeyKP3:      ButtonB,
+		ebiten.KeyKP3:      ButtonA,
+		ebiten.KeyKP2:      ButtonB,
 	},
 	Turbo: map[ebiten.Key]uint8{
-		ebiten.KeyKP5: ButtonA,
-		ebiten.KeyKP6: ButtonB,
+		ebiten.KeyKP6: ButtonA,
+		ebiten.KeyKP5: ButtonB,
 	},
 }
 
