@@ -96,7 +96,7 @@ Eventually, this will be configurable in the UI.
 - [x] Cartridge implementation
   - [x] Support for mappers
   - [ ] Common mappers implemented
-    - Supported mappers: 0, 1, 2
+    - Supported mappers: 0, 1, 2, 7
 - [x] PPU implementation (graphics)
   - [x] Background rendering
   - [x] Sprite rendering

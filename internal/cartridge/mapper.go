@@ -20,6 +20,8 @@ func NewMapper(cartridge *Cartridge) (Mapper, error) {
 		return NewMapper2(cartridge), nil
 	case 1:
 		return NewMapper1(cartridge), nil
+	case 7:
+		return NewMapper7(cartridge), nil
 	default:
 		return nil, fmt.Errorf("%w: %d", ErrUnsupportedMapper, cartridge.Mapper)
 	}
