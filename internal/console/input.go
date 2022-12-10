@@ -12,7 +12,7 @@ const FastForwardFactor = 3
 func (c *Console) CheckInput() {
 	c.Bus.UpdateInput()
 
-	if ebiten.IsKeyPressed(controller.Reset) {
+	if inpututil.KeyPressDuration(controller.Reset) > 20 {
 		c.Reset()
 	}
 
