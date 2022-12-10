@@ -7,11 +7,11 @@ import (
 )
 
 func NewMapper2(cartridge *Cartridge) Mapper {
-	prgBanks := uint16(len(cartridge.prg) / consts.PrgChunkSize)
+	prgBanks := uint(len(cartridge.prg) / consts.PrgChunkSize)
 	mapper := &Mapper2{
 		cartridge: cartridge,
-		PrgBanks:  uint(prgBanks),
-		PrgBank2:  uint(prgBanks - 1),
+		PrgBanks:  prgBanks,
+		PrgBank2:  prgBanks - 1,
 	}
 	gob.Register(mapper)
 	return mapper
