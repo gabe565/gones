@@ -1,9 +1,14 @@
 package config
 
 import (
+	"github.com/knadh/koanf"
 	"os"
 	"path/filepath"
 )
+
+var K = koanf.New(".")
+
+var Path string
 
 var configDir = "gones"
 

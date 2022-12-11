@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"context"
 	"errors"
+	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -14,53 +14,33 @@ import (
 	"strings"
 )
 
-type ContextKey uint8
-
-const (
-	ConfigKey ContextKey = iota
-)
-
-type Config struct {
-	Path       string
-	Debug      bool
-	Trace      bool
-	Scale      float64
-	Fullscreen bool
-}
-
 func New(version string) *cobra.Command {
-	var config Config
-
 	cmd := &cobra.Command{
 		Use:     "gones ROM",
 		Version: version,
 		RunE:    run,
 	}
-
-	cmd.Flags().BoolVar(&config.Debug, "debug", false, "Start with step debugging enabled")
-	cmd.Flags().BoolVar(&config.Trace, "trace", false, "Enable trace logging")
-	cmd.Flags().Float64Var(&config.Scale, "scale", 3, "Default UI scale")
-	cmd.Flags().BoolVarP(&config.Fullscreen, "fullscreen", "f", false, "Start in fullscreen")
-
-	ctx := context.Background()
-	ctx = context.WithValue(ctx, ConfigKey, &config)
-	cmd.SetContext(ctx)
+	config.Flags(cmd)
 
 	return cmd
 }
 
 func run(cmd *cobra.Command, args []string) error {
-	config := cmd.Context().Value(ConfigKey).(*Config)
+	if err := config.Load(cmd); err != nil {
+		return err
+	}
 
 	if len(args) > 0 {
 		config.Path = args[0]
 	}
+	path := config.Path
 	cmd.SilenceUsage = true
 
-	c, err := newConsole(config.Path)
+	c, err := newConsole(path)
 	if err != nil {
 		return err
 	}
+
 	go func() {
 		ch := make(chan os.Signal, 1)
 		signal.Notify(ch, os.Interrupt)
@@ -70,15 +50,16 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 	}()
 
-	c.SetTrace(config.Trace)
-	c.SetDebug(config.Debug)
+	c.SetTrace(config.K.Bool("debug.trace"))
+	c.SetDebug(config.K.Bool("debug.enabled"))
 
-	ebiten.SetWindowSize(int(config.Scale*ppu.Width), int(config.Scale*ppu.TrimmedHeight))
-	ebiten.SetWindowTitle(strings.TrimSuffix(filepath.Base(config.Path), filepath.Ext(config.Path)) + " | GoNES")
+	scale := config.K.Float64("ui.scale")
+	ebiten.SetWindowSize(int(scale*ppu.Width), int(scale*ppu.TrimmedHeight))
+	ebiten.SetWindowTitle(strings.TrimSuffix(filepath.Base(path), filepath.Ext(path)) + " | GoNES")
 	ebiten.SetScreenFilterEnabled(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowClosingHandled(true)
-	ebiten.SetFullscreen(config.Fullscreen)
+	ebiten.SetFullscreen(config.K.Bool("ui.fullscreen"))
 
 	if err := ebiten.RunGame(c); err != nil && !errors.Is(err, console.ErrExit) {
 		return err
