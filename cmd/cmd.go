@@ -19,6 +19,8 @@ func New(version string) *cobra.Command {
 		Use:     "gones ROM",
 		Version: version,
 		RunE:    run,
+
+		SilenceErrors: true,
 	}
 	config.Flags(cmd)
 
