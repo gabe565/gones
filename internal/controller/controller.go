@@ -21,7 +21,7 @@ type Controller struct {
 	index   byte
 	buttons [8]bool
 
-	Keymap Keymap[ebiten.Key]
+	Keymap Keymap
 	turbo  uint8
 }
 

@@ -4,12 +4,12 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-type Keymap[T ebiten.Key | ebiten.StandardGamepadButton] struct {
-	Regular map[T]uint8
-	Turbo   map[T]uint8
+type Keymap struct {
+	Regular map[ebiten.Key]uint8
+	Turbo   map[ebiten.Key]uint8
 }
 
-var Player1Keymap = Keymap[ebiten.Key]{
+var Player1Keymap = Keymap{
 	Regular: map[ebiten.Key]uint8{
 		ebiten.KeyW:          Up,
 		ebiten.KeyD:          Right,
@@ -26,7 +26,7 @@ var Player1Keymap = Keymap[ebiten.Key]{
 	},
 }
 
-var Player2Keymap = Keymap[ebiten.Key]{
+var Player2Keymap = Keymap{
 	Regular: map[ebiten.Key]uint8{
 		ebiten.KeyHome:     Up,
 		ebiten.KeyPageDown: Right,
@@ -40,23 +40,6 @@ var Player2Keymap = Keymap[ebiten.Key]{
 	Turbo: map[ebiten.Key]uint8{
 		ebiten.KeyKP6: ButtonA,
 		ebiten.KeyKP5: ButtonB,
-	},
-}
-
-var Joystick = Keymap[ebiten.StandardGamepadButton]{
-	Regular: map[ebiten.StandardGamepadButton]uint8{
-		ebiten.StandardGamepadButtonLeftTop:     Up,
-		ebiten.StandardGamepadButtonLeftRight:   Right,
-		ebiten.StandardGamepadButtonLeftBottom:  Down,
-		ebiten.StandardGamepadButtonLeftLeft:    Left,
-		ebiten.StandardGamepadButtonCenterRight: Start,
-		ebiten.StandardGamepadButtonCenterLeft:  Select,
-		ebiten.StandardGamepadButtonRightRight:  ButtonA,
-		ebiten.StandardGamepadButtonRightBottom: ButtonB,
-	},
-	Turbo: map[ebiten.StandardGamepadButton]uint8{
-		ebiten.StandardGamepadButtonRightTop:  ButtonA,
-		ebiten.StandardGamepadButtonRightLeft: ButtonB,
 	},
 }
 
