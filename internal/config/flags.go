@@ -9,6 +9,7 @@ var flagConfigTable = map[string]string{
 	"trace":      "debug.trace",
 	"scale":      "ui.scale",
 	"fullscreen": "ui.fullscreen",
+	"audio":      "audio.enabled",
 }
 
 var excludeFromConfig = [...]string{"config", "help", "version"}
@@ -19,4 +20,5 @@ func Flags(cmd *cobra.Command) {
 	cmd.Flags().Bool("trace", false, "Enable trace logging")
 	cmd.Flags().Float64("scale", 3, "Default UI scale")
 	cmd.Flags().BoolP("fullscreen", "f", false, "Start in fullscreen")
+	cmd.Flags().BoolP("audio", "a", true, "Enabled audio output")
 }

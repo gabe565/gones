@@ -6,6 +6,7 @@ import (
 	"github.com/gabe565/gones/internal/apu"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/cpu"
 	"github.com/gabe565/gones/internal/interrupts"
@@ -58,13 +59,17 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 
 	console.CPU.Reset()
 
-	console.audioCtx = audio.NewContext(consts.AudioSampleRate)
-	console.player, err = console.audioCtx.NewPlayer(console.APU)
-	if err != nil {
-		return &console, err
+	if config.K.Bool("audio.enabled") {
+		console.audioCtx = audio.NewContext(consts.AudioSampleRate)
+		console.player, err = console.audioCtx.NewPlayer(console.APU)
+		if err != nil {
+			return &console, err
+		}
+		console.player.SetBufferSize(time.Second / 50)
+		console.player.Play()
+	} else {
+		console.APU.Enabled = false
 	}
-	console.player.SetBufferSize(time.Second / 50)
-	console.player.Play()
 
 	return &console, nil
 }
