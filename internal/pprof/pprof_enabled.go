@@ -4,24 +4,17 @@ package pprof
 
 import (
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
 	"net/http"
 	_ "net/http/pprof"
 )
 
-var address string
+var address = "localhost:3000"
 
-func Flag(cmd *cobra.Command) {
-	cmd.Flags().StringVar(&address, "pprof", "localhost:3000", "Enables pprof http listener")
-}
-
-func Spawn() {
-	if address != "" {
-		go func() {
-			log.WithField("address", address).Info("starting pprof")
-			if err := http.ListenAndServe(address, nil); err != nil {
-				log.WithError(err).Error("failed to start pprof")
-			}
-		}()
-	}
+func init() {
+	go func() {
+		log.WithField("address", address).Info("starting pprof")
+		if err := http.ListenAndServe(address, nil); err != nil {
+			log.WithError(err).Error("failed to start pprof")
+		}
+	}()
 }

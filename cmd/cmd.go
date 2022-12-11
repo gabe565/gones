@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"github.com/gabe565/gones/internal/console"
-	"github.com/gabe565/gones/internal/pprof"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
 	log "github.com/sirupsen/logrus"
@@ -42,7 +41,6 @@ func New(version string) *cobra.Command {
 	cmd.Flags().BoolVar(&config.Trace, "trace", false, "Enable trace logging")
 	cmd.Flags().Float64Var(&config.Scale, "scale", 3, "Default UI scale")
 	cmd.Flags().BoolVarP(&config.Fullscreen, "fullscreen", "f", false, "Start in fullscreen")
-	pprof.Flag(cmd)
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, ConfigKey, &config)
@@ -52,8 +50,6 @@ func New(version string) *cobra.Command {
 }
 
 func run(cmd *cobra.Command, args []string) error {
-	pprof.Spawn()
-
 	config := cmd.Context().Value(ConfigKey).(*Config)
 
 	if len(args) > 0 {

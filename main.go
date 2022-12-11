@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gabe565/gones/cmd"
+	_ "github.com/gabe565/gones/internal/pprof"
 	"os"
 )
 
