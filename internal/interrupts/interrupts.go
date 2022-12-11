@@ -12,12 +12,12 @@ func (i Interrupt) Error() string {
 
 var NMI = Interrupt{
 	Name:       "NMI",
-	Cycles:     2,
+	Cycles:     7,
 	VectorAddr: 0xFFFA,
 }
 
 var IRQ = Interrupt{
 	Name:       "IRQ",
-	Cycles:     2,
+	Cycles:     7,
 	VectorAddr: 0xFFFE,
 }
