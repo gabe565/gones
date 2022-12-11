@@ -26,9 +26,9 @@ go install github.com/gabe565/gones
 
 ## Requirements
 
-Rendering uses [faiface/pixel](https://github.com/faiface/pixel) which requires
+Rendering uses [hajimehoshi/ebiten](https://github.com/hajimehoshi/ebiten) which requires
 OpenGL development libraries to compile.
-See [pixel requirements](https://github.com/faiface/pixel#requirements).
+See [ebiten install steps](https://ebitengine.org/en/documents/install.html).
 
 ## Usage
 
