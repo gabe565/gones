@@ -24,7 +24,7 @@ type Controller struct {
 	buttons [8]bool
 
 	Keymap Keymap
-	turbo  uint8
+	turbo  bool
 }
 
 func (j *Controller) Write(data byte) {
@@ -62,15 +62,15 @@ func (j *Controller) UpdateInput() {
 			turboKey, ok := j.Keymap.Turbo[button]
 			if ok && ebiten.IsKeyPressed(turboKey) {
 				turboPressed = true
-				j.buttons[button] = j.turbo%6 < 3
+				j.buttons[button] = j.turbo
 				continue
 			}
 		}
 		j.buttons[button] = pressed
 	}
 	if turboPressed {
-		j.turbo += 1
+		j.turbo = !j.turbo
 	} else {
-		j.turbo = 0
+		j.turbo = false
 	}
 }
