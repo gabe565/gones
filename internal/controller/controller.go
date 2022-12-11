@@ -4,8 +4,10 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+type Button uint8
+
 const (
-	ButtonA = iota
+	ButtonA Button = iota
 	ButtonB
 	Select
 	Start

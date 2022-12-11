@@ -5,12 +5,12 @@ import (
 )
 
 type Keymap struct {
-	Regular map[ebiten.Key]uint8
-	Turbo   map[ebiten.Key]uint8
+	Regular map[ebiten.Key]Button
+	Turbo   map[ebiten.Key]Button
 }
 
 var Player1Keymap = Keymap{
-	Regular: map[ebiten.Key]uint8{
+	Regular: map[ebiten.Key]Button{
 		ebiten.KeyW:          Up,
 		ebiten.KeyD:          Right,
 		ebiten.KeyS:          Down,
@@ -20,14 +20,14 @@ var Player1Keymap = Keymap{
 		ebiten.KeyM:          ButtonA,
 		ebiten.KeyN:          ButtonB,
 	},
-	Turbo: map[ebiten.Key]uint8{
+	Turbo: map[ebiten.Key]Button{
 		ebiten.KeyK: ButtonA,
 		ebiten.KeyJ: ButtonB,
 	},
 }
 
 var Player2Keymap = Keymap{
-	Regular: map[ebiten.Key]uint8{
+	Regular: map[ebiten.Key]Button{
 		ebiten.KeyHome:     Up,
 		ebiten.KeyPageDown: Right,
 		ebiten.KeyEnd:      Down,
@@ -37,7 +37,7 @@ var Player2Keymap = Keymap{
 		ebiten.KeyKP3:      ButtonA,
 		ebiten.KeyKP2:      ButtonB,
 	},
-	Turbo: map[ebiten.Key]uint8{
+	Turbo: map[ebiten.Key]Button{
 		ebiten.KeyKP6: ButtonA,
 		ebiten.KeyKP5: ButtonB,
 	},
