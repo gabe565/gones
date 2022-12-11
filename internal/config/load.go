@@ -1,10 +1,11 @@
 package config
 
 import (
+	"bytes"
 	"errors"
 	"github.com/knadh/koanf/parsers/yaml"
-	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/providers/posflag"
+	"github.com/knadh/koanf/providers/rawbytes"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"os"
@@ -25,15 +26,20 @@ func Load(cmd *cobra.Command) error {
 		cfgFile = filepath.Join(cfgDir, "config.yaml")
 	}
 
-	parser := yaml.Parser()
-
-	var writeCfg bool
-	if err := K.Load(file.Provider(cfgFile), parser); err != nil {
+	var cfgNotExists bool
+	cfgContents, err := os.ReadFile(cfgFile)
+	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			writeCfg = true
+			cfgNotExists = true
 		} else {
 			return err
 		}
+	}
+
+	parser := yaml.Parser()
+
+	if err := K.Load(rawbytes.Provider(cfgContents), parser); err != nil {
+		return err
 	}
 
 	err = K.Load(posflag.ProviderWithValue(cmd.Flags(), ".", K, func(key string, value string) (string, interface{}) {
@@ -51,8 +57,17 @@ func Load(cmd *cobra.Command) error {
 		return err
 	}
 
-	if writeCfg {
-		log.WithField("file", cfgFile).Info("Writing config")
+	newCfg, err := K.Marshal(parser)
+	if err != nil {
+		return err
+	}
+
+	if !bytes.Equal(cfgContents, newCfg) {
+		if cfgNotExists {
+			log.WithField("file", cfgFile).Info("Creating config")
+		} else {
+			log.WithField("file", cfgFile).Info("Updating config")
+		}
 
 		f, err := os.Create(cfgFile)
 		if err != nil {
@@ -62,12 +77,7 @@ func Load(cmd *cobra.Command) error {
 			_ = f.Close()
 		}(f)
 
-		b, err := K.Marshal(parser)
-		if err != nil {
-			return err
-		}
-
-		if _, err := f.Write(b); err != nil {
+		if _, err := f.Write(newCfg); err != nil {
 			return err
 		}
 
