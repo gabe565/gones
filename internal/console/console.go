@@ -99,9 +99,9 @@ func (c *Console) Step() error {
 		if c.PPU.Step() {
 			err = ErrRender
 		}
-	}
-	if nmi := c.PPU.NMI(); nmi {
-		c.CPU.Interrupt <- interrupts.NMI
+		if nmi := c.PPU.NMI(); nmi {
+			c.CPU.Interrupt <- interrupts.NMI
+		}
 	}
 
 	for i := uint(0); i < cycles; i += 1 {

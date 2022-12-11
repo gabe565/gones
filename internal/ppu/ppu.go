@@ -34,7 +34,7 @@ type PPU struct {
 	Scanline uint16
 	Cycles   uint
 
-	nmiOccurred bool
+	nmiOffset int8
 
 	ReadBuf byte
 	image   *image.RGBA
@@ -55,13 +55,10 @@ func (p *PPU) WriteAddr(data byte) {
 }
 
 func (p *PPU) WriteCtrl(data byte) {
-	beforeNmi := p.Ctrl.EnableNMI
 	p.Ctrl.Set(data)
 	p.TmpAddr.NametableX = p.Ctrl.NametableX
 	p.TmpAddr.NametableY = p.Ctrl.NametableY
-	if !beforeNmi && p.Status.Vblank && p.Ctrl.EnableNMI {
-		p.nmiOccurred = true
-	}
+	p.updateNmi()
 }
 
 func (p *PPU) WriteMask(data byte) {
@@ -100,7 +97,7 @@ func (p *PPU) WriteScroll(data byte) {
 func (p *PPU) ReadStatus() byte {
 	status := p.Status.Get()
 	p.Status.Vblank = false
-	p.nmiOccurred = false
+	p.updateNmi()
 	p.AddrLatch = false
 	return status
 }
@@ -174,6 +171,10 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 }
 
 func (p *PPU) tick() {
+	if p.nmiOffset != -1 {
+		p.nmiOffset -= 1
+	}
+
 	if p.Mask.BackgroundEnable || p.Mask.SpriteEnable {
 		if p.OddFrame && p.Scanline == 261 && p.Cycles == 339 {
 			p.Cycles = 0
@@ -257,13 +258,12 @@ func (p *PPU) Step() bool {
 
 	if p.Scanline == 241 && p.Cycles == 1 {
 		p.Status.Vblank = true
-		if p.Ctrl.EnableNMI {
-			p.nmiOccurred = true
-		}
+		p.updateNmi()
 	}
 
 	if preLine && p.Cycles == 1 {
 		p.Status.Vblank = false
+		p.updateNmi()
 		p.Status.SpriteOverflow = false
 		p.Status.SpriteZeroHit = false
 		return true
@@ -287,11 +287,7 @@ func (p *PPU) Reset() {
 }
 
 func (p *PPU) NMI() bool {
-	if p.nmiOccurred && p.Ctrl.EnableNMI {
-		p.nmiOccurred = false
-		return true
-	}
-	return false
+	return p.nmiOffset == 0 && p.Status.Vblank && p.Ctrl.EnableNMI
 }
 
 func (p *PPU) readPalette(addr uint16) byte {
@@ -306,4 +302,12 @@ func (p *PPU) writePalette(addr uint16, data byte) {
 		addr -= 16
 	}
 	p.Palette[addr] = data
+}
+
+func (p *PPU) updateNmi() {
+	nmi := p.Status.Vblank && p.Ctrl.EnableNMI
+	if nmi && !p.Status.PrevVblank {
+		p.nmiOffset = 14
+	}
+	p.Status.PrevVblank = nmi
 }

@@ -3,6 +3,7 @@ package registers
 type Status struct {
 	SpriteOverflow bool
 	SpriteZeroHit  bool
+	PrevVblank     bool
 	Vblank         bool
 }
 
