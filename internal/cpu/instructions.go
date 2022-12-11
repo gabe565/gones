@@ -131,13 +131,7 @@ func asl(c *CPU, mode AddressingMode) {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		var pageCrossed bool
-		addr, pageCrossed = c.getOperandAddress(mode)
-		if pageCrossed {
-			defer func() {
-				c.Cycles += 1
-			}()
-		}
+		addr, _ = c.getOperandAddress(mode)
 		data = c.ReadMem(addr)
 	}
 	c.Status.Carry = data>>7 == 1
@@ -1028,12 +1022,7 @@ func sre(c *CPU, mode AddressingMode) {
 //
 // [STA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STA
 func sta(c *CPU, mode AddressingMode) {
-	addr, pageCrossed := c.getOperandAddress(mode)
-	if pageCrossed {
-		defer func() {
-			c.Cycles += 1
-		}()
-	}
+	addr, _ := c.getOperandAddress(mode)
 	c.WriteMem(addr, c.Accumulator)
 }
 
