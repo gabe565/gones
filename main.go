@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/gabe565/gones/cmd"
-	_ "net/http/pprof"
 	"os"
 )
 
