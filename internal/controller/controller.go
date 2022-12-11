@@ -55,13 +55,13 @@ func (j *Controller) Read() byte {
 }
 
 func (j *Controller) UpdateInput() {
-	for key, button := range j.Keymap.Regular {
+	for button, key := range j.Keymap.Regular {
 		keyPressed := ebiten.IsKeyPressed(key)
 		j.buttons[button] = keyPressed
 	}
 
 	var turboPressed bool
-	for key, button := range j.Keymap.Turbo {
+	for button, key := range j.Keymap.Turbo {
 		if ebiten.IsKeyPressed(key) && !j.buttons[button] {
 			turboPressed = true
 			j.buttons[button] = j.turbo%6 < 3

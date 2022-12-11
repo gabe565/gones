@@ -5,41 +5,41 @@ import (
 )
 
 type Keymap struct {
-	Regular map[ebiten.Key]Button
-	Turbo   map[ebiten.Key]Button
+	Regular map[Button]ebiten.Key
+	Turbo   map[Button]ebiten.Key
 }
 
 var Player1Keymap = Keymap{
-	Regular: map[ebiten.Key]Button{
-		ebiten.KeyW:          Up,
-		ebiten.KeyD:          Right,
-		ebiten.KeyS:          Down,
-		ebiten.KeyA:          Left,
-		ebiten.KeyEnter:      Start,
-		ebiten.KeyShiftRight: Select,
-		ebiten.KeyM:          ButtonA,
-		ebiten.KeyN:          ButtonB,
+	Regular: map[Button]ebiten.Key{
+		Up:      ebiten.KeyW,
+		Right:   ebiten.KeyD,
+		Down:    ebiten.KeyS,
+		Left:    ebiten.KeyA,
+		Start:   ebiten.KeyEnter,
+		Select:  ebiten.KeyShiftRight,
+		ButtonA: ebiten.KeyM,
+		ButtonB: ebiten.KeyN,
 	},
-	Turbo: map[ebiten.Key]Button{
-		ebiten.KeyK: ButtonA,
-		ebiten.KeyJ: ButtonB,
+	Turbo: map[Button]ebiten.Key{
+		ButtonA: ebiten.KeyK,
+		ButtonB: ebiten.KeyJ,
 	},
 }
 
 var Player2Keymap = Keymap{
-	Regular: map[ebiten.Key]Button{
-		ebiten.KeyHome:     Up,
-		ebiten.KeyPageDown: Right,
-		ebiten.KeyEnd:      Down,
-		ebiten.KeyDelete:   Left,
-		ebiten.KeyKPEnter:  Start,
-		ebiten.KeyKPAdd:    Select,
-		ebiten.KeyKP3:      ButtonA,
-		ebiten.KeyKP2:      ButtonB,
+	Regular: map[Button]ebiten.Key{
+		Up:      ebiten.KeyHome,
+		Right:   ebiten.KeyPageDown,
+		Down:    ebiten.KeyEnd,
+		Left:    ebiten.KeyDelete,
+		Start:   ebiten.KeyKPEnter,
+		Select:  ebiten.KeyKPAdd,
+		ButtonA: ebiten.KeyKP3,
+		ButtonB: ebiten.KeyKP2,
 	},
-	Turbo: map[ebiten.Key]Button{
-		ebiten.KeyKP6: ButtonA,
-		ebiten.KeyKP5: ButtonB,
+	Turbo: map[Button]ebiten.Key{
+		ButtonA: ebiten.KeyKP6,
+		ButtonB: ebiten.KeyKP5,
 	},
 }
 
