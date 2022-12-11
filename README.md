@@ -2,12 +2,7 @@
 
 [![Build](https://github.com/gabe565/gones/actions/workflows/build.yml/badge.svg)](https://github.com/gabe565/gones/actions/workflows/build.yml)
 
-GoNES is another NES emulator written in Go.
-
-This emulator is in the early development stages and is not yet stable.
-
-I know that there are plenty of great NES emulators, but I love writing Go,
-and I wanted to learn more about the NES and emulation in general.
+NES emulator written in Go.
 
 ## Install
 
