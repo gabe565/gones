@@ -113,3 +113,5 @@ Eventually, this will be configurable in the UI.
 - [NESDev 6502 Reference](https://www.nesdev.org/obelisk-6502-guide/)
 - [NESDev Undocumented Opcodes](https://www.nesdev.org/undocumented_opcodes.txt)
 - [Writing an NES Emulator in Rust](https://bugzmanov.github.io/nes_ebook/)
+- [fogleman/nes](https://github.com/fogleman/nes)
+- [i82orbom/nesgo](https://github.com/i82orbom/nesgo)
