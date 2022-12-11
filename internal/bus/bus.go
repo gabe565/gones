@@ -15,10 +15,12 @@ func New(mapper cartridge.Mapper, ppu *ppu.PPU, apu *apu.APU) *Bus {
 		apu:    apu,
 		ppu:    ppu,
 		controller1: controller.Controller{
-			Keymap: controller.Player1Keymap,
+			Enabled: true,
+			Keymap:  controller.Player1Keymap,
 		},
 		controller2: controller.Controller{
-			Keymap: controller.Player2Keymap,
+			Enabled: true,
+			Keymap:  controller.Player2Keymap,
 		},
 	}
 }

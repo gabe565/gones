@@ -16,6 +16,7 @@ const (
 )
 
 type Controller struct {
+	Enabled bool
 	strobe  bool
 	index   byte
 	buttons [8]bool
@@ -32,6 +33,10 @@ func (j *Controller) Write(data byte) {
 }
 
 func (j *Controller) Read() byte {
+	if !j.Enabled {
+		return 0
+	}
+
 	if j.index >= 8 {
 		return 1
 	}
