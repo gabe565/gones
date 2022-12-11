@@ -13,7 +13,7 @@ func (c *CPU) branch(condition bool) {
 		jump := int8(c.ReadMem(c.ProgramCounter))
 		jumpAddr := c.ProgramCounter + 1 + uint16(jump)
 
-		if (c.ProgramCounter+1)&0xFF0 != jumpAddr {
+		if crossedPage(c.ProgramCounter+1, jumpAddr&0xFF00) {
 			c.Cycles += 1
 		}
 
