@@ -5,6 +5,7 @@ import (
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/controller"
 	"github.com/gabe565/gones/internal/ppu"
+	log "github.com/sirupsen/logrus"
 )
 
 func New(mapper cartridge.Mapper, ppu *ppu.PPU, apu *apu.APU) *Bus {
@@ -42,7 +43,7 @@ func (b *Bus) ReadMem(addr uint16) byte {
 		return b.ppu.ReadMem(addr)
 	case 0x2008 <= addr && addr < 0x4000:
 		addr &= 0x2007
-		return b.ReadMem(addr)
+		return b.ppu.ReadMem(addr)
 	case 0x4000 <= addr && addr < 0x4016:
 		return b.apu.ReadMem(addr)
 	case addr == 0x4016:
@@ -50,11 +51,14 @@ func (b *Bus) ReadMem(addr uint16) byte {
 	case addr == 0x4017:
 		return b.controller2.Read()
 	case addr <= 0x4018 && addr < 0x4020:
-		// Disabled
-	default:
+		// Disabled test registers
+		return 0
+	case 0x4020 <= addr:
 		return b.mapper.ReadMem(addr)
+	default:
+		log.Errorf("invalid Bus read from $%02X", addr)
+		return 0
 	}
-	return 0
 }
 
 // WriteMem writes a byte to memory.
@@ -67,16 +71,18 @@ func (b *Bus) WriteMem(addr uint16, data byte) {
 		b.ppu.WriteMem(addr, data)
 	case 0x2008 <= addr && addr < 0x4000:
 		addr &= 0x2007
-		b.WriteMem(addr, data)
+		b.ppu.WriteMem(addr, data)
 	case 0x4000 <= addr && addr <= 0x4013, addr == 0x4015, addr == 0x4017:
 		b.apu.WriteMem(addr, data)
 	case addr == 0x4016:
 		b.controller1.Write(data)
 		b.controller2.Write(data)
 	case addr <= 0x4018 && addr < 0x4020:
-		// Disabled
-	default:
+		// Disabled test registers
+	case 0x4020 <= addr:
 		b.mapper.WriteMem(addr, data)
+	default:
+		log.Errorf("invalid Bus write to $%02X", addr)
 	}
 }
 
