@@ -15,9 +15,10 @@ func (p *PPU) evaluateSprites() {
 	var count uint8
 
 	for i := 0; i < 64; i++ {
-		y := p.Oam[i*4+0]
-		a := p.Oam[i*4+2]
-		x := p.Oam[i*4+3]
+		sprite := p.Oam[i*4 : i*4+4 : i*4+4]
+		y := sprite[0]
+		a := sprite[2]
+		x := sprite[3]
 
 		row := int(p.Scanline) - int(y)
 		if row < 0 || row >= height {
@@ -25,7 +26,7 @@ func (p *PPU) evaluateSprites() {
 		}
 
 		if count < 8 {
-			p.SpriteData.Patterns[count] = p.fetchSpritePattern(i, row)
+			p.SpriteData.Patterns[count] = p.fetchSpritePattern(sprite[1], a, row)
 			p.SpriteData.Positions[count] = x
 			p.SpriteData.Priorities[count] = (a >> 5) & 1
 			p.SpriteData.Indexes[count] = byte(i)
@@ -42,9 +43,7 @@ func (p *PPU) evaluateSprites() {
 	p.SpriteData.Count = count
 }
 
-func (p *PPU) fetchSpritePattern(i, row int) uint32 {
-	tile := p.Oam[i*4+1]
-	attributes := p.Oam[i*4+2]
+func (p *PPU) fetchSpritePattern(tile, attributes byte, row int) uint32 {
 	var addr uint16
 
 	if p.Ctrl.SpriteHeight {
