@@ -83,7 +83,12 @@ func (p *PPU) WriteOamDma(data [0x100]byte) {
 }
 
 func (p *PPU) ReadOam() byte {
-	return p.Oam[p.OamAddr]
+	data := p.Oam[p.OamAddr]
+	if p.OamAddr&3 == 2 {
+		// Exclude unused bytes
+		data &= 0xE3
+	}
+	return data
 }
 
 func (p *PPU) WriteScroll(data byte) {
