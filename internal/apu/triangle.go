@@ -31,7 +31,9 @@ func (t *Triangle) Write(addr uint16, data byte) {
 	case 0x400A:
 		t.TimerPeriod = t.TimerPeriod&0xFF00 | uint16(data)
 	case 0x400B:
-		t.LengthValue = lengths[data>>3&0x1F]
+		if t.Enabled {
+			t.LengthValue = lengths[data>>3&0x1F]
+		}
 		t.TimerPeriod = uint16(data)&0x7<<8 | t.TimerPeriod&0xFF
 		t.TimerValue = t.TimerPeriod
 		t.CounterReload = true

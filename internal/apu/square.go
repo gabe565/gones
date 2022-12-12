@@ -55,7 +55,9 @@ func (p *Square) Write(addr uint16, data byte) {
 	case 0x4002, 0x4006:
 		p.TimerPeriod = p.TimerPeriod&0x700 | uint16(data)
 	case 0x4003, 0x4007:
-		p.LengthValue = lengths[data>>3&0x1F]
+		if p.Enabled {
+			p.LengthValue = lengths[data>>3&0x1F]
+		}
 		p.TimerPeriod = uint16(data)&0x7<<8 | p.TimerPeriod&0xFF
 		p.EnvelopeStart = true
 		p.DutyValue = 0

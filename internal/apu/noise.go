@@ -41,7 +41,9 @@ func (n *Noise) Write(addr uint16, data byte) {
 		n.LoopNoise = data>>7&1 == 1
 		n.TimerPeriod = noiseTimers[data&0xF]
 	case 0x400F:
-		n.LengthValue = lengths[data>>3&0x1F]
+		if n.Enabled {
+			n.LengthValue = lengths[data>>3&0x1F]
+		}
 		n.EnvelopeStart = true
 	}
 }
