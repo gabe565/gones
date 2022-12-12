@@ -45,6 +45,7 @@ type PPU struct {
 	nmiOffset uint8
 
 	ReadBuf byte
+	openBus byte
 	image   *image.RGBA
 
 	BgTile     BgTile
@@ -141,6 +142,7 @@ func (p *PPU) ReadData() byte {
 		val, p.ReadBuf = p.ReadBuf, val
 	} else if addr < 0x4000 {
 		p.ReadBuf = p.ReadDataAddr(addr - 0x1000)
+		val |= p.openBus & 0xC0
 	}
 	return val
 }
@@ -165,17 +167,18 @@ func (p *PPU) ReadDataAddr(addr uint16) byte {
 func (p *PPU) ReadMem(addr uint16) byte {
 	switch addr {
 	case 0x2000, 0x2001, 0x2003, 0x2005, 0x2006, 0x4014:
-		return 0
+		//
 	case 0x2002:
-		return p.ReadStatus()
+		p.openBus &^= 0xE0
+		p.openBus |= p.ReadStatus()
 	case 0x2004:
-		return p.ReadOam()
+		p.openBus = p.ReadOam()
 	case 0x2007:
-		return p.ReadData()
+		p.openBus = p.ReadData()
 	default:
 		log.Errorf("invalid PPU read from $%02X", addr)
-		return 0
 	}
+	return p.openBus
 }
 
 func (p *PPU) WriteMem(addr uint16, data byte) {
@@ -185,8 +188,7 @@ func (p *PPU) WriteMem(addr uint16, data byte) {
 	case 0x2001:
 		p.WriteMask(data)
 	case 0x2002:
-		log.WithField("address", fmt.Sprintf("%02X", addr)).
-			Error("attempt to write to PPU status register")
+		//
 	case 0x2003:
 		p.WriteOamAddr(data)
 	case 0x2004:
@@ -205,6 +207,7 @@ func (p *PPU) WriteMem(addr uint16, data byte) {
 	default:
 		log.Errorf("invalid PPU write to $%02X", addr)
 	}
+	p.openBus = data
 }
 
 var MirrorLookup = [...][4]uint16{
