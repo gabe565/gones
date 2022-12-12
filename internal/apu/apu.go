@@ -41,7 +41,7 @@ func New() *APU {
 		Square: [2]Square{{Channel: 1}, {Channel: 2}},
 		Noise:  Noise{ShiftRegister: 1},
 
-		buf: make(chan byte, 10*4*consts.AudioSampleRate/60),
+		buf: make(chan float32, 10*consts.AudioSampleRate/60),
 	}
 }
 
@@ -63,7 +63,7 @@ type APU struct {
 
 	irqOccurred bool
 
-	buf chan byte
+	buf chan float32
 }
 
 func (a *APU) WriteMem(addr uint16, data byte) {
@@ -187,11 +187,9 @@ func (a *APU) stepFrameCounter() {
 }
 
 func (a *APU) sendSample() {
-	for _, b := range a.output() {
-		select {
-		case a.buf <- b:
-		default:
-		}
+	select {
+	case a.buf <- a.output():
+	default:
 	}
 }
 
@@ -224,7 +222,7 @@ func (a *APU) stepLength() {
 	a.Noise.stepLength()
 }
 
-func (a *APU) output() []byte {
+func (a *APU) output() float32 {
 	p1 := a.Square[0].output()
 	p2 := a.Square[1].output()
 	pulseOut := squareTable[p1+p2]
@@ -234,13 +232,7 @@ func (a *APU) output() []byte {
 	d := a.DMC.output()
 	tndOut := tndTable[3*t+2*n+d]
 
-	out := int16((pulseOut + tndOut) * a.Volume * 32767)
-	return []byte{
-		byte(out),
-		byte(out >> 8),
-		byte(out),
-		byte(out >> 8),
-	}
+	return pulseOut + tndOut
 }
 
 func (a *APU) clearBuf() {
@@ -257,10 +249,16 @@ func (a *APU) Read(p []byte) (int, error) {
 	var n int
 
 loop:
-	for i := range p {
+	for i := 0; i < len(p); i += 4 {
 		select {
-		case p[i] = <-a.buf:
-			n += 1
+		case sample := <-a.buf:
+			p := p[i : i+4 : i+4]
+			out := int16(sample * a.Volume * 32767)
+			p[0] = byte(out)
+			p[1] = byte(out >> 8)
+			p[2] = p[0]
+			p[3] = p[1]
+			n += 4
 		default:
 			break loop
 		}
