@@ -50,8 +50,6 @@ type CPU struct {
 	Stall uint8
 }
 
-type Callback func(*CPU) error
-
 const (
 	// StackAddr is the memory address of the stack
 	StackAddr = 0x100
@@ -65,14 +63,6 @@ func (c *CPU) Reset() {
 	c.ProgramCounter = c.ReadMem16(consts.ResetAddr)
 	c.StackPointer = StackReset
 	c.Status = DefaultStatus
-}
-
-// Load loads a program into PRG memory
-func (c *CPU) Load(program []byte) {
-	for k, v := range program {
-		c.WriteMem(consts.PrgRomAddr+uint16(k), v)
-	}
-	c.WriteMem16(consts.ResetAddr, consts.PrgRomAddr)
 }
 
 func (c *CPU) handleInterrupt(interrupt interrupts.Interrupt) {
