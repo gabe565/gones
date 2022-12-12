@@ -65,8 +65,8 @@ func (p *PPU) fetchSpritePattern(tile, attributes byte, row int) uint32 {
 	}
 
 	a := (attributes & 3) << 2
-	tileLo := p.ReadAddr(addr)
-	tileHi := p.ReadAddr(addr + 8)
+	tileLo := p.ReadDataAddr(addr)
+	tileHi := p.ReadDataAddr(addr + 8)
 	var data uint32
 
 	for i := 0; i < 8; i++ {

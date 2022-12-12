@@ -4,10 +4,16 @@ import (
 	"fmt"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/interrupts"
+	"github.com/gabe565/gones/internal/memory"
 	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
 	"image"
 )
+
+type CPU interface {
+	memory.Read8
+	interrupts.Interruptible
+}
 
 func New(mapper cartridge.Mapper) *PPU {
 	return &PPU{
@@ -18,7 +24,7 @@ func New(mapper cartridge.Mapper) *PPU {
 
 type PPU struct {
 	mapper cartridge.Mapper
-	cpu    interrupts.Interruptible
+	cpu    CPU
 
 	Ctrl      registers.Control
 	Mask      registers.Mask
@@ -109,7 +115,7 @@ func (p *PPU) ReadStatus() byte {
 	return status
 }
 
-func (p *PPU) Write(data byte) {
+func (p *PPU) WriteData(data byte) {
 	addr := p.Addr.Get() % 0x4000
 	switch {
 	case addr < 0x2000:
@@ -126,20 +132,20 @@ func (p *PPU) Write(data byte) {
 	p.Addr.Increment(p.Ctrl.VramAddr())
 }
 
-func (p *PPU) Read() byte {
+func (p *PPU) ReadData() byte {
 	addr := p.Addr.Get() % 0x4000
 	p.Addr.Increment(p.Ctrl.VramAddr())
 
-	val := p.ReadAddr(addr)
+	val := p.ReadDataAddr(addr)
 	if addr < 0x3F00 {
 		val, p.ReadBuf = p.ReadBuf, val
 	} else if addr < 0x4000 {
-		p.ReadBuf = p.ReadAddr(addr - 0x1000)
+		p.ReadBuf = p.ReadDataAddr(addr - 0x1000)
 	}
 	return val
 }
 
-func (p *PPU) ReadAddr(addr uint16) byte {
+func (p *PPU) ReadDataAddr(addr uint16) byte {
 	addr %= 0x4000
 	switch {
 	case addr < 0x2000:
@@ -153,6 +159,51 @@ func (p *PPU) ReadAddr(addr uint16) byte {
 		log.WithField("address", fmt.Sprintf("%02X", addr)).
 			Error("unexpected access to mirrored space")
 		return 0
+	}
+}
+
+func (p *PPU) ReadMem(addr uint16) byte {
+	switch addr {
+	case 0x2000, 0x2001, 0x2003, 0x2005, 0x2006, 0x4014:
+		return 0
+	case 0x2002:
+		return p.ReadStatus()
+	case 0x2004:
+		return p.ReadOam()
+	case 0x2007:
+		return p.ReadData()
+	default:
+		log.Errorf("invalid PPU read from $%02X", addr)
+		return 0
+	}
+}
+
+func (p *PPU) WriteMem(addr uint16, data byte) {
+	switch addr {
+	case 0x2000:
+		p.WriteCtrl(data)
+	case 0x2001:
+		p.WriteMask(data)
+	case 0x2002:
+		log.WithField("address", fmt.Sprintf("%02X", addr)).
+			Error("attempt to write to PPU status register")
+	case 0x2003:
+		p.WriteOamAddr(data)
+	case 0x2004:
+		p.WriteOam(data)
+	case 0x2005:
+		p.WriteScroll(data)
+	case 0x2006:
+		p.WriteAddr(data)
+	case 0x2007:
+		p.WriteData(data)
+	case 0x4014:
+		hi := uint16(data) << 8
+		for i := 0; i < 256; i += 1 {
+			p.WriteOam(p.cpu.ReadMem(hi + uint16(i)))
+		}
+	default:
+		log.Errorf("invalid PPU write to $%02X", addr)
 	}
 }
 
@@ -312,6 +363,6 @@ func (p *PPU) updateNmi() {
 	p.Status.PrevVblank = nmi
 }
 
-func (p *PPU) SetCpu(c interrupts.Interruptible) {
+func (p *PPU) SetCpu(c CPU) {
 	p.cpu = c
 }

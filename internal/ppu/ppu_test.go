@@ -18,7 +18,7 @@ func TestPPU_VramWrite(t *testing.T) {
 	ppu, _ := stubPpu()
 	ppu.WriteAddr(0x23)
 	ppu.WriteAddr(0x05)
-	ppu.Write(0x66)
+	ppu.WriteData(0x66)
 	assert.EqualValues(t, 0x66, ppu.Vram[0x305])
 }
 
@@ -27,9 +27,9 @@ func TestPPU_VramRead(t *testing.T) {
 	ppu.Vram[0x305] = 0x66
 	ppu.WriteAddr(0x23)
 	ppu.WriteAddr(0x05)
-	ppu.Read() // Buffer
+	ppu.ReadData() // Buffer
 	assert.EqualValues(t, 0x2306, ppu.Addr.Get())
-	assert.EqualValues(t, 0x66, ppu.Read())
+	assert.EqualValues(t, 0x66, ppu.ReadData())
 }
 
 func TestPPU_VramRead_CrossPage(t *testing.T) {
@@ -38,9 +38,9 @@ func TestPPU_VramRead_CrossPage(t *testing.T) {
 	ppu.Vram[0x200] = 0x77
 	ppu.WriteAddr(0x21)
 	ppu.WriteAddr(0xFF)
-	ppu.Read() // Buffer
-	assert.EqualValues(t, 0x66, ppu.Read())
-	assert.EqualValues(t, 0x77, ppu.Read())
+	ppu.ReadData() // Buffer
+	assert.EqualValues(t, 0x66, ppu.ReadData())
+	assert.EqualValues(t, 0x77, ppu.ReadData())
 }
 
 func TestPPU_VramRead_Step32(t *testing.T) {
@@ -51,33 +51,33 @@ func TestPPU_VramRead_Step32(t *testing.T) {
 	ppu.Vram[0x1FF+64] = 0x88
 	ppu.WriteAddr(0x21)
 	ppu.WriteAddr(0xFF)
-	ppu.Read() // Buffer
-	assert.EqualValues(t, 0x66, ppu.Read())
-	assert.EqualValues(t, 0x77, ppu.Read())
-	assert.EqualValues(t, 0x88, ppu.Read())
+	ppu.ReadData() // Buffer
+	assert.EqualValues(t, 0x66, ppu.ReadData())
+	assert.EqualValues(t, 0x77, ppu.ReadData())
+	assert.EqualValues(t, 0x88, ppu.ReadData())
 }
 
 func TestPPU_HorizontalMirror(t *testing.T) {
 	ppu, _ := stubPpu()
 	ppu.WriteAddr(0x24)
 	ppu.WriteAddr(0x05)
-	ppu.Write(0x66) // A
+	ppu.WriteData(0x66) // A
 
 	ppu.WriteAddr(0x28)
 	ppu.WriteAddr(0x05)
-	ppu.Write(0x77) // B
+	ppu.WriteData(0x77) // B
 
 	ppu.WriteAddr(0x20)
 	ppu.WriteAddr(0x05)
-	ppu.Read() // Buffer
+	ppu.ReadData() // Buffer
 
-	assert.EqualValues(t, 0x66, ppu.Read()) // A
+	assert.EqualValues(t, 0x66, ppu.ReadData()) // A
 
 	ppu.WriteAddr(0x2C)
 	ppu.WriteAddr(0x05)
 
-	ppu.Read()
-	assert.EqualValues(t, 0x77, ppu.Read()) // B
+	ppu.ReadData()
+	assert.EqualValues(t, 0x77, ppu.ReadData()) // B
 }
 
 func TestPPU_VerticalMirror(t *testing.T) {
@@ -85,23 +85,23 @@ func TestPPU_VerticalMirror(t *testing.T) {
 	cart.Mirror = cartridge.Vertical
 	ppu.WriteAddr(0x20)
 	ppu.WriteAddr(0x05)
-	ppu.Write(0x66) // A
+	ppu.WriteData(0x66) // A
 
 	ppu.WriteAddr(0x2C)
 	ppu.WriteAddr(0x05)
-	ppu.Write(0x77) // B
+	ppu.WriteData(0x77) // B
 
 	ppu.WriteAddr(0x28)
 	ppu.WriteAddr(0x05)
-	ppu.Read() // Buffer
+	ppu.ReadData() // Buffer
 
-	assert.EqualValues(t, 0x66, ppu.Read()) // A
+	assert.EqualValues(t, 0x66, ppu.ReadData()) // A
 
 	ppu.WriteAddr(0x24)
 	ppu.WriteAddr(0x05)
 
-	ppu.Read()
-	assert.EqualValues(t, 0x77, ppu.Read()) // B
+	ppu.ReadData()
+	assert.EqualValues(t, 0x77, ppu.ReadData()) // B
 }
 
 func TestPPU_StatusResetsLatch(t *testing.T) {
@@ -110,14 +110,14 @@ func TestPPU_StatusResetsLatch(t *testing.T) {
 	ppu.WriteAddr(0x21)
 	ppu.WriteAddr(0x23)
 	ppu.WriteAddr(0x05)
-	ppu.Read() // Buffer
-	assert.NotEqualValues(t, 0x66, ppu.Read())
+	ppu.ReadData() // Buffer
+	assert.NotEqualValues(t, 0x66, ppu.ReadData())
 
 	ppu.ReadStatus()
 	ppu.WriteAddr(0x23)
 	ppu.WriteAddr(0x05)
-	ppu.Read()
-	assert.EqualValues(t, 0x66, ppu.Read())
+	ppu.ReadData()
+	assert.EqualValues(t, 0x66, ppu.ReadData())
 }
 
 func TestPPU_VramMirror(t *testing.T) {
@@ -127,8 +127,8 @@ func TestPPU_VramMirror(t *testing.T) {
 	ppu.WriteAddr(0x63)
 	ppu.WriteAddr(0x05)
 
-	ppu.Read() // Buffer
-	assert.EqualValues(t, 0x66, ppu.Read())
+	ppu.ReadData() // Buffer
+	assert.EqualValues(t, 0x66, ppu.ReadData())
 }
 
 func TestPPU_StatusResetsVblank(t *testing.T) {

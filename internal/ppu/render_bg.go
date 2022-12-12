@@ -10,7 +10,7 @@ type BgTile struct {
 
 func (p *PPU) fetchNametableByte() {
 	addr := 0x2000 | p.Addr.Get()&0xFFF
-	p.BgTile.NametableByte = p.ReadAddr(addr)
+	p.BgTile.NametableByte = p.ReadDataAddr(addr)
 }
 
 func (p *PPU) fetchAttrTableByte() {
@@ -21,7 +21,7 @@ func (p *PPU) fetchAttrTableByte() {
 	if p.Addr.NametableX {
 		addr |= 1 << 10
 	}
-	p.BgTile.AttrByte = p.ReadAddr(addr)
+	p.BgTile.AttrByte = p.ReadDataAddr(addr)
 	if p.Addr.CoarseY&2 != 0 {
 		p.BgTile.AttrByte >>= 4
 	}
@@ -37,7 +37,7 @@ func (p *PPU) fetchLoTileByte() {
 	if p.Ctrl.BgTileSelect {
 		addr += 1 << 12
 	}
-	p.BgTile.LoByte = p.ReadAddr(addr)
+	p.BgTile.LoByte = p.ReadDataAddr(addr)
 }
 
 func (p *PPU) fetchHiTileByte() {
@@ -45,7 +45,7 @@ func (p *PPU) fetchHiTileByte() {
 	if p.Ctrl.BgTileSelect {
 		addr += 1 << 12
 	}
-	p.BgTile.HiByte = p.ReadAddr(addr)
+	p.BgTile.HiByte = p.ReadDataAddr(addr)
 }
 
 func (p *PPU) storeTileData() {
