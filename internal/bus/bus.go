@@ -98,7 +98,7 @@ func (b *Bus) WriteMem(addr uint16, data byte) {
 			buf[k] = b.ReadMem(hi + uint16(k))
 		}
 		b.ppu.WriteOamDma(buf)
-	case 0x4000 <= addr && addr < 0x4013, addr == 0x4015, addr == 0x4017:
+	case 0x4000 <= addr && addr <= 0x4013, addr == 0x4015, addr == 0x4017:
 		b.apu.WriteMem(addr, data)
 	case addr == 0x4016:
 		b.controller1.Write(data)

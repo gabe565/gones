@@ -10,7 +10,6 @@ type DMC struct {
 
 	IrqEnabled bool
 	Loop       bool
-	LoadCount  byte
 
 	TickPeriod byte
 	TickValue  byte
@@ -32,7 +31,7 @@ func (d *DMC) Write(addr uint16, data byte) {
 		d.Loop = data>>6&1 == 1
 		d.TickPeriod = dmcTicks[data&0xF]
 	case 0x4011:
-		d.LoadCount = data & 0x7F
+		d.Value = data & 0x7F
 	case 0x4012:
 		d.SampleAddr = 0xC000 | uint16(data)<<6
 	case 0x4013:
