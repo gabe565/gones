@@ -10,6 +10,7 @@ var flagConfigTable = map[string]string{
 	"scale":      "ui.scale",
 	"fullscreen": "ui.fullscreen",
 	"audio":      "audio.enabled",
+	"resume":     "state.resume",
 }
 
 var excludeFromConfig = [...]string{"config", "help", "version"}
@@ -21,4 +22,5 @@ func Flags(cmd *cobra.Command) {
 	cmd.Flags().Float64("scale", 3, "Default UI scale")
 	cmd.Flags().BoolP("fullscreen", "f", false, "Start in fullscreen")
 	cmd.Flags().BoolP("audio", "a", true, "Enabled audio output")
+	cmd.Flags().Bool("resume", true, "Automatically resume where you left off")
 }

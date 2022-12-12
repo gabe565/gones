@@ -71,10 +71,23 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 		console.APU.Enabled = false
 	}
 
+	if config.K.Bool("state.resume") {
+		if err := console.LoadState(0); err != nil {
+			if !errors.Is(err, os.ErrNotExist) {
+				return &console, err
+			}
+		}
+	}
+
 	return &console, nil
 }
 
 func (c *Console) Close() error {
+	if config.K.Bool("state.resume") {
+		if err := c.SaveState(0); err != nil {
+			return err
+		}
+	}
 	if c.Cartridge.Battery {
 		if err := c.SaveSram(); err != nil {
 			return err
