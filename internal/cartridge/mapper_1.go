@@ -29,7 +29,7 @@ type Mapper1 struct {
 	ChrOffsets    [2]int
 }
 
-func (m *Mapper1) Step(renderEnabled bool, scanline uint16, cycle uint) {}
+func (m *Mapper1) Step(_ bool, _ uint16, _ uint) {}
 
 func (m *Mapper1) Cartridge() *Cartridge { return m.cartridge }
 

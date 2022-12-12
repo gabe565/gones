@@ -17,7 +17,7 @@ type Mapper7 struct {
 	PrgBank   uint
 }
 
-func (m *Mapper7) Step(renderEnabled bool, scanline uint16, cycle uint) {}
+func (m *Mapper7) Step(_ bool, _ uint16, _ uint) {}
 
 func (m *Mapper7) Cartridge() *Cartridge { return m.cartridge }
 

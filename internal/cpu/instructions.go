@@ -170,7 +170,7 @@ func axs(c *CPU, mode AddressingMode) {
 // See [BCC Instruction Reference].
 //
 // [BCC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BCC
-func bcc(c *CPU, mode AddressingMode) {
+func bcc(c *CPU, _ AddressingMode) {
 	c.branch(!c.Status.Carry)
 }
 
@@ -182,7 +182,7 @@ func bcc(c *CPU, mode AddressingMode) {
 // See [BCS Instruction Reference].
 //
 // [BCS Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BCS
-func bcs(c *CPU, mode AddressingMode) {
+func bcs(c *CPU, _ AddressingMode) {
 	c.branch(c.Status.Carry)
 }
 
@@ -194,7 +194,7 @@ func bcs(c *CPU, mode AddressingMode) {
 // See [BEQ Instruction Reference].
 //
 // [BEQ Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BEQ
-func beq(c *CPU, mode AddressingMode) {
+func beq(c *CPU, _ AddressingMode) {
 	c.branch(c.Status.Zero)
 }
 
@@ -224,7 +224,7 @@ func bit(c *CPU, mode AddressingMode) {
 // See [BMI Instruction Reference].
 //
 // [BMI Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BMI
-func bmi(c *CPU, mode AddressingMode) {
+func bmi(c *CPU, _ AddressingMode) {
 	c.branch(c.Status.Negative)
 }
 
@@ -236,7 +236,7 @@ func bmi(c *CPU, mode AddressingMode) {
 // See [BNE Instruction Reference].
 //
 // [BNE Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BNE
-func bne(c *CPU, mode AddressingMode) {
+func bne(c *CPU, _ AddressingMode) {
 	c.branch(!c.Status.Zero)
 }
 
@@ -248,7 +248,7 @@ func bne(c *CPU, mode AddressingMode) {
 // See [BPL Instruction Reference].
 //
 // [BPL Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BPL
-func bpl(c *CPU, mode AddressingMode) {
+func bpl(c *CPU, _ AddressingMode) {
 	c.branch(!c.Status.Negative)
 }
 
@@ -278,7 +278,7 @@ func brk(c *CPU, mode AddressingMode) {
 // See [BVC Instruction Reference].
 //
 // [BVC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BVC
-func bvc(c *CPU, mode AddressingMode) {
+func bvc(c *CPU, _ AddressingMode) {
 	c.branch(!c.Status.Overflow)
 }
 
@@ -290,7 +290,7 @@ func bvc(c *CPU, mode AddressingMode) {
 // See [BVS Instruction Reference].
 //
 // [BVS Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BVS
-func bvs(c *CPU, mode AddressingMode) {
+func bvs(c *CPU, _ AddressingMode) {
 	c.branch(c.Status.Overflow)
 }
 
@@ -301,7 +301,7 @@ func bvs(c *CPU, mode AddressingMode) {
 // See [CLC Instruction Reference].
 //
 // [CLC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLC
-func clc(c *CPU, mode AddressingMode) {
+func clc(c *CPU, _ AddressingMode) {
 	c.Status.Carry = false
 }
 
@@ -312,7 +312,7 @@ func clc(c *CPU, mode AddressingMode) {
 // See [CLC Instruction Reference].
 //
 // [CLC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLC
-func cld(c *CPU, mode AddressingMode) {
+func cld(c *CPU, _ AddressingMode) {
 	c.Status.Decimal = false
 }
 
@@ -324,7 +324,7 @@ func cld(c *CPU, mode AddressingMode) {
 // See [CLI Instruction Reference].
 //
 // [CLI Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLI
-func cli(c *CPU, mode AddressingMode) {
+func cli(c *CPU, _ AddressingMode) {
 	c.Status.InterruptDisable = false
 }
 
@@ -335,7 +335,7 @@ func cli(c *CPU, mode AddressingMode) {
 // See [CLV Instruction Reference].
 //
 // [CLV Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLV
-func clv(c *CPU, mode AddressingMode) {
+func clv(c *CPU, _ AddressingMode) {
 	c.Status.Overflow = false
 }
 
@@ -415,7 +415,7 @@ func dec(c *CPU, mode AddressingMode) {
 // See [DEX Instruction Reference].
 //
 // [DEX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEX
-func dex(c *CPU, mode AddressingMode) {
+func dex(c *CPU, _ AddressingMode) {
 	c.RegisterX -= 1
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
@@ -428,7 +428,7 @@ func dex(c *CPU, mode AddressingMode) {
 // See [DEY Instruction Reference].
 //
 // [DEY Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEY
-func dey(c *CPU, mode AddressingMode) {
+func dey(c *CPU, _ AddressingMode) {
 	c.RegisterY -= 1
 	c.updateZeroAndNegFlags(c.RegisterY)
 }
@@ -475,7 +475,7 @@ func inc(c *CPU, mode AddressingMode) {
 // See [INX Instruction Reference].
 //
 // [INX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INX
-func inx(c *CPU, mode AddressingMode) {
+func inx(c *CPU, _ AddressingMode) {
 	c.RegisterX += 1
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
@@ -488,7 +488,7 @@ func inx(c *CPU, mode AddressingMode) {
 // See [INY Instruction Reference].
 //
 // [INY Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INY
-func iny(c *CPU, mode AddressingMode) {
+func iny(c *CPU, _ AddressingMode) {
 	c.RegisterY += 1
 	c.updateZeroAndNegFlags(c.RegisterY)
 }
@@ -527,7 +527,7 @@ func jmp(c *CPU, mode AddressingMode) {
 // See [JSR Instruction Reference].
 //
 // [JSR Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JSR
-func jsr(c *CPU, mode AddressingMode) {
+func jsr(c *CPU, _ AddressingMode) {
 	c.stackPush16(c.ProgramCounter + 1)
 	addr := c.ReadMem16(c.ProgramCounter)
 	c.ProgramCounter = addr
@@ -720,7 +720,7 @@ func ora(c *CPU, mode AddressingMode) {
 // See [PHA Instruction Reference].
 //
 // [PHA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PHA
-func pha(c *CPU, mode AddressingMode) {
+func pha(c *CPU, _ AddressingMode) {
 	c.stackPush(c.Accumulator)
 }
 
@@ -731,7 +731,7 @@ func pha(c *CPU, mode AddressingMode) {
 // See [PHP Instruction Reference].
 //
 // [PHP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PHP
-func php(c *CPU, mode AddressingMode) {
+func php(c *CPU, _ AddressingMode) {
 	c.stackPush(c.Status.Get() | Break)
 }
 
@@ -743,7 +743,7 @@ func php(c *CPU, mode AddressingMode) {
 // See [PLA Instruction Reference].
 //
 // [PLA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLA
-func pla(c *CPU, mode AddressingMode) {
+func pla(c *CPU, _ AddressingMode) {
 	data := c.stackPop()
 	c.setAccumulator(data)
 }
@@ -756,7 +756,7 @@ func pla(c *CPU, mode AddressingMode) {
 // See [PLP Instruction Reference].
 //
 // [PLP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLP
-func plp(c *CPU, mode AddressingMode) {
+func plp(c *CPU, _ AddressingMode) {
 	c.Status.Set(c.stackPop() &^ Break)
 }
 
@@ -862,7 +862,7 @@ func rra(c *CPU, mode AddressingMode) {
 // See [RTI Instruction Reference].
 //
 // [RTI Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#RTI
-func rti(c *CPU, mode AddressingMode) {
+func rti(c *CPU, _ AddressingMode) {
 	c.Status.Set(c.stackPop() &^ Break)
 	c.ProgramCounter = c.stackPop16()
 }
@@ -876,7 +876,7 @@ func rti(c *CPU, mode AddressingMode) {
 // See [RTS Instruction Reference].
 //
 // [RTS Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#RTS
-func rts(c *CPU, mode AddressingMode) {
+func rts(c *CPU, _ AddressingMode) {
 	c.ProgramCounter = c.stackPop16() + 1
 }
 
@@ -921,7 +921,7 @@ func sbc(c *CPU, mode AddressingMode) {
 // See [SEC Instruction Reference].
 //
 // [SEC Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SEC
-func sec(c *CPU, mode AddressingMode) {
+func sec(c *CPU, _ AddressingMode) {
 	c.Status.Carry = true
 }
 
@@ -932,7 +932,7 @@ func sec(c *CPU, mode AddressingMode) {
 // See [SED Instruction Reference].
 //
 // [SED Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SED
-func sed(c *CPU, mode AddressingMode) {
+func sed(c *CPU, _ AddressingMode) {
 	c.Status.Decimal = true
 }
 
@@ -943,7 +943,7 @@ func sed(c *CPU, mode AddressingMode) {
 // See [SEI Instruction Reference].
 //
 // [SEI Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#SEI
-func sei(c *CPU, mode AddressingMode) {
+func sei(c *CPU, _ AddressingMode) {
 	c.Status.InterruptDisable = true
 }
 
@@ -955,7 +955,7 @@ func sei(c *CPU, mode AddressingMode) {
 // See [6502 Undocumented Opcodes]
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
-func shx(c *CPU, mode AddressingMode) {
+func shx(c *CPU, _ AddressingMode) {
 	addr := c.ReadMem16(c.ProgramCounter) + uint16(c.RegisterY)
 	data := c.RegisterX & (uint8(addr>>8) + 1)
 	c.WriteMem(addr, data)
@@ -969,7 +969,7 @@ func shx(c *CPU, mode AddressingMode) {
 // See [6502 Undocumented Opcodes]
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
-func shy(c *CPU, mode AddressingMode) {
+func shy(c *CPU, _ AddressingMode) {
 	addr := c.ReadMem16(c.ProgramCounter) + uint16(c.RegisterX)
 	data := c.RegisterY & (uint8(addr>>8) + 1)
 	c.WriteMem(addr, data)
@@ -1048,7 +1048,7 @@ func sty(c *CPU, mode AddressingMode) {
 // See [6502 Undocumented Opcodes]
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
-func tas(c *CPU, mode AddressingMode) {
+func tas(c *CPU, _ AddressingMode) {
 	data := c.Accumulator & c.RegisterX
 	c.StackPointer = data
 	addr := c.ReadMem16(c.ProgramCounter) + uint16(c.RegisterY)
@@ -1064,7 +1064,7 @@ func tas(c *CPU, mode AddressingMode) {
 // See [TAX Instruction Reference].
 //
 // [TAX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TAX
-func tax(c *CPU, mode AddressingMode) {
+func tax(c *CPU, _ AddressingMode) {
 	c.RegisterX = c.Accumulator
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
@@ -1077,7 +1077,7 @@ func tax(c *CPU, mode AddressingMode) {
 // See [TAY Instruction Reference].
 //
 // [TAY Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TAY
-func tay(c *CPU, mode AddressingMode) {
+func tay(c *CPU, _ AddressingMode) {
 	c.RegisterY = c.Accumulator
 	c.updateZeroAndNegFlags(c.RegisterY)
 }
@@ -1090,7 +1090,7 @@ func tay(c *CPU, mode AddressingMode) {
 // See [TSX Instruction Reference].
 //
 // [TSX Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TSX
-func tsx(c *CPU, mode AddressingMode) {
+func tsx(c *CPU, _ AddressingMode) {
 	c.RegisterX = c.StackPointer
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
@@ -1103,7 +1103,7 @@ func tsx(c *CPU, mode AddressingMode) {
 // See [TXA Instruction Reference].
 //
 // [TXA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TXA
-func txa(c *CPU, mode AddressingMode) {
+func txa(c *CPU, _ AddressingMode) {
 	c.setAccumulator(c.RegisterX)
 }
 
@@ -1114,7 +1114,7 @@ func txa(c *CPU, mode AddressingMode) {
 // See [TXS Instruction Reference].
 //
 // [TXS Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TXS
-func txs(c *CPU, mode AddressingMode) {
+func txs(c *CPU, _ AddressingMode) {
 	c.StackPointer = c.RegisterX
 }
 
@@ -1126,7 +1126,7 @@ func txs(c *CPU, mode AddressingMode) {
 // See [TYA Instruction Reference].
 //
 // [TYA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#TYA
-func tya(c *CPU, mode AddressingMode) {
+func tya(c *CPU, _ AddressingMode) {
 	c.setAccumulator(c.RegisterY)
 }
 
