@@ -2,14 +2,16 @@ package cartridge
 
 import (
 	"encoding/gob"
+	"github.com/gabe565/gones/internal/consts"
 	log "github.com/sirupsen/logrus"
 )
 
 func NewMapper1(cartridge *Cartridge) Mapper {
 	mapper := &Mapper1{
 		cartridge:     cartridge,
-		ShiftRegister: 1,
+		ShiftRegister: 0x10,
 	}
+	mapper.PrgOffsets[1] = mapper.prgBankOffset(-1)
 	gob.Register(mapper)
 	return mapper
 }
@@ -19,7 +21,7 @@ type Mapper1 struct {
 	ShiftRegister byte
 	Control       byte
 	PrgMode       byte
-	ChrMode       byte
+	ChrMode       bool
 	PrgBank       byte
 	ChrBank0      byte
 	ChrBank1      byte
@@ -42,8 +44,8 @@ func (m *Mapper1) ReadMem(addr uint16) byte {
 		return m.cartridge.Sram[addr]
 	case 0x8000 <= addr:
 		addr -= 0x8000
-		bank := addr / 0x4000
-		offset := int(addr % 0x4000)
+		bank := addr / consts.PrgChunkSize
+		offset := int(addr % consts.PrgChunkSize)
 		return m.cartridge.prg[m.PrgOffsets[bank]+offset]
 	default:
 		log.Fatalf("invalid mapper 1 read from $%04X", addr)
@@ -69,16 +71,17 @@ func (m *Mapper1) WriteMem(addr uint16, data byte) {
 			m.ShiftRegister >>= 1
 			m.ShiftRegister |= data & 1 << 4
 			if complete {
+				data := m.ShiftRegister
 				switch {
 				case addr < 0xA000:
 					m.writeControl(data)
-				case 0xA000 <= addr && addr < 0xBFFF:
+				case 0xA000 <= addr && addr < 0xC000:
 					m.ChrBank0 = data
 					m.updateOffsets()
-				case 0xC000 <= addr && addr < 0xDFFF:
+				case 0xC000 <= addr && addr < 0xE000:
 					m.ChrBank1 = data
 					m.updateOffsets()
-				case 0xE000 <= addr && addr <= 0xFFF:
+				case 0xE000 <= addr:
 					m.PrgBank = data & 0xF
 					m.updateOffsets()
 				}
@@ -92,7 +95,7 @@ func (m *Mapper1) WriteMem(addr uint16, data byte) {
 
 func (m *Mapper1) writeControl(data byte) {
 	m.Control = data
-	m.ChrMode = data >> 4 & 1
+	m.ChrMode = data>>4&1 == 1
 	m.PrgMode = data >> 2 & 3
 	switch data & 3 {
 	case 0:
@@ -104,14 +107,15 @@ func (m *Mapper1) writeControl(data byte) {
 	case 3:
 		m.cartridge.Mirror = Horizontal
 	}
+	m.updateOffsets()
 }
 
 func (m *Mapper1) prgBankOffset(i int) int {
 	if i >= 0x80 {
 		i -= 0x100
 	}
-	i %= len(m.cartridge.prg) / 0x4000
-	offset := i * 0x4000
+	i %= len(m.cartridge.prg) / consts.PrgChunkSize
+	offset := i * consts.PrgChunkSize
 	if offset < 0 {
 		offset += len(m.cartridge.prg)
 	}
@@ -143,12 +147,11 @@ func (m *Mapper1) updateOffsets() {
 		m.PrgOffsets[1] = m.prgBankOffset(-1)
 	}
 
-	switch m.ChrMode {
-	case 0:
-		m.ChrOffsets[0] = m.chrBankOffset(int(m.ChrBank0 & 0xFE))
-		m.ChrOffsets[1] = m.chrBankOffset(int(m.ChrBank0 | 0x01))
-	case 1:
+	if m.ChrMode {
 		m.ChrOffsets[0] = m.chrBankOffset(int(m.ChrBank0))
 		m.ChrOffsets[1] = m.chrBankOffset(int(m.ChrBank1))
+	} else {
+		m.ChrOffsets[0] = m.chrBankOffset(int(m.ChrBank0 & 0xFE))
+		m.ChrOffsets[1] = m.chrBankOffset(int(m.ChrBank0 | 0x01))
 	}
 }
