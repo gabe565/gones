@@ -105,16 +105,13 @@ func (p *PPU) ReadStatus() byte {
 }
 
 func (p *PPU) Write(data byte) {
-	addr := p.Addr.Get() & 0x3FFF
+	addr := p.Addr.Get() % 0x4000
 	switch {
 	case addr < 0x2000:
 		p.mapper.WriteMem(addr, data)
-	case 0x2000 <= addr && addr < 0x3000:
+	case 0x2000 <= addr && addr < 0x3F00:
 		addr := p.MirrorVramAddr(addr)
 		p.Vram[addr] = data
-	case 0x3000 <= addr && addr < 0x3F00:
-		log.WithField("address", fmt.Sprintf("$%02X", addr)).
-			Error("bad PPU write")
 	case 0x3F00 <= addr && addr < 0x4000:
 		p.writePalette(addr%32, data)
 	default:
@@ -125,11 +122,11 @@ func (p *PPU) Write(data byte) {
 }
 
 func (p *PPU) Read() byte {
-	addr := p.Addr.Get() & 0x3FFF
+	addr := p.Addr.Get() % 0x4000
 	p.Addr.Increment(p.Ctrl.VramAddr())
 
 	val := p.ReadAddr(addr)
-	if addr%0x4000 < 0x3F00 {
+	if addr < 0x3F00 {
 		val, p.ReadBuf = p.ReadBuf, val
 	} else if addr < 0x4000 {
 		p.ReadBuf = p.ReadAddr(addr - 0x1000)
@@ -138,16 +135,13 @@ func (p *PPU) Read() byte {
 }
 
 func (p *PPU) ReadAddr(addr uint16) byte {
+	addr %= 0x4000
 	switch {
 	case addr < 0x2000:
 		return p.mapper.ReadMem(addr)
-	case 0x2000 <= addr && addr < 0x3000:
+	case 0x2000 <= addr && addr < 0x3F00:
 		addr := p.MirrorVramAddr(addr)
 		return p.Vram[addr]
-	case 0x3000 <= addr && addr < 0x3F00:
-		log.WithField("address", fmt.Sprintf("$%02X", addr)).
-			Error("bad PPU read")
-		return 0
 	case 0x3F00 <= addr && addr < 0x4000:
 		return p.readPalette(addr % 32)
 	default:
