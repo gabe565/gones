@@ -263,7 +263,7 @@ func bpl(c *CPU, mode AddressingMode) {
 //
 // [BRK Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#BRK
 func brk(c *CPU, mode AddressingMode) {
-	c.stackPush16(c.ProgramCounter)
+	c.stackPush16(c.ProgramCounter + 1)
 	c.Status.Break = true
 	php(c, mode)
 	sei(c, mode)
