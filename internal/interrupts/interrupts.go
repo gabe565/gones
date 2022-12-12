@@ -21,3 +21,7 @@ var IRQ = Interrupt{
 	Cycles:     7,
 	VectorAddr: 0xFFFE,
 }
+
+type Interruptible interface {
+	AddInterrupt(*Interrupt)
+}

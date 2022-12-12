@@ -2,8 +2,16 @@ package apu
 
 import (
 	"github.com/gabe565/gones/internal/consts"
+	"github.com/gabe565/gones/internal/interrupts"
+	"github.com/gabe565/gones/internal/memory"
 	log "github.com/sirupsen/logrus"
 )
+
+type CPU interface {
+	memory.Read8
+	interrupts.Interruptible
+	AddStall(uint8)
+}
 
 const FrameCounterRate = consts.CpuFrequency / 240.0
 
@@ -49,6 +57,7 @@ type APU struct {
 	Enabled    bool
 	SampleRate float64
 	Volume     float32
+	cpu        CPU
 
 	Square   [2]Square
 	Triangle Triangle
@@ -60,8 +69,6 @@ type APU struct {
 	FrameValue  byte
 
 	InterruptInhibit bool
-
-	irqOccurred bool
 
 	buf chan float32
 }
@@ -152,15 +159,8 @@ func (a *APU) Step() {
 }
 
 func (a *APU) SetCpu(c CPU) {
+	a.cpu = c
 	a.DMC.cpu = c
-}
-
-func (a *APU) IRQ() bool {
-	if a.irqOccurred {
-		a.irqOccurred = false
-		return true
-	}
-	return false
 }
 
 func (a *APU) stepFrameCounter() {
@@ -180,7 +180,7 @@ func (a *APU) stepFrameCounter() {
 			a.stepSweep()
 			a.stepLength()
 			if a.FramePeriod == 4 && !a.InterruptInhibit {
-				a.irqOccurred = true
+				a.cpu.AddInterrupt(&interrupts.IRQ)
 			}
 		}
 	}

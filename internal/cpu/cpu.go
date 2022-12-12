@@ -13,7 +13,6 @@ func New(b memory.ReadWrite) *CPU {
 		Status:       DefaultStatus,
 		StackPointer: StackReset,
 		bus:          b,
-		Interrupt:    make(chan interrupts.Interrupt, 1),
 	}
 }
 
@@ -46,7 +45,7 @@ type CPU struct {
 
 	Cycles uint
 
-	Interrupt chan interrupts.Interrupt
+	interrupt *interrupts.Interrupt
 
 	Stall uint8
 }
@@ -76,7 +75,7 @@ func (c *CPU) Load(program []byte) {
 	c.WriteMem16(consts.ResetAddr, consts.PrgRomAddr)
 }
 
-func (c *CPU) interrupt(interrupt interrupts.Interrupt) {
+func (c *CPU) handleInterrupt(interrupt interrupts.Interrupt) {
 	c.stackPush16(c.ProgramCounter)
 	status := c.Status
 	status.Break = false
@@ -102,8 +101,9 @@ func (c *CPU) Step() (uint, error) {
 
 	cycles := c.Cycles
 
-	if len(c.Interrupt) > 0 {
-		c.interrupt(<-c.Interrupt)
+	if c.interrupt != nil {
+		c.handleInterrupt(*c.interrupt)
+		c.interrupt = nil
 	}
 
 	code := c.ReadMem(c.ProgramCounter)
@@ -128,4 +128,10 @@ func (c *CPU) Step() (uint, error) {
 
 func (c *CPU) AddStall(stall uint8) {
 	c.Stall += stall
+}
+
+func (c *CPU) AddInterrupt(i *interrupts.Interrupt) {
+	if c.interrupt == nil {
+		c.interrupt = i
+	}
 }

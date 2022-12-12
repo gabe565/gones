@@ -3,6 +3,7 @@ package ppu
 import (
 	"fmt"
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
 	"image"
@@ -17,6 +18,7 @@ func New(mapper cartridge.Mapper) *PPU {
 
 type PPU struct {
 	mapper cartridge.Mapper
+	cpu    interrupts.Interruptible
 
 	Ctrl      registers.Control
 	Mask      registers.Mask
@@ -34,7 +36,7 @@ type PPU struct {
 	Scanline uint16
 	Cycles   uint
 
-	nmiOffset int8
+	nmiOffset uint8
 
 	ReadBuf byte
 	image   *image.RGBA
@@ -171,8 +173,11 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 }
 
 func (p *PPU) tick() {
-	if p.nmiOffset != -1 {
+	if p.nmiOffset != 0 {
 		p.nmiOffset -= 1
+		if p.nmiOffset == 0 && p.Status.Vblank && p.Ctrl.EnableNMI {
+			p.cpu.AddInterrupt(&interrupts.NMI)
+		}
 	}
 
 	if p.Mask.BackgroundEnable || p.Mask.SpriteEnable {
@@ -286,10 +291,6 @@ func (p *PPU) Reset() {
 	p.AddrLatch = false
 }
 
-func (p *PPU) NMI() bool {
-	return p.nmiOffset == 0 && p.Status.Vblank && p.Ctrl.EnableNMI
-}
-
 func (p *PPU) readPalette(addr uint16) byte {
 	if addr >= 16 && addr%4 == 0 {
 		addr -= 16
@@ -310,4 +311,8 @@ func (p *PPU) updateNmi() {
 		p.nmiOffset = 14
 	}
 	p.Status.PrevVblank = nmi
+}
+
+func (p *PPU) SetCpu(c interrupts.Interruptible) {
+	p.cpu = c
 }

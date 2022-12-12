@@ -9,7 +9,6 @@ import (
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/cpu"
-	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
@@ -55,6 +54,8 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 	console.APU = apu.New()
 	console.Bus = bus.New(console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)
+
+	console.PPU.SetCpu(console.CPU)
 	console.APU.SetCpu(console.CPU)
 
 	console.CPU.Reset()
@@ -112,19 +113,10 @@ func (c *Console) Step() error {
 		if c.PPU.Step() {
 			err = ErrRender
 		}
-		if nmi := c.PPU.NMI(); nmi {
-			c.CPU.Interrupt <- interrupts.NMI
-		}
 	}
 
 	for i := uint(0); i < cycles; i += 1 {
 		c.APU.Step()
-	}
-	if irq := c.APU.IRQ(); irq {
-		select {
-		case c.CPU.Interrupt <- interrupts.IRQ:
-		default:
-		}
 	}
 
 	return err
