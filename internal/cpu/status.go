@@ -17,12 +17,12 @@ const (
 	InterruptDisable
 	Decimal
 	Break
-	Break2
+	Unused
 	Overflow
 	Negative
 )
 
-var DefaultStatus = Status{InterruptDisable: true, Break2: true}
+var DefaultStatus = Status{InterruptDisable: true}
 
 type Status struct {
 	Carry            bool
@@ -30,7 +30,6 @@ type Status struct {
 	InterruptDisable bool
 	Decimal          bool
 	Break            bool
-	Break2           bool
 	Overflow         bool
 	Negative         bool
 }
@@ -52,16 +51,13 @@ func (s *Status) Get() byte {
 	if s.Break {
 		v |= Break
 	}
-	if s.Break2 {
-		v |= Break2
-	}
 	if s.Overflow {
 		v |= Overflow
 	}
 	if s.Negative {
 		v |= Negative
 	}
-	return v
+	return v | Unused
 }
 
 func (s *Status) Set(data byte) {
@@ -70,7 +66,6 @@ func (s *Status) Set(data byte) {
 	s.InterruptDisable = data&InterruptDisable != 0
 	s.Decimal = data&Decimal != 0
 	s.Break = data&Break != 0
-	s.Break2 = data&Break2 != 0
 	s.Overflow = data&Overflow != 0
 	s.Negative = data&Negative != 0
 }

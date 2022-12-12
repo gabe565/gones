@@ -265,7 +265,6 @@ func bpl(c *CPU, mode AddressingMode) {
 func brk(c *CPU, mode AddressingMode) {
 	c.stackPush16(c.ProgramCounter)
 	c.Status.Break = true
-	c.Status.Break2 = true
 	php(c, mode)
 	sei(c, mode)
 	c.ProgramCounter = c.ReadMem16(0xFFFE)
@@ -735,7 +734,6 @@ func pha(c *CPU, mode AddressingMode) {
 func php(c *CPU, mode AddressingMode) {
 	status := c.Status
 	status.Break = true
-	status.Break2 = true
 	c.stackPush(status.Get())
 }
 
@@ -764,7 +762,6 @@ func plp(c *CPU, mode AddressingMode) {
 	flags := c.stackPop()
 	c.Status.Set(flags)
 	c.Status.Break = false
-	c.Status.Break2 = true
 }
 
 // rla - Undocumented Opcode
@@ -873,7 +870,6 @@ func rti(c *CPU, mode AddressingMode) {
 	flags := c.stackPop()
 	c.Status.Set(flags)
 	c.Status.Break = false
-	c.Status.Break2 = true
 
 	c.ProgramCounter = c.stackPop16()
 }

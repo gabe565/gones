@@ -79,7 +79,6 @@ func (c *CPU) handleInterrupt(interrupt interrupts.Interrupt) {
 	c.stackPush16(c.ProgramCounter)
 	status := c.Status
 	status.Break = false
-	status.Break2 = true
 
 	c.stackPush(status.Get())
 	c.Status.InterruptDisable = true
