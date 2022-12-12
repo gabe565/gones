@@ -24,9 +24,11 @@ type Mapper2 struct {
 	PrgBank2  uint
 }
 
-func (m *Mapper2) Step() {}
+func (m *Mapper2) Step(renderEnabled bool, scanline uint16, cycle uint) {}
 
 func (m *Mapper2) Cartridge() *Cartridge { return m.cartridge }
+
+func (m *Mapper2) SetCpu(_ CPU) {}
 
 func (m *Mapper2) ReadMem(addr uint16) byte {
 	switch {

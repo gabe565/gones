@@ -3,13 +3,19 @@ package cartridge
 import (
 	"errors"
 	"fmt"
+	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/memory"
 )
+
+type CPU interface {
+	interrupts.Interruptible
+}
 
 type Mapper interface {
 	memory.ReadWrite8
 	Cartridge() *Cartridge
-	Step()
+	Step(renderEnabled bool, scanline uint16, cycle uint)
+	SetCpu(CPU)
 }
 
 var ErrUnsupportedMapper = errors.New("unsupported mapper")
@@ -20,6 +26,8 @@ func NewMapper(cartridge *Cartridge) (Mapper, error) {
 		return NewMapper2(cartridge), nil
 	case 1:
 		return NewMapper1(cartridge), nil
+	case 4:
+		return NewMapper4(cartridge), nil
 	case 7:
 		return NewMapper7(cartridge), nil
 	default:

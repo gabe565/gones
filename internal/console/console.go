@@ -55,6 +55,7 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 	console.Bus = bus.New(console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)
 
+	console.Mapper.SetCpu(console.CPU)
 	console.PPU.SetCpu(console.CPU)
 	console.APU.SetCpu(console.CPU)
 
@@ -113,6 +114,11 @@ func (c *Console) Step() error {
 		if c.PPU.Step() {
 			err = ErrRender
 		}
+		c.Mapper.Step(
+			c.PPU.Mask.BackgroundEnable || c.PPU.Mask.SpriteEnable,
+			c.PPU.Scanline,
+			c.PPU.Cycles,
+		)
 	}
 
 	for i := uint(0); i < cycles; i += 1 {

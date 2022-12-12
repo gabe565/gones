@@ -29,9 +29,11 @@ type Mapper1 struct {
 	ChrOffsets    [2]int
 }
 
-func (m *Mapper1) Step() {}
+func (m *Mapper1) Step(renderEnabled bool, scanline uint16, cycle uint) {}
 
 func (m *Mapper1) Cartridge() *Cartridge { return m.cartridge }
+
+func (m *Mapper1) SetCpu(_ CPU) {}
 
 func (m *Mapper1) ReadMem(addr uint16) byte {
 	switch {
