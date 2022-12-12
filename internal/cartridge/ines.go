@@ -19,6 +19,23 @@ type iNESFileHeader struct {
 	_        [7]byte
 }
 
+func (i iNESFileHeader) Mapper() byte {
+	mapper1 := i.Control[0] >> 4
+	mapper2 := i.Control[1] >> 4
+	return mapper2<<4 | mapper1
+}
+
+func (i iNESFileHeader) Mirror() Mirror {
+	if i.Control[0]>>3&1 == 1 {
+		return FourScreen
+	}
+	return Mirror(i.Control[0] & 1)
+}
+
+func (i iNESFileHeader) Battery() bool {
+	return (i.Control[0]>>1)&1 == 1
+}
+
 var iNesMagic = [4]byte{'N', 'E', 'S', 0x1A}
 
 var ErrInvalidRom = errors.New("invalid ROM")
@@ -48,9 +65,9 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 	}
 
 	cartridge := New()
-	cartridge.Mapper = getMapper(header.Control)
-	cartridge.Mirror = getMirror(header.Control[0])
-	cartridge.Battery = hasBattery(header.Control[0])
+	cartridge.Mapper = header.Mapper()
+	cartridge.Mirror = header.Mirror()
+	cartridge.Battery = header.Battery()
 
 	cartridge.prg = make([]byte, int(header.PrgCount)*consts.PrgChunkSize)
 	if _, err := io.ReadFull(r, cartridge.prg); err != nil {
@@ -76,21 +93,4 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 	cartridge.hash = fmt.Sprintf("%x", md5.Sum(nil))
 
 	return cartridge, nil
-}
-
-func getMapper(data [2]byte) byte {
-	mapper1 := data[0] >> 4
-	mapper2 := data[1] >> 4
-	return mapper2<<4 | mapper1
-}
-
-func getMirror(data byte) Mirror {
-	if data>>3&1 == 1 {
-		return FourScreen
-	}
-	return Mirror(data & 1)
-}
-
-func hasBattery(data byte) bool {
-	return (data>>1)&1 == 1
 }

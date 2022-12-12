@@ -2,69 +2,78 @@ package cartridge
 
 import "testing"
 
-func Test_hasBattery(t *testing.T) {
-	type args struct {
-		data byte
+func Test_iNESFileHeader_Battery(t *testing.T) {
+	type fields struct {
+		Control [2]byte
 	}
 	tests := []struct {
-		name string
-		args args
-		want bool
+		name   string
+		fields fields
+		want   bool
 	}{
-		{"false", args{}, false},
-		{"true", args{0b10}, true},
-		{"extraneous true", args{0b1011}, true},
-		{"extraneous false", args{0b1001}, false},
+		{"false", fields{}, false},
+		{"true", fields{[2]byte{0b10, 0}}, true},
+		{"extraneous true", fields{[2]byte{0b1011, 0}}, true},
+		{"extraneous false", fields{[2]byte{0b1001, 0}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := hasBattery(tt.args.data); got != tt.want {
-				t.Errorf("hasBattery() = %v, want %v", got, tt.want)
+			i := iNESFileHeader{
+				Control: tt.fields.Control,
+			}
+			if got := i.Battery(); got != tt.want {
+				t.Errorf("Battery() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_getMirror(t *testing.T) {
-	type args struct {
-		data byte
+func Test_iNESFileHeader_Mirror(t *testing.T) {
+	type fields struct {
+		Control [2]byte
 	}
 	tests := []struct {
-		name string
-		args args
-		want Mirror
+		name   string
+		fields fields
+		want   Mirror
 	}{
-		{"horizontal", args{}, Horizontal},
-		{"vertical", args{0b1}, Vertical},
-		{"four screen", args{0b1001}, FourScreen},
+		{"horizontal", fields{}, Horizontal},
+		{"vertical", fields{[2]byte{0b1, 0}}, Vertical},
+		{"four screen", fields{[2]byte{0b1001, 0}}, FourScreen},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getMirror(tt.args.data); got != tt.want {
-				t.Errorf("getMirror() = %v, want %v", got, tt.want)
+			i := iNESFileHeader{
+				Control: tt.fields.Control,
+			}
+			if got := i.Mirror(); got != tt.want {
+				t.Errorf("Mirror() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_getMapper(t *testing.T) {
-	type args struct {
-		data [2]byte
+func Test_iNESFileHeader_Mapper(t *testing.T) {
+	type fields struct {
+		Control [2]byte
 	}
 	tests := []struct {
-		name string
-		args args
-		want byte
+		name   string
+		fields fields
+		want   byte
 	}{
-		{"0", args{}, 0},
-		{"1", args{[2]byte{0b10000}}, 1},
-		{"2", args{[2]byte{0b100000}}, 2},
-		{"40", args{[2]byte{0b10000000, 0b100000}}, 40},
+		{"0", fields{}, 0},
+		{"1", fields{[2]byte{0b10000}}, 1},
+		{"2", fields{[2]byte{0b100000}}, 2},
+		{"40", fields{[2]byte{0b10000000, 0b100000}}, 40},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getMapper(tt.args.data); got != tt.want {
-				t.Errorf("getMapper() = %v, want %v", got, tt.want)
+			i := iNESFileHeader{
+				Control: tt.fields.Control,
+			}
+			if got := i.Mapper(); got != tt.want {
+				t.Errorf("Mapper() = %v, want %v", got, tt.want)
 			}
 		})
 	}
