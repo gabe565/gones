@@ -77,12 +77,8 @@ func (c *CPU) Load(program []byte) {
 
 func (c *CPU) handleInterrupt(interrupt interrupts.Interrupt) {
 	c.stackPush16(c.ProgramCounter)
-	status := c.Status
-	status.Break = false
-
-	c.stackPush(status.Get())
-	c.Status.InterruptDisable = true
-
+	php(c, 0)
+	sei(c, 0)
 	c.Cycles += uint(interrupt.Cycles)
 	c.ProgramCounter = c.ReadMem16(interrupt.VectorAddr)
 }

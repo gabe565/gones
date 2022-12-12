@@ -732,9 +732,7 @@ func pha(c *CPU, mode AddressingMode) {
 //
 // [PHP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PHP
 func php(c *CPU, mode AddressingMode) {
-	status := c.Status
-	status.Break = true
-	c.stackPush(status.Get())
+	c.stackPush(c.Status.Get() | Break)
 }
 
 // pla - Pull Accumulator
@@ -759,9 +757,7 @@ func pla(c *CPU, mode AddressingMode) {
 //
 // [PLP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#PLP
 func plp(c *CPU, mode AddressingMode) {
-	flags := c.stackPop()
-	c.Status.Set(flags)
-	c.Status.Break = false
+	c.Status.Set(c.stackPop() &^ Break)
 }
 
 // rla - Undocumented Opcode
@@ -867,10 +863,7 @@ func rra(c *CPU, mode AddressingMode) {
 //
 // [RTI Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#RTI
 func rti(c *CPU, mode AddressingMode) {
-	flags := c.stackPop()
-	c.Status.Set(flags)
-	c.Status.Break = false
-
+	c.Status.Set(c.stackPop() &^ Break)
 	c.ProgramCounter = c.stackPop16()
 }
 
