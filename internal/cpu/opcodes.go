@@ -34,7 +34,7 @@ func (o OpCode) String() string {
 // See [6502 Instruction Reference].
 //
 // [6502 Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html
-var OpCodes = []OpCode{
+var OpCodes = [...]OpCode{
 	0x93: {"*AHX", 0x93, 2, 6, IndirectY, ahx},
 	0x9F: {"*AHX", 0x9F, 3, 5, AbsoluteY, ahx},
 	0x4B: {"*ALR", 0x4B, 2, 2, Immediate, alr},
