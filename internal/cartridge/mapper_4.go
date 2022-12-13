@@ -8,10 +8,10 @@ import (
 
 func NewMapper4(cartridge *Cartridge) Mapper {
 	mapper := &Mapper4{cartridge: cartridge}
-	mapper.prgOffsets[0] = mapper.prgBankOffset(0)
-	mapper.prgOffsets[1] = mapper.prgBankOffset(1)
-	mapper.prgOffsets[2] = mapper.prgBankOffset(-2)
-	mapper.prgOffsets[3] = mapper.prgBankOffset(-1)
+	mapper.PrgOffsets[0] = mapper.prgBankOffset(0)
+	mapper.PrgOffsets[1] = mapper.prgBankOffset(1)
+	mapper.PrgOffsets[2] = mapper.prgBankOffset(-2)
+	mapper.PrgOffsets[3] = mapper.prgBankOffset(-1)
 	gob.Register(mapper)
 	return mapper
 }
@@ -19,15 +19,15 @@ func NewMapper4(cartridge *Cartridge) Mapper {
 type Mapper4 struct {
 	cartridge  *Cartridge
 	cpu        CPU
-	register   byte
-	registers  [8]byte
-	prgMode    bool
-	chrMode    bool
-	prgOffsets [4]int
-	chrOffsets [8]int
-	reload     byte
-	counter    byte
-	irqEnable  bool
+	Register   byte
+	Registers  [8]byte
+	PrgMode    bool
+	ChrMode    bool
+	PrgOffsets [4]int
+	ChrOffsets [8]int
+	Reload     byte
+	Counter    byte
+	IRQEnable  bool
 }
 
 func (m *Mapper4) Step(renderEnabled bool, scanline uint16, cycle uint) {
@@ -38,11 +38,11 @@ func (m *Mapper4) Step(renderEnabled bool, scanline uint16, cycle uint) {
 		return
 	case !renderEnabled:
 		return
-	case m.counter == 0:
-		m.counter = m.reload
+	case m.Counter == 0:
+		m.Counter = m.Reload
 	default:
-		m.counter -= 1
-		if m.counter == 0 && m.irqEnable {
+		m.Counter -= 1
+		if m.Counter == 0 && m.IRQEnable {
 			m.cpu.AddInterrupt(&interrupts.IRQ)
 		}
 	}
@@ -57,7 +57,7 @@ func (m *Mapper4) ReadMem(addr uint16) byte {
 	case addr < 0x2000:
 		bank := addr / 0x400
 		offset := int(addr % 0x400)
-		return m.cartridge.Chr[m.chrOffsets[bank]+offset]
+		return m.cartridge.Chr[m.ChrOffsets[bank]+offset]
 	case 0x6000 <= addr && addr < 0x8000:
 		addr -= 0x6000
 		return m.cartridge.Sram[addr]
@@ -65,7 +65,7 @@ func (m *Mapper4) ReadMem(addr uint16) byte {
 		addr -= 0x8000
 		bank := addr / 0x2000
 		offset := int(addr % 0x2000)
-		return m.cartridge.prg[m.prgOffsets[bank]+offset]
+		return m.cartridge.prg[m.PrgOffsets[bank]+offset]
 	default:
 		log.Fatalf("invalid mapper 4 read from $%04X", addr)
 		return 0
@@ -77,7 +77,7 @@ func (m *Mapper4) WriteMem(addr uint16, data byte) {
 	case addr < 0x2000:
 		bank := addr / 0x400
 		offset := int(addr % 0x400)
-		m.cartridge.Chr[m.chrOffsets[bank]+offset] = data
+		m.cartridge.Chr[m.ChrOffsets[bank]+offset] = data
 	case 0x6000 <= addr && addr < 0x8000:
 		addr -= 0x6000
 		m.cartridge.Sram[addr] = data
@@ -86,13 +86,13 @@ func (m *Mapper4) WriteMem(addr uint16, data byte) {
 		case addr < 0xA000:
 			if addr%2 == 0 {
 				// Bank select
-				m.prgMode = data&0x40 == 0x40
-				m.chrMode = data&0x80 == 0x80
-				m.register = data & 7
+				m.PrgMode = data&0x40 == 0x40
+				m.ChrMode = data&0x80 == 0x80
+				m.Register = data & 7
 				m.updateOffsets()
 			} else {
 				// Bank data
-				m.registers[m.register] = data
+				m.Registers[m.Register] = data
 				m.updateOffsets()
 			}
 		case 0xA000 <= addr && addr < 0xC000:
@@ -108,13 +108,13 @@ func (m *Mapper4) WriteMem(addr uint16, data byte) {
 		case 0xC000 <= addr && addr < 0xE000:
 			if addr%2 == 0 {
 				// IRQ Latch
-				m.reload = data
+				m.Reload = data
 			} else {
 				// IRQ Reload
-				m.counter = 0
+				m.Counter = 0
 			}
 		case 0xE000 <= addr:
-			m.irqEnable = addr%2 == 1
+			m.IRQEnable = addr%2 == 1
 		}
 	default:
 		log.Fatalf("invalid mapper 4 write to $%04X", addr)
@@ -146,35 +146,35 @@ func (m *Mapper4) chrBankOffset(i int) int {
 }
 
 func (m *Mapper4) updateOffsets() {
-	if m.prgMode {
-		m.prgOffsets[0] = m.prgBankOffset(-2)
-		m.prgOffsets[1] = m.prgBankOffset(int(m.registers[7]))
-		m.prgOffsets[2] = m.prgBankOffset(int(m.registers[6]))
-		m.prgOffsets[3] = m.prgBankOffset(-1)
+	if m.PrgMode {
+		m.PrgOffsets[0] = m.prgBankOffset(-2)
+		m.PrgOffsets[1] = m.prgBankOffset(int(m.Registers[7]))
+		m.PrgOffsets[2] = m.prgBankOffset(int(m.Registers[6]))
+		m.PrgOffsets[3] = m.prgBankOffset(-1)
 	} else {
-		m.prgOffsets[0] = m.prgBankOffset(int(m.registers[6]))
-		m.prgOffsets[1] = m.prgBankOffset(int(m.registers[7]))
-		m.prgOffsets[2] = m.prgBankOffset(-2)
-		m.prgOffsets[3] = m.prgBankOffset(-1)
+		m.PrgOffsets[0] = m.prgBankOffset(int(m.Registers[6]))
+		m.PrgOffsets[1] = m.prgBankOffset(int(m.Registers[7]))
+		m.PrgOffsets[2] = m.prgBankOffset(-2)
+		m.PrgOffsets[3] = m.prgBankOffset(-1)
 	}
 
-	if m.chrMode {
-		m.chrOffsets[0] = m.chrBankOffset(int(m.registers[2]))
-		m.chrOffsets[1] = m.chrBankOffset(int(m.registers[3]))
-		m.chrOffsets[2] = m.chrBankOffset(int(m.registers[4]))
-		m.chrOffsets[3] = m.chrBankOffset(int(m.registers[5]))
-		m.chrOffsets[4] = m.chrBankOffset(int(m.registers[0] & 0xFE))
-		m.chrOffsets[5] = m.chrBankOffset(int(m.registers[0] | 1))
-		m.chrOffsets[6] = m.chrBankOffset(int(m.registers[1] & 0xFE))
-		m.chrOffsets[7] = m.chrBankOffset(int(m.registers[1] | 1))
+	if m.ChrMode {
+		m.ChrOffsets[0] = m.chrBankOffset(int(m.Registers[2]))
+		m.ChrOffsets[1] = m.chrBankOffset(int(m.Registers[3]))
+		m.ChrOffsets[2] = m.chrBankOffset(int(m.Registers[4]))
+		m.ChrOffsets[3] = m.chrBankOffset(int(m.Registers[5]))
+		m.ChrOffsets[4] = m.chrBankOffset(int(m.Registers[0] & 0xFE))
+		m.ChrOffsets[5] = m.chrBankOffset(int(m.Registers[0] | 1))
+		m.ChrOffsets[6] = m.chrBankOffset(int(m.Registers[1] & 0xFE))
+		m.ChrOffsets[7] = m.chrBankOffset(int(m.Registers[1] | 1))
 	} else {
-		m.chrOffsets[0] = m.chrBankOffset(int(m.registers[0] & 0xFE))
-		m.chrOffsets[1] = m.chrBankOffset(int(m.registers[0] | 1))
-		m.chrOffsets[2] = m.chrBankOffset(int(m.registers[1] & 0xFE))
-		m.chrOffsets[3] = m.chrBankOffset(int(m.registers[1] | 1))
-		m.chrOffsets[4] = m.chrBankOffset(int(m.registers[2]))
-		m.chrOffsets[5] = m.chrBankOffset(int(m.registers[3]))
-		m.chrOffsets[6] = m.chrBankOffset(int(m.registers[4]))
-		m.chrOffsets[7] = m.chrBankOffset(int(m.registers[5]))
+		m.ChrOffsets[0] = m.chrBankOffset(int(m.Registers[0] & 0xFE))
+		m.ChrOffsets[1] = m.chrBankOffset(int(m.Registers[0] | 1))
+		m.ChrOffsets[2] = m.chrBankOffset(int(m.Registers[1] & 0xFE))
+		m.ChrOffsets[3] = m.chrBankOffset(int(m.Registers[1] | 1))
+		m.ChrOffsets[4] = m.chrBankOffset(int(m.Registers[2]))
+		m.ChrOffsets[5] = m.chrBankOffset(int(m.Registers[3]))
+		m.ChrOffsets[6] = m.chrBankOffset(int(m.Registers[4]))
+		m.ChrOffsets[7] = m.chrBankOffset(int(m.Registers[5]))
 	}
 }
