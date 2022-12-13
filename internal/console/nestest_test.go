@@ -3,21 +3,26 @@ package console
 import (
 	"bufio"
 	_ "embed"
-	"github.com/gabe565/gones/internal/test_roms/nestest"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
 )
 
+//go:embed nes-test-roms/other/nestest.nes
+var nestest string
+
+//go:embed nes-test-roms/other/nestest.log
+var nestestLog string
+
 func Test_nestest(t *testing.T) {
-	c, err := stubConsole(strings.NewReader(nestest.ROM))
+	c, err := stubConsole(strings.NewReader(nestest))
 	if !assert.NoError(t, err) {
 		return
 	}
 
 	c.CPU.ProgramCounter = 0xC000
 
-	scanner := bufio.NewScanner(strings.NewReader(nestest.Log))
+	scanner := bufio.NewScanner(strings.NewReader(nestestLog))
 	var checkedLines uint
 	for scanner.Scan() {
 		checkedLines += 1
@@ -50,5 +55,5 @@ func Test_nestest(t *testing.T) {
 		return
 	}
 
-	assert.EqualValues(t, strings.Count(nestest.Log, "\n"), checkedLines)
+	assert.EqualValues(t, strings.Count(nestestLog, "\n"), checkedLines)
 }
