@@ -44,9 +44,10 @@ type PPU struct {
 
 	nmiOffset uint8
 
-	ReadBuf byte
-	openBus byte
-	image   *image.RGBA
+	ReadBuf    byte
+	openBus    byte
+	RenderDone bool
+	image      *image.RGBA
 
 	BgTile     BgTile
 	SpriteData SpriteData
@@ -254,7 +255,7 @@ func (p *PPU) tick() {
 	}
 }
 
-func (p *PPU) Step() bool {
+func (p *PPU) Step() {
 	p.tick()
 
 	renderingEnabled := p.Mask.BackgroundEnable || p.Mask.SpriteEnable
@@ -324,10 +325,8 @@ func (p *PPU) Step() bool {
 		p.updateNmi()
 		p.Status.SpriteOverflow = false
 		p.Status.SpriteZeroHit = false
-		return true
+		p.RenderDone = true
 	}
-
-	return false
 }
 
 func (p *PPU) Reset() {

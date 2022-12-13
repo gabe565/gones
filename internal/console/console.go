@@ -96,8 +96,6 @@ func (c *Console) Close() error {
 	return nil
 }
 
-var ErrRender = errors.New("render triggered")
-
 func (c *Console) Step() error {
 	if c.enableTrace {
 		fmt.Println(c.CPU.Trace())
@@ -109,9 +107,7 @@ func (c *Console) Step() error {
 	}
 
 	for i := uint(0); i < cycles*3; i += 1 {
-		if c.PPU.Step() {
-			err = ErrRender
-		}
+		c.PPU.Step()
 		c.Mapper.Step(
 			c.PPU.Mask.BackgroundEnable || c.PPU.Mask.SpriteEnable,
 			c.PPU.Scanline,
@@ -152,13 +148,11 @@ func (c *Console) Update() error {
 
 	for {
 		if err := c.Step(); err != nil {
-			if errors.Is(err, ErrRender) {
-				break
-			}
 			return err
 		}
 
-		if c.debug == DebugStepFrame {
+		if c.PPU.RenderDone || c.debug == DebugStepFrame {
+			c.PPU.RenderDone = false
 			break
 		}
 	}
