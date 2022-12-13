@@ -68,6 +68,15 @@ func (j *Controller) UpdateInput() {
 		}
 		j.buttons[button] = pressed
 	}
+
+	// Directional safety
+	if j.buttons[Left] && j.buttons[Right] {
+		j.buttons[Right] = false
+	}
+	if j.buttons[Up] && j.buttons[Down] {
+		j.buttons[Down] = false
+	}
+
 	if turboPressed {
 		j.turbo = !j.turbo
 	} else {
