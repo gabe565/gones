@@ -32,7 +32,7 @@ type Mapper4 struct {
 
 func (m *Mapper4) Step(renderEnabled bool, scanline uint16, cycle uint) {
 	switch {
-	case cycle != 260:
+	case cycle != 280:
 		return
 	case 240 <= scanline && scanline < 261:
 		return
