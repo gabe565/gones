@@ -14,7 +14,7 @@ func (p *PPU) evaluateSprites() {
 	height := int(p.Ctrl.SpriteSize())
 	var count uint8
 
-	for i := 0; i < 64; i++ {
+	for i := 0; i < 64; i += 1 {
 		sprite := p.Oam[i*4 : i*4+4 : i*4+4]
 		y := sprite[0]
 		a := sprite[2]
@@ -69,7 +69,7 @@ func (p *PPU) fetchSpritePattern(tile, attributes byte, row int) uint32 {
 	tileHi := p.ReadDataAddr(addr + 8)
 	var data uint32
 
-	for i := 0; i < 8; i++ {
+	for i := 0; i < 8; i += 1 {
 		var p1, p2 byte
 		if attributes&0x40 == 0x40 {
 			p1 = (tileLo & 1) << 0
@@ -94,14 +94,14 @@ func (p *PPU) spritePixel() (byte, byte) {
 		return 0, 0
 	}
 
-	for i := uint8(0); i < p.SpriteData.Count; i++ {
+	for i := uint8(0); i < p.SpriteData.Count; i += 1 {
 		offset := int(p.Cycles) - 1 - int(p.SpriteData.Positions[i])
 		if offset < 0 || offset > 7 {
 			continue
 		}
 
 		offset = 7 - offset
-		color := byte((p.SpriteData.Patterns[i] >> byte(offset*4)) & 0x0F)
+		color := byte((p.SpriteData.Patterns[i] >> byte(offset*4)) & 0xF)
 		if color%4 == 0 {
 			continue
 		}
