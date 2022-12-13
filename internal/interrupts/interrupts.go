@@ -1,9 +1,10 @@
 package interrupts
 
 type Interrupt struct {
-	Name       string
-	Cycles     uint16
-	VectorAddr uint16
+	Name          string
+	Cycles        uint16
+	StackProhibit bool
+	VectorAddr    uint16
 }
 
 func (i Interrupt) Error() string {
@@ -14,6 +15,12 @@ var NMI = Interrupt{
 	Name:       "NMI",
 	Cycles:     7,
 	VectorAddr: 0xFFFA,
+}
+
+var Reset = Interrupt{
+	Name:          "Reset",
+	StackProhibit: true,
+	VectorAddr:    0xFFFC,
 }
 
 var IRQ = Interrupt{

@@ -3,17 +3,18 @@ package cpu
 import (
 	"errors"
 	"fmt"
-	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/memory"
 )
 
 func New(b memory.ReadWrite) *CPU {
-	return &CPU{
+	cpu := CPU{
+		StackPointer: byte(StackAddr - 3),
 		Status:       DefaultStatus,
-		StackPointer: StackReset,
 		bus:          b,
 	}
+	cpu.ProgramCounter = cpu.ReadMem16(interrupts.Reset.VectorAddr)
+	return &cpu
 }
 
 // CPU implements the NES CPU.
@@ -50,24 +51,18 @@ type CPU struct {
 	Stall uint8
 }
 
-const (
-	// StackAddr is the memory address of the stack
-	StackAddr = 0x100
-
-	// StackReset is the start value for the stack pointer
-	StackReset = 0xFD
-)
-
 // Reset resets the CPU and sets ProgramCounter to the value of the [Reset] Vector.
 func (c *CPU) Reset() {
-	c.ProgramCounter = c.ReadMem16(consts.ResetAddr)
-	c.StackPointer = StackReset
-	c.Status = DefaultStatus
+	c.handleInterrupt(interrupts.Reset)
 }
 
 func (c *CPU) handleInterrupt(interrupt interrupts.Interrupt) {
-	c.stackPush16(c.ProgramCounter)
-	php(c, 0)
+	if interrupt.StackProhibit {
+		c.StackPointer -= 3
+	} else {
+		c.stackPush16(c.ProgramCounter)
+		php(c, 0)
+	}
 	sei(c, 0)
 	c.Cycles += uint(interrupt.Cycles)
 	c.ProgramCounter = c.ReadMem16(interrupt.VectorAddr)

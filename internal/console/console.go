@@ -59,8 +59,6 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 	console.PPU.SetCpu(console.CPU)
 	console.APU.SetCpu(console.CPU)
 
-	console.CPU.Reset()
-
 	if config.K.Bool("audio.enabled") {
 		console.audioCtx = audio.NewContext(consts.AudioSampleRate)
 		console.player, err = console.audioCtx.NewPlayer(console.APU)

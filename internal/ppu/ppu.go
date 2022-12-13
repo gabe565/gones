@@ -331,15 +331,8 @@ func (p *PPU) Step() bool {
 }
 
 func (p *PPU) Reset() {
-	p.Cycles = 0
-	p.Scanline = 0
 	p.WriteCtrl(0)
 	p.WriteMask(0)
-	p.WriteOamAddr(0)
-	p.Addr = registers.Address{}
-	p.TmpAddr = registers.Address{}
-	p.BgTile = BgTile{}
-	p.SpriteData = SpriteData{}
 	p.OddFrame = false
 	p.AddrLatch = false
 }

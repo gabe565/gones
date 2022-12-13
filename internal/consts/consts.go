@@ -10,9 +10,6 @@ const (
 	// ChrChunkSize is the size of the smallest CHR
 	ChrChunkSize = 0x2000
 
-	// ResetAddr is the memory address for the Reset Interrupt Vector.
-	ResetAddr = 0xFFFC
-
 	CpuFrequency = 1789772
 
 	AudioSampleRate = 44100

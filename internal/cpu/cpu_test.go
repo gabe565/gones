@@ -17,7 +17,6 @@ func stubCpu(program []byte) *CPU {
 	bus := bus.New(mapper, ppu, apu)
 	cpu := New(bus)
 	apu.SetCpu(cpu)
-	cpu.Reset()
 	return cpu
 }
 

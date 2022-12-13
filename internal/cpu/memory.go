@@ -40,6 +40,9 @@ func (c *CPU) WriteMem16(addr uint16, data uint16) {
 	c.bus.WriteMem16(addr, data)
 }
 
+// StackAddr is the memory address of the stack
+const StackAddr = 0x100
+
 func (c *CPU) stackPush(data byte) {
 	c.WriteMem(StackAddr+uint16(c.StackPointer), data)
 	c.StackPointer -= 1

@@ -130,12 +130,11 @@ func (a *APU) ReadMem(addr uint16) byte {
 }
 
 func (a *APU) Reset() {
-	a.clearBuf()
-	a.Square[0] = Square{Channel: 1}
-	a.Square[1] = Square{Channel: 2}
-	a.Triangle = Triangle{}
-	a.Noise = Noise{ShiftRegister: 1}
-	a.DMC = DMC{cpu: a.DMC.cpu}
+	a.Square[0].SetEnabled(false)
+	a.Square[1].SetEnabled(false)
+	a.Triangle.SetEnabled(false)
+	a.Noise.SetEnabled(false)
+	a.DMC.SetEnabled(false)
 }
 
 func (a *APU) Step() {
@@ -233,16 +232,6 @@ func (a *APU) output() float32 {
 	tndOut := tndTable[3*t+2*n+d]
 
 	return pulseOut + tndOut
-}
-
-func (a *APU) clearBuf() {
-	for {
-		select {
-		case <-a.buf:
-		default:
-			return
-		}
-	}
 }
 
 func (a *APU) Read(p []byte) (int, error) {

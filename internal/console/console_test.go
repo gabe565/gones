@@ -33,7 +33,6 @@ func Test_nestest(t *testing.T) {
 	c.CPU = cpu.New(c.Bus)
 	c.APU.SetCpu(c.CPU)
 
-	c.CPU.Reset()
 	c.CPU.ProgramCounter = 0xC000
 
 	scanner := bufio.NewScanner(strings.NewReader(nestest.Log))
