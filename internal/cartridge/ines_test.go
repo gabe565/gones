@@ -3,6 +3,8 @@ package cartridge
 import "testing"
 
 func Test_iNESFileHeader_Battery(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Control [2]byte
 	}
@@ -29,6 +31,8 @@ func Test_iNESFileHeader_Battery(t *testing.T) {
 }
 
 func Test_iNESFileHeader_Mirror(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Control [2]byte
 	}
@@ -54,6 +58,8 @@ func Test_iNESFileHeader_Mirror(t *testing.T) {
 }
 
 func Test_iNESFileHeader_Mapper(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Control [2]byte
 	}

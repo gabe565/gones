@@ -15,6 +15,8 @@ func stubPpu() (*PPU, *cartridge.Cartridge) {
 }
 
 func TestPPU_VramWrite(t *testing.T) {
+	t.Parallel()
+
 	ppu, _ := stubPpu()
 	ppu.WriteAddr(0x23)
 	ppu.WriteAddr(0x05)
@@ -23,6 +25,8 @@ func TestPPU_VramWrite(t *testing.T) {
 }
 
 func TestPPU_VramRead(t *testing.T) {
+	t.Parallel()
+
 	ppu, _ := stubPpu()
 	ppu.Vram[0x305] = 0x66
 	ppu.WriteAddr(0x23)
@@ -33,6 +37,8 @@ func TestPPU_VramRead(t *testing.T) {
 }
 
 func TestPPU_VramRead_CrossPage(t *testing.T) {
+	t.Parallel()
+
 	ppu, _ := stubPpu()
 	ppu.Vram[0x1FF] = 0x66
 	ppu.Vram[0x200] = 0x77
@@ -44,6 +50,8 @@ func TestPPU_VramRead_CrossPage(t *testing.T) {
 }
 
 func TestPPU_VramRead_Step32(t *testing.T) {
+	t.Parallel()
+
 	ppu, _ := stubPpu()
 	ppu.WriteCtrl(0b100)
 	ppu.Vram[0x1FF] = 0x66
@@ -58,6 +66,8 @@ func TestPPU_VramRead_Step32(t *testing.T) {
 }
 
 func TestPPU_HorizontalMirror(t *testing.T) {
+	t.Parallel()
+
 	ppu, _ := stubPpu()
 	ppu.WriteAddr(0x24)
 	ppu.WriteAddr(0x05)
@@ -81,6 +91,8 @@ func TestPPU_HorizontalMirror(t *testing.T) {
 }
 
 func TestPPU_VerticalMirror(t *testing.T) {
+	t.Parallel()
+
 	ppu, cart := stubPpu()
 	cart.Mirror = cartridge.Vertical
 	ppu.WriteAddr(0x20)
@@ -105,6 +117,8 @@ func TestPPU_VerticalMirror(t *testing.T) {
 }
 
 func TestPPU_StatusResetsLatch(t *testing.T) {
+	t.Parallel()
+
 	ppu, _ := stubPpu()
 	ppu.Vram[0x305] = 0x66
 	ppu.WriteAddr(0x21)
@@ -121,6 +135,8 @@ func TestPPU_StatusResetsLatch(t *testing.T) {
 }
 
 func TestPPU_VramMirror(t *testing.T) {
+	t.Parallel()
+
 	ppu, _ := stubPpu()
 	ppu.Vram[0x305] = 0x66
 
@@ -132,6 +148,8 @@ func TestPPU_VramMirror(t *testing.T) {
 }
 
 func TestPPU_StatusResetsVblank(t *testing.T) {
+	t.Parallel()
+
 	ppu, _ := stubPpu()
 	ppu.Status.Vblank = true
 	assert.EqualValues(t, 1, ppu.ReadStatus()>>7)
@@ -139,6 +157,8 @@ func TestPPU_StatusResetsVblank(t *testing.T) {
 }
 
 func TestCPU_OamReadWrite(t *testing.T) {
+	t.Parallel()
+
 	ppu, _ := stubPpu()
 	ppu.WriteOamAddr(0x10)
 	ppu.WriteOam(0x66)
@@ -150,6 +170,8 @@ func TestCPU_OamReadWrite(t *testing.T) {
 }
 
 func TestCPU_OamDma(t *testing.T) {
+	t.Parallel()
+
 	ppu, _ := stubPpu()
 
 	var data [256]byte

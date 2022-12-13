@@ -15,6 +15,8 @@ var nestest string
 var nestestLog string
 
 func Test_nestest(t *testing.T) {
+	t.Parallel()
+
 	c, err := stubConsole(strings.NewReader(nestest))
 	if !assert.NoError(t, err) {
 		return
