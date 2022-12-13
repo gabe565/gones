@@ -157,7 +157,7 @@ func axs(c *CPU, mode AddressingMode) {
 	data := c.ReadMem(addr)
 	result := c.RegisterX & c.Accumulator
 	c.Status.Carry = data <= result
-	result -= 1
+	result -= data
 	c.RegisterX = result
 	c.updateZeroAndNegFlags(result)
 }
@@ -955,10 +955,10 @@ func sei(c *CPU, _ AddressingMode) {
 // See [6502 Undocumented Opcodes]
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
-func shx(c *CPU, _ AddressingMode) {
-	addr := c.ReadMem16(c.ProgramCounter) + uint16(c.RegisterY)
+func shx(c *CPU, mode AddressingMode) {
+	addr, _ := c.getOperandAddress(mode)
 	data := c.RegisterX & (uint8(addr>>8) + 1)
-	c.WriteMem(addr, data)
+	c.WriteMem(uint16(data)<<8|addr&0xFF, data)
 }
 
 // shy - Undocumented Opcode
@@ -969,10 +969,10 @@ func shx(c *CPU, _ AddressingMode) {
 // See [6502 Undocumented Opcodes]
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
-func shy(c *CPU, _ AddressingMode) {
-	addr := c.ReadMem16(c.ProgramCounter) + uint16(c.RegisterX)
+func shy(c *CPU, mode AddressingMode) {
+	addr, _ := c.getOperandAddress(mode)
 	data := c.RegisterY & (uint8(addr>>8) + 1)
-	c.WriteMem(addr, data)
+	c.WriteMem(uint16(data)<<8|addr&0xFF, data)
 }
 
 // slo - Undocumented Opcode
