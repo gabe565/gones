@@ -81,5 +81,12 @@ func (c *Console) LoadState(num uint8) error {
 		return err
 	}
 
+	// gob doesn't handle interfaces in the same way as regular pointers
+	// c.Mapper will be a new instance and needs to be setup
+	c.Mapper.SetCartridge(c.Cartridge)
+	c.Mapper.SetCpu(c.CPU)
+	c.Bus.SetMapper(c.Mapper)
+	c.PPU.SetMapper(c.Mapper)
+
 	return nil
 }

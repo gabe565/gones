@@ -27,6 +27,8 @@ func (m *Mapper3) Step(_ bool, _ uint16, _ uint) {}
 
 func (m *Mapper3) Cartridge() *Cartridge { return m.cartridge }
 
+func (m *Mapper3) SetCartridge(c *Cartridge) { m.cartridge = c }
+
 func (m *Mapper3) SetCpu(_ CPU) {}
 
 func (m *Mapper3) ReadMem(addr uint16) byte {

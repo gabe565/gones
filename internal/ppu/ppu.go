@@ -361,3 +361,7 @@ func (p *PPU) updateNmi() {
 func (p *PPU) SetCpu(c CPU) {
 	p.cpu = c
 }
+
+func (p *PPU) SetMapper(m cartridge.Mapper) {
+	p.mapper = m
+}

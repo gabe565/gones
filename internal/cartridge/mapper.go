@@ -14,6 +14,7 @@ type CPU interface {
 type Mapper interface {
 	memory.ReadWrite8
 	Cartridge() *Cartridge
+	SetCartridge(*Cartridge)
 	Step(renderEnabled bool, scanline uint16, cycle uint)
 	SetCpu(CPU)
 }

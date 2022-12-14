@@ -111,3 +111,7 @@ func (b *Bus) UpdateInput() {
 	b.controller1.UpdateInput()
 	b.controller2.UpdateInput()
 }
+
+func (b *Bus) SetMapper(m cartridge.Mapper) {
+	b.mapper = m
+}

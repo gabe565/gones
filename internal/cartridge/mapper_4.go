@@ -50,6 +50,8 @@ func (m *Mapper4) Step(renderEnabled bool, scanline uint16, cycle uint) {
 
 func (m *Mapper4) Cartridge() *Cartridge { return m.cartridge }
 
+func (m *Mapper4) SetCartridge(c *Cartridge) { m.cartridge = c }
+
 func (m *Mapper4) SetCpu(c CPU) { m.cpu = c }
 
 func (m *Mapper4) ReadMem(addr uint16) byte {
