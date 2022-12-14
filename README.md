@@ -90,7 +90,7 @@ Eventually, this will be configurable in the UI.
   - CPU is stable, and `nestest.nes` passes.
 - [x] Cartridge implementation
   - [x] Support for mappers
-  - [ ] Common mappers implemented
+  - [x] Common mappers implemented
     - Supported mappers: 0, 1, 2, 3, 4, 7 (83.21% of official NES games)
 - [x] PPU implementation (graphics)
   - [x] Background rendering
