@@ -102,8 +102,8 @@ github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+
 github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgfV/d3M/q6VIi02HzZEHgUlZvzk=
 github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFbcEtjT1g+wF4CSlocrBnw=
 github.com/hajimehoshi/bitmapfont/v2 v2.2.2/go.mod h1:Ua/x9Dkz7M9CU4zr1VHWOqGwjKdXbOTRsH7lWfb1Co0=
-github.com/hajimehoshi/ebiten/v2 v2.4.13 h1:ZZ5y+bFkAbUeD2WGquHF+xSbg83SIbcsxCwEVeZgHWM=
-github.com/hajimehoshi/ebiten/v2 v2.4.13/go.mod h1:BZcqCU4XHmScUi+lsKexocWcf4offMFwfp8dVGIB/G4=
+github.com/hajimehoshi/ebiten/v2 v2.4.15 h1:yvhCrDv9y7TpdHtdux5ES/IwP6Pfplz5rJVxE0Z+ZPU=
+github.com/hajimehoshi/ebiten/v2 v2.4.15/go.mod h1:BZcqCU4XHmScUi+lsKexocWcf4offMFwfp8dVGIB/G4=
 github.com/hajimehoshi/file2byteslice v0.0.0-20210813153925-5340248a8f41 h1:s01qIIRG7vN/5ndLwkDktjx44ulFk6apvAjVBYR50Yo=
 github.com/hajimehoshi/file2byteslice v0.0.0-20210813153925-5340248a8f41/go.mod h1:CqqAHp7Dk/AqQiwuhV1yT2334qbA/tFWQW0MD2dGqUE=
 github.com/hajimehoshi/go-mp3 v0.3.3/go.mod h1:qMJj/CSDxx6CGHiZeCgbiq2DSUkbK0UbtXShQcnfyMM=
