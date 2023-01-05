@@ -18,6 +18,10 @@
     {
       "matchUpdateTypes": ["rollback"],
       "commitMessagePrefix": ":arrow_down:"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "automerge": true
     }
   ]
 }
