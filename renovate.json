@@ -23,5 +23,6 @@
       "matchManagers": ["github-actions"],
       "automerge": true
     }
-  ]
+  ],
+  "postUpdateOptions": ["gomodTidy"]
 }
