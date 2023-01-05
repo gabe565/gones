@@ -1,6 +1,4 @@
-ARG GO_VERSION
-
-FROM golang:$GO_VERSION
+FROM golang:1.19
 WORKDIR /app
 
 RUN set -x \

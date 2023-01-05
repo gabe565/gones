@@ -164,8 +164,6 @@ jobs:
           tags: builder
           load: true
           platforms: ${{ matrix.docker-platform }}
-          build-args: |
-            GO_VERSION=${{ steps.setup-go.outputs.go-version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Build
