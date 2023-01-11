@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gabe565/gones/internal/consts"
+	"github.com/gabe565/gones/internal/database"
 	"io"
 	"os"
 )
@@ -91,6 +92,9 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 		return cartridge, err
 	}
 	cartridge.hash = fmt.Sprintf("%x", md5.Sum(nil))
+	if cartridge.hash != "" {
+		cartridge.name, _ = database.FindNameByHash(cartridge.hash)
+	}
 
 	return cartridge, nil
 }

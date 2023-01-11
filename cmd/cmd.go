@@ -57,11 +57,16 @@ func run(cmd *cobra.Command, args []string) error {
 
 	scale := config.K.Float64("ui.scale")
 	ebiten.SetWindowSize(int(scale*ppu.Width), int(scale*ppu.TrimmedHeight))
-	ebiten.SetWindowTitle(strings.TrimSuffix(filepath.Base(path), filepath.Ext(path)) + " | GoNES")
 	ebiten.SetScreenFilterEnabled(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowClosingHandled(true)
 	ebiten.SetFullscreen(config.K.Bool("ui.fullscreen"))
+
+	name := c.Cartridge.Name()
+	if name == "" {
+		name = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+	}
+	ebiten.SetWindowTitle(name + " | GoNES")
 
 	if err := ebiten.RunGame(c); err != nil && !errors.Is(err, console.ErrExit) {
 		return err

@@ -4,11 +4,13 @@ import (
 	"crypto/md5"
 	"fmt"
 	"github.com/gabe565/gones/internal/consts"
+	"github.com/gabe565/gones/internal/database"
 	"github.com/gabe565/gones/internal/interrupts"
 )
 
 type Cartridge struct {
 	hash string
+	name string
 
 	prg     []byte
 	Chr     []byte
@@ -27,6 +29,9 @@ func New() *Cartridge {
 func FromBytes(b []byte) *Cartridge {
 	cart := New()
 	cart.hash = fmt.Sprintf("%x", md5.Sum(b))
+	if cart.hash != "" {
+		cart.name, _ = database.FindNameByHash(cart.hash)
+	}
 
 	cart.prg = make([]byte, consts.PrgRomAddr, consts.PrgChunkSize*2)
 	cart.prg = append(cart.prg, b...)
@@ -36,4 +41,8 @@ func FromBytes(b []byte) *Cartridge {
 	cart.Chr = make([]byte, consts.ChrChunkSize)
 
 	return cart
+}
+
+func (c *Cartridge) Name() string {
+	return c.name
 }

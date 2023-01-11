@@ -115,3 +115,4 @@ Eventually, this will be configurable in the UI.
 - [Writing an NES Emulator in Rust](https://bugzmanov.github.io/nes_ebook/)
 - [fogleman/nes](https://github.com/fogleman/nes)
 - [i82orbom/nesgo](https://github.com/i82orbom/nesgo)
+- [No-Intro](https://no-intro.org)
