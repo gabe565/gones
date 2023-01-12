@@ -34,7 +34,7 @@ jobs:
       - name: Install apt dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install $LINUX_DEPENDENCIES
+          sudo apt-get install --no-install-recommends $LINUX_DEPENDENCIES
       - name: Lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -58,7 +58,7 @@ jobs:
       - name: Install apt dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install $LINUX_DEPENDENCIES
+          sudo apt-get install --no-install-recommends $LINUX_DEPENDENCIES
       - name: Test
         run: xvfb-run go test ./...
 
@@ -74,7 +74,7 @@ jobs:
             runs-on: ubuntu-latest
             pre-build: |
               sudo apt-get update
-              sudo apt-get install $LINUX_DEPENDENCIES
+              sudo apt-get install --no-install-recommends $LINUX_DEPENDENCIES
           - platform: darwin-amd64
             runs-on: macos-12
           - platform: darwin-arm64

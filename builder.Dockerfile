@@ -3,7 +3,7 @@ WORKDIR /app
 
 RUN set -x \
     && apt-get update \
-    && apt-get install -y \
+    && apt-get install -y --no-install-recommends \
       libasound2-dev \
       libc6-dev \
       libgl1-mesa-dev \
