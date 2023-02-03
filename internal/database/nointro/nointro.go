@@ -5,8 +5,6 @@ import (
 	"encoding/xml"
 )
 
-//go:generate go run ./download
-
 //go:embed nes.xml
 var Nes []byte
 

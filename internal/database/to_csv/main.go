@@ -7,13 +7,15 @@ import (
 	"os"
 )
 
+//go:generate go run .
+
 func main() {
 	datafile, err := nointro.Load(nointro.Nes)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	f, err := os.Create("database.csv")
+	f, err := os.Create("../database.csv")
 	if err != nil {
 		log.Panic(err)
 	}

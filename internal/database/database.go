@@ -8,8 +8,6 @@ import (
 	"io"
 )
 
-//go:generate go run ./generate_xml
-
 //go:embed database.csv
 var database []byte
 
