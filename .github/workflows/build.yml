@@ -30,7 +30,6 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version-file: go.mod
-          cache: true
       - name: Install apt dependencies
         run: |
           sudo apt-get update
@@ -39,8 +38,6 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           args: --timeout=5m
-          skip-build-cache: true
-          skip-pkg-cache: true
 
   test:
     name: Test
@@ -50,6 +47,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: true
+      - name: Change Cache Key
+        run: echo '// ${{ github.job }}' >> go.sum
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
