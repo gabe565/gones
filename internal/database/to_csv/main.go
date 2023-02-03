@@ -1,3 +1,5 @@
+//go:build embed_nes_xml
+
 package main
 
 import (
@@ -6,8 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"os"
 )
-
-//go:generate go run .
 
 func main() {
 	datafile, err := nointro.Load(nointro.Nes)

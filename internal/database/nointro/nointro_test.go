@@ -1,3 +1,5 @@
+//go:build embed_nes_xml
+
 package nointro
 
 import (
