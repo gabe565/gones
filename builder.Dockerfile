@@ -13,3 +13,5 @@ RUN apt-get install -y --no-install-recommends \
       libxrandr-dev \
       libxxf86vm-dev \
       pkg-config
+
+RUN git config --global --add safe.directory "$PWD"
