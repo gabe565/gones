@@ -1,5 +1,7 @@
 # GoNES
 
+<img src="./assets/logo.svg" width="192" align="right" alt="GoNES Logo">
+
 [![Build](https://github.com/gabe565/gones/actions/workflows/build.yml/badge.svg)](https://github.com/gabe565/gones/actions/workflows/build.yml)
 
 NES emulator written in Go.
