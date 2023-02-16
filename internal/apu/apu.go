@@ -243,10 +243,10 @@ loop:
 		case sample := <-a.buf:
 			p := p[i : i+4 : i+4]
 			out := int16(sample * a.Volume * 32767)
-			p[0] = byte(out)
-			p[1] = byte(out >> 8)
-			p[2] = p[0]
-			p[3] = p[1]
+			lo := byte(out)
+			p[0], p[2] = lo, lo
+			hi := byte(out >> 8)
+			p[1], p[3] = hi, hi
 			n += 4
 		default:
 			break loop
