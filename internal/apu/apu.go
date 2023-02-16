@@ -144,8 +144,8 @@ func (a *APU) Step() {
 
 	a.stepTimer()
 
-	f1 := int(float32(cycle1) / FrameCounterRate)
-	f2 := int(float32(cycle2) / FrameCounterRate)
+	f1 := int(float64(cycle1) / FrameCounterRate)
+	f2 := int(float64(cycle2) / FrameCounterRate)
 	if f1 != f2 {
 		a.stepFrameCounter()
 	}
