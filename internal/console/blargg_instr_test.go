@@ -13,16 +13,16 @@ var blarggInstrTest string
 func Test_blarggCpuTest(t *testing.T) {
 	t.Parallel()
 
-	c, err := stubConsole(strings.NewReader(blarggInstrTest))
+	test, err := NewBlarggTest(strings.NewReader(blarggInstrTest))
 	if !assert.NoError(t, err) {
 		return
 	}
 
-	status, err := runBlarggTest(c)
+	err = test.Run()
 	if !assert.NoError(t, err) {
 		return
 	}
 
-	assert.EqualValues(t, StatusSuccess, status)
-	assert.EqualValues(t, "All 16 tests passed\n\n\n", getBlarggMessage(c.Bus))
+	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
+	assert.EqualValues(t, "All 16 tests passed\n\n\n", GetBlarggMessage(test))
 }

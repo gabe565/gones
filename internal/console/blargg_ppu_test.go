@@ -20,16 +20,16 @@ Failed #3
 func Test_blarggPpuOpenBus(t *testing.T) {
 	t.Parallel()
 
-	c, err := stubConsole(strings.NewReader(blarggPpuOpenBus))
+	test, err := NewBlarggTest(strings.NewReader(blarggPpuOpenBus))
 	if !assert.NoError(t, err) {
 		return
 	}
 
-	status, err := runBlarggTest(c)
+	err = test.Run()
 	if !assert.NoError(t, err) {
 		return
 	}
 
-	assert.EqualValues(t, 3, status)
-	assert.EqualValues(t, blarggPpuOpenBusSuccess, getBlarggMessage(c.Bus))
+	assert.EqualValues(t, 3, GetBlarggStatus(test))
+	assert.EqualValues(t, blarggPpuOpenBusSuccess, GetBlarggMessage(test))
 }

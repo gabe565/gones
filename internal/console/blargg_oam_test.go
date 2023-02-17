@@ -34,18 +34,18 @@ Passed
 func Test_oamRead(t *testing.T) {
 	t.Parallel()
 
-	c, err := stubConsole(strings.NewReader(oamRead))
+	test, err := NewBlarggTest(strings.NewReader(oamRead))
 	if !assert.NoError(t, err) {
 		return
 	}
 
-	status, err := runBlarggTest(c)
+	err = test.Run()
 	if !assert.NoError(t, err) {
 		return
 	}
 
-	assert.EqualValues(t, StatusSuccess, status)
-	assert.EqualValues(t, oamReadSuccess, getBlarggMessage(c.Bus))
+	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
+	assert.EqualValues(t, oamReadSuccess, GetBlarggMessage(test))
 }
 
 //go:embed nes-test-roms/oam_stress/oam_stress.nes
@@ -75,16 +75,16 @@ Passed
 func Test_oamStress(t *testing.T) {
 	t.Parallel()
 
-	c, err := stubConsole(strings.NewReader(oamStress))
+	test, err := NewBlarggTest(strings.NewReader(oamStress))
 	if !assert.NoError(t, err) {
 		return
 	}
 
-	status, err := runBlarggTest(c)
+	err = test.Run()
 	if !assert.NoError(t, err) {
 		return
 	}
 
-	assert.EqualValues(t, StatusSuccess, status)
-	assert.EqualValues(t, oamStressSuccess, getBlarggMessage(c.Bus))
+	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
+	assert.EqualValues(t, oamStressSuccess, GetBlarggMessage(test))
 }
