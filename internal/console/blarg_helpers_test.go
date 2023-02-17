@@ -1,6 +1,10 @@
 package console
 
-import "io"
+import (
+	"bytes"
+	"io"
+	"regexp"
+)
 
 type Status int16
 
@@ -55,4 +59,42 @@ func GetBlarggMessage(b *ConsoleTest) string {
 		message = append(message, data)
 	}
 	return string(message)
+}
+
+type PpuMessage struct {
+	Message string
+}
+
+func (p PpuMessage) Error() string {
+	return p.Message
+}
+
+func NewBlargPpuMessageCallback() func(*ConsoleTest) error {
+	var started bool
+	re := regexp.MustCompile("  +")
+
+	return func(b *ConsoleTest) error {
+		if !started {
+			if ready := b.Console.Bus.ReadMem(0x7F1); ready != 0 {
+				started = true
+			}
+			return nil
+		}
+
+		if ready := b.Console.Bus.ReadMem(0x7F1); ready == 0 {
+			var i int
+			for {
+				if b.Console.PPU.Vram[i] == 0 {
+					break
+				}
+				i += 1
+			}
+			vram := b.Console.PPU.Vram[:i]
+			vram = re.ReplaceAll(vram, []byte("\n"))
+			vram = bytes.TrimSpace(vram)
+			return PpuMessage{Message: string(vram)}
+		}
+
+		return nil
+	}
 }
