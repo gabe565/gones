@@ -41,6 +41,7 @@ type PPU struct {
 
 	Scanline uint16
 	Cycles   uint
+	VblRace  bool
 
 	nmiOffset uint8
 
@@ -112,8 +113,12 @@ func (p *PPU) WriteScroll(data byte) {
 func (p *PPU) ReadStatus() byte {
 	status := p.Status.Get()
 	p.Status.Vblank = false
+	p.VblRace = false
 	p.updateNmi()
 	p.AddrLatch = false
+	if p.Scanline == 241 && p.Cycles == 0 {
+		p.VblRace = true
+	}
 	return status
 }
 
@@ -315,7 +320,7 @@ func (p *PPU) Step() {
 		}
 	}
 
-	if p.Scanline == 241 && p.Cycles == 1 {
+	if p.Scanline == 241 && p.Cycles == 1 && !p.VblRace {
 		p.Status.Vblank = true
 		p.updateNmi()
 	}
@@ -326,6 +331,7 @@ func (p *PPU) Step() {
 		p.Status.SpriteOverflow = false
 		p.Status.SpriteZeroHit = false
 		p.RenderDone = true
+		p.VblRace = false
 	}
 }
 
