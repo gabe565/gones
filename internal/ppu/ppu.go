@@ -234,11 +234,14 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 func (p *PPU) tick() {
 	if p.nmiOffset != 0 {
 		p.nmiOffset -= 1
-		if p.nmiOffset >= 12 && (!p.Status.Vblank || !p.Ctrl.EnableNMI) {
-			p.nmiOffset = 0
-		} else if p.nmiOffset == 0 {
+		if p.nmiOffset == 0 {
 			p.cpu.AddInterrupt(&interrupts.NMI)
+		} else if p.nmiOffset >= 12 {
+			if !p.Status.Vblank || !p.Ctrl.EnableNMI {
+				p.nmiOffset = 0
+			}
 		}
+
 	}
 
 	if p.Mask.BackgroundEnable || p.Mask.SpriteEnable {
