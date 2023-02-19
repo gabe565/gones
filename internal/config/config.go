@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/knadh/koanf"
+	"github.com/knadh/koanf/v2"
 	"os"
 	"path/filepath"
 )
