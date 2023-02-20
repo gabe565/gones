@@ -133,10 +133,7 @@ func (c *Console) Layout(_, _ int) (int, int) {
 }
 
 func (c *Console) Update() error {
-	if ebiten.IsWindowBeingClosed() || c.closeOnUpdate {
-		if err := c.Close(); err != nil {
-			return err
-		}
+	if c.closeOnUpdate {
 		return ErrExit
 	}
 

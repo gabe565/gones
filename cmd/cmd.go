@@ -42,6 +42,11 @@ func run(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	defer func() {
+		if err := c.Close(); err != nil {
+			log.Error(err)
+		}
+	}()
 
 	go func() {
 		ch := make(chan os.Signal, 1)
@@ -59,7 +64,6 @@ func run(cmd *cobra.Command, args []string) error {
 	ebiten.SetWindowSize(int(scale*ppu.Width), int(scale*ppu.TrimmedHeight))
 	ebiten.SetScreenFilterEnabled(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
-	ebiten.SetWindowClosingHandled(true)
 	ebiten.SetFullscreen(config.K.Bool("ui.fullscreen"))
 	ebiten.SetScreenClearedEveryFrame(false)
 
