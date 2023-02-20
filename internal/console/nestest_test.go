@@ -58,4 +58,6 @@ func Test_nestest(t *testing.T) {
 	}
 
 	assert.EqualValues(t, strings.Count(nestestLog, "\n"), checkedLines)
+	assert.EqualValues(t, 0, c.Bus.ReadMem(2), "See https://github.com/christopherpow/nes-test-roms/blob/master/other/nestest.txt#L87 for failure code meaning")
+	assert.EqualValues(t, 0, c.Bus.ReadMem(3), "See https://github.com/christopherpow/nes-test-roms/blob/master/other/nestest.txt#L366 for failure code meaning")
 }
