@@ -12,7 +12,7 @@ import log "github.com/sirupsen/logrus"
 type AddressingMode uint8
 
 const (
-	Implied AddressingMode = iota
+	Implicit AddressingMode = iota
 	Accumulator
 	Immediate
 	ZeroPage

@@ -683,7 +683,7 @@ func lxa(c *CPU, mode AddressingMode) {
 //
 // [NOP Instruction Reference]:
 func nop(c *CPU, mode AddressingMode) {
-	if mode != Implied {
+	if mode != Implicit {
 		addr, pageCrossed := c.getOperandAddress(mode)
 		if pageCrossed {
 			defer func() {

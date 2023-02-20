@@ -22,7 +22,7 @@ func (c *CPU) Trace() string {
 	var valAddr uint16
 	var val byte
 	switch op.Mode {
-	case Implied, Immediate, Accumulator, Relative:
+	case Implicit, Immediate, Accumulator, Relative:
 		//
 	default:
 		valAddr, _ = c.getAbsoluteAddress(op.Mode, begin+1)
@@ -62,7 +62,7 @@ func (c *CPU) Trace() string {
 			trace += fmt.Sprintf("($%02X,X) @ %02X = %04X = %02X", addr, addr+c.RegisterX, valAddr, val)
 		case IndirectY:
 			trace += fmt.Sprintf("($%02X),Y = %04X @ %04X = %02X", addr, valAddr-uint16(c.RegisterY), valAddr, val)
-		case Implied, Relative:
+		case Implicit, Relative:
 			// assuming local jumps: BNE, BVS, etc
 			addr := uint16(int8(addr)) + begin + 2
 			trace += fmt.Sprintf("$%04X", addr)
@@ -80,7 +80,7 @@ func (c *CPU) Trace() string {
 		switch op.Mode {
 		case Indirect:
 			trace += fmt.Sprintf("($%04X) = %04X", addr, valAddr)
-		case Implied, Relative:
+		case Implicit, Relative:
 			trace += fmt.Sprintf("$%04X", addr)
 		case Absolute:
 			if op.Code == 0x4C { // JMP
