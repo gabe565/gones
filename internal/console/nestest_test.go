@@ -33,15 +33,10 @@ func Test_nestest(t *testing.T) {
 		//TODO: Remove this after APU is supported
 		case 0xC68B, 0xC690, 0xC695, 0xC69A, 0xC69F:
 		default:
-			trace := c.CPU.Trace()
+			actual := c.Trace()
 			expected := scanner.Text()
 
-			//TODO: Remove this after adding PPU and CYC to trace
-			if len(expected) > 73 {
-				expected = expected[:73]
-			}
-
-			if !assert.EqualValues(t, expected, trace) {
+			if !assert.EqualValues(t, expected, actual) {
 				return
 			}
 		}
