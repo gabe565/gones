@@ -98,7 +98,7 @@ func (c *Console) Close() error {
 
 func (c *Console) Step() error {
 	if c.enableTrace {
-		fmt.Println(c.CPU.Trace())
+		fmt.Println(c.Trace())
 	}
 
 	cycles, err := c.CPU.Step()
