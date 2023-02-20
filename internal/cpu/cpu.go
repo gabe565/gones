@@ -12,6 +12,7 @@ func New(b memory.ReadWrite) *CPU {
 		StackPointer: byte(StackAddr - 3),
 		Status:       DefaultStatus,
 		bus:          b,
+		Cycles:       7,
 	}
 	cpu.ProgramCounter = cpu.ReadMem16(interrupts.Reset.VectorAddr)
 	return &cpu

@@ -19,6 +19,7 @@ func New(mapper cartridge.Mapper) *PPU {
 	return &PPU{
 		mapper: mapper,
 		image:  image.NewRGBA(image.Rect(0, 0, Width, TrimmedHeight)),
+		Cycles: 21,
 	}
 }
 
