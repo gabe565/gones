@@ -277,11 +277,11 @@ func (p *PPU) Step() {
 	visibleCycle := p.Cycles >= 1 && p.Cycles <= 256
 	fetchCycle := preFetchCycle || visibleCycle
 
-	if renderingEnabled {
-		if visibleLine && visibleCycle {
-			p.renderPixel()
-		}
+	if visibleLine && visibleCycle {
+		p.renderPixel()
+	}
 
+	if renderingEnabled {
 		// Background
 		if renderLine && fetchCycle {
 			p.BgTile.Data <<= 4
