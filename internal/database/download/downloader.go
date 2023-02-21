@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
+	"github.com/PuerkitoBio/goquery"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"mime/multipart"
@@ -15,15 +16,6 @@ import (
 
 const BaseUrl = "https://datomatic.no-intro.org/index.php"
 const System = "45"
-
-var postFields = map[string]string{
-	"system_selection": "45",
-	"sys_list_order":   "2",
-	"naming":           "0",
-	"hash":             "0",
-	"fill_parents":     "1",
-	"hdl_xml_":         "Prepare",
-}
 
 func NewDownloader() (*Downloader, error) {
 	jar, err := cookiejar.New(nil)
@@ -58,11 +50,12 @@ func (g *Downloader) Url() string {
 }
 
 func (g *Downloader) Run() error {
-	if err := g.initSession(); err != nil {
+	postParams, err := g.getFormParams()
+	if err != nil {
 		return err
 	}
 
-	url, err := g.prepareDownload()
+	url, err := g.prepareDownload(postParams)
 	if err != nil {
 		return err
 	}
@@ -112,24 +105,76 @@ func (g *Downloader) buildPostForm(fields map[string]string) (io.Reader, string,
 
 var ErrInvalidResponse = errors.New("invalid response")
 
-func (g *Downloader) initSession() error {
+var ErrNoForm = errors.New(`could not find form with name "main_form"`)
+
+func (g *Downloader) getFormParams() (map[string]string, error) {
+	postParams := make(map[string]string)
+
 	// Get session cookie
-	log.WithField("url", BaseUrl).Info("Initialize session")
-	res, err := g.client.Head(BaseUrl)
+	log.WithField("url", g.Url()).Info("Get form params")
+	res, err := g.client.Get(g.Url())
 	if err != nil {
-		return err
+		return postParams, err
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, res.Body)
+		_ = res.Body.Close()
+	}()
 
 	if res.StatusCode != http.StatusOK {
-		return ErrInvalidResponse
+		return postParams, ErrInvalidResponse
 	}
 
-	return nil
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return postParams, err
+	}
+
+	sel := doc.Find(`form[name="main_form"]`)
+	if sel.Length() == 0 {
+		return postParams, ErrNoForm
+	}
+
+	node := sel.Eq(0)
+
+	// Iterate over selects
+	node.Find("select").Each(func(i int, s *goquery.Selection) {
+		if name, exists := s.Attr("name"); exists {
+			s.Find("option").Each(func(i int, s *goquery.Selection) {
+				if _, exists := s.Attr("selected"); exists {
+					if value, exists := s.Attr("value"); exists {
+						postParams[name] = value
+					}
+				}
+			})
+		}
+	})
+
+	// Iterate over inputs
+	node.Find("input").Each(func(i int, s *goquery.Selection) {
+		if inputType, exists := s.Attr("type"); exists {
+			switch inputType {
+			case "radio":
+				// Skip unchecked radio buttons
+				if _, exists := s.Attr("checked"); !exists {
+					return
+				}
+			}
+		}
+
+		if name, exists := s.Attr("name"); exists {
+			if value, exists := s.Attr("value"); exists {
+				postParams[name] = value
+			}
+		}
+	})
+
+	return postParams, nil
 }
 
 var ErrMissingLocation = errors.New("missing location")
 
-func (g *Downloader) prepareDownload() (string, error) {
+func (g *Downloader) prepareDownload(postFields map[string]string) (string, error) {
 	// Get form params to request a download
 	body, contentType, err := g.buildPostForm(postFields)
 	if err != nil {
