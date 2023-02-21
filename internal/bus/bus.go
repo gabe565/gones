@@ -64,6 +64,18 @@ func (b *Bus) ReadMem(addr uint16) byte {
 	return b.openBus
 }
 
+// ReadMemSafe reads a byte from memory, but immediately returns 0xFF for any reads with side effects.
+func (b *Bus) ReadMemSafe(addr uint16) byte {
+	switch {
+	case 0x2001 <= addr && addr < 0x4000,
+		0x4004 <= addr && addr <= 0x4007,
+		0x4015 <= addr && addr <= 0x4017:
+		return 0xFF
+	default:
+		return b.ReadMem(addr)
+	}
+}
+
 // WriteMem writes a byte to memory.
 func (b *Bus) WriteMem(addr uint16, data byte) {
 	switch {

@@ -4,6 +4,10 @@ type Read8 interface {
 	ReadMem(uint16) byte
 }
 
+type ReadSafe interface {
+	ReadMemSafe(uint16) byte
+}
+
 type Write8 interface {
 	WriteMem(uint16, byte)
 }
@@ -29,4 +33,9 @@ type ReadWrite16 interface {
 type ReadWrite interface {
 	ReadWrite8
 	ReadWrite16
+}
+
+type ReadSafeWrite interface {
+	ReadWrite
+	ReadSafe
 }

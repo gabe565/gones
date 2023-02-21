@@ -7,7 +7,7 @@ import (
 	"github.com/gabe565/gones/internal/memory"
 )
 
-func New(b memory.ReadWrite) *CPU {
+func New(b memory.ReadSafeWrite) *CPU {
 	cpu := CPU{
 		StackPointer: byte(StackAddr - 3),
 		Status:       DefaultStatus,
@@ -43,7 +43,7 @@ type CPU struct {
 	RegisterY byte
 
 	// bus Main memory bus
-	bus memory.ReadWrite
+	bus memory.ReadSafeWrite
 
 	Cycles uint
 
