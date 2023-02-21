@@ -17,7 +17,7 @@ import (
 
 func Load(cmd *cobra.Command) error {
 	// Load default config
-	if err := K.Load(confmap.Provider(defaultConfig(), "."), nil); err != nil {
+	if err := K.Load(confmap.Provider(defaultConfig(), ""), nil); err != nil {
 		return err
 	}
 

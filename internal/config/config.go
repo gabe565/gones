@@ -14,12 +14,20 @@ var configDir = "gones"
 
 func defaultConfig() map[string]any {
 	return map[string]any{
-		"audio.enabled": true,
-		"debug.enabled": false,
-		"debug.trace":   false,
-		"state.resume":  true,
-		"ui.fullscreen": false,
-		"ui.scale":      3,
+		"audio": map[string]any{
+			"enabled": true,
+		},
+		"debug": map[string]any{
+			"enabled": false,
+			"trace":   false,
+		},
+		"state": map[string]any{
+			"resume": true,
+		},
+		"ui": map[string]any{
+			"fullscreen": false,
+			"scale":      3,
+		},
 	}
 }
 
