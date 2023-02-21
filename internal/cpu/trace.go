@@ -6,8 +6,21 @@ import (
 	"strings"
 )
 
-var skipRead = [...]uint16{
-	0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x4016, 0x4017,
+var unsafeRead = [...]uint16{
+	0x2001,
+	0x2002,
+	0x2003,
+	0x2004,
+	0x2005,
+	0x2006,
+	0x2007,
+	0x4004,
+	0x4005,
+	0x4006,
+	0x4007,
+	0x4015,
+	0x4016,
+	0x4017,
 }
 
 func (c *CPU) Trace() string {
@@ -27,14 +40,13 @@ func (c *CPU) Trace() string {
 	default:
 		valAddr, _ = c.getAbsoluteAddress(op.Mode, begin+1)
 
-		var skip bool
-		for _, skipAddr := range skipRead {
+		for _, skipAddr := range unsafeRead {
 			if valAddr == skipAddr {
-				skip = true
+				val = 0xFF
 				break
 			}
 		}
-		if !skip {
+		if val == 0 {
 			val = c.ReadMem(valAddr)
 		}
 	}
