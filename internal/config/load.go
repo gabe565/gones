@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"errors"
 	"github.com/knadh/koanf/parsers/yaml"
+	"github.com/knadh/koanf/providers/confmap"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/providers/rawbytes"
 	log "github.com/sirupsen/logrus"
@@ -15,6 +16,12 @@ import (
 )
 
 func Load(cmd *cobra.Command) error {
+	// Load default config
+	if err := K.Load(confmap.Provider(defaultConfig(), "."), nil); err != nil {
+		return err
+	}
+
+	// Find config file
 	cfgFile, err := cmd.Flags().GetString("config")
 	if err != nil {
 		return err
@@ -29,6 +36,7 @@ func Load(cmd *cobra.Command) error {
 	}
 
 	var cfgNotExists bool
+	// Load config file if exists
 	cfgContents, err := os.ReadFile(cfgFile)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
@@ -38,24 +46,9 @@ func Load(cmd *cobra.Command) error {
 		}
 	}
 
+	// Parse config file
 	parser := yaml.Parser()
-
 	if err := K.Load(rawbytes.Provider(cfgContents), parser); err != nil {
-		return err
-	}
-
-	err = K.Load(posflag.ProviderWithValue(cmd.Flags(), ".", K, func(key string, value string) (string, interface{}) {
-		if k, ok := flagConfigTable[key]; ok {
-			key = k
-		}
-		for _, name := range excludeFromConfig {
-			if key == name {
-				return "", value
-			}
-		}
-		return key, value
-	}), nil)
-	if err != nil {
 		return err
 	}
 
@@ -86,6 +79,22 @@ func Load(cmd *cobra.Command) error {
 		if err := f.Close(); err != nil {
 			return err
 		}
+	}
+
+	// Load flags
+	err = K.Load(posflag.ProviderWithValue(cmd.Flags(), ".", K, func(key string, value string) (string, any) {
+		if k, ok := flagConfigTable[key]; ok {
+			key = k
+		}
+		for _, name := range excludeFromConfig {
+			if key == name {
+				return "", value
+			}
+		}
+		return key, value
+	}), nil)
+	if err != nil {
+		return err
 	}
 
 	log.WithField("file", cfgFile).Info("Loaded config")

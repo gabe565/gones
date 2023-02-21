@@ -12,6 +12,17 @@ var Path string
 
 var configDir = "gones"
 
+func defaultConfig() map[string]any {
+	return map[string]any{
+		"audio.enabled": true,
+		"debug.enabled": false,
+		"debug.trace":   false,
+		"state.resume":  true,
+		"ui.fullscreen": false,
+		"ui.scale":      3,
+	}
+}
+
 func GetDir() (string, error) {
 	if xdgConfigDir := os.Getenv("XDG_CONFIG_DIR"); xdgConfigDir != "" {
 		return filepath.Join(xdgConfigDir, configDir), nil
