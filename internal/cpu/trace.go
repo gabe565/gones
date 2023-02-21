@@ -57,12 +57,8 @@ func (c *CPU) Trace() string {
 			log.Panicf("unexpected addressing mode %s has len 2. code %02X", op.Mode, op.Code)
 		}
 	case 3:
-		addrLo := c.ReadMem(begin + 1)
-		hexDump = append(hexDump, uint16(addrLo))
-		addrHi := c.ReadMem(begin + 2)
-		hexDump = append(hexDump, uint16(addrHi))
-
 		addr := c.ReadMem16(begin + 1)
+		hexDump = append(hexDump, addr&0xFF, addr>>8)
 
 		switch op.Mode {
 		case Indirect:
