@@ -4,18 +4,20 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-type Button uint8
+type Player string
 
 const (
-	ButtonA Button = iota
-	ButtonB
-	Select
-	Start
-	Up
-	Down
-	Left
-	Right
+	Player1 Player = "player1"
+	Player2        = "player2"
 )
+
+func NewController(player Player) Controller {
+	controller := Controller{Keymap: NewKeymap(player)}
+	if len(controller.Keymap.Regular) != 0 {
+		controller.Enabled = true
+	}
+	return controller
+}
 
 type Controller struct {
 	Enabled bool

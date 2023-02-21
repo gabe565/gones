@@ -1,7 +1,10 @@
 package controller
 
 import (
+	"github.com/gabe565/gones/internal/config"
 	"github.com/hajimehoshi/ebiten/v2"
+	log "github.com/sirupsen/logrus"
+	"strings"
 )
 
 type Keymap struct {
@@ -9,41 +12,50 @@ type Keymap struct {
 	Turbo   map[Button]ebiten.Key
 }
 
-var Player1Keymap = Keymap{
-	Regular: map[Button]ebiten.Key{
-		Up:      ebiten.KeyW,
-		Right:   ebiten.KeyD,
-		Down:    ebiten.KeyS,
-		Left:    ebiten.KeyA,
-		Start:   ebiten.KeyEnter,
-		Select:  ebiten.KeyShiftRight,
-		ButtonA: ebiten.KeyM,
-		ButtonB: ebiten.KeyN,
-	},
-	Turbo: map[Button]ebiten.Key{
-		ButtonA: ebiten.KeyK,
-		ButtonB: ebiten.KeyJ,
-	},
+func NewKeymap(player Player) Keymap {
+	keymapConf := config.K.StringMap("input.keys." + string(player))
+
+	keymap := Keymap{
+		Regular: make(map[Button]ebiten.Key),
+		Turbo:   make(map[Button]ebiten.Key),
+	}
+
+	for buttonName, keyName := range keymapConf {
+		var turbo bool
+		if strings.HasSuffix(buttonName, "_turbo") {
+			turbo = true
+			buttonName = strings.TrimSuffix(buttonName, "_turbo")
+		}
+
+		var button Button
+		if err := button.UnmarshalText([]byte(buttonName)); err != nil {
+			log.Fatal(err)
+		}
+
+		var key ebiten.Key
+		if err := key.UnmarshalText([]byte(keyName)); err != nil {
+			log.Fatal(err)
+		}
+
+		if turbo {
+			keymap.Turbo[button] = key
+		} else {
+			keymap.Regular[button] = key
+		}
+	}
+
+	return keymap
 }
 
-var Player2Keymap = Keymap{
-	Regular: map[Button]ebiten.Key{
-		Up:      ebiten.KeyHome,
-		Right:   ebiten.KeyPageDown,
-		Down:    ebiten.KeyEnd,
-		Left:    ebiten.KeyDelete,
-		Start:   ebiten.KeyKPEnter,
-		Select:  ebiten.KeyKPAdd,
-		ButtonA: ebiten.KeyKP3,
-		ButtonB: ebiten.KeyKP2,
-	},
-	Turbo: map[Button]ebiten.Key{
-		ButtonA: ebiten.KeyKP6,
-		ButtonB: ebiten.KeyKP5,
-	},
+func LoadKeys() {
+	_ = Reset.UnmarshalText([]byte(config.K.String("input.keys.reset")))
+	_ = SaveState1.UnmarshalText([]byte(config.K.String("input.keys.state1_save")))
+	_ = LoadState1.UnmarshalText([]byte(config.K.String("input.keys.state1_load")))
+	_ = FastForward.UnmarshalText([]byte(config.K.String("input.keys.fast_forward")))
+	_ = ToggleFullscreen.UnmarshalText([]byte(config.K.String("input.keys.fullscreen")))
 }
 
-const (
+var (
 	Reset = ebiten.KeyR
 
 	SaveState1 = ebiten.KeyF1

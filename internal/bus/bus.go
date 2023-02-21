@@ -10,17 +10,11 @@ import (
 
 func New(mapper cartridge.Mapper, ppu *ppu.PPU, apu *apu.APU) *Bus {
 	return &Bus{
-		mapper: mapper,
-		apu:    apu,
-		ppu:    ppu,
-		controller1: controller.Controller{
-			Enabled: true,
-			Keymap:  controller.Player1Keymap,
-		},
-		controller2: controller.Controller{
-			Enabled: true,
-			Keymap:  controller.Player2Keymap,
-		},
+		mapper:      mapper,
+		apu:         apu,
+		ppu:         ppu,
+		controller1: controller.NewController(controller.Player1),
+		controller2: controller.NewController(controller.Player2),
 	}
 }
 
