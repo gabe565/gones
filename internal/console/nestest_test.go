@@ -28,17 +28,11 @@ func Test_nestest(t *testing.T) {
 	var checkedLines uint
 	for scanner.Scan() {
 		checkedLines += 1
+		actual := c.Trace()
+		expected := scanner.Text()
 
-		switch c.CPU.ProgramCounter {
-		//TODO: Remove this after APU is supported
-		case 0xC68B, 0xC690, 0xC695, 0xC69A, 0xC69F:
-		default:
-			actual := c.Trace()
-			expected := scanner.Text()
-
-			if !assert.EqualValues(t, expected, actual) {
-				return
-			}
+		if !assert.EqualValues(t, expected, actual) {
+			return
 		}
 
 		if err := c.Step(); !assert.NoError(t, err) {
