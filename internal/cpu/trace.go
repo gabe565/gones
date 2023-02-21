@@ -15,7 +15,7 @@ func (c *CPU) Trace() string {
 	}
 
 	begin := c.ProgramCounter
-	hexDump := []uint16{uint16(code)}
+	hexDump := []uint8{code}
 	var valAddr uint16
 	var val byte
 	switch op.Mode {
@@ -34,7 +34,7 @@ func (c *CPU) Trace() string {
 		}
 	case 2:
 		addr := c.ReadMem(begin + 1)
-		hexDump = append(hexDump, uint16(addr))
+		hexDump = append(hexDump, addr)
 
 		switch op.Mode {
 		case Immediate:
@@ -58,7 +58,7 @@ func (c *CPU) Trace() string {
 		}
 	case 3:
 		addr := c.ReadMem16(begin + 1)
-		hexDump = append(hexDump, addr&0xFF, addr>>8)
+		hexDump = append(hexDump, uint8(addr&0xFF), uint8(addr>>8))
 
 		switch op.Mode {
 		case Indirect:
