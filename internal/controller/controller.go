@@ -8,7 +8,7 @@ type Player string
 
 const (
 	Player1 Player = "player1"
-	Player2        = "player2"
+	Player2 Player = "player2"
 )
 
 func NewController(player Player) Controller {
