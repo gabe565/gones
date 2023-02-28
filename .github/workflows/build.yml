@@ -59,7 +59,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends $LINUX_DEPENDENCIES
       - name: Test
-        run: xvfb-run go test ./...
+        run: xvfb-run go test ./... -coverprofile=coverage.txt -covermode=atomic
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
 
   build-native:
     name: Build Natively (${{ matrix.platform }})
