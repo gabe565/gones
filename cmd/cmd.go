@@ -64,7 +64,6 @@ func run(cmd *cobra.Command, args []string) error {
 
 	scale := config.K.Float64("ui.scale")
 	ebiten.SetWindowSize(int(scale*ppu.Width), int(scale*ppu.TrimmedHeight))
-	ebiten.SetScreenFilterEnabled(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetFullscreen(config.K.Bool("ui.fullscreen"))
 	ebiten.SetScreenClearedEveryFrame(false)
