@@ -3,6 +3,7 @@ package cpu
 import (
 	"errors"
 	"fmt"
+
 	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/memory"
 )

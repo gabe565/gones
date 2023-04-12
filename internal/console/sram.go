@@ -2,9 +2,10 @@ package console
 
 import (
 	"errors"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func (c *Console) SaveSram() error {
@@ -15,7 +16,7 @@ func (c *Console) SaveSram() error {
 
 	log.WithField("file", path).Info("Writing save to disk")
 
-	if err := os.MkdirAll(filepath.Dir(path), 0777); err != nil {
+	if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
 		return err
 	}
 

@@ -3,6 +3,7 @@ package cartridge
 import (
 	"crypto/md5"
 	"fmt"
+
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/database"
 	"github.com/gabe565/gones/internal/interrupts"

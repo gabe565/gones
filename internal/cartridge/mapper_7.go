@@ -2,6 +2,7 @@ package cartridge
 
 import (
 	"encoding/gob"
+
 	"github.com/gabe565/gones/internal/consts"
 	log "github.com/sirupsen/logrus"
 )

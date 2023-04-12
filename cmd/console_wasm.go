@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"bytes"
+	"syscall/js"
+
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/console"
-	"syscall/js"
 )
 
 func newConsole(_ string) (*console.Console, error) {

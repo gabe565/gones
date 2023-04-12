@@ -5,14 +5,15 @@ package config
 import (
 	"bytes"
 	"errors"
+	"os"
+	"path/filepath"
+
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/confmap"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/providers/rawbytes"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"os"
-	"path/filepath"
 )
 
 func Load(cmd *cobra.Command) error {

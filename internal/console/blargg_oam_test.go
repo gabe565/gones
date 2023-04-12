@@ -2,13 +2,15 @@ package console
 
 import (
 	_ "embed"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 //go:embed nes-test-roms/oam_read/oam_read.nes
 var oamRead string
+
 var oamReadSuccess = `----------------
 ----------------
 ----------------
@@ -50,6 +52,7 @@ func Test_oamRead(t *testing.T) {
 
 //go:embed nes-test-roms/oam_stress/oam_stress.nes
 var oamStress string
+
 var oamStressSuccess = `----------------
 ----------------
 ----------------

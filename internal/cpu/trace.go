@@ -2,9 +2,10 @@ package cpu
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/gabe565/gones/internal/memory"
 	log "github.com/sirupsen/logrus"
-	"strings"
 )
 
 func (c *CPU) Trace() string {

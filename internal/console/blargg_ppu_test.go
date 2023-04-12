@@ -2,13 +2,15 @@ package console
 
 import (
 	_ "embed"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 //go:embed nes-test-roms/ppu_open_bus/ppu_open_bus.nes
 var blarggPpuOpenBus string
+
 var blarggPpuOpenBusSuccess = `
 Decay value should become zero by one second
 

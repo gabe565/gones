@@ -1,10 +1,11 @@
 package config
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/knadh/koanf/v2"
 	"os"
 	"path/filepath"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/knadh/koanf/v2"
 )
 
 var K = koanf.New(".")

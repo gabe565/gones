@@ -1,12 +1,13 @@
 package console
 
 import (
+	"io"
+
 	"github.com/gabe565/gones/internal/apu"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/cpu"
 	"github.com/gabe565/gones/internal/ppu"
-	"io"
 )
 
 func stubConsole(r io.ReadSeeker) (*Console, error) {

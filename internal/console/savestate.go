@@ -4,9 +4,10 @@ import (
 	"compress/gzip"
 	"encoding/gob"
 	"errors"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func (c *Console) SaveState(num uint8) error {
@@ -17,7 +18,7 @@ func (c *Console) SaveState(num uint8) error {
 
 	log.WithField("file", path).Info("Saving state")
 
-	if err := os.MkdirAll(filepath.Dir(path), 0777); err != nil {
+	if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
 		return err
 	}
 

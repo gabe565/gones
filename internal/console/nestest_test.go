@@ -3,9 +3,10 @@ package console
 import (
 	"bufio"
 	_ "embed"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 //go:embed nes-test-roms/other/nestest.nes

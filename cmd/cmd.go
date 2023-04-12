@@ -2,6 +2,11 @@ package cmd
 
 import (
 	"errors"
+	"os"
+	"os/signal"
+	"path/filepath"
+	"strings"
+
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
 	"github.com/gabe565/gones/internal/controller"
@@ -9,10 +14,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"os"
-	"os/signal"
-	"path/filepath"
-	"strings"
 )
 
 func New(version string) *cobra.Command {

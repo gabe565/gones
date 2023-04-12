@@ -20,8 +20,10 @@ var lengths = [...]byte{
 	12, 16, 24, 18, 48, 20, 96, 22, 192, 24, 72, 26, 16, 28, 32, 30,
 }
 
-var squareTable [31]float32
-var tndTable [203]float32
+var (
+	squareTable [31]float32
+	tndTable    [203]float32
+)
 
 const (
 	StatusPulse1 = 1 << iota

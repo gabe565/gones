@@ -4,6 +4,7 @@ package cmd
 
 import (
 	"errors"
+
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/console"
 )

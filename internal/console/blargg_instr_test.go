@@ -2,9 +2,10 @@ package console
 
 import (
 	_ "embed"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 //go:embed nes-test-roms/instr_test-v5/all_instrs.nes
@@ -29,6 +30,7 @@ func Test_blarggCpuTest(t *testing.T) {
 
 //go:embed nes-test-roms/cpu_timing_test6/cpu_timing_test.nes
 var blarggCpuTimingTest string
+
 var blarggCpuTimingSuccess = `6502 TIMING TEST (16 SECONDS)
 OFFICIAL INSTRUCTIONS ONLY
 PASSED`

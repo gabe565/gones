@@ -5,10 +5,11 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/gabe565/gones/internal/consts"
-	"github.com/gabe565/gones/internal/database"
 	"io"
 	"os"
+
+	"github.com/gabe565/gones/internal/consts"
+	"github.com/gabe565/gones/internal/database"
 )
 
 type iNESFileHeader struct {

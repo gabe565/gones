@@ -3,6 +3,9 @@ package console
 import (
 	"errors"
 	"fmt"
+	"os"
+	"time"
+
 	"github.com/gabe565/gones/internal/apu"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
@@ -13,8 +16,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	log "github.com/sirupsen/logrus"
-	"os"
-	"time"
 )
 
 var ErrExit = errors.New("exit")

@@ -2,9 +2,10 @@ package console
 
 import (
 	_ "embed"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 //go:embed nes-test-roms/apu_reset/4015_cleared.nes

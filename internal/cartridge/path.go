@@ -2,8 +2,9 @@ package cartridge
 
 import (
 	"fmt"
-	"github.com/gabe565/gones/internal/config"
 	"path/filepath"
+
+	"github.com/gabe565/gones/internal/config"
 )
 
 func (c *Cartridge) SramPath() (string, error) {

@@ -1,12 +1,13 @@
 package cpu
 
 import (
+	"testing"
+
 	"github.com/gabe565/gones/internal/apu"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func stubCpu(program []byte) *CPU {

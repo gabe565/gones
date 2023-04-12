@@ -4,9 +4,10 @@ package main
 
 import (
 	"encoding/csv"
+	"os"
+
 	"github.com/gabe565/gones/internal/database/nointro"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 func main() {

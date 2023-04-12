@@ -1,10 +1,11 @@
 package controller
 
 import (
+	"strings"
+
 	"github.com/gabe565/gones/internal/config"
 	"github.com/hajimehoshi/ebiten/v2"
 	log "github.com/sirupsen/logrus"
-	"strings"
 )
 
 type Keymap struct {

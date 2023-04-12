@@ -2,12 +2,13 @@ package ppu
 
 import (
 	"fmt"
+	"image"
+
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/memory"
 	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
-	"image"
 )
 
 type CPU interface {

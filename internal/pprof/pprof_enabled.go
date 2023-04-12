@@ -3,9 +3,10 @@
 package pprof
 
 import (
-	log "github.com/sirupsen/logrus"
 	"net/http"
 	_ "net/http/pprof"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var address = "localhost:3000"

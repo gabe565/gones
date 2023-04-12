@@ -4,18 +4,21 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
-	"github.com/PuerkitoBio/goquery"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
 	"os"
+
+	"github.com/PuerkitoBio/goquery"
+	log "github.com/sirupsen/logrus"
 )
 
-const BaseUrl = "https://datomatic.no-intro.org/index.php"
-const System = "45"
+const (
+	BaseUrl = "https://datomatic.no-intro.org/index.php"
+	System  = "45"
+)
 
 func NewDownloader() (*Downloader, error) {
 	jar, err := cookiejar.New(nil)
