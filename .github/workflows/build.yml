@@ -117,7 +117,7 @@ jobs:
         run: ${{ matrix.pre-build }}
       - name: Build
         run: |
-          go build -ldflags='-w -s' -o dist/gones${{ matrix.extension }}
+          go build -ldflags='-w -s' -trimpath -o dist/gones${{ matrix.extension }}
         env:
           CGO_ENABLED: "1"
       - name: Upload Artifact
@@ -180,7 +180,7 @@ jobs:
             -v "$(go env GOMODCACHE):/go/pkg/mod" \
             -v "$PWD:/app" \
             builder \
-            go build -ldflags='-w -s' -o dist/gones${{ matrix.extension }}
+            go build -ldflags='-w -s' -trimpath -o dist/gones${{ matrix.extension }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
