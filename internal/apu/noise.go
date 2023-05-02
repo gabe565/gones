@@ -34,7 +34,6 @@ func (n *Noise) Write(addr uint16, data byte) {
 		n.EnvelopeEnabled = data>>4&1 == 0
 		n.EnvelopePeriod = data & 0xF
 		n.Volume = data & 0xF
-		n.EnvelopeStart = true
 	case 0x400D:
 		//
 	case 0x400E:
