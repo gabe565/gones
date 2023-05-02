@@ -34,9 +34,13 @@ See [ebiten install steps](https://ebitengine.org/en/documents/install.html).
 
 ## Usage
 
+In a terminal, run:
+
 ```shell
 gones ROM_FILE
 ```
+
+See [docs](./docs/gones.md) for the full command line usage documentation.
 
 ## Keybinds
 

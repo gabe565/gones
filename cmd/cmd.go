@@ -22,7 +22,8 @@ func New(version string) *cobra.Command {
 		Version: version,
 		RunE:    run,
 
-		SilenceErrors: true,
+		SilenceErrors:     true,
+		DisableAutoGenTag: true,
 	}
 	config.Flags(cmd)
 

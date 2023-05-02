@@ -9,3 +9,12 @@ repos:
       - id: golangci-lint-mod
         args: [--fix]
       - id: go-test-mod
+
+  - repo: local
+    hooks:
+      - id: usage-docs
+        name: usage-docs
+        entry: go run ./internal/cmd/docs
+        language: system
+        types: [go]
+        pass_filenames: false
