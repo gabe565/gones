@@ -30,6 +30,7 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
+          cache: false
       - name: Install apt dependencies
         run: |
           sudo apt-get update
@@ -53,7 +54,6 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
-          cache: true
       - name: Install apt dependencies
         run: |
           sudo apt-get update
@@ -91,6 +91,7 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
+          cache: false
       - name: Get Go cache paths
         id: go-cache-path
         shell: bash
@@ -144,6 +145,7 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
+          cache: false
       - name: Get Go cache paths
         id: go-cache-path
         shell: bash
