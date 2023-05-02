@@ -61,6 +61,10 @@ func Load(cmd *cobra.Command) error {
 	if !bytes.Equal(cfgContents, newCfg) {
 		if cfgNotExists {
 			log.WithField("file", cfgFile).Info("Creating config")
+
+			if err := os.MkdirAll(filepath.Dir(cfgFile), 0o777); err != nil {
+				return err
+			}
 		} else {
 			log.WithField("file", cfgFile).Info("Updating config")
 		}
