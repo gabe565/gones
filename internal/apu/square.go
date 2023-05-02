@@ -40,7 +40,7 @@ type Square struct {
 func (p *Square) Write(addr uint16, data byte) {
 	switch addr {
 	case 0x4000, 0x4004:
-		p.DutyMode = data >> 6 & 2
+		p.DutyMode = data >> 6 & 3
 		p.LengthEnabled = data>>5&1 == 0
 		p.EnvelopeLoop = data>>5&1 == 1
 		p.EnvelopeEnabled = data>>4&1 == 0
