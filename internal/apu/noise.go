@@ -58,14 +58,14 @@ func (n *Noise) SetEnabled(v bool) {
 func (n *Noise) stepTimer() {
 	if n.TimerValue == 0 {
 		n.TimerValue = n.TimerPeriod
-		shift := 1
+		feedback := n.ShiftRegister & 1
 		if n.LoopNoise {
-			shift = 6
+			feedback ^= n.ShiftRegister >> 6 & 1
+		} else {
+			feedback ^= n.ShiftRegister >> 1 & 1
 		}
-		b1 := n.ShiftRegister & 1
-		b2 := n.ShiftRegister >> shift & 1
 		n.ShiftRegister >>= 1
-		n.ShiftRegister |= (b1 ^ b2) << 14
+		n.ShiftRegister |= feedback << 14
 	} else {
 		n.TimerValue -= 1
 	}
