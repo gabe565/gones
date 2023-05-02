@@ -8,8 +8,8 @@ var duties = [...][8]byte{
 }
 
 type Square struct {
-	Enabled bool
-	Channel uint8
+	Enabled  bool
+	Channel1 bool
 
 	DutyMode  byte
 	DutyValue byte
@@ -119,7 +119,7 @@ func (p *Square) sweep() {
 	delta := p.TimerPeriod >> p.SweepShift
 	if p.SweepNegate {
 		delta = -delta
-		if p.Channel == 1 {
+		if p.Channel1 {
 			delta -= 1
 		}
 	}

@@ -48,7 +48,7 @@ func New() *APU {
 		Volume:     1,
 		SampleRate: consts.CpuFrequency / float64(consts.AudioSampleRate),
 
-		Square: [2]Square{{Channel: 1}, {Channel: 2}},
+		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},
 
 		buf: make(chan float32, 10*consts.AudioSampleRate/60),
