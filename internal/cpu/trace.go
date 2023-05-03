@@ -16,7 +16,8 @@ func (c *CPU) Trace() string {
 	}
 
 	begin := c.ProgramCounter
-	hexDump := []uint8{code}
+	hexDump := make([]byte, 1, 3)
+	hexDump[0] = code
 	var valAddr uint16
 	var val byte
 	switch op.Mode {
