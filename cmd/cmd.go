@@ -16,11 +16,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func New(version string) *cobra.Command {
+func New() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "gones ROM",
-		Version: version,
-		RunE:    run,
+		Use:  "gones ROM",
+		RunE: run,
 
 		SilenceErrors:     true,
 		DisableAutoGenTag: true,

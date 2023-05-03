@@ -14,7 +14,9 @@ var (
 )
 
 func main() {
-	if err := cmd.New(buildVersion()).Execute(); err != nil {
+	rootCmd := cmd.New()
+	rootCmd.Version = buildVersion()
+	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
 }
