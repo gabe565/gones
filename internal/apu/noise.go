@@ -1,6 +1,6 @@
 package apu
 
-var noiseTimers = [...]uint16{
+var noisePeriodTable = [...]uint16{
 	4, 8, 16, 32, 64, 96, 128, 160, 202, 254, 380, 508, 762, 1016, 2034, 4068,
 }
 
@@ -38,10 +38,10 @@ func (n *Noise) Write(addr uint16, data byte) {
 		//
 	case 0x400E:
 		n.LoopNoise = data>>7&1 == 1
-		n.TimerPeriod = noiseTimers[data&0xF]
+		n.TimerPeriod = noisePeriodTable[data&0xF]
 	case 0x400F:
 		if n.Enabled {
-			n.LengthValue = lengths[data>>3&0x1F]
+			n.LengthValue = lengthTable[data>>3&0x1F]
 		}
 		n.EnvelopeStart = true
 	}

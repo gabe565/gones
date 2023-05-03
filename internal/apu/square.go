@@ -1,6 +1,6 @@
 package apu
 
-var duties = [...][8]byte{
+var squareDutyTable = [...][8]byte{
 	{0, 1, 0, 0, 0, 0, 0, 0},
 	{0, 1, 1, 0, 0, 0, 0, 0},
 	{0, 1, 1, 1, 1, 0, 0, 0},
@@ -56,7 +56,7 @@ func (p *Square) Write(addr uint16, data byte) {
 		p.TimerPeriod = p.TimerPeriod&0x700 | uint16(data)
 	case 0x4003, 0x4007:
 		if p.Enabled {
-			p.LengthValue = lengths[data>>3&0x1F]
+			p.LengthValue = lengthTable[data>>3&0x1F]
 		}
 		p.TimerPeriod = uint16(data)&0x7<<8 | p.TimerPeriod&0xFF
 		p.EnvelopeStart = true
@@ -138,7 +138,7 @@ func (p *Square) output() byte {
 		return 0
 	case p.LengthValue == 0:
 		return 0
-	case duties[p.DutyMode][p.DutyValue] == 0:
+	case squareDutyTable[p.DutyMode][p.DutyValue] == 0:
 		return 0
 	case p.TimerPeriod < 8, p.TimerPeriod > 0x7FF:
 		return 0

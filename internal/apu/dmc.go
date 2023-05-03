@@ -1,6 +1,6 @@
 package apu
 
-var dmcTicks = [...]byte{
+var dmcPeriodTable = [...]byte{
 	214, 190, 170, 160, 143, 127, 113, 107, 95, 80, 71, 64, 53, 42, 36, 27,
 }
 
@@ -29,7 +29,7 @@ func (d *DMC) Write(addr uint16, data byte) {
 	case 0x4010:
 		d.IrqEnabled = data>>7&1 == 1
 		d.Loop = data>>6&1 == 1
-		d.TickPeriod = dmcTicks[data&0xF]
+		d.TickPeriod = dmcPeriodTable[data&0xF]
 	case 0x4011:
 		d.Value = data & 0x7F
 	case 0x4012:

@@ -1,6 +1,6 @@
 package apu
 
-var triangleOutputs = [...]byte{
+var triangleOutputTable = [...]byte{
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 	15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
 }
@@ -32,7 +32,7 @@ func (t *Triangle) Write(addr uint16, data byte) {
 		t.TimerPeriod = t.TimerPeriod&0xFF00 | uint16(data)
 	case 0x400B:
 		if t.Enabled {
-			t.LengthValue = lengths[data>>3&0x1F]
+			t.LengthValue = lengthTable[data>>3&0x1F]
 		}
 		t.TimerPeriod = uint16(data)&0x7<<8 | t.TimerPeriod&0xFF
 		t.TimerValue = t.TimerPeriod
@@ -77,5 +77,5 @@ func (t *Triangle) stepCounter() {
 }
 
 func (t *Triangle) output() byte {
-	return triangleOutputs[t.DutyValue]
+	return triangleOutputTable[t.DutyValue]
 }
