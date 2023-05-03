@@ -51,7 +51,7 @@ func (m *Mapper2) ReadMem(addr uint16) byte {
 		addr += m.PrgBank2 * consts.PrgChunkSize
 		return m.cartridge.prg[addr]
 	default:
-		log.Fatalf("invalid mapper 2 read from $%04X", addr)
+		log.Warnf("invalid mapper 2 read from $%04X", addr)
 		return 0
 	}
 }
@@ -68,6 +68,6 @@ func (m *Mapper2) WriteMem(addr uint16, data byte) {
 		data %= m.PrgBanks
 		m.PrgBank1 = data
 	default:
-		log.Fatalf("invalid mapper 2 write to $%04X", addr)
+		log.Warnf("invalid mapper 2 write to $%04X", addr)
 	}
 }

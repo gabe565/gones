@@ -70,7 +70,7 @@ func (m *Mapper4) ReadMem(addr uint16) byte {
 		offset := int(addr % 0x2000)
 		return m.cartridge.prg[m.PrgOffsets[bank]+offset]
 	default:
-		log.Fatalf("invalid mapper 4 read from $%04X", addr)
+		log.Warnf("invalid mapper 4 read from $%04X", addr)
 		return 0
 	}
 }
@@ -120,7 +120,7 @@ func (m *Mapper4) WriteMem(addr uint16, data byte) {
 			m.IRQEnable = addr%2 == 1
 		}
 	default:
-		log.Fatalf("invalid mapper 4 write to $%04X", addr)
+		log.Warnf("invalid mapper 4 write to $%04X", addr)
 	}
 }
 

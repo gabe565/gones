@@ -40,7 +40,7 @@ func (m *Mapper7) ReadMem(addr uint16) byte {
 		addr += m.PrgBank * 2 * consts.PrgChunkSize
 		return m.cartridge.prg[addr]
 	default:
-		log.Fatalf("invalid mapper 7 read from $%04X", addr)
+		log.Warnf("invalid mapper 7 read from $%04X", addr)
 		return 0
 	}
 }
@@ -62,6 +62,6 @@ func (m *Mapper7) WriteMem(addr uint16, data byte) {
 		}
 		m.PrgBank = uint(data & 7)
 	default:
-		log.Fatalf("invalid mapper 7 write to $%04X", addr)
+		log.Warnf("invalid mapper 7 write to $%04X", addr)
 	}
 }

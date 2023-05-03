@@ -53,7 +53,7 @@ func (m *Mapper1) ReadMem(addr uint16) byte {
 		offset := int(addr % consts.PrgChunkSize)
 		return m.cartridge.prg[m.PrgOffsets[bank]+offset]
 	default:
-		log.Fatalf("invalid mapper 1 read from $%04X", addr)
+		log.Warnf("invalid mapper 1 read from $%04X", addr)
 		return 0
 	}
 }
@@ -94,7 +94,7 @@ func (m *Mapper1) WriteMem(addr uint16, data byte) {
 			}
 		}
 	default:
-		log.Fatalf("invalid mapper 1 write to $%04X", addr)
+		log.Warnf("invalid mapper 1 write to $%04X", addr)
 	}
 }
 

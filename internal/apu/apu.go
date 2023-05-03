@@ -102,7 +102,7 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 			a.stepLength()
 		}
 	default:
-		log.Fatalf("invalid APU write to $%04X", addr)
+		log.Warnf("invalid APU write to $%04X", addr)
 	}
 }
 
