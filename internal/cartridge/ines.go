@@ -10,6 +10,7 @@ import (
 
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/database"
+	log "github.com/sirupsen/logrus"
 )
 
 type iNESFileHeader struct {
@@ -96,6 +97,15 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 	if cartridge.hash != "" {
 		cartridge.name, _ = database.FindNameByHash(cartridge.hash)
 	}
+
+	log.WithField("title", cartridge.name).Info("Loaded cartridge")
+	log.WithFields(log.Fields{
+		"battery": cartridge.Battery,
+		"mapper":  cartridge.Mapper,
+		"mirror":  cartridge.Mirror,
+		"prg":     header.PrgCount,
+		"chr":     header.ChrCount,
+	}).Debug("Cartridge header info")
 
 	return cartridge, nil
 }
