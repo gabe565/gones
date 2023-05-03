@@ -16,7 +16,7 @@ func (c *Console) SaveState(num uint8) error {
 		return err
 	}
 
-	log.WithField("file", path).Info("Saving state")
+	log.WithField("file", filepath.Base(path)).Info("Saving state")
 
 	if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
 		return err
@@ -56,7 +56,7 @@ func (c *Console) LoadState(num uint8) error {
 		return err
 	}
 
-	log.WithField("file", path).Info("Loading state")
+	log.WithField("file", filepath.Base(path)).Info("Loading state")
 
 	f, err := os.Open(path)
 	if err != nil {

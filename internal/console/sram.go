@@ -14,7 +14,7 @@ func (c *Console) SaveSram() error {
 		return err
 	}
 
-	log.WithField("file", path).Info("Writing save to disk")
+	log.WithField("file", filepath.Base(path)).Info("Writing save to disk")
 
 	if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
 		return err
@@ -53,7 +53,7 @@ func (c *Console) LoadSram() error {
 		_ = f.Close()
 	}(f)
 
-	log.WithField("file", path).Info("Loading save from disk")
+	log.WithField("file", filepath.Base(path)).Info("Loading save from disk")
 
 	if _, err := f.Read(c.Cartridge.Sram); err != nil {
 		return err
