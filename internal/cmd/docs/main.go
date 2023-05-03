@@ -13,7 +13,7 @@ func main() {
 	output := "./docs"
 
 	if err := os.RemoveAll(output); err != nil {
-		log.Fatal(fmt.Errorf("failed to remove existing dia: %w", err))
+		log.Fatal(fmt.Errorf("failed to remove existing dir: %w", err))
 	}
 
 	if err := os.MkdirAll(output, 0o755); err != nil {
