@@ -22,6 +22,10 @@ type MapperInterrupts interface {
 	SetCpu(CPU)
 }
 
+type MapperCPU interface {
+	StepCPU()
+}
+
 type MapperPPU interface {
 	StepPPU(renderEnabled bool, scanline uint16, cycle uint)
 }

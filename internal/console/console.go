@@ -108,6 +108,9 @@ func (c *Console) Step() error {
 	if err != nil {
 		return err
 	}
+	if mapper, ok := c.Mapper.(cartridge.MapperCPU); ok {
+		mapper.StepCPU()
+	}
 
 	for i := uint(0); i < cycles*3; i += 1 {
 		c.PPU.Step()
