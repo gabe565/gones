@@ -18,13 +18,9 @@ type Mapper7 struct {
 	PrgBank   uint
 }
 
-func (m *Mapper7) Step(_ bool, _ uint16, _ uint) {}
-
 func (m *Mapper7) Cartridge() *Cartridge { return m.cartridge }
 
 func (m *Mapper7) SetCartridge(c *Cartridge) { m.cartridge = c }
-
-func (m *Mapper7) SetCpu(_ CPU) {}
 
 func (m *Mapper7) ReadMem(addr uint16) byte {
 	switch {

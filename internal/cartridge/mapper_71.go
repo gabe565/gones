@@ -25,13 +25,9 @@ type Mapper71 struct {
 	PrgLast   uint
 }
 
-func (m *Mapper71) Step(_ bool, _ uint16, _ uint) {}
-
 func (m *Mapper71) Cartridge() *Cartridge { return m.cartridge }
 
 func (m *Mapper71) SetCartridge(c *Cartridge) { m.cartridge = c }
-
-func (m *Mapper71) SetCpu(_ CPU) {}
 
 func (m *Mapper71) ReadMem(addr uint16) byte {
 	switch {

@@ -16,8 +16,14 @@ type Mapper interface {
 	memory.ReadWrite8
 	Cartridge() *Cartridge
 	SetCartridge(*Cartridge)
-	Step(renderEnabled bool, scanline uint16, cycle uint)
+}
+
+type MapperInterrupts interface {
 	SetCpu(CPU)
+}
+
+type MapperPPU interface {
+	StepPPU(renderEnabled bool, scanline uint16, cycle uint)
 }
 
 var ErrUnsupportedMapper = errors.New("unsupported mapper")

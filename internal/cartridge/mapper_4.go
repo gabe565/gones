@@ -31,7 +31,7 @@ type Mapper4 struct {
 	IRQEnable  bool
 }
 
-func (m *Mapper4) Step(renderEnabled bool, scanline uint16, cycle uint) {
+func (m *Mapper4) StepPPU(renderEnabled bool, scanline uint16, cycle uint) {
 	switch {
 	case cycle != 280:
 		return
