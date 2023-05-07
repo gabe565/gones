@@ -97,7 +97,7 @@ Eventually, this will be configurable in the UI.
 - [x] Cartridge implementation
   - [x] Support for mappers
   - [x] Common mappers implemented
-    - Supported mappers: 0, 1, 2, 3, 4, 7, 71 (83.72% of official NES games)
+    - Supported mappers: 0, 1, 2, 3, 4, 7, 69, 71 (84.34% of official NES games)
 - [x] PPU implementation (graphics)
   - [x] Background rendering
   - [x] Sprite rendering

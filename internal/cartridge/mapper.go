@@ -44,6 +44,8 @@ func NewMapper(cartridge *Cartridge) (Mapper, error) {
 		return NewMapper4(cartridge), nil
 	case 7:
 		return NewMapper7(cartridge), nil
+	case 69:
+		return NewMapper69(cartridge), nil
 	case 71:
 		return NewMapper71(cartridge), nil
 	default:
