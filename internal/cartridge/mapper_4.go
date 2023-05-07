@@ -84,41 +84,38 @@ func (m *Mapper4) WriteMem(addr uint16, data byte) {
 	case 0x6000 <= addr && addr < 0x8000:
 		addr -= 0x6000
 		m.cartridge.Sram[addr] = data
-	case 0x8000 <= addr:
-		switch {
-		case addr < 0xA000:
-			if addr%2 == 0 {
-				// Bank select
-				m.PrgMode = data&0x40 == 0x40
-				m.ChrMode = data&0x80 == 0x80
-				m.Register = data & 7
-				m.updateOffsets()
-			} else {
-				// Bank data
-				m.Registers[m.Register] = data
-				m.updateOffsets()
-			}
-		case 0xA000 <= addr && addr < 0xC000:
-			if addr%2 == 0 {
-				// Mirror
-				switch data & 1 {
-				case 0:
-					m.cartridge.Mirror = Vertical
-				case 1:
-					m.cartridge.Mirror = Horizontal
-				}
-			}
-		case 0xC000 <= addr && addr < 0xE000:
-			if addr%2 == 0 {
-				// IRQ Latch
-				m.Reload = data
-			} else {
-				// IRQ Reload
-				m.Counter = 0
-			}
-		case 0xE000 <= addr:
-			m.IRQEnable = addr%2 == 1
+	case 0x8000 <= addr && addr < 0xA000:
+		if addr%2 == 0 {
+			// Bank select
+			m.PrgMode = data&0x40 == 0x40
+			m.ChrMode = data&0x80 == 0x80
+			m.Register = data & 7
+			m.updateOffsets()
+		} else {
+			// Bank data
+			m.Registers[m.Register] = data
+			m.updateOffsets()
 		}
+	case 0xA000 <= addr && addr < 0xC000:
+		if addr%2 == 0 {
+			// Mirror
+			switch data & 1 {
+			case 0:
+				m.cartridge.Mirror = Vertical
+			case 1:
+				m.cartridge.Mirror = Horizontal
+			}
+		}
+	case 0xC000 <= addr && addr < 0xE000:
+		if addr%2 == 0 {
+			// IRQ Latch
+			m.Reload = data
+		} else {
+			// IRQ Reload
+			m.Counter = 0
+		}
+	case 0xE000 <= addr:
+		m.IRQEnable = addr%2 == 1
 	default:
 		log.Warnf("invalid mapper 4 write to $%04X", addr)
 	}
