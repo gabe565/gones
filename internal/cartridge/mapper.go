@@ -26,8 +26,8 @@ type MapperOnCPUStep interface {
 	OnCPUStep()
 }
 
-type MapperOnPPUStep interface {
-	OnPPUStep(renderEnabled bool, scanline uint16, cycle uint)
+type MapperOnScanline interface {
+	OnScanline()
 }
 
 var ErrUnsupportedMapper = errors.New("unsupported mapper")

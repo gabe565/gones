@@ -114,13 +114,6 @@ func (c *Console) Step() error {
 
 	for i := uint(0); i < cycles*3; i += 1 {
 		c.PPU.Step()
-		if mapper, ok := c.Mapper.(cartridge.MapperOnPPUStep); ok {
-			mapper.OnPPUStep(
-				c.PPU.Mask.RenderingEnabled(),
-				c.PPU.Scanline,
-				c.PPU.Cycles,
-			)
-		}
 	}
 
 	for i := uint(0); i < cycles; i += 1 {

@@ -339,6 +339,12 @@ func (p *PPU) Step() {
 		p.updateNmi()
 	}
 
+	if p.Cycles == 280 && renderLine && p.Mask.RenderingEnabled() {
+		if mapper, ok := p.mapper.(cartridge.MapperOnScanline); ok {
+			mapper.OnScanline()
+		}
+	}
+
 	if preLine && p.Cycles == 1 {
 		p.Status.Vblank = false
 		p.updateNmi()

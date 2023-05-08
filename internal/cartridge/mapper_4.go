@@ -31,17 +31,10 @@ type Mapper4 struct {
 	IRQEnable  bool
 }
 
-func (m *Mapper4) OnPPUStep(renderEnabled bool, scanline uint16, cycle uint) {
-	switch {
-	case cycle != 280:
-		return
-	case 240 <= scanline && scanline < 261:
-		return
-	case !renderEnabled:
-		return
-	case m.Counter == 0:
+func (m *Mapper4) OnScanline() {
+	if m.Counter == 0 {
 		m.Counter = m.Reload
-	default:
+	} else {
 		m.Counter -= 1
 		if m.Counter == 0 && m.IRQEnable {
 			m.cpu.AddInterrupt(&interrupts.IRQ)
