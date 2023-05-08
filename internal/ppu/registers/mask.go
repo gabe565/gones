@@ -32,3 +32,7 @@ func (m *Mask) Set(data byte) {
 	m.EmphasizeGreen = data&MaskEmphasizeGreen != 0
 	m.EmphasizeBlue = data&MaskEmphasizeBlue != 0
 }
+
+func (m *Mask) RenderingEnabled() bool {
+	return m.BackgroundEnable || m.SpriteEnable
+}

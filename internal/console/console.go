@@ -116,7 +116,7 @@ func (c *Console) Step() error {
 		c.PPU.Step()
 		if mapper, ok := c.Mapper.(cartridge.MapperPPU); ok {
 			mapper.StepPPU(
-				c.PPU.Mask.BackgroundEnable || c.PPU.Mask.SpriteEnable,
+				c.PPU.Mask.RenderingEnabled(),
 				c.PPU.Scanline,
 				c.PPU.Cycles,
 			)

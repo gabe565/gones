@@ -143,7 +143,7 @@ func (p *PPU) WriteData(data byte) {
 
 func (p *PPU) ReadData() byte {
 	addr := p.Addr.Get() % 0x4000
-	if (p.Mask.SpriteEnable || p.Mask.BackgroundEnable) && (p.Scanline == 261 || p.Scanline < 240) {
+	if p.Mask.RenderingEnabled() && (p.Scanline == 261 || p.Scanline < 240) {
 		// If rendering enabled, increment Coarse X and Y
 		// https://www.nesdev.org/wiki/PPU_scrolling#$2007_reads_and_writes
 		p.incrementX()
@@ -254,7 +254,7 @@ func (p *PPU) tick() {
 
 	}
 
-	if p.Mask.BackgroundEnable || p.Mask.SpriteEnable {
+	if p.Mask.RenderingEnabled() {
 		if p.OddFrame && p.Scanline == 261 && p.Cycles == 339 {
 			p.Cycles = 0
 			p.Scanline = 0
@@ -278,7 +278,6 @@ func (p *PPU) tick() {
 func (p *PPU) Step() {
 	p.tick()
 
-	renderingEnabled := p.Mask.BackgroundEnable || p.Mask.SpriteEnable
 	preLine := p.Scanline == 261
 	visibleLine := p.Scanline < 240
 	renderLine := preLine || visibleLine
@@ -290,7 +289,7 @@ func (p *PPU) Step() {
 		p.renderPixel()
 	}
 
-	if renderingEnabled {
+	if p.Mask.RenderingEnabled() {
 		// Background
 		if renderLine && fetchCycle {
 			p.BgTile.Data <<= 4
