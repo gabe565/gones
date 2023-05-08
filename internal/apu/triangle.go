@@ -50,7 +50,7 @@ func (t *Triangle) SetEnabled(v bool) {
 func (t *Triangle) stepTimer() {
 	if t.TimerValue == 0 {
 		t.TimerValue = t.TimerPeriod
-		if t.LengthValue > 0 && t.CounterValue > 0 {
+		if t.LengthValue > 0 && t.CounterValue > 0 && t.TimerPeriod != 0 {
 			t.DutyValue += 1
 			t.DutyValue %= 32
 		}
