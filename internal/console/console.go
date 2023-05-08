@@ -108,14 +108,14 @@ func (c *Console) Step() error {
 	if err != nil {
 		return err
 	}
-	if mapper, ok := c.Mapper.(cartridge.MapperCPU); ok {
-		mapper.StepCPU()
+	if mapper, ok := c.Mapper.(cartridge.MapperOnCPUStep); ok {
+		mapper.OnCPUStep()
 	}
 
 	for i := uint(0); i < cycles*3; i += 1 {
 		c.PPU.Step()
-		if mapper, ok := c.Mapper.(cartridge.MapperPPU); ok {
-			mapper.StepPPU(
+		if mapper, ok := c.Mapper.(cartridge.MapperOnPPUStep); ok {
+			mapper.OnPPUStep(
 				c.PPU.Mask.RenderingEnabled(),
 				c.PPU.Scanline,
 				c.PPU.Cycles,

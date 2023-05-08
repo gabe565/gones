@@ -22,12 +22,12 @@ type MapperInterrupts interface {
 	SetCpu(CPU)
 }
 
-type MapperCPU interface {
-	StepCPU()
+type MapperOnCPUStep interface {
+	OnCPUStep()
 }
 
-type MapperPPU interface {
-	StepPPU(renderEnabled bool, scanline uint16, cycle uint)
+type MapperOnPPUStep interface {
+	OnPPUStep(renderEnabled bool, scanline uint16, cycle uint)
 }
 
 var ErrUnsupportedMapper = errors.New("unsupported mapper")

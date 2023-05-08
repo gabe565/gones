@@ -41,7 +41,7 @@ func (m *Mapper69) SetCartridge(c *Cartridge) { m.cartridge = c }
 
 func (m *Mapper69) SetCpu(c CPU) { m.cpu = c }
 
-func (m *Mapper69) StepCPU() {
+func (m *Mapper69) OnCPUStep() {
 	if m.IrqCounterEnable {
 		m.IrqCounter -= 1
 		if m.IrqEnable && m.IrqCounter == 0xFFFF {
