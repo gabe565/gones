@@ -120,5 +120,6 @@ Eventually, this will be configurable in the UI.
 - [NESDev Undocumented Opcodes](https://www.nesdev.org/undocumented_opcodes.txt)
 - [Writing an NES Emulator in Rust](https://bugzmanov.github.io/nes_ebook/)
 - [fogleman/nes](https://github.com/fogleman/nes)
+- [ltriant/nes](https://github.com/ltriant/nes)
 - [i82orbom/nesgo](https://github.com/i82orbom/nesgo)
 - [No-Intro](https://no-intro.org)
