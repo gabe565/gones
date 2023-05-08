@@ -146,8 +146,8 @@ func (p *PPU) ReadData() byte {
 	if p.Mask.RenderingEnabled() && (p.Scanline == 261 || p.Scanline < 240) {
 		// If rendering enabled, increment Coarse X and Y
 		// https://www.nesdev.org/wiki/PPU_scrolling#$2007_reads_and_writes
-		p.incrementX()
-		p.incrementY()
+		p.Addr.IncrementX()
+		p.Addr.IncrementY()
 	} else {
 		// Else increment by 1 or 32
 		p.Addr.Increment(p.Ctrl.VramAddr())
@@ -309,18 +309,18 @@ func (p *PPU) Step() {
 		}
 
 		if preLine && p.Cycles >= 280 && p.Cycles <= 304 {
-			p.copyAddrY()
+			p.Addr.LoadY(p.TmpAddr)
 		}
 
 		if renderLine {
 			if fetchCycle && p.Cycles%8 == 0 {
-				p.incrementX()
+				p.Addr.IncrementX()
 			}
 			if p.Cycles == 256 {
-				p.incrementY()
+				p.Addr.IncrementY()
 			}
 			if p.Cycles == 257 {
-				p.copyAddrX()
+				p.Addr.LoadX(p.TmpAddr)
 			}
 		}
 

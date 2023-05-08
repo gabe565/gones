@@ -61,44 +61,6 @@ func (p *PPU) storeTileData() {
 	p.BgTile.Data |= uint64(data)
 }
 
-func (p *PPU) incrementX() {
-	if p.Addr.CoarseX < 31 {
-		p.Addr.CoarseX += 1
-	} else {
-		p.Addr.CoarseX = 0
-		p.Addr.NametableX = !p.Addr.NametableX
-	}
-}
-
-func (p *PPU) incrementY() {
-	if p.Addr.FineY < 7 {
-		p.Addr.FineY += 1
-	} else {
-		p.Addr.FineY = 0
-
-		switch p.Addr.CoarseY {
-		case 29:
-			p.Addr.CoarseY = 0
-			p.Addr.NametableY = !p.Addr.NametableY
-		case 31:
-			p.Addr.CoarseY = 0
-		default:
-			p.Addr.CoarseY += 1
-		}
-	}
-}
-
-func (p *PPU) copyAddrX() {
-	p.Addr.NametableX = p.TmpAddr.NametableX
-	p.Addr.CoarseX = p.TmpAddr.CoarseX
-}
-
-func (p *PPU) copyAddrY() {
-	p.Addr.NametableY = p.TmpAddr.NametableY
-	p.Addr.CoarseY = p.TmpAddr.CoarseY
-	p.Addr.FineY = p.TmpAddr.FineY
-}
-
 func (p *PPU) bgPixel() byte {
 	if !p.Mask.BackgroundEnable {
 		return 0

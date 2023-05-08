@@ -53,3 +53,41 @@ func (r *Address) WriteScrollX(data byte) {
 func (r *Address) Increment(inc byte) {
 	r.Set(r.Get() + uint16(inc))
 }
+
+func (r *Address) IncrementX() {
+	if r.CoarseX < 31 {
+		r.CoarseX += 1
+	} else {
+		r.CoarseX = 0
+		r.NametableX = !r.NametableX
+	}
+}
+
+func (r *Address) IncrementY() {
+	if r.FineY < 7 {
+		r.FineY += 1
+	} else {
+		r.FineY = 0
+
+		switch r.CoarseY {
+		case 29:
+			r.CoarseY = 0
+			r.NametableY = !r.NametableY
+		case 31:
+			r.CoarseY = 0
+		default:
+			r.CoarseY += 1
+		}
+	}
+}
+
+func (r *Address) LoadX(other Address) {
+	r.NametableX = other.NametableX
+	r.CoarseX = other.CoarseX
+}
+
+func (r *Address) LoadY(other Address) {
+	r.NametableY = other.NametableY
+	r.CoarseY = other.CoarseY
+	r.FineY = other.FineY
+}
