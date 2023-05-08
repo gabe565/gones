@@ -143,7 +143,15 @@ func (p *PPU) WriteData(data byte) {
 
 func (p *PPU) ReadData() byte {
 	addr := p.Addr.Get() % 0x4000
-	p.Addr.Increment(p.Ctrl.VramAddr())
+	if (p.Mask.SpriteEnable || p.Mask.BackgroundEnable) && (p.Scanline == 261 || p.Scanline < 240) {
+		// If rendering enabled, increment Coarse X and Y
+		// https://www.nesdev.org/wiki/PPU_scrolling#$2007_reads_and_writes
+		p.incrementX()
+		p.incrementY()
+	} else {
+		// Else increment by 1 or 32
+		p.Addr.Increment(p.Ctrl.VramAddr())
+	}
 
 	val := p.ReadDataAddr(addr)
 	if addr < 0x3F00 {
