@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-//go:generate cp $GOROOT/misc/wasm/wasm_exec.js public
+//go:generate cp $GOROOT/misc/wasm/wasm_exec.js web/src/scripts
 
 var (
 	Version = "next"
