@@ -1,6 +1,6 @@
 # GoNES
 
-<img src="public/images/icon.svg" width="192" align="right" alt="GoNES Logo">
+<img src="web/public/images/icon.svg" width="192" align="right" alt="GoNES Logo">
 
 [![Build](https://github.com/gabe565/gones/actions/workflows/build.yml/badge.svg)](https://github.com/gabe565/gones/actions/workflows/build.yml)
 
