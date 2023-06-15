@@ -1,13 +1,12 @@
-//go:build !wasm
-
 package console
 
 import (
 	"compress/gzip"
+	"encoding/base64"
 	"encoding/gob"
-	"errors"
-	"os"
 	"path/filepath"
+	"strings"
+	"syscall/js"
 
 	"github.com/gabe565/gones/internal/cartridge"
 	log "github.com/sirupsen/logrus"
@@ -21,23 +20,11 @@ func (c *Console) SaveState(num uint8) error {
 
 	log.WithField("file", filepath.Base(path)).Info("Saving state")
 
-	if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
-		return err
-	}
+	var buf strings.Builder
 
-	if err := os.Rename(path, path+".bak"); err != nil && !errors.Is(err, os.ErrNotExist) {
-		return err
-	}
+	b64w := base64.NewEncoder(base64.StdEncoding, &buf)
 
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer func(f *os.File) {
-		_ = f.Close()
-	}(f)
-
-	gzw := gzip.NewWriter(f)
+	gzw := gzip.NewWriter(b64w)
 	defer func() {
 		_ = gzw.Close()
 	}()
@@ -50,7 +37,12 @@ func (c *Console) SaveState(num uint8) error {
 		return err
 	}
 
-	return f.Close()
+	if err := b64w.Close(); err != nil {
+		return err
+	}
+
+	js.Global().Get("localStorage").Call("setItem", path, buf.String())
+	return nil
 }
 
 func (c *Console) LoadState(num uint8) error {
@@ -61,15 +53,16 @@ func (c *Console) LoadState(num uint8) error {
 
 	log.WithField("file", filepath.Base(path)).Info("Loading state")
 
-	f, err := os.Open(path)
-	if err != nil {
-		return err
+	data := js.Global().Get("localStorage").Call("getItem", path)
+	if data.IsNull() {
+		return nil
 	}
-	defer func(f *os.File) {
-		_ = f.Close()
-	}(f)
 
-	gzr, err := gzip.NewReader(f)
+	r := strings.NewReader(data.String())
+
+	b64r := base64.NewDecoder(base64.StdEncoding, r)
+
+	gzr, err := gzip.NewReader(b64r)
 	if err != nil {
 		return err
 	}
