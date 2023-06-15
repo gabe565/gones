@@ -1,12 +1,17 @@
 package config
 
 import (
+	"github.com/knadh/koanf/providers/confmap"
 	"github.com/knadh/koanf/providers/posflag"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 func Load(cmd *cobra.Command) error {
+	if err := K.Load(confmap.Provider(defaultConfig(), ""), nil); err != nil {
+		return err
+	}
+
 	err := K.Load(posflag.ProviderWithValue(cmd.Flags(), ".", K, func(key string, value string) (string, interface{}) {
 		if k, ok := flagConfigTable[key]; ok {
 			key = k
@@ -22,7 +27,10 @@ func Load(cmd *cobra.Command) error {
 		return err
 	}
 
-	log.Info("Loaded config")
+	if err := K.Set("audio.enabled", false); err != nil {
+		return err
+	}
 
+	log.Info("Loaded config")
 	return nil
 }
