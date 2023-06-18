@@ -1,8 +1,8 @@
 <template>
   <transition name="slide-fade" appear>
     <section
-      role="alert"
       v-if="offlineReady || needRefresh"
+      role="alert"
       class="z-40 flex items-center absolute bottom-0 right-0 m-8 mb-md-2 bg-teal-700 border-b-4 border-teal-500 rounded-lg text-teal-100 px-4 py-3 shadow-md"
     >
       <span class="mx-1">

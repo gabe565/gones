@@ -3,21 +3,22 @@ require("@rushstack/eslint-patch/modern-module-resolution");
 
 module.exports = {
   root: true,
+  env: {
+    browser: true,
+  },
   extends: [
-    "plugin:vue/vue3-essential",
+    "plugin:vue/vue3-recommended",
     "eslint:recommended",
     "@vue/eslint-config-prettier/skip-formatting",
+    "prettier",
+    "plugin:prettier/recommended",
   ],
   rules: {
-    "object-curly-spacing": ["error", "always"],
-    "require-jsdoc": "off",
-    indent: ["error", 2, { SwitchCase: 1 }],
     "no-unused-vars": ["error", { varsIgnorePattern: "^_", argsIgnorePattern: "^_" }],
-    "valid-jsdoc": "off",
-    "new-cap": "off",
+    "vue/no-template-shadow": "off",
   },
   parserOptions: {
-    ecmaVersion: "latest",
+    sourceType: "module",
   },
   ignorePatterns: ["wasm_exec.js"],
 };

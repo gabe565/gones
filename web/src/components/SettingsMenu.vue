@@ -19,9 +19,9 @@ const cartridgeInput = ref();
 <template>
   <transition name="slide-fade">
     <section
+      v-if="modelValue"
       id="settings"
       class="flex flex-col fixed h-full w-[22em] top-0 left-0 z-30 bg-gray-900 p-5 shadow-lg shadow-gray-950"
-      v-if="modelValue"
       role="menu"
       aria-expanded="true"
     >
@@ -39,10 +39,10 @@ const cartridgeInput = ref();
 
       <div class="flex flex-col items-center pb-6">
         <input
+          ref="cartridgeInput"
           type="file"
           class="hidden"
           @change="$emit('cartridge:insert', $event.target.files.item(0))"
-          ref="cartridgeInput"
         />
         <button
           class="block bg-gray-800 hover:bg-gray-700 py-2 px-4 my-2 rounded-full border border-gray-600 transition-colors"
