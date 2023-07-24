@@ -233,6 +233,7 @@ func (g *Downloader) getFormParams() (map[string]string, error) {
 		}
 	})
 
+	log.WithField("params", postParams).Info("Got form params")
 	return postParams, nil
 }
 
@@ -300,6 +301,7 @@ func (g *Downloader) download(url string) (*http.Response, error) {
 		return res, err
 	}
 
+	log.WithField("contentLength", res.Header.Get("Content-Length")).Info("Began download")
 	return res, nil
 }
 
