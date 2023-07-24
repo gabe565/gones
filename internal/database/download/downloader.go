@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -106,8 +107,6 @@ func (g *Downloader) buildPostForm(fields map[string]string) (io.Reader, string,
 	return bodyBuf, bodyWriter.FormDataContentType(), nil
 }
 
-var ErrInvalidResponse = errors.New("invalid response")
-
 var ErrNoForm = errors.New(`could not find form with name "main_form"`)
 
 func (g *Downloader) getFormParams() (map[string]string, error) {
@@ -124,8 +123,8 @@ func (g *Downloader) getFormParams() (map[string]string, error) {
 		_ = res.Body.Close()
 	}()
 
-	if res.StatusCode != http.StatusOK {
-		return postParams, ErrInvalidResponse
+	if err := checkStatusCode(res, http.StatusOK); err != nil {
+		return postParams, err
 	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
@@ -204,8 +203,8 @@ func (g *Downloader) prepareDownload(postFields map[string]string) (string, erro
 	_, _ = io.Copy(io.Discard, res.Body)
 	_ = res.Body.Close()
 
-	if res.StatusCode != http.StatusFound {
-		return "", ErrInvalidResponse
+	if err := checkStatusCode(res, http.StatusFound); err != nil {
+		return "", err
 	}
 
 	location := res.Header.Get("Location")
@@ -235,8 +234,8 @@ func (g *Downloader) download(url string) (*http.Response, error) {
 		return res, err
 	}
 
-	if res.StatusCode != http.StatusOK {
-		return res, ErrInvalidResponse
+	if err := checkStatusCode(res, http.StatusOK); err != nil {
+		return res, err
 	}
 
 	return res, nil
@@ -267,4 +266,18 @@ func (g *Downloader) unzip(src io.ReadCloser) (io.ReadCloser, error) {
 	}
 
 	return f, nil
+}
+
+var ErrInvalidResponse = errors.New("invalid response")
+
+func checkStatusCode(response *http.Response, expected int) error {
+	if response.StatusCode != expected {
+		return fmt.Errorf(
+			`%w: got %q, expected %q`,
+			ErrInvalidResponse,
+			response.Status,
+			fmt.Sprintf("%d %s", expected, http.StatusText(expected)),
+		)
+	}
+	return nil
 }
