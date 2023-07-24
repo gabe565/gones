@@ -11,17 +11,15 @@ import (
 	"net/http/cookiejar"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	log "github.com/sirupsen/logrus"
 )
 
-const (
-	BaseUrl = "https://datomatic.no-intro.org/index.php"
-	System  = "45"
-)
+const BaseUrl = "https://datomatic.no-intro.org/index.php"
 
-func NewDownloader() (*Downloader, error) {
+func NewDownloader(systemName string) (*Downloader, error) {
 	jar, err := cookiejar.New(nil)
 	if err != nil {
 		return nil, err
@@ -31,6 +29,8 @@ func NewDownloader() (*Downloader, error) {
 		client: &http.Client{
 			Jar: jar,
 		},
+
+		SystemName: systemName,
 	}
 
 	return generate, nil
@@ -38,6 +38,9 @@ func NewDownloader() (*Downloader, error) {
 
 type Downloader struct {
 	client *http.Client
+
+	SystemName string
+	SystemId   string
 }
 
 func (g *Downloader) Url() string {
@@ -47,13 +50,20 @@ func (g *Downloader) Url() string {
 	}
 	q := u.Query()
 	q.Set("page", "download")
-	q.Set("s", System)
+	if g.SystemId != "" {
+		q.Set("s", g.SystemId)
+	}
 	q.Set("op", "xml")
 	u.RawQuery = q.Encode()
 	return u.String()
 }
 
-func (g *Downloader) Run() error {
+func (g *Downloader) Run() (err error) {
+	g.SystemId, err = g.getSystemId(g.SystemName)
+	if err != nil {
+		return err
+	}
+
 	postParams, err := g.getFormParams()
 	if err != nil {
 		return err
@@ -107,7 +117,59 @@ func (g *Downloader) buildPostForm(fields map[string]string) (io.Reader, string,
 	return bodyBuf, bodyWriter.FormDataContentType(), nil
 }
 
+var ErrSystemNotFound = errors.New("could not find system ID")
+
 var ErrNoForm = errors.New(`could not find form with name "main_form"`)
+
+func (g *Downloader) getSystemId(systemName string) (string, error) {
+	log.WithFields(log.Fields{"url": g.Url(), "systemName": g.SystemName}).Info("Get system ID")
+
+	res, err := g.client.Get(g.Url())
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, res.Body)
+		_ = res.Body.Close()
+	}()
+
+	if err := checkStatusCode(res, http.StatusOK); err != nil {
+		return "", err
+	}
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return "", err
+	}
+
+	sel := doc.Find(`form[name="main_form"]`)
+	if sel.Length() == 0 {
+		return "", ErrNoForm
+	}
+
+	node := sel.Eq(0)
+
+	// Iterate over selects
+	var system string
+	node.Find("select").Each(func(i int, s *goquery.Selection) {
+		if name, exists := s.Attr("name"); exists && name == "system_selection" {
+			s.Find("option").Each(func(i int, s *goquery.Selection) {
+				if strings.TrimSpace(s.Text()) == systemName {
+					if value, exists := s.Attr("value"); exists {
+						system = value
+					}
+				}
+			})
+		}
+	})
+
+	if system == "" {
+		return "", fmt.Errorf("%w: %s", ErrSystemNotFound, systemName)
+	}
+
+	log.WithField("id", system).Info("Got system ID")
+	return system, nil
+}
 
 func (g *Downloader) getFormParams() (map[string]string, error) {
 	postParams := make(map[string]string)

@@ -7,7 +7,7 @@ import (
 //go:generate go run .
 
 func main() {
-	action, err := NewDownloader()
+	action, err := NewDownloader("Nintendo - Nintendo Entertainment System")
 	if err != nil {
 		log.Panic(err)
 	}
