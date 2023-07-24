@@ -1,5 +1,5 @@
 <script setup>
-import IconMenu from "~icons/feather/menu";
+import IconMenu from "~icons/material-symbols/menu-rounded";
 
 defineProps({
   modelValue: {

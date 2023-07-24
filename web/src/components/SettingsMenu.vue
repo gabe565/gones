@@ -1,6 +1,6 @@
 <script setup>
-import IconClose from "~icons/feather/x";
-import IconUpload from "~icons/feather/upload";
+import IconClose from "~icons/material-symbols/close-rounded";
+import IconUpload from "~icons/material-symbols/upload-rounded";
 import IconGithub from "~icons/simple-icons/github";
 import KeyTable from "./KeyTable.vue";
 import { ref } from "vue";

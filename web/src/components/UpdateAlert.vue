@@ -32,8 +32,8 @@
 </template>
 
 <script setup>
-import IconRefreshCw from "~icons/feather/refresh-cw";
-import IconClose from "~icons/feather/x";
+import IconRefreshCw from "~icons/material-symbols/refresh-rounded";
+import IconClose from "~icons/material-symbols/close-rounded";
 import { onMounted, ref, watch } from "vue";
 
 const updateSW = ref(undefined);
