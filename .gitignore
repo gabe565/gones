@@ -3,3 +3,4 @@
 /dist
 gones
 gones.wasm
+wasm_exec.js

@@ -218,6 +218,8 @@ jobs:
           key: wasm-go-build-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             wasm-go-build-
+      - name: Generate
+        run: go generate -x
       - name: Build Go
         env:
           GOOS: js
