@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
       - name: Set up Go
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
       - name: Change Cache Key
@@ -86,7 +86,7 @@ jobs:
             extension: .exe
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
@@ -139,7 +139,7 @@ jobs:
             docker-platform: linux/arm64/v8
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Go
         id: setup-go
         uses: actions/setup-go@v4
@@ -195,7 +195,7 @@ jobs:
     needs: [lint, test]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Go
         id: setup-go
