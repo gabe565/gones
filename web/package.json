@@ -19,7 +19,7 @@
     "tailwindcss": "3.3.3",
     "unplugin-icons": "0.16.3",
     "vite": "4.4.9",
-    "vite-plugin-pwa": "0.16.4",
+    "vite-plugin-pwa": "0.16.5",
     "vue": "3.3.4"
   },
   "devDependencies": {
