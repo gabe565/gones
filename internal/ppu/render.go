@@ -21,26 +21,26 @@ func (p *PPU) renderPixel() {
 	y := int(p.Scanline) - 8
 
 	bgPixel := p.bgPixel(x)
-	b := bgPixel%4 != 0
+	bgEnabled := bgPixel%4 != 0
 
-	i, sprite := p.spritePixel(x)
-	s := sprite%4 != 0
+	i, spritePixel := p.spritePixel(x)
+	spriteEnabled := spritePixel%4 != 0
 
 	var colorIdx byte
 
 	switch {
-	case !b && !s:
+	case !bgEnabled && !spriteEnabled:
 		colorIdx = 0
-	case !b && s:
-		colorIdx = sprite | 0x10
-	case b && !s:
+	case !bgEnabled && spriteEnabled:
+		colorIdx = spritePixel | 0x10
+	case bgEnabled && !spriteEnabled:
 		colorIdx = bgPixel
 	default:
 		if p.SpriteData.Indexes[i] == 0 && x < 255 {
 			p.Status.SpriteZeroHit = true
 		}
 		if p.SpriteData.Priorities[i] == 0 {
-			colorIdx = sprite | 0x10
+			colorIdx = spritePixel | 0x10
 		} else {
 			colorIdx = bgPixel
 		}
