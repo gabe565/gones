@@ -76,11 +76,9 @@ jobs:
             pre-build: |
               sudo apt-get update
               sudo apt-get install --no-install-recommends $LINUX_DEPENDENCIES
-          - platform: darwin-amd64
+          - platform: darwin
             runs-on: macos-12
-          - platform: darwin-arm64
-            runs-on: macos-12
-            envs: GOARCH=arm64
+            build: ./hack/build-app.sh
           - platform: windows-amd64
             runs-on: windows-latest
             extension: .exe
@@ -116,7 +114,11 @@ jobs:
       - name: Pre-build
         if: matrix.pre-build
         run: ${{ matrix.pre-build }}
-      - name: Build
+      - name: Build (Matrix)
+        if: ${{ matrix.build }}
+        run: ${{ matrix.build }}
+      - name: Build (Default)
+        if: ${{ !matrix.build }}
         run: |
           go build -ldflags='-w -s' -trimpath -o dist/gones${{ matrix.extension }}
         env:
