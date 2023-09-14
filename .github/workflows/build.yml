@@ -122,11 +122,13 @@ jobs:
           go build -ldflags='-w -s' -trimpath -o dist/gones${{ matrix.extension }}
         env:
           CGO_ENABLED: "1"
+      - name: Compress
+        run: tar -cvf gones.tar -C dist .
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.platform }}
-          path: dist
+          path: gones.tar
 
   build-container:
     name: Build in Container (${{ matrix.platform }})
@@ -183,11 +185,13 @@ jobs:
             -v "$PWD:/app" \
             builder \
             go build -ldflags='-w -s' -trimpath -o dist/gones${{ matrix.extension }}
+      - name: Compress
+        run: tar -cvf gones.tar -C dist .
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.platform }}
-          path: dist
+          path: gones.tar
 
   build-web:
     name: Build Web
