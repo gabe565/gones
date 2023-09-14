@@ -3,15 +3,25 @@
 package cmd
 
 import (
-	"errors"
-
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/console"
+	"github.com/ncruces/zenity"
 )
 
 func newConsole(path string) (*console.Console, error) {
 	if path == "" {
-		return nil, errors.New("No ROM provided")
+		var err error
+		path, err = zenity.SelectFile(
+			zenity.Title("Choose a ROM file"),
+			zenity.FileFilter{
+				Name:     "NES ROM",
+				Patterns: []string{"*.nes"},
+				CaseFold: true,
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	cart, err := cartridge.FromiNesFile(path)

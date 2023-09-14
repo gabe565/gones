@@ -35,10 +35,10 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 	controller.LoadKeys()
 
+	var path string
 	if len(args) > 0 {
-		config.Path = args[0]
+		path = args[0]
 	}
-	path := config.Path
 	cmd.SilenceUsage = true
 
 	c, err := newConsole(path)

@@ -10,8 +10,6 @@ import (
 
 var K = koanf.New(".")
 
-var Path string
-
 var configDir = "gones"
 
 func defaultConfig() map[string]any {
