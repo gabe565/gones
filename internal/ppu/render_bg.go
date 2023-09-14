@@ -61,8 +61,8 @@ func (p *PPU) storeTileData() {
 	p.BgTile.Data |= uint64(data)
 }
 
-func (p *PPU) bgPixel() byte {
-	if !p.Mask.BackgroundEnable {
+func (p *PPU) bgPixel(x int) byte {
+	if !p.Mask.BackgroundEnable || (x < 8 && !p.Mask.BgLeftColEnable) {
 		return 0
 	}
 

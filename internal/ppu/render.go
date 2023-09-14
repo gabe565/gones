@@ -17,20 +17,13 @@ func (p *PPU) Image() *image.RGBA {
 }
 
 func (p *PPU) renderPixel() {
-	x := int(p.Cycles - 1)
-	y := int(p.Scanline)
+	x := int(p.Cycles) - 1
+	y := int(p.Scanline) - 8
 
-	bgPixel := p.bgPixel()
-	if x < 8 && !p.Mask.BgLeftColEnable {
-		bgPixel = 0
-	}
-
-	i, sprite := p.spritePixel()
-	if x < 8 && !p.Mask.SpriteLeftColEnable {
-		sprite = 0
-	}
-
+	bgPixel := p.bgPixel(x)
 	b := bgPixel%4 != 0
+
+	i, sprite := p.spritePixel(x)
 	s := sprite%4 != 0
 
 	var colorIdx byte
@@ -75,5 +68,5 @@ func (p *PPU) renderPixel() {
 		}
 	}
 
-	p.image.SetRGBA(x, y-8, c)
+	p.image.SetRGBA(x, y, c)
 }

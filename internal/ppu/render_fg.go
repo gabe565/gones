@@ -89,13 +89,13 @@ func (p *PPU) fetchSpritePattern(tile, attributes byte, row int) uint32 {
 	return data
 }
 
-func (p *PPU) spritePixel() (byte, byte) {
+func (p *PPU) spritePixel(x int) (byte, byte) {
 	if !p.Mask.SpriteEnable {
 		return 0, 0
 	}
 
 	for i := uint8(0); i < p.SpriteData.Count; i += 1 {
-		offset := int(p.Cycles) - 1 - int(p.SpriteData.Positions[i])
+		offset := x - int(p.SpriteData.Positions[i])
 		if offset < 0 || offset > 7 {
 			continue
 		}
