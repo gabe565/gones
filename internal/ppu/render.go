@@ -27,10 +27,9 @@ func (p *PPU) renderPixel() {
 	spriteEnabled := spritePixel%4 != 0
 
 	var colorIdx byte
-
 	switch {
 	case !bgEnabled && !spriteEnabled:
-		colorIdx = 0
+		//
 	case !bgEnabled && spriteEnabled:
 		colorIdx = spritePixel | 0x10
 	case bgEnabled && !spriteEnabled:
