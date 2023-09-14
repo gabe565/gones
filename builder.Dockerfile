@@ -1,8 +1,9 @@
 FROM golang:1.21
 WORKDIR /app
 
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends \
+RUN set -x \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
       libasound2-dev \
       libc6-dev \
       libgl1-mesa-dev \
@@ -12,6 +13,6 @@ RUN apt-get install -y --no-install-recommends \
       libxinerama-dev \
       libxrandr-dev \
       libxxf86vm-dev \
-      pkg-config
-
-RUN git config --global --add safe.directory "$PWD"
+      pkg-config \
+  && git config --global --add safe.directory "$PWD" \
+  && rm -rf /var/lib/apt/lists/*
