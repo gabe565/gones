@@ -14,16 +14,16 @@ func TestFindNameByHash(t *testing.T) {
 		name    string
 		args    args
 		want    string
-		wantErr bool
+		wantErr assert.ErrorAssertionFunc
 	}{
-		{"Mario 3", args{"85f0ddddfe4ab67c42aba48498f42fdc"}, "Super Mario Bros. 3 (USA)", false},
-		{"Metroid", args{"397d10e475266ad28144a5fa6ec3c466"}, "Metroid (USA)", false},
-		{"Not Found", args{"a"}, "", true},
+		{"Mario 3", args{"85f0ddddfe4ab67c42aba48498f42fdc"}, "Super Mario Bros. 3 (USA)", assert.NoError},
+		{"Metroid", args{"397d10e475266ad28144a5fa6ec3c466"}, "Metroid (USA)", assert.NoError},
+		{"Not Found", args{"a"}, "", assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := FindNameByHash(tt.args.md5)
-			if !assert.Equal(t, tt.wantErr, err != nil) {
+			if !tt.wantErr(t, err) {
 				return
 			}
 			assert.Equal(t, tt.want, got)
