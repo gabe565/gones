@@ -23,7 +23,7 @@ For now, binaries can be downloaded from CI build artifacts.
 Make sure you have [Go](https://go.dev/doc/install) and the [requirements](#requirements) installed, then run:
 
 ```shell
-go install github.com/gabe565/gones
+go install github.com/gabe565/gones@latest
 ```
 
 ## Requirements
