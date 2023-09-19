@@ -108,6 +108,7 @@ Eventually, this will be configurable in the UI.
   - [x] Player 2
   - [ ] External controllers
 - [x] APU implementation (audio)
+  - APU is disabled for the WASM build target. Emulation runs slower in WASM, causing audio to sound glitchy. I'm optimizing the emulation logic so that audio will be more reliable in WASM.
 - [x] Save file for games with batteries
 - [x] Save states
 - [ ] Preferences (remap controllers, video config, sound config, etc)
