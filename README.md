@@ -111,6 +111,8 @@ Eventually, this will be configurable in the UI.
 - [x] Save file for games with batteries
 - [x] Save states
 - [ ] Preferences (remap controllers, video config, sound config, etc)
+  - [x] Config file
+  - [ ] Config UI
 - [ ] Cheats
 
 ## References
