@@ -232,7 +232,7 @@ jobs:
           go build -ldflags='-w -s' -trimpath -o web/src/assets/gones.wasm
 
       - name: Set up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: web/.nvmrc
           cache: npm
