@@ -10,8 +10,8 @@
     "format": "prettier . --write --ignore-path .gitignore"
   },
   "dependencies": {
-    "@iconify-json/material-symbols": "1.1.61",
-    "@iconify-json/simple-icons": "1.1.77",
+    "@iconify-json/material-symbols": "1.x",
+    "@iconify-json/simple-icons": "1.x",
     "@vitejs/plugin-vue": "4.4.0",
     "autoprefixer": "10.4.16",
     "postcss": "8.4.31",
