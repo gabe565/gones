@@ -125,7 +125,7 @@ jobs:
       - name: Compress
         run: tar -cvf gones.tar -C dist .
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}
           path: gones.tar
@@ -188,7 +188,7 @@ jobs:
       - name: Compress
         run: tar -cvf gones.tar -C dist .
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}
           path: gones.tar
