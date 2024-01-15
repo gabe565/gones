@@ -1,6 +1,6 @@
 module github.com/gabe565/gones
 
-go 1.21.4
+go 1.21.6
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
