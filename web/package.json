@@ -20,7 +20,7 @@
     "unplugin-icons": "0.17.4",
     "vite": "4.5.0",
     "vite-plugin-pwa": "0.16.7",
-    "vue": "3.3.8"
+    "vue": "3.4.13"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "1.6.1",
