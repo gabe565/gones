@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: '3'
+
+tasks:
+  deps:linux:
+    platforms: [linux]
+    cmd: |
+      sudo apt-get install -y --no-install-recommends
+        libasound2-dev
+        libc6-dev
+        libgl1-mesa-dev
+        libglu1-mesa-dev
+        libxcursor-dev
+        libxi-dev
+        libxinerama-dev
+        libxrandr-dev
+        libxxf86vm-dev
+
+  build:
+    cmds:
+      - cmd: sh ./hack/build-app.sh
+        platforms: [darwin]
+      - cmd: go build -ldflags='-w -s' -trimpath -o dist/gones
+        platforms: [linux]
+      - cmd: go build -ldflags='-w -s' -trimpath -o dist/gones.exe
+        platforms: [windows]
+
+  build:wasm:
+    env:
+      GOOS: js
+      GOARCH: wasm
+    cmd: go build -ldflags='-w -s' -trimpath -o web/src/assets/gones.wasm
+
+  deps:web:
+    dir: web
+    sources: [package*.json]
+    cmd: npm install
+
+  build:web:
+    deps: [build:wasm, deps:web]
+    dir: web
+    cmd: npm run build
+
+  icons:
+    cmd: sh ./hack/build-icns.sh
+
+  update:nointro:
+    cmd: go generate ./internal/database/...
