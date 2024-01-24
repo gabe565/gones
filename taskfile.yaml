@@ -49,4 +49,9 @@ tasks:
 
   gen:palette:
     dir: internal/ppu/palette
+    sources:
+      - generate/main.go
+      - palette.go
+    generates:
+      - palette_emphasis.go
     cmd: go run ./generate/main.go
