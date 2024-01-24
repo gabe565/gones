@@ -20,11 +20,6 @@ var lengthTable = [...]byte{
 	12, 16, 24, 18, 48, 20, 96, 22, 192, 24, 72, 26, 16, 28, 32, 30,
 }
 
-var (
-	squareTable [31]float32
-	tndTable    [203]float32
-)
-
 const (
 	StatusPulse1 = 1 << iota
 	StatusPulse2
@@ -32,15 +27,6 @@ const (
 	StatusNoise
 	StatusDMC
 )
-
-func init() {
-	for i := range squareTable {
-		squareTable[i] = 95.52 / (8128.0/float32(i) + 100)
-	}
-	for i := range tndTable {
-		tndTable[i] = 163.67 / (24329.0/float32(i) + 100)
-	}
-}
 
 func New() *APU {
 	return &APU{
@@ -222,14 +208,14 @@ func (a *APU) stepLength() {
 }
 
 func (a *APU) output() float32 {
-	p1 := a.Square[0].output()
-	p2 := a.Square[1].output()
-	pulseOut := squareTable[p1+p2]
+	p1 := float32(a.Square[0].output())
+	p2 := float32(a.Square[1].output())
+	pulseOut := 95.88 / (8128/(p1+p2) + 100)
 
-	t := a.Triangle.output()
-	n := a.Noise.output()
-	d := a.DMC.output()
-	tndOut := tndTable[3*t+2*n+d]
+	t := float32(a.Triangle.output())
+	n := float32(a.Noise.output())
+	d := float32(a.DMC.output())
+	tndOut := 159.79 / (1/(t/8227+n/12241+d/22638) + 100)
 
 	return pulseOut + tndOut
 }
