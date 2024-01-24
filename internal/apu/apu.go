@@ -138,20 +138,20 @@ func (a *APU) Reset() {
 }
 
 func (a *APU) Step() {
-	cycle1 := a.Cycle
+	cycle1 := float64(a.Cycle)
 	a.Cycle += 1
-	cycle2 := a.Cycle
+	cycle2 := float64(a.Cycle)
 
 	a.stepTimer()
 
-	f1 := int(float64(cycle1) / FrameCounterRate)
-	f2 := int(float64(cycle2) / FrameCounterRate)
+	f1 := int(cycle1 / FrameCounterRate)
+	f2 := int(cycle2 / FrameCounterRate)
 	if f1 != f2 {
 		a.stepFrameCounter()
 	}
 
-	s1 := int(float64(cycle1) / a.SampleRate)
-	s2 := int(float64(cycle2) / a.SampleRate)
+	s1 := int(cycle1 / a.SampleRate)
+	s2 := int(cycle2 / a.SampleRate)
 	if s1 != s2 && a.Enabled {
 		a.sendSample()
 	}
