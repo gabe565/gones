@@ -33,8 +33,11 @@ func main() {
 		{Red, Green, Blue},
 	}
 
+	arrLen := Id(print16(len(palette.Default)))
+
 	for _, combination := range combinations {
-		f.Var().Id("Emphasis"+strings.Join(combination, "")).Op("=").Index(Id(print16(0x40))).Qual("image/color", "RGBA").
+		f.Var().Id("Emphasis"+strings.Join(combination, "")).Op("=").
+			Index(arrLen).Qual("image/color", "RGBA").
 			Values(DictFunc(func(d Dict) {
 				for i, c := range palette.Default {
 					// Don't attenuate $xE or $xF (black)
