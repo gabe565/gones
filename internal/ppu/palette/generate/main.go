@@ -34,7 +34,7 @@ func main() {
 		{Red, Green, Blue},
 	}
 
-	arrLen := Id(print16(len(palette.Default)))
+	arrLen := id16(len(palette.Default))
 
 	for _, combination := range combinations {
 		f.Var().Id("Emphasis"+strings.Join(combination, "")).Op("=").
@@ -57,12 +57,7 @@ func main() {
 							}
 						}
 					}
-					d[Id(print16(i))] = Values(
-						Id(print16(c.R)),
-						Id(print16(c.G)),
-						Id(print16(c.B)),
-						Id(print16(c.A)),
-					)
+					d[id16(i)] = Values(id16(c.R), id16(c.G), id16(c.B), id16(c.A))
 				}
 			})).Line()
 	}
@@ -81,6 +76,6 @@ func main() {
 	}
 }
 
-func print16[T cmp.Ordered](i T) string {
-	return fmt.Sprintf("%#02X", i)
+func id16[T cmp.Ordered](i T) *Statement {
+	return Id(fmt.Sprintf("%#02X", i))
 }
