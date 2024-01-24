@@ -68,7 +68,7 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 		if err != nil {
 			return &console, err
 		}
-		console.player.SetBufferSize(time.Second / 50)
+		console.player.SetBufferSize(time.Second / 20)
 		console.player.Play()
 	} else {
 		console.APU.Enabled = false

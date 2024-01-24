@@ -27,10 +27,6 @@ func Load(cmd *cobra.Command) error {
 		return err
 	}
 
-	if err := K.Set("audio.enabled", false); err != nil {
-		return err
-	}
-
 	log.Info("Loaded config")
 	return nil
 }
