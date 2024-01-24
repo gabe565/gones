@@ -239,7 +239,6 @@ func (a *APU) output() float32 {
 func (a *APU) Read(p []byte) (int, error) {
 	var n int
 
-loop:
 	for i := 0; i < len(p); i += 4 {
 		select {
 		case sample := <-a.buf:
@@ -251,15 +250,14 @@ loop:
 			p[1], p[3] = hi, hi
 			n += 4
 		default:
-			break loop
+			if n == 0 {
+				for i := range p {
+					p[i] = 0
+				}
+				n = len(p)
+			}
+			return n, nil
 		}
-	}
-
-	if n == 0 {
-		for i := range p {
-			p[i] = 0
-		}
-		n = len(p)
 	}
 
 	return n, nil
