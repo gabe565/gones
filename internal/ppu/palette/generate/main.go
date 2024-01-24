@@ -37,7 +37,7 @@ func main() {
 	arrLen := id16(len(palette.Default))
 
 	for _, combination := range combinations {
-		f.Var().Id("Emphasis"+strings.Join(combination, "")).Op("=").
+		f.Var().Id("Emphasize"+strings.Join(combination, "")).Op("=").
 			Index(arrLen).Qual("image/color", "RGBA").
 			Values(DictFunc(func(d Dict) {
 				for i, c := range palette.Default {

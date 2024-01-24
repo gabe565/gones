@@ -85,19 +85,19 @@ func (p *PPU) WriteMask(data byte) {
 	case 0:
 		p.SystemPalette = &palette.Default
 	case registers.MaskEmphasizeRed:
-		p.SystemPalette = &palette.EmphasisR
+		p.SystemPalette = &palette.EmphasizeR
 	case registers.MaskEmphasizeGreen:
-		p.SystemPalette = &palette.EmphasisG
+		p.SystemPalette = &palette.EmphasizeG
 	case registers.MaskEmphasizeBlue:
-		p.SystemPalette = &palette.EmphasisB
+		p.SystemPalette = &palette.EmphasizeB
 	case registers.MaskEmphasizeRed | registers.MaskEmphasizeGreen:
-		p.SystemPalette = &palette.EmphasisRG
+		p.SystemPalette = &palette.EmphasizeRG
 	case registers.MaskEmphasizeRed | registers.MaskEmphasizeBlue:
-		p.SystemPalette = &palette.EmphasisRB
+		p.SystemPalette = &palette.EmphasizeRB
 	case registers.MaskEmphasizeGreen | registers.MaskEmphasizeBlue:
-		p.SystemPalette = &palette.EmphasisGB
+		p.SystemPalette = &palette.EmphasizeGB
 	case registers.MaskEmphasizeRed | registers.MaskEmphasizeGreen | registers.MaskEmphasizeBlue:
-		p.SystemPalette = &palette.EmphasisRGB
+		p.SystemPalette = &palette.EmphasizeRGB
 	}
 }
 
