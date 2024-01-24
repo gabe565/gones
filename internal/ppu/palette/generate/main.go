@@ -3,6 +3,7 @@ package main
 import (
 	"cmp"
 	"fmt"
+	"math"
 	"os"
 	"strings"
 
@@ -45,14 +46,14 @@ func main() {
 						for _, emphasis := range combination {
 							switch emphasis {
 							case Red:
-								c.G = uint8(float64(c.G) * Attenuate)
-								c.B = uint8(float64(c.B) * Attenuate)
+								c.G = uint8(math.Round(float64(c.G) * Attenuate))
+								c.B = uint8(math.Round(float64(c.B) * Attenuate))
 							case Green:
-								c.R = uint8(float64(c.R) * Attenuate)
-								c.B = uint8(float64(c.B) * Attenuate)
+								c.R = uint8(math.Round(float64(c.R) * Attenuate))
+								c.B = uint8(math.Round(float64(c.B) * Attenuate))
 							case Blue:
-								c.R = uint8(float64(c.R) * Attenuate)
-								c.G = uint8(float64(c.G) * Attenuate)
+								c.R = uint8(math.Round(float64(c.R) * Attenuate))
+								c.G = uint8(math.Round(float64(c.G) * Attenuate))
 							}
 						}
 					}
