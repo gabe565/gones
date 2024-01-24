@@ -3,10 +3,12 @@ package ppu
 import (
 	"fmt"
 	"image"
+	"image/color"
 
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/memory"
+	"github.com/gabe565/gones/internal/ppu/palette"
 	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
 )
@@ -18,9 +20,10 @@ type CPU interface {
 
 func New(mapper cartridge.Mapper) *PPU {
 	return &PPU{
-		mapper: mapper,
-		image:  image.NewRGBA(image.Rect(0, 0, Width, TrimmedHeight)),
-		Cycles: 21,
+		mapper:        mapper,
+		image:         image.NewRGBA(image.Rect(0, 0, Width, TrimmedHeight)),
+		Cycles:        21,
+		SystemPalette: &palette.Default,
 	}
 }
 
@@ -37,12 +40,13 @@ type PPU struct {
 	FineX     byte
 	Vram      [0x800]byte
 
-	OamAddr byte
-	Oam     [0x100]byte
-	Palette [0x20]byte
+	OamAddr       byte
+	Oam           [0x100]byte
+	SystemPalette *[0x40]color.RGBA
+	Palette       [0x20]byte
 
-	Scanline uint16
-	Cycles   uint
+	Scanline int
+	Cycles   int
 	VblRace  bool
 
 	nmiOffset uint8
@@ -76,6 +80,25 @@ func (p *PPU) WriteCtrl(data byte) {
 
 func (p *PPU) WriteMask(data byte) {
 	p.Mask.Set(data)
+
+	switch data & (registers.MaskEmphasizeRed | registers.MaskEmphasizeGreen | registers.MaskEmphasizeBlue) {
+	case 0:
+		p.SystemPalette = &palette.Default
+	case registers.MaskEmphasizeRed:
+		p.SystemPalette = &palette.EmphasisR
+	case registers.MaskEmphasizeGreen:
+		p.SystemPalette = &palette.EmphasisG
+	case registers.MaskEmphasizeBlue:
+		p.SystemPalette = &palette.EmphasisB
+	case registers.MaskEmphasizeRed | registers.MaskEmphasizeGreen:
+		p.SystemPalette = &palette.EmphasisRG
+	case registers.MaskEmphasizeRed | registers.MaskEmphasizeBlue:
+		p.SystemPalette = &palette.EmphasisRB
+	case registers.MaskEmphasizeGreen | registers.MaskEmphasizeBlue:
+		p.SystemPalette = &palette.EmphasisGB
+	case registers.MaskEmphasizeRed | registers.MaskEmphasizeGreen | registers.MaskEmphasizeBlue:
+		p.SystemPalette = &palette.EmphasisRGB
+	}
 }
 
 func (p *PPU) WriteOamAddr(data byte) {

@@ -50,7 +50,7 @@ func (p *PPU) fetchHiTileByte() {
 
 func (p *PPU) storeTileData() {
 	var data uint32
-	for i := 0; i < 8; i++ {
+	for i := uint8(0); i < 8; i++ {
 		p1 := (p.BgTile.LoByte & 0x80) >> 7
 		p2 := (p.BgTile.HiByte & 0x80) >> 6
 		p.BgTile.LoByte <<= 1

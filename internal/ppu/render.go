@@ -9,7 +9,6 @@ const (
 	Height        = 240
 	TrimHeight    = 8
 	TrimmedHeight = Height - 2*TrimHeight
-	Attenuate     = 0.746
 )
 
 func (p *PPU) Image() *image.RGBA {
@@ -17,8 +16,8 @@ func (p *PPU) Image() *image.RGBA {
 }
 
 func (p *PPU) renderPixel() {
-	x := int(p.Cycles) - 1
-	y := int(p.Scanline) - 8
+	x := p.Cycles - 1
+	y := p.Scanline - 8
 
 	bgPixel := p.bgPixel(x)
 	bgEnabled := bgPixel%4 != 0
@@ -27,22 +26,21 @@ func (p *PPU) renderPixel() {
 	spriteEnabled := spritePixel%4 != 0
 
 	var colorIdx byte
-	switch {
-	case !bgEnabled && !spriteEnabled:
-		//
-	case !bgEnabled && spriteEnabled:
-		colorIdx = spritePixel | 0x10
-	case bgEnabled && !spriteEnabled:
-		colorIdx = bgPixel
-	default:
-		if p.SpriteData.Indexes[i] == 0 && x < 255 {
-			p.Status.SpriteZeroHit = true
-		}
-		if p.SpriteData.Priorities[i] == 0 {
-			colorIdx = spritePixel | 0x10
+	if bgEnabled {
+		if spriteEnabled {
+			if p.SpriteData.Indexes[i] == 0 && x < 255 {
+				p.Status.SpriteZeroHit = true
+			}
+			if p.SpriteData.Priorities[i] == 0 {
+				colorIdx = spritePixel | 0x10
+			} else {
+				colorIdx = bgPixel
+			}
 		} else {
 			colorIdx = bgPixel
 		}
+	} else if spriteEnabled {
+		colorIdx = spritePixel | 0x10
 	}
 
 	colorIdx = p.readPalette(uint16(colorIdx)) % 64
@@ -50,22 +48,6 @@ func (p *PPU) renderPixel() {
 		colorIdx &= 0x30
 	}
 
-	c := SystemPalette[colorIdx]
-	// Don't attenuate $xE or $xF (black)
-	if colorIdx&0xE != 0xE {
-		if p.Mask.EmphasizeRed {
-			c.G = uint8(float64(c.G) * Attenuate)
-			c.B = uint8(float64(c.B) * Attenuate)
-		}
-		if p.Mask.EmphasizeGreen {
-			c.R = uint8(float64(c.R) * Attenuate)
-			c.B = uint8(float64(c.B) * Attenuate)
-		}
-		if p.Mask.EmphasizeBlue {
-			c.R = uint8(float64(c.R) * Attenuate)
-			c.G = uint8(float64(c.G) * Attenuate)
-		}
-	}
-
+	c := p.SystemPalette[colorIdx]
 	p.image.SetRGBA(x, y, c)
 }

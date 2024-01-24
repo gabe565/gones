@@ -46,3 +46,7 @@ tasks:
 
   update:nointro:
     cmd: go generate ./internal/database/...
+
+  gen:palette:
+    dir: internal/ppu/palette
+    cmd: go run ./generate/main.go
