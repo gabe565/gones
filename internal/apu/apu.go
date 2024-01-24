@@ -45,7 +45,6 @@ func init() {
 func New() *APU {
 	return &APU{
 		Enabled:    true,
-		Volume:     1,
 		SampleRate: consts.CpuFrequency / float64(consts.AudioSampleRate),
 
 		Square: [2]Square{{Channel1: true}, {}},
@@ -58,7 +57,6 @@ func New() *APU {
 type APU struct {
 	Enabled    bool
 	SampleRate float64
-	Volume     float32
 	cpu        CPU
 
 	Square   [2]Square
@@ -243,7 +241,7 @@ func (a *APU) Read(p []byte) (int, error) {
 		select {
 		case sample := <-a.buf:
 			p := p[i : i+4 : i+4]
-			out := int16(sample * a.Volume * 32767)
+			out := int16(sample * 32767)
 			lo := byte(out)
 			p[0], p[2] = lo, lo
 			hi := byte(out >> 8)

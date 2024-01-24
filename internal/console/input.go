@@ -18,11 +18,11 @@ func (c *Console) CheckInput() {
 
 	if inpututil.IsKeyJustPressed(controller.FastForward) {
 		c.APU.SampleRate *= FastForwardFactor
-		c.APU.Volume = 0.4
+		c.player.SetVolume(0.4)
 		ebiten.SetTPS(FastForwardFactor * 60)
 	} else if inpututil.IsKeyJustReleased(controller.FastForward) {
 		ebiten.SetTPS(60)
-		c.APU.Volume = 1
+		c.player.SetVolume(1)
 		c.APU.SampleRate /= FastForwardFactor
 	}
 
