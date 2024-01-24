@@ -10,7 +10,7 @@ const (
 	// ChrChunkSize is the size of the smallest CHR
 	ChrChunkSize = 0x2000
 
-	CpuFrequency = 1789772
+	CpuFrequency = 1789773
 
 	AudioSampleRate = 44100
 )

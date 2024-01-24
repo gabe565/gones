@@ -13,7 +13,7 @@ type CPU interface {
 	AddStall(uint8)
 }
 
-const FrameCounterRate = consts.CpuFrequency / 240.0
+const FrameCounterRate = consts.CpuFrequency / float32(240.0)
 
 var lengthTable = [...]byte{
 	10, 254, 20, 2, 40, 4, 80, 6, 160, 8, 60, 10, 14, 12, 26, 14,
@@ -31,18 +31,18 @@ const (
 func New() *APU {
 	return &APU{
 		Enabled:    true,
-		SampleRate: consts.CpuFrequency / float64(consts.AudioSampleRate),
+		SampleRate: consts.CpuFrequency / float32(consts.AudioSampleRate),
 
 		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},
 
-		buf: make(chan float32, 10*consts.AudioSampleRate/60),
+		buf: make(chan float32, 8*consts.AudioSampleRate/20),
 	}
 }
 
 type APU struct {
 	Enabled    bool
-	SampleRate float64
+	SampleRate float32
 	cpu        CPU
 
 	Square   [2]Square
@@ -124,20 +124,20 @@ func (a *APU) Reset() {
 }
 
 func (a *APU) Step() {
-	cycle1 := float64(a.Cycle)
+	cycle1 := float32(a.Cycle)
 	a.Cycle += 1
-	cycle2 := float64(a.Cycle)
+	cycle2 := float32(a.Cycle)
 
 	a.stepTimer()
 
-	f1 := int(cycle1 / FrameCounterRate)
-	f2 := int(cycle2 / FrameCounterRate)
+	f1 := uint32(cycle1 / FrameCounterRate)
+	f2 := uint32(cycle2 / FrameCounterRate)
 	if f1 != f2 {
 		a.stepFrameCounter()
 	}
 
-	s1 := int(cycle1 / a.SampleRate)
-	s2 := int(cycle2 / a.SampleRate)
+	s1 := uint32(cycle1 / a.SampleRate)
+	s2 := uint32(cycle2 / a.SampleRate)
 	if s1 != s2 && a.Enabled {
 		a.sendSample()
 	}
