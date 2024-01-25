@@ -3,6 +3,7 @@ package cartridge
 import (
 	"encoding/gob"
 
+	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -28,17 +29,7 @@ type Mapper4 struct {
 	Reload     byte
 	Counter    byte
 	IRQEnable  bool
-}
-
-func (m *Mapper4) OnScanline() {
-	if m.Counter == 0 {
-		m.Counter = m.Reload
-	} else {
-		m.Counter -= 1
-		if m.Counter == 0 && m.IRQEnable {
-			m.cpu.AddIrq()
-		}
-	}
+	PrevA12    bool
 }
 
 func (m *Mapper4) Cartridge() *Cartridge { return m.cartridge }
@@ -46,6 +37,26 @@ func (m *Mapper4) Cartridge() *Cartridge { return m.cartridge }
 func (m *Mapper4) SetCartridge(c *Cartridge) { m.cartridge = c }
 
 func (m *Mapper4) SetCpu(c CPU) { m.cpu = c }
+
+func (m *Mapper4) OnScanline() {
+	if m.Counter == 0 {
+		m.Counter = m.Reload
+	} else {
+		m.Counter -= 1
+	}
+
+	if m.Counter == 0 && m.IRQEnable {
+		m.cpu.AddIrq()
+	}
+}
+
+func (m *Mapper4) OnVramAddr(addr registers.Address) {
+	curr := addr.FineY&1 == 1
+	if !m.PrevA12 && curr {
+		m.OnScanline()
+	}
+	m.PrevA12 = curr
+}
 
 func (m *Mapper4) ReadMem(addr uint16) byte {
 	switch {
@@ -108,6 +119,9 @@ func (m *Mapper4) WriteMem(addr uint16, data byte) {
 		}
 	case 0xE000 <= addr:
 		m.IRQEnable = addr%2 == 1
+		if !m.IRQEnable {
+			m.cpu.ClearIrq()
+		}
 	default:
 		log.Warnf("invalid mapper 4 write to $%04X", addr)
 	}

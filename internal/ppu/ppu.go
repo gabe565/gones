@@ -67,6 +67,10 @@ func (p *PPU) WriteAddr(data byte) {
 	if p.AddrLatch {
 		p.TmpAddr.WriteLo(data)
 		p.Addr = p.TmpAddr
+
+		if mapper, ok := p.mapper.(cartridge.MapperOnVramAddr); ok {
+			mapper.OnVramAddr(p.Addr)
+		}
 	} else {
 		p.TmpAddr.WriteHi(data)
 	}
@@ -164,6 +168,9 @@ func (p *PPU) WriteData(data byte) {
 			Error("unexpected write to mirrored space")
 	}
 	p.Addr.Increment(p.Ctrl.VramAddr())
+	if mapper, ok := p.mapper.(cartridge.MapperOnVramAddr); ok {
+		mapper.OnVramAddr(p.Addr)
+	}
 }
 
 func (p *PPU) ReadData() byte {
@@ -184,6 +191,10 @@ func (p *PPU) ReadData() byte {
 	} else if addr < 0x4000 {
 		p.ReadBuf = p.ReadDataAddr(addr - 0x1000)
 		val |= p.openBus & 0xC0
+	}
+
+	if mapper, ok := p.mapper.(cartridge.MapperOnVramAddr); ok {
+		mapper.OnVramAddr(p.Addr)
 	}
 	return val
 }

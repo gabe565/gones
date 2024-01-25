@@ -6,6 +6,7 @@ import (
 
 	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/memory"
+	"github.com/gabe565/gones/internal/ppu/registers"
 )
 
 type CPU interface {
@@ -28,6 +29,10 @@ type MapperOnCPUStep interface {
 
 type MapperOnScanline interface {
 	OnScanline()
+}
+
+type MapperOnVramAddr interface {
+	OnVramAddr(registers.Address)
 }
 
 var ErrUnsupportedMapper = errors.New("unsupported mapper")
