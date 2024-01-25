@@ -113,7 +113,9 @@ func (c *CPU) AddStall(stall uint16) {
 }
 
 func (c *CPU) AddInterrupt(i *interrupts.Interrupt) {
-	if c.interrupt == nil {
+	switch {
+	case i == &interrupts.IRQ && c.Status.InterruptDisable:
+	default:
 		c.interrupt = i
 	}
 }
