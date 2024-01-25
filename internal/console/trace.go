@@ -8,6 +8,6 @@ func (c *Console) Trace() string {
 		c.CPU.Trace(),
 		c.PPU.Scanline,
 		c.PPU.Cycles,
-		c.CPU.Cycles,
+		c.CPU.Cycles(),
 	)
 }

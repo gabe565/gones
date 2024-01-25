@@ -32,3 +32,7 @@ var IRQ = Interrupt{
 type Interruptible interface {
 	AddInterrupt(*Interrupt)
 }
+
+type Stallable interface {
+	AddStall(uint16)
+}

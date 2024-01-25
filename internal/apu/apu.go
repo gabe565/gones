@@ -10,7 +10,7 @@ import (
 type CPU interface {
 	memory.Read8
 	interrupts.Interruptible
-	AddStall(uint8)
+	interrupts.Stallable
 }
 
 const FrameCounterRate = consts.CpuFrequency / float32(240.0)

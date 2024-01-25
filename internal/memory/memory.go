@@ -39,3 +39,7 @@ type ReadSafeWrite interface {
 	ReadWrite
 	ReadSafe
 }
+
+type HasCycles interface {
+	Cycles() uint
+}

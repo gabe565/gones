@@ -13,7 +13,7 @@ func New(b memory.ReadSafeWrite) *CPU {
 		StackPointer: byte(StackAddr - 3),
 		Status:       DefaultStatus,
 		bus:          b,
-		Cycles:       7,
+		cycles:       7,
 	}
 	cpu.ProgramCounter = cpu.ReadMem16(interrupts.Reset.VectorAddr)
 	return &cpu
@@ -46,11 +46,11 @@ type CPU struct {
 	// bus Main memory bus
 	bus memory.ReadSafeWrite
 
-	Cycles uint
+	cycles uint
 
 	interrupt *interrupts.Interrupt
 
-	Stall uint8
+	Stall uint16
 }
 
 // Reset resets the CPU and sets ProgramCounter to the value of the [Reset] Vector.
@@ -66,7 +66,7 @@ func (c *CPU) handleInterrupt(interrupt interrupts.Interrupt) {
 		php(c, 0)
 	}
 	sei(c, 0)
-	c.Cycles += uint(interrupt.Cycles)
+	c.cycles += uint(interrupt.Cycles)
 	c.ProgramCounter = c.ReadMem16(interrupt.VectorAddr)
 }
 
@@ -77,11 +77,11 @@ var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 func (c *CPU) Step() (uint, error) {
 	if c.Stall > 0 {
 		c.Stall -= 1
-		c.Cycles += 1
+		c.cycles += 1
 		return 1, nil
 	}
 
-	cycles := c.Cycles
+	cycles := c.cycles
 
 	if c.interrupt != nil {
 		c.handleInterrupt(*c.interrupt)
@@ -99,16 +99,16 @@ func (c *CPU) Step() (uint, error) {
 
 	op.Exec(c, op.Mode)
 
-	c.Cycles += uint(op.Cycles)
+	c.cycles += uint(op.Cycles)
 
 	if prevPC == c.ProgramCounter {
 		c.ProgramCounter += uint16(op.Len - 1)
 	}
 
-	return c.Cycles - cycles, nil
+	return c.cycles - cycles, nil
 }
 
-func (c *CPU) AddStall(stall uint8) {
+func (c *CPU) AddStall(stall uint16) {
 	c.Stall += stall
 }
 
@@ -116,4 +116,8 @@ func (c *CPU) AddInterrupt(i *interrupts.Interrupt) {
 	if c.interrupt == nil {
 		c.interrupt = i
 	}
+}
+
+func (c *CPU) Cycles() uint {
+	return c.cycles
 }

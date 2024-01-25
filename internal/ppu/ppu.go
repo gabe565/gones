@@ -15,7 +15,9 @@ import (
 
 type CPU interface {
 	memory.Read8
+	memory.HasCycles
 	interrupts.Interruptible
+	interrupts.Stallable
 }
 
 func New(mapper cartridge.Mapper) *PPU {
@@ -242,6 +244,11 @@ func (p *PPU) WriteMem(addr uint16, data byte) {
 		hi := uint16(data) << 8
 		for i := 0; i < 256; i += 1 {
 			p.WriteOam(p.cpu.ReadMem(hi + uint16(i)))
+		}
+		if p.cpu.Cycles()%2 == 1 {
+			p.cpu.AddStall(514)
+		} else {
+			p.cpu.AddStall(513)
 		}
 	default:
 		log.Errorf("invalid PPU write to $%02X", addr)
