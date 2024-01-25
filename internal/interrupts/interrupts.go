@@ -30,7 +30,9 @@ var IRQ = Interrupt{
 }
 
 type Interruptible interface {
-	AddInterrupt(*Interrupt)
+	AddNmi()
+	AddIrq()
+	ClearIrq()
 }
 
 type Stallable interface {

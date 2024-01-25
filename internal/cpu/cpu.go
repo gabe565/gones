@@ -48,7 +48,8 @@ type CPU struct {
 
 	cycles uint
 
-	interrupt *interrupts.Interrupt
+	pendingNmi bool
+	pendingIrq bool
 
 	Stall uint16
 }
@@ -83,9 +84,14 @@ func (c *CPU) Step() (uint, error) {
 
 	cycles := c.cycles
 
-	if c.interrupt != nil {
-		c.handleInterrupt(*c.interrupt)
-		c.interrupt = nil
+	if c.pendingNmi {
+		c.handleInterrupt(interrupts.NMI)
+		c.pendingNmi = false
+	} else {
+		if c.pendingIrq && !c.Status.InterruptDisable {
+			c.handleInterrupt(interrupts.IRQ)
+			c.pendingIrq = false
+		}
 	}
 
 	code := c.ReadMem(c.ProgramCounter)
@@ -112,12 +118,16 @@ func (c *CPU) AddStall(stall uint16) {
 	c.Stall += stall
 }
 
-func (c *CPU) AddInterrupt(i *interrupts.Interrupt) {
-	switch {
-	case i == &interrupts.IRQ && c.Status.InterruptDisable:
-	default:
-		c.interrupt = i
-	}
+func (c *CPU) AddNmi() {
+	c.pendingNmi = true
+}
+
+func (c *CPU) AddIrq() {
+	c.pendingIrq = true
+}
+
+func (c *CPU) ClearIrq() {
+	c.pendingIrq = false
 }
 
 func (c *CPU) Cycles() uint {

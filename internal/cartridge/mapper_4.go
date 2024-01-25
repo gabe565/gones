@@ -3,7 +3,6 @@ package cartridge
 import (
 	"encoding/gob"
 
-	"github.com/gabe565/gones/internal/interrupts"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -37,7 +36,7 @@ func (m *Mapper4) OnScanline() {
 	} else {
 		m.Counter -= 1
 		if m.Counter == 0 && m.IRQEnable {
-			m.cpu.AddInterrupt(&interrupts.IRQ)
+			m.cpu.AddIrq()
 		}
 	}
 }

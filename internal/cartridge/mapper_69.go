@@ -3,7 +3,6 @@ package cartridge
 import (
 	"encoding/gob"
 
-	"github.com/gabe565/gones/internal/interrupts"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -45,7 +44,7 @@ func (m *Mapper69) OnCPUStep() {
 	if m.IrqCounterEnable {
 		m.IrqCounter -= 1
 		if m.IrqEnable && m.IrqCounter == 0xFFFF {
-			m.cpu.AddInterrupt(&interrupts.IRQ)
+			m.cpu.AddIrq()
 		}
 	}
 }

@@ -275,7 +275,7 @@ func (p *PPU) tick() {
 	if p.nmiOffset != 0 {
 		p.nmiOffset -= 1
 		if p.nmiOffset == 0 {
-			p.cpu.AddInterrupt(&interrupts.NMI)
+			p.cpu.AddNmi()
 		} else if p.nmiOffset >= 12 {
 			if !p.Status.Vblank || !p.Ctrl.EnableNMI {
 				p.nmiOffset = 0

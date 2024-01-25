@@ -165,7 +165,7 @@ func (a *APU) stepFrameCounter() {
 			a.stepSweep()
 			a.stepLength()
 			if a.FramePeriod == 4 && !a.InterruptInhibit {
-				a.cpu.AddInterrupt(&interrupts.IRQ)
+				a.cpu.AddIrq()
 			}
 		}
 	}
