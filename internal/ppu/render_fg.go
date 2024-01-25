@@ -20,7 +20,7 @@ func (p *PPU) evaluateSprites() {
 		a := sprite[2]
 		x := sprite[3]
 
-		row := int(p.Scanline) - int(y)
+		row := p.Scanline - int(y)
 		if row < 0 || row >= height {
 			continue
 		}
