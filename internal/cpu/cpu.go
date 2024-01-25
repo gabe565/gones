@@ -15,7 +15,7 @@ func New(b memory.ReadSafeWrite) *CPU {
 		bus:          b,
 		cycles:       7,
 	}
-	cpu.ProgramCounter = cpu.ReadMem16(interrupts.Reset.VectorAddr)
+	cpu.ProgramCounter = cpu.ReadMem16(interrupts.ResetVector)
 	return &cpu
 }
 
@@ -56,19 +56,27 @@ type CPU struct {
 
 // Reset resets the CPU and sets ProgramCounter to the value of the [Reset] Vector.
 func (c *CPU) Reset() {
-	c.handleInterrupt(interrupts.Reset)
+	c.StackPointer -= 3
+	sei(c, 0)
+	c.ProgramCounter = c.ReadMem16(interrupts.ResetVector)
 }
 
-func (c *CPU) handleInterrupt(interrupt interrupts.Interrupt) {
-	if interrupt.StackProhibit {
-		c.StackPointer -= 3
-	} else {
-		c.stackPush16(c.ProgramCounter)
-		php(c, 0)
-	}
+func (c *CPU) nmi() {
+	c.stackPush16(c.ProgramCounter)
+	php(c, 0)
 	sei(c, 0)
-	c.cycles += uint(interrupt.Cycles)
-	c.ProgramCounter = c.ReadMem16(interrupt.VectorAddr)
+	c.cycles += 7
+	c.ProgramCounter = c.ReadMem16(interrupts.NmiVector)
+	c.pendingNmi = false
+}
+
+func (c *CPU) irq() {
+	c.stackPush16(c.ProgramCounter)
+	php(c, 0)
+	sei(c, 0)
+	c.cycles += 7
+	c.ProgramCounter = c.ReadMem16(interrupts.IrqVector)
+	c.pendingIrq = false
 }
 
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
@@ -85,13 +93,9 @@ func (c *CPU) Step() (uint, error) {
 	cycles := c.cycles
 
 	if c.pendingNmi {
-		c.handleInterrupt(interrupts.NMI)
-		c.pendingNmi = false
-	} else {
-		if c.pendingIrq && !c.Status.InterruptDisable {
-			c.handleInterrupt(interrupts.IRQ)
-			c.pendingIrq = false
-		}
+		c.nmi()
+	} else if c.pendingIrq && !c.Status.InterruptDisable {
+		c.irq()
 	}
 
 	code := c.ReadMem(c.ProgramCounter)
