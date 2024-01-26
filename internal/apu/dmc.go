@@ -78,8 +78,14 @@ func (d *DMC) stepReader() {
 			d.CurrAddr = 0x8000
 		}
 		d.CurrLen -= 1
-		if d.CurrLen == 0 && d.Loop {
-			d.restart()
+		if d.CurrLen == 0 {
+			if d.Loop {
+				d.restart()
+			}
+
+			if d.IrqEnabled {
+				d.cpu.AddIrq()
+			}
 		}
 	}
 }
