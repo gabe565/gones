@@ -54,7 +54,7 @@ type APU struct {
 	FramePeriod uint8
 	FrameValue  byte
 
-	InterruptInhibit bool
+	IrqEnabled bool
 
 	buf chan float32
 }
@@ -79,7 +79,7 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 		a.DMC.SetEnabled(data&StatusDMC != 0)
 	case addr == 0x4017:
 		a.FramePeriod = 4 + data>>7&1
-		a.InterruptInhibit = data>>6&1 == 1
+		a.IrqEnabled = data>>6&1 == 0
 		if a.FramePeriod == 5 {
 			a.stepEnvelope()
 			a.stepSweep()
@@ -164,7 +164,7 @@ func (a *APU) stepFrameCounter() {
 			a.stepEnvelope()
 			a.stepSweep()
 			a.stepLength()
-			if a.FramePeriod == 4 && !a.InterruptInhibit {
+			if a.FramePeriod == 4 && a.IrqEnabled {
 				a.cpu.AddIrq()
 			}
 		}
