@@ -109,6 +109,7 @@ func (a *APU) ReadMem(addr uint16) byte {
 		if a.DMC.CurrLen > 0 {
 			data |= StatusDMC
 		}
+		a.cpu.ClearIrq()
 		return data
 	default:
 		return 0
