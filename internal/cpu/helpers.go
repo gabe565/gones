@@ -8,13 +8,13 @@ func (c *CPU) updateZeroAndNegFlags(result byte) {
 
 func (c *CPU) branch(condition bool) {
 	if condition {
-		c.cycles += 1
+		c.Cycles += 1
 
 		jump := int8(c.ReadMem(c.ProgramCounter))
 		jumpAddr := c.ProgramCounter + 1 + uint16(jump)
 
 		if crossedPage(c.ProgramCounter+1, jumpAddr&0xFF00) {
-			c.cycles += 1
+			c.Cycles += 1
 		}
 
 		c.ProgramCounter = jumpAddr
@@ -25,7 +25,7 @@ func (c *CPU) compare(mode AddressingMode, rhs byte) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.cycles += 1
+			c.Cycles += 1
 		}()
 	}
 	data := c.ReadMem(addr)

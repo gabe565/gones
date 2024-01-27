@@ -25,7 +25,7 @@ type Bus struct {
 	ppu         *ppu.PPU
 	controller1 controller.Controller
 	controller2 controller.Controller
-	openBus     byte
+	OpenBus     byte
 }
 
 // ReadMem reads a byte from memory.
@@ -33,29 +33,29 @@ func (b *Bus) ReadMem(addr uint16) byte {
 	switch {
 	case addr < 0x2000:
 		addr &= 0x07FF
-		b.openBus = b.CpuVram[addr]
+		b.OpenBus = b.CpuVram[addr]
 	case 0x2000 <= addr && addr <= 0x2007, addr == 0x4014:
 		return b.ppu.ReadMem(addr)
 	case 0x2008 <= addr && addr < 0x4000:
 		addr &= 0x2007
 		return b.ppu.ReadMem(addr)
 	case 0x4000 <= addr && addr < 0x4016:
-		b.openBus = b.apu.ReadMem(addr)
+		b.OpenBus = b.apu.ReadMem(addr)
 	case addr == 0x4016:
-		b.openBus &^= 0xF
-		b.openBus |= b.controller1.Read()
+		b.OpenBus &^= 0xF
+		b.OpenBus |= b.controller1.Read()
 	case addr == 0x4017:
-		b.openBus &^= 0xF
-		b.openBus |= b.controller2.Read()
+		b.OpenBus &^= 0xF
+		b.OpenBus |= b.controller2.Read()
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled test registers
 	case 0x4020 <= addr:
-		b.openBus = b.mapper.ReadMem(addr)
+		b.OpenBus = b.mapper.ReadMem(addr)
 	default:
 		log.Errorf("invalid Bus read from $%02X", addr)
 		return 0
 	}
-	return b.openBus
+	return b.OpenBus
 }
 
 // ReadMemSafe reads a byte from memory, but immediately returns 0xFF for any reads with side effects.
@@ -95,7 +95,7 @@ func (b *Bus) WriteMem(addr uint16, data byte) {
 	default:
 		log.Errorf("invalid Bus write to $%02X", addr)
 	}
-	b.openBus = data
+	b.OpenBus = data
 }
 
 // ReadMem16 reads two bytes from memory.

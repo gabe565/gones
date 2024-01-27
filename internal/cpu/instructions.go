@@ -15,7 +15,7 @@ func adc(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.cycles += 1
+			c.Cycles += 1
 		}()
 	}
 	v := c.ReadMem(addr)
@@ -82,7 +82,7 @@ func and(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.cycles += 1
+			c.Cycles += 1
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -445,7 +445,7 @@ func eor(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.cycles += 1
+			c.Cycles += 1
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -545,7 +545,7 @@ func las(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.cycles += 1
+			c.Cycles += 1
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -567,7 +567,7 @@ func lax(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.cycles += 1
+			c.Cycles += 1
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -587,7 +587,7 @@ func lda(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.cycles += 1
+			c.Cycles += 1
 		}()
 	}
 	v := c.ReadMem(addr)
@@ -606,7 +606,7 @@ func ldx(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.cycles += 1
+			c.Cycles += 1
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -626,7 +626,7 @@ func ldy(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.cycles += 1
+			c.Cycles += 1
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -687,7 +687,7 @@ func nop(c *CPU, mode AddressingMode) {
 		addr, pageCrossed := c.getOperandAddress(mode)
 		if pageCrossed {
 			defer func() {
-				c.cycles += 1
+				c.Cycles += 1
 			}()
 		}
 		_ = c.ReadMem(addr)
@@ -706,7 +706,7 @@ func ora(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.cycles += 1
+			c.Cycles += 1
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -907,7 +907,7 @@ func sbc(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.cycles += 1
+			c.Cycles += 1
 		}()
 	}
 	v := c.ReadMem(addr)

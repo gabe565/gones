@@ -13,7 +13,7 @@ func New(b memory.ReadSafeWrite) *CPU {
 		StackPointer: byte(StackAddr - 3),
 		Status:       DefaultStatus,
 		bus:          b,
-		cycles:       7,
+		Cycles:       7,
 	}
 	cpu.ProgramCounter = cpu.ReadMem16(interrupts.ResetVector)
 	return &cpu
@@ -46,10 +46,10 @@ type CPU struct {
 	// bus Main memory bus
 	bus memory.ReadSafeWrite
 
-	cycles uint
+	Cycles uint
 
-	pendingNmi bool
-	pendingIrq bool
+	PendingNmi bool
+	PendingIrq bool
 
 	Stall uint16
 }
@@ -65,18 +65,18 @@ func (c *CPU) nmi() {
 	c.stackPush16(c.ProgramCounter)
 	php(c, 0)
 	sei(c, 0)
-	c.cycles += 7
+	c.Cycles += 7
 	c.ProgramCounter = c.ReadMem16(interrupts.NmiVector)
-	c.pendingNmi = false
+	c.PendingNmi = false
 }
 
 func (c *CPU) irq() {
 	c.stackPush16(c.ProgramCounter)
 	php(c, 0)
 	sei(c, 0)
-	c.cycles += 7
+	c.Cycles += 7
 	c.ProgramCounter = c.ReadMem16(interrupts.IrqVector)
-	c.pendingIrq = false
+	c.PendingIrq = false
 }
 
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
@@ -86,15 +86,15 @@ var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 func (c *CPU) Step() (uint, error) {
 	if c.Stall > 0 {
 		c.Stall -= 1
-		c.cycles += 1
+		c.Cycles += 1
 		return 1, nil
 	}
 
-	cycles := c.cycles
+	cycles := c.Cycles
 
-	if c.pendingNmi {
+	if c.PendingNmi {
 		c.nmi()
-	} else if c.pendingIrq && !c.Status.InterruptDisable {
+	} else if c.PendingIrq && !c.Status.InterruptDisable {
 		c.irq()
 	}
 
@@ -109,13 +109,13 @@ func (c *CPU) Step() (uint, error) {
 
 	op.Exec(c, op.Mode)
 
-	c.cycles += uint(op.Cycles)
+	c.Cycles += uint(op.Cycles)
 
 	if prevPC == c.ProgramCounter {
 		c.ProgramCounter += uint16(op.Len - 1)
 	}
 
-	return c.cycles - cycles, nil
+	return c.Cycles - cycles, nil
 }
 
 func (c *CPU) AddStall(stall uint16) {
@@ -123,17 +123,17 @@ func (c *CPU) AddStall(stall uint16) {
 }
 
 func (c *CPU) AddNmi() {
-	c.pendingNmi = true
+	c.PendingNmi = true
 }
 
 func (c *CPU) AddIrq() {
-	c.pendingIrq = true
+	c.PendingIrq = true
 }
 
 func (c *CPU) ClearIrq() {
-	c.pendingIrq = false
+	c.PendingIrq = false
 }
 
-func (c *CPU) Cycles() uint {
-	return c.cycles
+func (c *CPU) GetCycles() uint {
+	return c.Cycles
 }

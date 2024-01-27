@@ -41,5 +41,5 @@ type ReadSafeWrite interface {
 }
 
 type HasCycles interface {
-	Cycles() uint
+	GetCycles() uint
 }

@@ -51,10 +51,10 @@ type PPU struct {
 	Cycles   int
 	VblRace  bool
 
-	nmiOffset uint8
+	NmiOffset uint8
 
 	ReadBuf    byte
-	openBus    byte
+	OpenBus    byte
 	RenderDone bool
 	image      *image.RGBA
 
@@ -190,7 +190,7 @@ func (p *PPU) ReadData() byte {
 		val, p.ReadBuf = p.ReadBuf, val
 	} else if addr < 0x4000 {
 		p.ReadBuf = p.ReadDataAddr(addr - 0x1000)
-		val |= p.openBus & 0xC0
+		val |= p.OpenBus & 0xC0
 	}
 
 	if mapper, ok := p.mapper.(cartridge.MapperOnVramAddr); ok {
@@ -221,16 +221,16 @@ func (p *PPU) ReadMem(addr uint16) byte {
 	case 0x2000, 0x2001, 0x2003, 0x2005, 0x2006, 0x4014:
 		//
 	case 0x2002:
-		p.openBus &^= 0xE0
-		p.openBus |= p.ReadStatus()
+		p.OpenBus &^= 0xE0
+		p.OpenBus |= p.ReadStatus()
 	case 0x2004:
-		p.openBus = p.ReadOam()
+		p.OpenBus = p.ReadOam()
 	case 0x2007:
-		p.openBus = p.ReadData()
+		p.OpenBus = p.ReadData()
 	default:
 		log.Errorf("invalid PPU read from $%02X", addr)
 	}
-	return p.openBus
+	return p.OpenBus
 }
 
 func (p *PPU) WriteMem(addr uint16, data byte) {
@@ -256,7 +256,7 @@ func (p *PPU) WriteMem(addr uint16, data byte) {
 		for i := 0; i < 256; i += 1 {
 			p.WriteOam(p.cpu.ReadMem(hi + uint16(i)))
 		}
-		if p.cpu.Cycles()%2 == 1 {
+		if p.cpu.GetCycles()%2 == 1 {
 			p.cpu.AddStall(514)
 		} else {
 			p.cpu.AddStall(513)
@@ -264,7 +264,7 @@ func (p *PPU) WriteMem(addr uint16, data byte) {
 	default:
 		log.Errorf("invalid PPU write to $%02X", addr)
 	}
-	p.openBus = data
+	p.OpenBus = data
 }
 
 var MirrorLookup = [...][4]uint16{
@@ -283,13 +283,13 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 }
 
 func (p *PPU) tick() {
-	if p.nmiOffset != 0 {
-		p.nmiOffset -= 1
-		if p.nmiOffset == 0 {
+	if p.NmiOffset != 0 {
+		p.NmiOffset -= 1
+		if p.NmiOffset == 0 {
 			p.cpu.AddNmi()
-		} else if p.nmiOffset >= 12 {
+		} else if p.NmiOffset >= 12 {
 			if !p.Status.Vblank || !p.Ctrl.EnableNMI {
-				p.nmiOffset = 0
+				p.NmiOffset = 0
 			}
 		}
 
@@ -420,7 +420,7 @@ func (p *PPU) writePalette(addr uint16, data byte) {
 func (p *PPU) updateNmi() {
 	nmi := p.Status.Vblank && p.Ctrl.EnableNMI
 	if nmi && !p.Status.PrevVblank {
-		p.nmiOffset = 14
+		p.NmiOffset = 14
 	}
 	p.Status.PrevVblank = nmi
 }
