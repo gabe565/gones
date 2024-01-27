@@ -150,7 +150,6 @@ func (c *Console) Update() error {
 		}
 
 		if c.PPU.RenderDone || c.debug == DebugStepFrame {
-			c.PPU.RenderDone = false
 			break
 		}
 	}
@@ -163,8 +162,11 @@ func (c *Console) Update() error {
 }
 
 func (c *Console) Draw(screen *ebiten.Image) {
-	img := c.PPU.Image()
-	screen.WritePixels(img.Pix)
+	if c.PPU.RenderDone {
+		img := c.PPU.Image()
+		screen.WritePixels(img.Pix)
+		c.PPU.RenderDone = false
+	}
 }
 
 func (c *Console) CloseOnUpdate() {
