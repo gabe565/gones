@@ -29,7 +29,9 @@ tasks:
     env:
       GOOS: js
       GOARCH: wasm
-    cmd: go build -ldflags='-w -s' -trimpath -o web/src/assets/gones.wasm
+    cmds:
+      - GOROOT="$(go env GOROOT)" && cp $GOROOT/misc/wasm/wasm_exec.js web/src/scripts
+      - go build -ldflags='-w -s' -trimpath -o web/src/assets/gones.wasm
 
   deps:web:
     dir: web
