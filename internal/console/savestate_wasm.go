@@ -17,7 +17,7 @@ func (c *Console) SaveState(num uint8) error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Saving state")
+	log.WithField("file", filepath.Base(path)).Info("Saving state to localstorage")
 
 	var buf strings.Builder
 
@@ -54,7 +54,7 @@ func (c *Console) LoadState(num uint8) error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Loading state")
+	log.WithField("file", filepath.Base(path)).Info("Loading state from localstorage")
 
 	data := js.Global().Get("localStorage").Call("getItem", path)
 	if data.IsNull() {

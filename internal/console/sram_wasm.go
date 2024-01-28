@@ -15,7 +15,7 @@ func (c *Console) SaveSram() error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Writing save to disk")
+	log.WithField("file", filepath.Base(path)).Info("Writing save to localstorage")
 
 	var buf strings.Builder
 
@@ -39,6 +39,8 @@ func (c *Console) LoadSram() error {
 		return err
 	}
 
+	log.WithField("file", filepath.Base(path)).Info("Loading save from localstorage")
+
 	data := js.Global().Get("localStorage").Call("getItem", path)
 	if data.IsNull() {
 		return nil
@@ -47,8 +49,6 @@ func (c *Console) LoadSram() error {
 	r := strings.NewReader(data.String())
 
 	b64r := base64.NewDecoder(base64.StdEncoding, r)
-
-	log.WithField("file", filepath.Base(path)).Info("Loading save from disk")
 
 	if _, err := b64r.Read(c.Cartridge.Sram); err != nil {
 		return err
