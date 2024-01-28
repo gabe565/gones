@@ -46,7 +46,7 @@ func New() *APU {
 }
 
 type APU struct {
-	Enabled    bool
+	Enabled    bool    `msgpack:"-"`
 	SampleRate float64 `msgpack:"-"`
 	cpu        CPU
 
