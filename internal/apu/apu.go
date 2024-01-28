@@ -42,7 +42,7 @@ func New() *APU {
 
 type APU struct {
 	Enabled    bool
-	SampleRate float32
+	SampleRate float32 `msgpack:"-"`
 	cpu        CPU
 
 	Square   [2]Square
