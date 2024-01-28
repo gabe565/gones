@@ -10,7 +10,7 @@ import (
 func (c *Console) CheckInput() {
 	c.Bus.UpdateInput()
 
-	if inpututil.KeyPressDuration(controller.Reset) == 20 {
+	if inpututil.KeyPressDuration(controller.Reset) == 30 {
 		c.Reset()
 	}
 
