@@ -54,12 +54,12 @@ func (c *Console) LoadState(num uint8) error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Loading state from localstorage")
-
 	data := js.Global().Get("localStorage").Call("getItem", path)
 	if data.IsNull() {
 		return nil
 	}
+
+	log.WithField("file", filepath.Base(path)).Info("Loading state from localstorage")
 
 	r := strings.NewReader(data.String())
 

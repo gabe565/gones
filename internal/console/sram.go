@@ -43,12 +43,12 @@ func (c *Console) LoadSram() error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Debug("Loading save from disk")
-
 	sram, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
+
+	log.WithField("file", filepath.Base(path)).Debug("Loading save from disk")
 
 	c.Cartridge.Sram = sram
 	return nil

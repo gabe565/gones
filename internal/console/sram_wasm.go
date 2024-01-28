@@ -27,12 +27,12 @@ func (c *Console) LoadSram() error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Loading save from localstorage")
-
 	data := js.Global().Get("localStorage").Call("getItem", path)
 	if data.IsNull() {
 		return nil
 	}
+
+	log.WithField("file", filepath.Base(path)).Info("Loading save from localstorage")
 
 	if _, err := base64.StdEncoding.Decode(c.Cartridge.Sram, []byte(data.String())); err != nil {
 		return err
