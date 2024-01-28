@@ -3,7 +3,6 @@ package console
 import (
 	"encoding/base64"
 	"path/filepath"
-	"strings"
 	"syscall/js"
 
 	log "github.com/sirupsen/logrus"
@@ -17,19 +16,8 @@ func (c *Console) SaveSram() error {
 
 	log.WithField("file", filepath.Base(path)).Info("Writing save to localstorage")
 
-	var buf strings.Builder
-
-	b64w := base64.NewEncoder(base64.StdEncoding, &buf)
-
-	if _, err := buf.Write(c.Cartridge.Sram); err != nil {
-		return err
-	}
-
-	if err := b64w.Close(); err != nil {
-		return err
-	}
-
-	js.Global().Get("localStorage").Call("setItem", path, buf.String())
+	data := base64.StdEncoding.EncodeToString(c.Cartridge.Sram)
+	js.Global().Get("localStorage").Call("setItem", path, data)
 	return nil
 }
 
@@ -46,11 +34,7 @@ func (c *Console) LoadSram() error {
 		return nil
 	}
 
-	r := strings.NewReader(data.String())
-
-	b64r := base64.NewDecoder(base64.StdEncoding, r)
-
-	if _, err := b64r.Read(c.Cartridge.Sram); err != nil {
+	if _, err := base64.StdEncoding.Decode(c.Cartridge.Sram, []byte(data.String())); err != nil {
 		return err
 	}
 
