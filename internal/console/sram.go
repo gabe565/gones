@@ -26,19 +26,7 @@ func (c *Console) SaveSram() error {
 		return err
 	}
 
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer func(f *os.File) {
-		_ = f.Close()
-	}(f)
-
-	if _, err := f.Write(c.Cartridge.Sram); err != nil {
-		return err
-	}
-
-	return f.Close()
+	return os.WriteFile(path, c.Cartridge.Sram, 0o644)
 }
 
 func (c *Console) LoadSram() error {
@@ -47,19 +35,13 @@ func (c *Console) LoadSram() error {
 		return err
 	}
 
-	f, err := os.Open(path)
+	log.WithField("file", filepath.Base(path)).Info("Loading save from disk")
+
+	sram, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
-	defer func(f *os.File) {
-		_ = f.Close()
-	}(f)
 
-	log.WithField("file", filepath.Base(path)).Info("Loading save from disk")
-
-	if _, err := f.Read(c.Cartridge.Sram); err != nil {
-		return err
-	}
-
+	c.Cartridge.Sram = sram
 	return nil
 }
