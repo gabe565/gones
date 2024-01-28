@@ -25,7 +25,7 @@ func New(mapper cartridge.Mapper) *PPU {
 		mapper:        mapper,
 		image:         image.NewRGBA(image.Rect(0, 0, Width, TrimmedHeight)),
 		Cycles:        21,
-		SystemPalette: &palette.Default,
+		systemPalette: &palette.Default,
 	}
 }
 
@@ -44,7 +44,7 @@ type PPU struct {
 
 	OamAddr       byte
 	Oam           [0x100]byte
-	SystemPalette *[0x40]color.RGBA
+	systemPalette *[0x40]color.RGBA
 	Palette       [0x20]byte
 
 	Scanline int
@@ -86,24 +86,27 @@ func (p *PPU) WriteCtrl(data byte) {
 
 func (p *PPU) WriteMask(data byte) {
 	p.Mask.Set(data)
+	p.UpdatePalette(data)
+}
 
+func (p *PPU) UpdatePalette(data byte) {
 	switch data & (registers.MaskEmphasizeRed | registers.MaskEmphasizeGreen | registers.MaskEmphasizeBlue) {
 	case 0:
-		p.SystemPalette = &palette.Default
+		p.systemPalette = &palette.Default
 	case registers.MaskEmphasizeRed:
-		p.SystemPalette = &palette.EmphasizeR
+		p.systemPalette = &palette.EmphasizeR
 	case registers.MaskEmphasizeGreen:
-		p.SystemPalette = &palette.EmphasizeG
+		p.systemPalette = &palette.EmphasizeG
 	case registers.MaskEmphasizeBlue:
-		p.SystemPalette = &palette.EmphasizeB
+		p.systemPalette = &palette.EmphasizeB
 	case registers.MaskEmphasizeRed | registers.MaskEmphasizeGreen:
-		p.SystemPalette = &palette.EmphasizeRG
+		p.systemPalette = &palette.EmphasizeRG
 	case registers.MaskEmphasizeRed | registers.MaskEmphasizeBlue:
-		p.SystemPalette = &palette.EmphasizeRB
+		p.systemPalette = &palette.EmphasizeRB
 	case registers.MaskEmphasizeGreen | registers.MaskEmphasizeBlue:
-		p.SystemPalette = &palette.EmphasizeGB
+		p.systemPalette = &palette.EmphasizeGB
 	case registers.MaskEmphasizeRed | registers.MaskEmphasizeGreen | registers.MaskEmphasizeBlue:
-		p.SystemPalette = &palette.EmphasizeRGB
+		p.systemPalette = &palette.EmphasizeRGB
 	}
 }
 

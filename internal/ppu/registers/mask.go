@@ -33,6 +33,35 @@ func (m *Mask) Set(data byte) {
 	m.EmphasizeBlue = data&MaskEmphasizeBlue != 0
 }
 
+func (m *Mask) Get() byte {
+	var data byte
+	if m.Grayscale {
+		data |= MaskGrayscale
+	}
+	if m.BgLeftColEnable {
+		data |= MaskBgLeftColEnable
+	}
+	if m.SpriteLeftColEnable {
+		data |= MaskSpriteLeftColEnable
+	}
+	if m.BackgroundEnable {
+		data |= MaskBackgroundEnable
+	}
+	if m.SpriteEnable {
+		data |= MaskSpriteEnable
+	}
+	if m.EmphasizeRed {
+		data |= MaskEmphasizeRed
+	}
+	if m.EmphasizeGreen {
+		data |= MaskEmphasizeGreen
+	}
+	if m.EmphasizeBlue {
+		data |= MaskEmphasizeBlue
+	}
+	return data
+}
+
 func (m *Mask) RenderingEnabled() bool {
 	return m.BackgroundEnable || m.SpriteEnable
 }

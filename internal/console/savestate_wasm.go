@@ -86,6 +86,7 @@ func (c *Console) LoadState(num uint8) error {
 	}
 	c.Bus.SetMapper(c.Mapper)
 	c.PPU.SetMapper(c.Mapper)
+	c.PPU.UpdatePalette(c.PPU.Mask.Get())
 
 	return nil
 }

@@ -48,6 +48,6 @@ func (p *PPU) renderPixel() {
 		colorIdx &= 0x30
 	}
 
-	c := p.SystemPalette[colorIdx]
+	c := p.systemPalette[colorIdx]
 	p.image.SetRGBA(x, y, c)
 }
