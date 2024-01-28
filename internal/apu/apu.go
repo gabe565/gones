@@ -227,6 +227,12 @@ func (a *APU) output() float32 {
 	return pulseOut + tndOut
 }
 
+func (a *APU) Clear() {
+	for len(a.buf) != 0 {
+		<-a.buf
+	}
+}
+
 func (a *APU) Read(p []byte) (int, error) {
 	for i := 0; i < len(p); i += 4 {
 		sample := <-a.buf

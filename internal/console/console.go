@@ -38,10 +38,11 @@ type Console struct {
 	debug         Debug
 
 	autosave *time.Ticker
+	rate     uint8
 }
 
 func New(cart *cartridge.Cartridge) (*Console, error) {
-	console := Console{Cartridge: cart}
+	console := Console{Cartridge: cart, rate: 1}
 
 	var err error
 	console.Mapper, err = cartridge.NewMapper(cart)
@@ -104,7 +105,7 @@ func (c *Console) Close() error {
 	return nil
 }
 
-func (c *Console) Step() error {
+func (c *Console) Step(render bool) error {
 	if c.enableTrace {
 		fmt.Println(c.Trace())
 	}
@@ -118,7 +119,7 @@ func (c *Console) Step() error {
 	}
 
 	for i := uint(0); i < cycles*3; i += 1 {
-		c.PPU.Step()
+		c.PPU.Step(render)
 	}
 
 	for i := uint(0); i < cycles; i += 1 {
@@ -162,13 +163,18 @@ func (c *Console) Update() error {
 		return nil
 	}
 
-	for {
-		if err := c.Step(); err != nil {
-			return err
+	for i := uint8(0); i < c.rate; i += 1 {
+		if c.rate != 1 {
+			c.PPU.RenderDone = false
 		}
+		for {
+			if err := c.Step(i == c.rate-1); err != nil {
+				return err
+			}
 
-		if c.PPU.RenderDone || c.debug == DebugStepFrame {
-			break
+			if c.PPU.RenderDone || c.debug == DebugStepFrame {
+				break
+			}
 		}
 	}
 

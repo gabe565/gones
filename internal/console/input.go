@@ -7,8 +7,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const FastForwardFactor = 3
-
 func (c *Console) CheckInput() {
 	c.Bus.UpdateInput()
 
@@ -17,13 +15,11 @@ func (c *Console) CheckInput() {
 	}
 
 	if inpututil.IsKeyJustPressed(controller.FastForward) {
-		c.APU.SampleRate *= FastForwardFactor
 		c.player.SetVolume(0.4)
-		ebiten.SetTPS(FastForwardFactor * 60)
+		c.SetRate(3)
 	} else if inpututil.IsKeyJustReleased(controller.FastForward) {
-		ebiten.SetTPS(60)
+		c.SetRate(1)
 		c.player.SetVolume(1)
-		c.APU.SampleRate /= FastForwardFactor
 	}
 
 	if inpututil.IsKeyJustPressed(controller.ToggleDebug) {

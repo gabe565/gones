@@ -15,7 +15,7 @@ func (p *PPU) Image() *image.RGBA {
 	return p.image
 }
 
-func (p *PPU) renderPixel() {
+func (p *PPU) renderPixel(render bool) {
 	x := p.Cycles - 1
 	y := p.Scanline - 8
 
@@ -43,11 +43,13 @@ func (p *PPU) renderPixel() {
 		colorIdx = spritePixel | 0x10
 	}
 
-	colorIdx = p.readPalette(uint16(colorIdx)) % 64
-	if p.Mask.Grayscale {
-		colorIdx &= 0x30
-	}
+	if render {
+		colorIdx = p.readPalette(uint16(colorIdx)) % 64
+		if p.Mask.Grayscale {
+			colorIdx &= 0x30
+		}
 
-	c := p.systemPalette[colorIdx]
-	p.image.SetRGBA(x, y, c)
+		c := p.systemPalette[colorIdx]
+		p.image.SetRGBA(x, y, c)
+	}
 }

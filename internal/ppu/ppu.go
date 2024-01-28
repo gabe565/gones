@@ -319,7 +319,7 @@ func (p *PPU) tick() {
 	}
 }
 
-func (p *PPU) Step() {
+func (p *PPU) Step(render bool) {
 	p.tick()
 
 	preLine := p.Scanline == 261
@@ -330,7 +330,7 @@ func (p *PPU) Step() {
 	fetchCycle := preFetchCycle || visibleCycle
 
 	if visibleLine && visibleCycle {
-		p.renderPixel()
+		p.renderPixel(render)
 	}
 
 	if p.Mask.RenderingEnabled() {
