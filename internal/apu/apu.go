@@ -13,7 +13,7 @@ type CPU interface {
 	interrupts.Stallable
 }
 
-const FrameCounterRate = consts.CpuFrequency / float32(240.0)
+const FrameCounterRate = consts.CpuFrequency / float64(240.0)
 
 var lengthTable = [...]byte{
 	10, 254, 20, 2, 40, 4, 80, 6, 160, 8, 60, 10, 14, 12, 26, 14,
@@ -31,7 +31,7 @@ const (
 func New() *APU {
 	return &APU{
 		Enabled:    true,
-		SampleRate: consts.CpuFrequency / float32(consts.AudioSampleRate),
+		SampleRate: consts.CpuFrequency / float64(consts.AudioSampleRate),
 
 		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},
@@ -42,7 +42,7 @@ func New() *APU {
 
 type APU struct {
 	Enabled    bool
-	SampleRate float32 `msgpack:"-"`
+	SampleRate float64 `msgpack:"-"`
 	cpu        CPU
 
 	Square   [2]Square
@@ -125,9 +125,9 @@ func (a *APU) Reset() {
 }
 
 func (a *APU) Step() {
-	cycle1 := float32(a.Cycle)
+	cycle1 := float64(a.Cycle)
 	a.Cycle += 1
-	cycle2 := float32(a.Cycle)
+	cycle2 := float64(a.Cycle)
 
 	a.stepTimer()
 
