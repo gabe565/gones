@@ -85,6 +85,14 @@ func (c *Console) LoadState(num uint8) error {
 	}()
 
 	if err := msgpack.NewDecoder(gzr).Decode(c); err != nil {
+		if num == AutoSaveNum {
+			log.WithError(err).Error("Load state failed. Moving state file and continuing.")
+			if err := os.Rename(path, path+".failed"); err != nil {
+				return err
+			}
+			return nil
+		}
+
 		return err
 	}
 
