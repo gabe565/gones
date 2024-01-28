@@ -13,7 +13,10 @@ type CPU interface {
 	interrupts.Stallable
 }
 
-const FrameCounterRate = consts.CpuFrequency / float64(240.0)
+const (
+	FrameCounterRate  = consts.CpuFrequency / 240.0
+	DefaultSampleRate = consts.CpuFrequency / consts.AudioSampleRate * consts.FrameRateDifference
+)
 
 var lengthTable = [...]byte{
 	10, 254, 20, 2, 40, 4, 80, 6, 160, 8, 60, 10, 14, 12, 26, 14,
@@ -31,7 +34,7 @@ const (
 func New() *APU {
 	return &APU{
 		Enabled:    true,
-		SampleRate: consts.CpuFrequency / float64(consts.AudioSampleRate),
+		SampleRate: DefaultSampleRate,
 
 		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},
