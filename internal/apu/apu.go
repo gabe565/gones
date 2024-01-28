@@ -228,28 +228,14 @@ func (a *APU) output() float32 {
 }
 
 func (a *APU) Read(p []byte) (int, error) {
-	var n int
-
 	for i := 0; i < len(p); i += 4 {
-		select {
-		case sample := <-a.buf:
-			p := p[i : i+4 : i+4]
-			out := int16(sample * 32767)
-			lo := byte(out)
-			p[0], p[2] = lo, lo
-			hi := byte(out >> 8)
-			p[1], p[3] = hi, hi
-			n += 4
-		default:
-			if n == 0 {
-				for i := range p {
-					p[i] = 0
-				}
-				n = len(p)
-			}
-			return n, nil
-		}
+		sample := <-a.buf
+		p := p[i : i+4 : i+4]
+		out := int16(sample * 32767)
+		lo := byte(out)
+		p[0], p[2] = lo, lo
+		hi := byte(out >> 8)
+		p[1], p[3] = hi, hi
 	}
-
-	return n, nil
+	return len(p), nil
 }
