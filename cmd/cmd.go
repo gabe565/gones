@@ -68,6 +68,7 @@ func run(cmd *cobra.Command, args []string) error {
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetFullscreen(config.K.Bool("ui.fullscreen"))
 	ebiten.SetScreenClearedEveryFrame(false)
+	ebiten.SetRunnableOnUnfocused(false)
 
 	name := c.Cartridge.Name()
 	if name == "" {
