@@ -18,7 +18,11 @@ func (c *Console) SaveState(num uint8) error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Saving state")
+	if num == AutoSaveNum {
+		log.WithField("file", filepath.Base(path)).Info("Auto-saving state")
+	} else {
+		log.WithField("file", filepath.Base(path)).Info("Saving state")
+	}
 
 	if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
 		return err

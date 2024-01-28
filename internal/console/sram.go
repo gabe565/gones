@@ -11,12 +11,16 @@ import (
 )
 
 func (c *Console) SaveSram() error {
+	if !c.Cartridge.Battery {
+		return nil
+	}
+
 	path, err := c.Cartridge.SramPath()
 	if err != nil {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Writing save to disk")
+	log.WithField("file", filepath.Base(path)).Debug("Writing save to disk")
 
 	if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
 		return err
@@ -30,12 +34,16 @@ func (c *Console) SaveSram() error {
 }
 
 func (c *Console) LoadSram() error {
+	if !c.Cartridge.Battery {
+		return nil
+	}
+
 	path, err := c.Cartridge.SramPath()
 	if err != nil {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Loading save from disk")
+	log.WithField("file", filepath.Base(path)).Debug("Loading save from disk")
 
 	sram, err := os.ReadFile(path)
 	if err != nil {

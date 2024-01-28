@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/knadh/koanf/v2"
@@ -22,7 +23,8 @@ func defaultConfig() map[string]any {
 			"trace":   false,
 		},
 		"state": map[string]any{
-			"resume": true,
+			"resume":   true,
+			"interval": time.Minute,
 		},
 		"ui": map[string]any{
 			"fullscreen": false,

@@ -18,6 +18,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const AutoSaveNum = 0
+
 var ErrExit = errors.New("exit")
 
 type Console struct {
@@ -34,6 +36,8 @@ type Console struct {
 	closeOnUpdate bool
 	enableTrace   bool
 	debug         Debug
+
+	autosave *time.Ticker
 }
 
 func New(cart *cartridge.Cartridge) (*Console, error) {
@@ -45,10 +49,8 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 		return &console, err
 	}
 
-	if cart.Battery {
-		if err := console.LoadSram(); err != nil && !errors.Is(err, os.ErrNotExist) {
-			return &console, err
-		}
+	if err := console.LoadSram(); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return &console, err
 	}
 
 	console.PPU = ppu.New(console.Mapper)
@@ -75,26 +77,29 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 	}
 
 	if config.K.Bool("state.resume") {
-		if err := console.LoadState(0); err != nil {
+		if err := console.LoadState(AutoSaveNum); err != nil {
 			if !errors.Is(err, os.ErrNotExist) {
 				return &console, err
 			}
 		}
 	}
 
+	if duration := config.K.Duration("state.interval"); duration != 0 {
+		console.autosave = time.NewTicker(config.K.Duration("state.interval"))
+	}
+
 	return &console, nil
 }
 
 func (c *Console) Close() error {
+	c.autosave.Stop()
 	if config.K.Bool("state.resume") {
-		if err := c.SaveState(0); err != nil {
+		if err := c.SaveState(AutoSaveNum); err != nil {
 			return err
 		}
 	}
-	if c.Cartridge.Battery {
-		if err := c.SaveSram(); err != nil {
-			return err
-		}
+	if err := c.SaveSram(); err != nil {
+		return err
 	}
 	return nil
 }
@@ -118,6 +123,19 @@ func (c *Console) Step() error {
 
 	for i := uint(0); i < cycles; i += 1 {
 		c.APU.Step()
+	}
+
+	if c.autosave != nil {
+		select {
+		case <-c.autosave.C:
+			if err := c.SaveSram(); err != nil {
+				log.WithError(err).Error("Auto-save failed")
+			}
+			if err := c.SaveState(AutoSaveNum); err != nil {
+				log.WithError(err).Error("State auto-save failed")
+			}
+		default:
+		}
 	}
 
 	return err
