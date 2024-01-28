@@ -1,8 +1,6 @@
 package cartridge
 
 import (
-	"encoding/gob"
-
 	"github.com/gabe565/gones/internal/ppu/registers"
 	log "github.com/sirupsen/logrus"
 )
@@ -13,7 +11,6 @@ func NewMapper4(cartridge *Cartridge) Mapper {
 	mapper.PrgOffsets[1] = mapper.prgBankOffset(1)
 	mapper.PrgOffsets[2] = mapper.prgBankOffset(-2)
 	mapper.PrgOffsets[3] = mapper.prgBankOffset(-1)
-	gob.Register(mapper)
 	return mapper
 }
 

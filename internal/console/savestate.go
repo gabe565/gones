@@ -4,13 +4,12 @@ package console
 
 import (
 	"compress/gzip"
-	"encoding/gob"
 	"errors"
 	"os"
 	"path/filepath"
 
-	"github.com/gabe565/gones/internal/cartridge"
 	log "github.com/sirupsen/logrus"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 func (c *Console) SaveState(num uint8) error {
@@ -42,7 +41,11 @@ func (c *Console) SaveState(num uint8) error {
 		_ = gzw.Close()
 	}()
 
-	if err := gob.NewEncoder(gzw).Encode(c); err != nil {
+	encoder := msgpack.NewEncoder(gzw)
+	encoder.UseCompactFloats(true)
+	encoder.UseCompactInts(true)
+
+	if err := encoder.Encode(c); err != nil {
 		return err
 	}
 
@@ -77,7 +80,7 @@ func (c *Console) LoadState(num uint8) error {
 		_ = gzr.Close()
 	}()
 
-	if err := gob.NewDecoder(gzr).Decode(c); err != nil {
+	if err := msgpack.NewDecoder(gzr).Decode(c); err != nil {
 		return err
 	}
 
@@ -85,14 +88,6 @@ func (c *Console) LoadState(num uint8) error {
 		return err
 	}
 
-	// gob doesn't handle interfaces in the same way as regular pointers
-	// c.Mapper will be a new instance and needs to be setup
-	c.Mapper.SetCartridge(c.Cartridge)
-	if mapper, ok := c.Mapper.(cartridge.MapperInterrupts); ok {
-		mapper.SetCpu(c.CPU)
-	}
-	c.Bus.SetMapper(c.Mapper)
-	c.PPU.SetMapper(c.Mapper)
 	c.PPU.UpdatePalette(c.PPU.Mask.Get())
 
 	return nil

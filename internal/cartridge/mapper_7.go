@@ -1,15 +1,12 @@
 package cartridge
 
 import (
-	"encoding/gob"
-
 	"github.com/gabe565/gones/internal/consts"
 	log "github.com/sirupsen/logrus"
 )
 
 func NewMapper7(cartridge *Cartridge) Mapper {
 	mapper := &Mapper7{cartridge: cartridge}
-	gob.Register(mapper)
 	return mapper
 }
 

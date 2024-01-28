@@ -1,8 +1,6 @@
 package cartridge
 
 import (
-	"encoding/gob"
-
 	"github.com/gabe565/gones/internal/consts"
 	log "github.com/sirupsen/logrus"
 )
@@ -13,7 +11,6 @@ func NewMapper3(cartridge *Cartridge) Mapper {
 		cartridge: cartridge,
 		PrgBank2:  prgBanks - 1,
 	}
-	gob.Register(mapper)
 	return mapper
 }
 
