@@ -23,20 +23,18 @@ type iNESFileHeader struct {
 }
 
 func (i iNESFileHeader) Mapper() byte {
-	mapper1 := i.Control[0] >> 4
-	mapper2 := i.Control[1] >> 4
-	return mapper2<<4 | mapper1
+	return i.Control[1]&0xF0 | i.Control[0]>>4
 }
 
 func (i iNESFileHeader) Mirror() Mirror {
-	if i.Control[0]>>3&1 == 1 {
+	if i.Control[0]&0x8 != 0 {
 		return FourScreen
 	}
 	return Mirror(i.Control[0] & 1)
 }
 
 func (i iNESFileHeader) Battery() bool {
-	return (i.Control[0]>>1)&1 == 1
+	return i.Control[0]&0x2 != 0
 }
 
 var iNesMagic = [4]byte{'N', 'E', 'S', 0x1A}
