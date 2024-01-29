@@ -51,8 +51,15 @@ func (m *Mapper4) Irq() bool { return m.IrqPending }
 
 func (m *Mapper4) OnVramAddr(addr registers.Address) {
 	curr := addr.FineY&1 == 1
-	if !m.PrevA12 && curr {
-		m.OnScanline()
+	switch m.cartridge.Submapper {
+	case SubmapperMcAcc:
+		if m.PrevA12 && !curr {
+			m.OnScanline()
+		}
+	default:
+		if !m.PrevA12 && curr {
+			m.OnScanline()
+		}
 	}
 	m.PrevA12 = curr
 }
