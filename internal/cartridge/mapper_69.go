@@ -118,6 +118,7 @@ func (m *Mapper69) runCommand(data byte) {
 		// IRQ control
 		m.IrqEnable = data&1 == 1
 		m.IrqCounterEnable = data>>7&1 == 1
+		m.cpu.ClearIrq()
 	case 0xE:
 		// IRQ counter LO
 		m.IrqCounter = m.IrqCounter&0xFF00 | uint16(data)
