@@ -115,7 +115,7 @@ func (c *Console) Step(render bool) error {
 		return err
 	}
 	if mapper, ok := c.Mapper.(cartridge.MapperOnCPUStep); ok {
-		mapper.OnCPUStep()
+		mapper.OnCPUStep(cycles)
 	}
 
 	for i := uint(0); i < cycles*3; i += 1 {

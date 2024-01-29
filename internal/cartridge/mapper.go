@@ -24,7 +24,7 @@ type MapperInterrupts interface {
 }
 
 type MapperOnCPUStep interface {
-	OnCPUStep()
+	OnCPUStep(uint)
 }
 
 type MapperOnScanline interface {

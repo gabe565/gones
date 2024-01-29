@@ -37,10 +37,11 @@ func (m *Mapper69) SetCartridge(c *Cartridge) { m.cartridge = c }
 
 func (m *Mapper69) SetCpu(c CPU) { m.cpu = c }
 
-func (m *Mapper69) OnCPUStep() {
+func (m *Mapper69) OnCPUStep(cycles uint) {
 	if m.IrqCounterEnable {
-		m.IrqCounter -= 1
-		if m.IrqEnable && m.IrqCounter == 0xFFFF {
+		prev := m.IrqCounter
+		m.IrqCounter -= uint16(cycles)
+		if m.IrqEnable && m.IrqCounter > prev {
 			m.cpu.AddIrq()
 		}
 	}
