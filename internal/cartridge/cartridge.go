@@ -13,12 +13,13 @@ type Cartridge struct {
 	hash string
 	name string
 
-	prg     []byte
-	Chr     []byte
-	Sram    []byte
-	Mapper  byte
-	Mirror  Mirror
-	Battery bool
+	prg       []byte
+	Chr       []byte
+	Sram      []byte
+	Mapper    byte
+	Submapper byte `msgpack:"-"`
+	Mirror    Mirror
+	Battery   bool
 }
 
 func New() *Cartridge {
