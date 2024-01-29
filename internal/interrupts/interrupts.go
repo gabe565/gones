@@ -8,8 +8,6 @@ const (
 
 type Interruptible interface {
 	AddNmi()
-	AddIrq()
-	ClearIrq()
 }
 
 type Stallable interface {

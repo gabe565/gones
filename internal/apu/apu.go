@@ -48,7 +48,6 @@ func New() *APU {
 type APU struct {
 	Enabled    bool    `msgpack:"-"`
 	SampleRate float64 `msgpack:"-"`
-	cpu        CPU
 
 	Square   [2]Square
 	Triangle Triangle
@@ -60,6 +59,7 @@ type APU struct {
 	FrameValue  byte
 
 	IrqEnabled bool
+	IrqPending bool
 
 	buf chan float32
 }
@@ -82,6 +82,7 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 		a.Triangle.SetEnabled(data&StatusTriangle != 0)
 		a.Noise.SetEnabled(data&StatusNoise != 0)
 		a.DMC.SetEnabled(data&StatusDMC != 0)
+		a.DMC.IrqPending = false
 	case addr == 0x4017:
 		a.FramePeriod = 4 + data>>7&1
 		a.IrqEnabled = data>>6&1 == 0
@@ -118,7 +119,7 @@ func (a *APU) ReadMem(addr uint16) byte {
 		if a.DMC.CurrLen > 0 {
 			data |= StatusDMC
 		}
-		a.cpu.ClearIrq()
+		a.IrqPending = false
 		return data
 	default:
 		return 0
@@ -133,7 +134,7 @@ func (a *APU) Reset() {
 	a.DMC.SetEnabled(false)
 }
 
-func (a *APU) Step() {
+func (a *APU) Step() bool {
 	cycle1 := float64(a.Cycle)
 	a.Cycle += 1
 	cycle2 := float64(a.Cycle)
@@ -151,10 +152,11 @@ func (a *APU) Step() {
 	if s1 != s2 && a.Enabled {
 		a.sendSample()
 	}
+
+	return a.IrqPending || a.DMC.IrqPending
 }
 
 func (a *APU) SetCpu(c CPU) {
-	a.cpu = c
 	a.DMC.cpu = c
 }
 
@@ -173,7 +175,7 @@ func (a *APU) stepFrameCounter() {
 		a.stepSweep()
 		a.stepLength()
 		if a.FramePeriod == 4 && a.IrqEnabled {
-			a.cpu.AddIrq()
+			a.IrqPending = true
 		}
 	}
 }

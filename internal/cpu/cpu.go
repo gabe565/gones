@@ -48,8 +48,8 @@ type CPU struct {
 
 	Cycles uint
 
-	PendingNmi bool
-	PendingIrq bool
+	NmiPending bool
+	IrqPending bool
 
 	Stall uint16
 }
@@ -67,7 +67,7 @@ func (c *CPU) nmi() {
 	sei(c, 0)
 	c.Cycles += 7
 	c.ProgramCounter = c.ReadMem16(interrupts.NmiVector)
-	c.PendingNmi = false
+	c.NmiPending = false
 }
 
 func (c *CPU) irq() {
@@ -76,7 +76,7 @@ func (c *CPU) irq() {
 	sei(c, 0)
 	c.Cycles += 7
 	c.ProgramCounter = c.ReadMem16(interrupts.IrqVector)
-	c.PendingIrq = false
+	c.IrqPending = false
 }
 
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
@@ -92,9 +92,9 @@ func (c *CPU) Step() (uint, error) {
 
 	cycles := c.Cycles
 
-	if c.PendingNmi {
+	if c.NmiPending {
 		c.nmi()
-	} else if c.PendingIrq && !c.Status.InterruptDisable {
+	} else if c.IrqPending && !c.Status.InterruptDisable {
 		c.irq()
 	}
 
@@ -123,15 +123,7 @@ func (c *CPU) AddStall(stall uint16) {
 }
 
 func (c *CPU) AddNmi() {
-	c.PendingNmi = true
-}
-
-func (c *CPU) AddIrq() {
-	c.PendingIrq = true
-}
-
-func (c *CPU) ClearIrq() {
-	c.PendingIrq = false
+	c.NmiPending = true
 }
 
 func (c *CPU) GetCycles() uint {

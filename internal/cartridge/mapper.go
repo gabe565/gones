@@ -35,6 +35,10 @@ type MapperOnVramAddr interface {
 	OnVramAddr(registers.Address)
 }
 
+type MapperIrq interface {
+	Irq() bool
+}
+
 var ErrUnsupportedMapper = errors.New("unsupported mapper")
 
 func NewMapper(cartridge *Cartridge) (Mapper, error) {

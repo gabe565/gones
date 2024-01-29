@@ -9,6 +9,7 @@ type DMC struct {
 	Value   byte
 
 	IrqEnabled bool
+	IrqPending bool
 	Loop       bool
 
 	TickPeriod byte
@@ -28,6 +29,9 @@ func (d *DMC) Write(addr uint16, data byte) {
 	switch addr {
 	case 0x4010:
 		d.IrqEnabled = data>>7&1 == 1
+		if !d.IrqEnabled {
+			d.IrqPending = false
+		}
 		d.Loop = data>>6&1 == 1
 		d.TickPeriod = dmcPeriodTable[data&0xF]
 	case 0x4011:
@@ -84,7 +88,7 @@ func (d *DMC) stepReader() {
 			}
 
 			if d.IrqEnabled {
-				d.cpu.AddIrq()
+				d.IrqPending = true
 			}
 		}
 	}

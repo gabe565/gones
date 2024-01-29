@@ -110,10 +110,13 @@ func (c *Console) Step(render bool) error {
 		fmt.Println(c.Trace())
 	}
 
+	var irq bool
+
 	cycles, err := c.CPU.Step()
 	if err != nil {
 		return err
 	}
+
 	if mapper, ok := c.Mapper.(cartridge.MapperOnCPUStep); ok {
 		mapper.OnCPUStep(cycles)
 	}
@@ -123,8 +126,14 @@ func (c *Console) Step(render bool) error {
 	}
 
 	for i := uint(0); i < cycles; i += 1 {
-		c.APU.Step()
+		irq = c.APU.Step() || irq
 	}
+
+	if mapper, ok := c.Mapper.(cartridge.MapperIrq); ok {
+		irq = mapper.Irq() || irq
+	}
+
+	c.CPU.IrqPending = irq
 
 	if c.autosave != nil {
 		select {

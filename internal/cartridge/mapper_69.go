@@ -29,6 +29,7 @@ type Mapper69 struct {
 	IrqEnable        bool
 	IrqCounterEnable bool
 	IrqCounter       uint16
+	IrqPending       bool
 }
 
 func (m *Mapper69) Cartridge() *Cartridge { return m.cartridge }
@@ -42,10 +43,12 @@ func (m *Mapper69) OnCPUStep(cycles uint) {
 		prev := m.IrqCounter
 		m.IrqCounter -= uint16(cycles)
 		if m.IrqEnable && m.IrqCounter > prev {
-			m.cpu.AddIrq()
+			m.IrqPending = true
 		}
 	}
 }
+
+func (m *Mapper69) Irq() bool { return m.IrqPending }
 
 func (m *Mapper69) ReadMem(addr uint16) byte {
 	switch {
@@ -118,7 +121,7 @@ func (m *Mapper69) runCommand(data byte) {
 		// IRQ control
 		m.IrqEnable = data&1 == 1
 		m.IrqCounterEnable = data>>7&1 == 1
-		m.cpu.ClearIrq()
+		m.IrqPending = false
 	case 0xE:
 		// IRQ counter LO
 		m.IrqCounter = m.IrqCounter&0xFF00 | uint16(data)

@@ -25,7 +25,8 @@ type Mapper4 struct {
 	ChrOffsets [8]int
 	Reload     byte
 	Counter    byte
-	IRQEnable  bool
+	IrqEnable  bool
+	IrqPending bool
 	PrevA12    bool
 }
 
@@ -40,12 +41,13 @@ func (m *Mapper4) OnScanline() {
 		m.Counter = m.Reload
 	} else {
 		m.Counter -= 1
-	}
-
-	if m.Counter == 0 && m.IRQEnable {
-		m.cpu.AddIrq()
+		if m.Counter == 0 && m.IrqEnable {
+			m.IrqPending = true
+		}
 	}
 }
+
+func (m *Mapper4) Irq() bool { return m.IrqPending }
 
 func (m *Mapper4) OnVramAddr(addr registers.Address) {
 	curr := addr.FineY&1 == 1
@@ -115,9 +117,9 @@ func (m *Mapper4) WriteMem(addr uint16, data byte) {
 			m.Counter = 0
 		}
 	case 0xE000 <= addr:
-		m.IRQEnable = addr%2 == 1
-		if !m.IRQEnable {
-			m.cpu.ClearIrq()
+		m.IrqEnable = addr%2 == 1
+		if !m.IrqEnable {
+			m.IrqPending = false
 		}
 	default:
 		log.Warnf("invalid mapper 4 write to $%04X", addr)
