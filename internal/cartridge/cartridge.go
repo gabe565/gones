@@ -16,10 +16,10 @@ type Cartridge struct {
 	prg       []byte
 	Chr       []byte
 	Sram      []byte
-	Mapper    byte
+	Mapper    byte `msgpack:"-"`
 	Submapper byte `msgpack:"-"`
 	Mirror    Mirror
-	Battery   bool
+	Battery   bool `msgpack:"-"`
 }
 
 func New() *Cartridge {
