@@ -21,6 +21,9 @@ func New() *cobra.Command {
 		Use:   "ls [path...]",
 		Short: "List ROM files and metadata",
 		RunE:  run,
+		ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+			return []string{"nes"}, cobra.ShellCompDirectiveFilterFileExt
+		},
 	}
 	cmd.Flags().StringToStringP("filter", "f", map[string]string{}, "Filter by a field")
 	cmd.Flags().StringP("sort", "s", "", "Sort by a field")

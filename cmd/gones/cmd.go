@@ -20,6 +20,9 @@ func New() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "gones ROM",
 		RunE: run,
+		ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+			return []string{"nes"}, cobra.ShellCompDirectiveFilterFileExt
+		},
 
 		SilenceErrors:     true,
 		DisableAutoGenTag: true,
