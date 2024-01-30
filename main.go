@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/gabe565/gones/cmd"
+	"github.com/gabe565/gones/cmd/gones"
 	_ "github.com/gabe565/gones/internal/pprof"
 	log "github.com/sirupsen/logrus"
 )
@@ -14,7 +14,7 @@ var (
 )
 
 func main() {
-	rootCmd := cmd.New()
+	rootCmd := gones.New()
 	rootCmd.Version = buildVersion()
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)

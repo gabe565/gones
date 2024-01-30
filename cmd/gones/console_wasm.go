@@ -1,4 +1,4 @@
-package cmd
+package gones
 
 import (
 	"bytes"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/console"
+	log "github.com/sirupsen/logrus"
 )
 
 func newConsole(_ string) (*console.Console, error) {
@@ -19,6 +20,7 @@ func newConsole(_ string) (*console.Console, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.WithField("title", cart.Name()).Info("Loaded cartridge")
 
 	return console.New(cart)
 }

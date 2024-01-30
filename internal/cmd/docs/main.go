@@ -5,12 +5,18 @@ import (
 	"log"
 	"os"
 
-	"github.com/gabe565/gones/cmd"
+	"github.com/gabe565/gones/cmd/gones"
+	gonesutil "github.com/gabe565/gones/cmd/gonesutil/root"
+	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 )
 
 func main() {
 	output := "./docs"
+	commands := []*cobra.Command{
+		gones.New(),
+		gonesutil.New(),
+	}
 
 	if err := os.RemoveAll(output); err != nil {
 		log.Fatal(fmt.Errorf("failed to remove existing dir: %w", err))
@@ -20,8 +26,9 @@ func main() {
 		log.Fatal(fmt.Errorf("failed to mkdir: %w", err))
 	}
 
-	rootCmd := cmd.New()
-	if err := doc.GenMarkdownTree(rootCmd, output); err != nil {
-		log.Fatal(fmt.Errorf("failed to generate markdown: %w", err))
+	for _, cmd := range commands {
+		if err := doc.GenMarkdownTree(cmd, output); err != nil {
+			log.Fatal(fmt.Errorf("failed to generate markdown: %w", err))
+		}
 	}
 }

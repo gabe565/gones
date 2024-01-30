@@ -107,7 +107,6 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 		cartridge.name, _ = database.FindNameByHash(cartridge.hash)
 	}
 
-	log.WithField("title", cartridge.name).Info("Loaded cartridge")
 	log.WithFields(log.Fields{
 		"battery": cartridge.Battery,
 		"mapper":  cartridge.Mapper,

@@ -1,11 +1,12 @@
 //go:build !wasm
 
-package cmd
+package gones
 
 import (
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/console"
 	"github.com/ncruces/zenity"
+	log "github.com/sirupsen/logrus"
 )
 
 func newConsole(path string) (*console.Console, error) {
@@ -28,6 +29,7 @@ func newConsole(path string) (*console.Console, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.WithField("title", cart.Name()).Info("Loaded cartridge")
 
 	return console.New(cart)
 }

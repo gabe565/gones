@@ -3,6 +3,6 @@
 .task/
 /data
 /dist
-gones
+/gones
 gones.wasm
 wasm_exec.js
