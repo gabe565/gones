@@ -381,6 +381,7 @@ func (p *PPU) Step(render bool) {
 	if p.Scanline == 241 && p.Cycles == 1 && !p.VblRace {
 		p.Status.Vblank = true
 		p.updateNmi()
+		p.RenderDone = true
 	}
 
 	if p.Cycles == 280 && renderLine && p.Mask.RenderingEnabled() {
@@ -394,7 +395,6 @@ func (p *PPU) Step(render bool) {
 		p.updateNmi()
 		p.Status.SpriteOverflow = false
 		p.Status.SpriteZeroHit = false
-		p.RenderDone = true
 		p.VblRace = false
 	}
 }
