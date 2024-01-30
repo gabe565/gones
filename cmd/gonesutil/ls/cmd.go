@@ -26,7 +26,21 @@ func New() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringToStringP("filter", "f", map[string]string{}, "Filter by a field")
+	_ = cmd.RegisterFlagCompletionFunc(
+		"filter",
+		func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+			return []string{"name=", "mapper=", "mirror=", "battery="}, cobra.ShellCompDirectiveNoFileComp | cobra.ShellCompDirectiveNoSpace
+		},
+	)
+
 	cmd.Flags().StringP("sort", "s", "", "Sort by a field")
+	_ = cmd.RegisterFlagCompletionFunc(
+		"sort",
+		func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+			return []string{"path", "name", "mapper", "battery", "mirror"}, cobra.ShellCompDirectiveNoFileComp
+		},
+	)
+
 	cmd.Flags().BoolP("reverse", "r", false, "Reverse the output")
 	return cmd
 }

@@ -17,6 +17,10 @@ var excludeFromConfig = [...]string{"config", "help", "version"}
 
 func Flags(cmd *cobra.Command) {
 	cmd.Flags().StringP("config", "c", "", "Config file (default is $HOME/.config/gones/config.yaml)")
+	_ = cmd.RegisterFlagCompletionFunc("config", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return []string{"yml", "yaml"}, cobra.ShellCompDirectiveFilterFileExt
+	})
+
 	cmd.Flags().Bool("debug", false, "Start with step debugging enabled")
 	cmd.Flags().Bool("trace", false, "Enable trace logging")
 	cmd.Flags().Float64("scale", 3, "Default UI scale")
