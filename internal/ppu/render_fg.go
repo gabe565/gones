@@ -90,7 +90,7 @@ func (p *PPU) fetchSpritePattern(tile, attributes byte, row int) uint32 {
 }
 
 func (p *PPU) spritePixel(x int) (byte, byte) {
-	if !p.Mask.SpriteEnable {
+	if !p.Mask.SpriteEnable || (x < 8 && !p.Mask.SpriteLeftColEnable) {
 		return 0, 0
 	}
 
