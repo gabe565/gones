@@ -39,8 +39,6 @@ func New() *APU {
 		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},
 
-		FramePeriod: 4,
-
 		buf: make(chan float32, 8*consts.AudioSampleRate/20),
 	}
 }
@@ -86,14 +84,10 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 	case addr == 0x4017:
 		a.FramePeriod = 4 + data>>7&1
 		a.IrqEnabled = data>>6&1 == 0
-		switch a.FramePeriod {
-		case 4:
-		case 5:
+		if a.FramePeriod == 5 {
 			a.stepEnvelope()
 			a.stepSweep()
 			a.stepLength()
-		default:
-			log.Errorf("Invalid frame period: %d", a.FramePeriod)
 		}
 	default:
 		log.Warnf("invalid APU write to $%04X", addr)
@@ -161,21 +155,24 @@ func (a *APU) SetCpu(c CPU) {
 }
 
 func (a *APU) stepFrameCounter() {
-	a.FrameValue += 1
-	a.FrameValue %= a.FramePeriod
-	switch a.FrameValue {
-	case 0, 2:
-		a.stepEnvelope()
-	case 1:
-		a.stepEnvelope()
-		a.stepSweep()
-		a.stepLength()
-	case 3:
-		a.stepEnvelope()
-		a.stepSweep()
-		a.stepLength()
-		if a.FramePeriod == 4 && a.IrqEnabled {
-			a.IrqPending = true
+	switch a.FramePeriod {
+	case 4, 5:
+		a.FrameValue += 1
+		a.FrameValue %= a.FramePeriod
+		switch a.FrameValue {
+		case 0, 2:
+			a.stepEnvelope()
+		case 1:
+			a.stepEnvelope()
+			a.stepSweep()
+			a.stepLength()
+		case 3:
+			a.stepEnvelope()
+			a.stepSweep()
+			a.stepLength()
+			if a.FramePeriod == 4 && a.IrqEnabled {
+				a.IrqPending = true
+			}
 		}
 	}
 }
