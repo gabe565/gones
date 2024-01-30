@@ -27,8 +27,9 @@ func defaultConfig() map[string]any {
 			"interval": time.Minute,
 		},
 		"ui": map[string]any{
-			"fullscreen": false,
-			"scale":      3,
+			"fullscreen":      false,
+			"scale":           3,
+			"pause_unfocused": true,
 		},
 		"input": map[string]any{
 			"keys": map[string]any{
