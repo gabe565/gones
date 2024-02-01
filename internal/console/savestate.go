@@ -48,6 +48,7 @@ func (c *Console) SaveState(num uint8) error {
 	encoder := msgpack.NewEncoder(gzw)
 	encoder.UseCompactFloats(true)
 	encoder.UseCompactInts(true)
+	encoder.SetSortMapKeys(true)
 
 	if err := encoder.Encode(c); err != nil {
 		return err
