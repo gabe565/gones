@@ -340,13 +340,13 @@ func (p *PPU) Step(render bool) {
 
 			switch p.Cycles % 8 {
 			case 1:
-				p.fetchNametableByte()
+				p.BgTile.NametableByte = p.fetchNametableByte()
 			case 3:
-				p.fetchAttrTableByte()
+				p.BgTile.AttrByte = p.fetchAttrTableByte()
 			case 5:
-				p.fetchLoTileByte()
+				p.BgTile.LoByte = p.fetchLoTileByte()
 			case 7:
-				p.fetchHiTileByte()
+				p.BgTile.HiByte = p.fetchHiTileByte()
 			case 0:
 				p.storeTileData()
 			}

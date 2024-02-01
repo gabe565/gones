@@ -8,12 +8,12 @@ type BgTile struct {
 	Data          uint64
 }
 
-func (p *PPU) fetchNametableByte() {
+func (p *PPU) fetchNametableByte() byte {
 	addr := 0x2000 | p.Addr.Get()&0xFFF
-	p.BgTile.NametableByte = p.ReadDataAddr(addr)
+	return p.ReadDataAddr(addr)
 }
 
-func (p *PPU) fetchAttrTableByte() {
+func (p *PPU) fetchAttrTableByte() byte {
 	addr := 0x23C0 | uint16(p.Addr.CoarseY>>2)<<3 | uint16(p.Addr.CoarseX>>2)
 	if p.Addr.NametableY {
 		addr |= 1 << 11
@@ -21,31 +21,33 @@ func (p *PPU) fetchAttrTableByte() {
 	if p.Addr.NametableX {
 		addr |= 1 << 10
 	}
-	p.BgTile.AttrByte = p.ReadDataAddr(addr)
+	var attrByte byte
+	attrByte = p.ReadDataAddr(addr)
 	if p.Addr.CoarseY&2 != 0 {
-		p.BgTile.AttrByte >>= 4
+		attrByte >>= 4
 	}
 	if p.Addr.CoarseX&2 != 0 {
-		p.BgTile.AttrByte >>= 2
+		attrByte >>= 2
 	}
-	p.BgTile.AttrByte &= 3
-	p.BgTile.AttrByte <<= 2
+	attrByte &= 3
+	attrByte <<= 2
+	return attrByte
 }
 
-func (p *PPU) fetchLoTileByte() {
+func (p *PPU) fetchLoTileByte() byte {
 	addr := uint16(p.BgTile.NametableByte)<<4 + uint16(p.Addr.FineY)
 	if p.Ctrl.BgTileSelect {
 		addr += 1 << 12
 	}
-	p.BgTile.LoByte = p.ReadDataAddr(addr)
+	return p.ReadDataAddr(addr)
 }
 
-func (p *PPU) fetchHiTileByte() {
+func (p *PPU) fetchHiTileByte() byte {
 	addr := uint16(p.BgTile.NametableByte)<<4 + uint16(p.Addr.FineY) + 8
 	if p.Ctrl.BgTileSelect {
 		addr += 1 << 12
 	}
-	p.BgTile.HiByte = p.ReadDataAddr(addr)
+	return p.ReadDataAddr(addr)
 }
 
 func (p *PPU) storeTileData() {
