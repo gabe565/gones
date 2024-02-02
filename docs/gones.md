@@ -1,6 +1,6 @@
 ## gones
 
-
+NES emulator written in Go
 
 ```
 gones ROM [flags]

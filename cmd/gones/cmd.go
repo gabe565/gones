@@ -18,8 +18,9 @@ import (
 
 func New() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "gones ROM",
-		RunE: run,
+		Use:   "gones ROM",
+		Short: "NES emulator written in Go",
+		RunE:  run,
 		ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 			return []string{"nes"}, cobra.ShellCompDirectiveFilterFileExt
 		},
