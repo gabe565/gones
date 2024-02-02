@@ -26,12 +26,7 @@ func New() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringToStringP("filter", "f", map[string]string{}, "Filter by a field")
-	_ = cmd.RegisterFlagCompletionFunc(
-		"filter",
-		func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-			return []string{"name=", "mapper=", "mirror=", "battery="}, cobra.ShellCompDirectiveNoFileComp | cobra.ShellCompDirectiveNoSpace
-		},
-	)
+	_ = cmd.RegisterFlagCompletionFunc("filter", completeFilter)
 
 	cmd.Flags().StringP("sort", "s", "", "Sort by a field")
 	_ = cmd.RegisterFlagCompletionFunc(
@@ -66,12 +61,9 @@ type entry struct {
 func run(cmd *cobra.Command, args []string) (err error) {
 	cmd.SilenceUsage = true
 
-	carts, failed := loadPaths(args)
-
-	if filters, err := cmd.Flags().GetStringToString("filter"); err != nil {
+	carts, failed, err := loadCarts(cmd, args)
+	if err != nil {
 		return err
-	} else if len(filters) != 0 {
-		carts = slices.DeleteFunc(carts, filterFunc(filters))
 	}
 
 	if field, err := cmd.Flags().GetString("sort"); err != nil {
@@ -109,6 +101,19 @@ func run(cmd *cobra.Command, args []string) (err error) {
 		return errors.New("some ROMs were invalid")
 	}
 	return nil
+}
+
+func loadCarts(cmd *cobra.Command, args []string) ([]entry, bool, error) {
+	var failed bool
+	carts, failed := loadPaths(args)
+
+	if filters, err := cmd.Flags().GetStringToString("filter"); err != nil {
+		return carts, failed, err
+	} else if len(filters) != 0 {
+		carts = slices.DeleteFunc(carts, filterFunc(filters))
+	}
+
+	return carts, failed, nil
 }
 
 func loadPaths(paths []string) ([]entry, bool) {
@@ -222,4 +227,32 @@ func filterFunc(filters map[string]string) func(e entry) bool {
 		}
 		return false
 	}
+}
+
+func completeFilter(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	defaults := []string{"name=", "mapper=", "mirror=", "battery="}
+	if !strings.Contains(toComplete, "=") {
+		return defaults, cobra.ShellCompDirectiveNoFileComp | cobra.ShellCompDirectiveNoSpace
+	}
+
+	carts, _, _ := loadCarts(cmd, args)
+	matches := make([]string, 0, len(carts))
+	param, _, _ := strings.Cut(toComplete, "=")
+	for _, cart := range carts {
+		switch param {
+		case "name":
+			matches = append(matches, param+"="+cart.name)
+		case "mapper":
+			matches = append(matches, param+"="+strconv.Itoa(int(cart.mapper)))
+		case "mirror":
+			matches = append(matches, param+"="+cart.mirror.String())
+		case "battery":
+			matches = append(matches, param+"="+strconv.FormatBool(cart.battery))
+		}
+	}
+
+	if len(matches) == 0 {
+		return defaults, cobra.ShellCompDirectiveNoFileComp | cobra.ShellCompDirectiveNoSpace
+	}
+	return matches, cobra.ShellCompDirectiveNoFileComp
 }
