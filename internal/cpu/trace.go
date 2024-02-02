@@ -88,10 +88,15 @@ func (c *CPU) Trace() string {
 	}
 	hexStr = strings.TrimSpace(hexStr)
 
+	undocumented := ' '
+	if op.Undocumented {
+		undocumented = '*'
+	}
 	final := fmt.Sprintf(
-		"%04X  %-8s %4s %-27s A:%02X X:%02X Y:%02X P:%02X SP:%02X",
+		"%04X  %-8s %c%3s %-27s A:%02X X:%02X Y:%02X P:%02X SP:%02X",
 		begin,
 		hexStr,
+		undocumented,
 		op.Mnemonic,
 		trace,
 		c.Accumulator,
