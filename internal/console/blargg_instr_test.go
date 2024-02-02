@@ -25,7 +25,7 @@ func Test_blarggCpuTest(t *testing.T) {
 	}
 
 	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
-	assert.EqualValues(t, "All 16 tests passed\n\n\n", GetBlarggMessage(test))
+	assert.EqualValues(t, "All 16 tests passed", GetBlarggMessage(test))
 }
 
 //go:embed nes-test-roms/cpu_timing_test6/cpu_timing_test.nes

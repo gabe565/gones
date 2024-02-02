@@ -30,8 +30,7 @@ var oamReadSuccess = `----------------
 
 oam_read
 
-Passed
-`
+Passed`
 
 func Test_oamRead(t *testing.T) {
 	t.Parallel()
@@ -72,8 +71,7 @@ var oamStressSuccess = `----------------
 
 oam_stress
 
-Passed
-`
+Passed`
 
 func Test_oamStress(t *testing.T) {
 	t.Parallel()

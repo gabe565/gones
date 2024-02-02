@@ -25,7 +25,7 @@ func Test_blarggApuRst4015Clr(t *testing.T) {
 	}
 
 	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
-	assert.EqualValues(t, "\n4015_cleared\n\nPassed\n", GetBlarggMessage(test))
+	assert.EqualValues(t, "4015_cleared\n\nPassed", GetBlarggMessage(test))
 }
 
 //go:embed nes-test-roms/apu_reset/irq_flag_cleared.nes
@@ -45,5 +45,5 @@ func Test_blarggIrqClr(t *testing.T) {
 	}
 
 	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
-	assert.EqualValues(t, "\nirq_flag_cleared\n\nPassed\n", GetBlarggMessage(test))
+	assert.EqualValues(t, "irq_flag_cleared\n\nPassed", GetBlarggMessage(test))
 }

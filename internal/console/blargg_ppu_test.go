@@ -11,12 +11,6 @@ import (
 //go:embed nes-test-roms/ppu_open_bus/ppu_open_bus.nes
 var blarggPpuOpenBus string
 
-var blarggPpuOpenBusSuccess = `
-ppu_open_bus
-
-Passed
-`
-
 func Test_blarggPpuOpenBus(t *testing.T) {
 	t.Parallel()
 
@@ -31,215 +25,305 @@ func Test_blarggPpuOpenBus(t *testing.T) {
 	}
 
 	assert.EqualValues(t, 0, GetBlarggStatus(test))
-	assert.EqualValues(t, blarggPpuOpenBusSuccess, GetBlarggMessage(test))
+	assert.EqualValues(t, "ppu_open_bus\n\nPassed", GetBlarggMessage(test))
 }
 
-//go:embed nes-test-roms/vbl_nmi_timing/1.frame_basics.nes
-var blarggFrameBasicsTest string
+//go:embed nes-test-roms/ppu_vbl_nmi/rom_singles/01-vbl_basics.nes
+var blarggVblBasics string
 
-func Test_blarggFrameBasics(t *testing.T) {
+func Test_blarggVblBasics(t *testing.T) {
 	t.Parallel()
 
-	var message string
-	callback := NewBlargPpuMessageCallback()
-
-	test, err := NewConsoleTest(strings.NewReader(blarggFrameBasicsTest), callback)
+	test, err := NewBlarggTest(strings.NewReader(blarggVblBasics))
 	if !assert.NoError(t, err) {
 		return
 	}
 
 	err = test.Run()
-	if !assert.Error(t, err) {
+	if !assert.NoError(t, err) {
 		return
 	}
 
-	switch err := err.(type) {
-	case PpuMessage:
-		message = err.Message
-	default:
-		assert.NoError(t, err)
-		return
-	}
-
-	assert.EqualValues(t, "PPU FRAME BASICS\nPASSED", message)
+	assert.EqualValues(t, 0, GetBlarggStatus(test))
+	assert.EqualValues(t, "01-vbl_basics\n\nPassed", GetBlarggMessage(test))
 }
 
-//go:embed nes-test-roms/vbl_nmi_timing/2.vbl_timing.nes
-var blarggVblTest string
+//go:embed nes-test-roms/ppu_vbl_nmi/rom_singles/02-vbl_set_time.nes
+var blarggVblSetTime string
 
-func Test_blarggVbl(t *testing.T) {
+var blarggVblSetTimeSuccess = `T+ 1 2
+00 - V
+01 - V
+02 - V
+03 - V
+04 - -
+05 V -
+06 V -
+07 V -
+08 V -
+
+02-vbl_set_time
+
+Passed`
+
+func Test_blarggVblSetTime(t *testing.T) {
 	t.Parallel()
 
-	var message string
-	callback := NewBlargPpuMessageCallback()
-
-	test, err := NewConsoleTest(strings.NewReader(blarggVblTest), callback)
+	test, err := NewBlarggTest(strings.NewReader(blarggVblSetTime))
 	if !assert.NoError(t, err) {
 		return
 	}
 
 	err = test.Run()
-	if !assert.Error(t, err) {
+	if !assert.NoError(t, err) {
 		return
 	}
 
-	switch err := err.(type) {
-	case PpuMessage:
-		message = err.Message
-	default:
-		assert.NoError(t, err)
-		return
-	}
-
-	assert.EqualValues(t, "VBL TIMING\nPASSED", message)
+	assert.EqualValues(t, 0, GetBlarggStatus(test))
+	assert.EqualValues(t, blarggVblSetTimeSuccess, GetBlarggMessage(test))
 }
 
-//go:embed nes-test-roms/vbl_nmi_timing/3.even_odd_frames.nes
-var blarggEvenOddFramesTest string
+//go:embed nes-test-roms/ppu_vbl_nmi/rom_singles/03-vbl_clear_time.nes
+var blarggVblClearTime string
 
-func Test_blarggEvenOddFrames(t *testing.T) {
+var blarggVblClearTimeSuccess = `00 V
+01 V
+02 V
+03 V
+04 V
+05 V
+06 -
+07 -
+08 -
+
+03-vbl_clear_time
+
+Passed`
+
+func Test_blarggVblClearTime(t *testing.T) {
 	t.Parallel()
 
-	var message string
-	callback := NewBlargPpuMessageCallback()
-
-	test, err := NewConsoleTest(strings.NewReader(blarggEvenOddFramesTest), callback)
+	test, err := NewBlarggTest(strings.NewReader(blarggVblClearTime))
 	if !assert.NoError(t, err) {
 		return
 	}
 
 	err = test.Run()
-	if !assert.Error(t, err) {
+	if !assert.NoError(t, err) {
 		return
 	}
 
-	switch err := err.(type) {
-	case PpuMessage:
-		message = err.Message
-	default:
-		assert.NoError(t, err)
-		return
-	}
-
-	assert.EqualValues(t, "EVEN ODD FRAMES\nPASSED", message)
+	assert.EqualValues(t, 0, GetBlarggStatus(test))
+	assert.EqualValues(t, blarggVblClearTimeSuccess, GetBlarggMessage(test))
 }
 
-//go:embed nes-test-roms/vbl_nmi_timing/4.vbl_clear_timing.nes
-var blarggVblClearTimingTest string
+//go:embed nes-test-roms/ppu_vbl_nmi/rom_singles/04-nmi_control.nes
+var blarggNmiControl string
 
-func Test_blarggVblClearTiming(t *testing.T) {
+func Test_blarggNmiControl(t *testing.T) {
 	t.Parallel()
 
-	var message string
-	callback := NewBlargPpuMessageCallback()
-
-	test, err := NewConsoleTest(strings.NewReader(blarggVblClearTimingTest), callback)
+	test, err := NewBlarggTest(strings.NewReader(blarggNmiControl))
 	if !assert.NoError(t, err) {
 		return
 	}
 
 	err = test.Run()
-	if !assert.Error(t, err) {
-		return
-	}
-
-	switch err := err.(type) {
-	case PpuMessage:
-		message = err.Message
-	default:
-		assert.NoError(t, err)
-		return
-	}
-
-	assert.EqualValues(t, "VBL CLEAR TIMING\nPASSED", message)
-}
-
-//go:embed nes-test-roms/vbl_nmi_timing/5.nmi_suppression.nes
-var blarggNmiSuppressionTest string
-
-func Test_blarggNmiSuppression(t *testing.T) {
-	t.Parallel()
-
-	var message string
-	callback := NewBlargPpuMessageCallback()
-
-	test, err := NewConsoleTest(strings.NewReader(blarggNmiSuppressionTest), callback)
 	if !assert.NoError(t, err) {
 		return
 	}
 
-	err = test.Run()
-	if !assert.Error(t, err) {
-		return
-	}
-
-	switch err := err.(type) {
-	case PpuMessage:
-		message = err.Message
-	default:
-		assert.NoError(t, err)
-		return
-	}
-
-	assert.EqualValues(t, "NMI SUPPRESSION\nPASSED", message)
+	assert.EqualValues(t, 0, GetBlarggStatus(test))
+	assert.EqualValues(t, "04-nmi_control\n\nPassed", GetBlarggMessage(test))
 }
 
-//go:embed nes-test-roms/vbl_nmi_timing/6.nmi_disable.nes
-var blarggNmiDisableTest string
+//go:embed nes-test-roms/ppu_vbl_nmi/rom_singles/05-nmi_timing.nes
+var blarggNmiTiming string
 
-func Test_blarggNmiDisable(t *testing.T) {
-	t.Parallel()
+var blarggNmiTimingSuccess = `00 4
+01 4
+02 4
+03 3
+04 3
+05 3
+06 3
+07 3
+08 3
+09 2
 
-	var message string
-	callback := NewBlargPpuMessageCallback()
+05-nmi_timing
 
-	test, err := NewConsoleTest(strings.NewReader(blarggNmiDisableTest), callback)
-	if !assert.NoError(t, err) {
-		return
-	}
-
-	err = test.Run()
-	if !assert.Error(t, err) {
-		return
-	}
-
-	switch err := err.(type) {
-	case PpuMessage:
-		message = err.Message
-	default:
-		assert.NoError(t, err)
-		return
-	}
-
-	assert.EqualValues(t, "NMI DISABLE\nPASSED", message)
-}
-
-//go:embed nes-test-roms/vbl_nmi_timing/7.nmi_timing.nes
-var blarggNmiTimingTest string
+Passed`
 
 func Test_blarggNmiTiming(t *testing.T) {
 	t.Parallel()
 
-	var message string
-	callback := NewBlargPpuMessageCallback()
-
-	test, err := NewConsoleTest(strings.NewReader(blarggNmiTimingTest), callback)
+	test, err := NewBlarggTest(strings.NewReader(blarggNmiTiming))
 	if !assert.NoError(t, err) {
 		return
 	}
 
 	err = test.Run()
-	if !assert.Error(t, err) {
+	if !assert.NoError(t, err) {
 		return
 	}
 
-	switch err := err.(type) {
-	case PpuMessage:
-		message = err.Message
-	default:
-		assert.NoError(t, err)
+	assert.EqualValues(t, 0, GetBlarggStatus(test))
+	assert.EqualValues(t, blarggNmiTimingSuccess, GetBlarggMessage(test))
+}
+
+//go:embed nes-test-roms/ppu_vbl_nmi/rom_singles/06-suppression.nes
+var blarggNmiSuppression string
+
+var blarggNmiSuppressionSuccess = `00 - N
+01 - N
+02 - N
+03 - N
+04 - -
+05 V -
+06 V -
+07 V N
+08 V N
+09 V N
+
+06-suppression
+
+Passed`
+
+func Test_blarggNmiSuppression(t *testing.T) {
+	t.Parallel()
+
+	test, err := NewBlarggTest(strings.NewReader(blarggNmiSuppression))
+	if !assert.NoError(t, err) {
 		return
 	}
 
-	assert.EqualValues(t, "NMI TIMING\nPASSED", message)
+	err = test.Run()
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	assert.EqualValues(t, 0, GetBlarggStatus(test))
+	assert.EqualValues(t, blarggNmiSuppressionSuccess, GetBlarggMessage(test))
+}
+
+//go:embed nes-test-roms/ppu_vbl_nmi/rom_singles/07-nmi_on_timing.nes
+var blarggNmiOnTiming string
+
+var blarggNmiOnTimingSuccess = `00 N
+01 N
+02 N
+03 N
+04 N
+05 -
+06 -
+07 -
+08 -
+
+07-nmi_on_timing
+
+Passed`
+
+func Test_blarggNmiOnTiming(t *testing.T) {
+	t.Parallel()
+
+	test, err := NewBlarggTest(strings.NewReader(blarggNmiOnTiming))
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	err = test.Run()
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	assert.EqualValues(t, 0, GetBlarggStatus(test))
+	assert.EqualValues(t, blarggNmiOnTimingSuccess, GetBlarggMessage(test))
+}
+
+//go:embed nes-test-roms/ppu_vbl_nmi/rom_singles/08-nmi_off_timing.nes
+var blarggNmiOffTiming string
+
+var blarggNmiOffTimingSuccess = `03 -
+04 -
+05 -
+06 -
+07 N
+08 N
+09 N
+0A N
+0B N
+0C N
+
+08-nmi_off_timing
+
+Passed`
+
+func Test_blarggNmiOffTiming(t *testing.T) {
+	t.Parallel()
+
+	test, err := NewBlarggTest(strings.NewReader(blarggNmiOffTiming))
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	err = test.Run()
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	assert.EqualValues(t, 0, GetBlarggStatus(test))
+	assert.EqualValues(t, blarggNmiOffTimingSuccess, GetBlarggMessage(test))
+}
+
+//go:embed nes-test-roms/ppu_vbl_nmi/rom_singles/09-even_odd_frames.nes
+var blarggEvenOddFrames string
+
+var blarggEvenOddFramesSuccess = `00 01 01 02 
+09-even_odd_frames
+
+Passed`
+
+func Test_blarggEvenOddFrames(t *testing.T) {
+	t.Parallel()
+
+	test, err := NewBlarggTest(strings.NewReader(blarggEvenOddFrames))
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	err = test.Run()
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	assert.EqualValues(t, 0, GetBlarggStatus(test))
+	assert.EqualValues(t, blarggEvenOddFramesSuccess, GetBlarggMessage(test))
+}
+
+//go:embed nes-test-roms/ppu_vbl_nmi/rom_singles/10-even_odd_timing.nes
+var blarggEvenOddTiming string
+
+var blarggEvenOddTimingSuccess = `08 07 
+Clock is skipped too late, relative to enabling BG
+
+10-even_odd_timing
+
+Failed #3`
+
+func Test_blarggEvenOddTiming(t *testing.T) {
+	t.Parallel()
+
+	test, err := NewBlarggTest(strings.NewReader(blarggEvenOddTiming))
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	err = test.Run()
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	assert.EqualValues(t, 3, GetBlarggStatus(test))
+	assert.EqualValues(t, blarggEvenOddTimingSuccess, GetBlarggMessage(test))
 }

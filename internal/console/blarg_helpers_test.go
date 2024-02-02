@@ -58,7 +58,7 @@ func GetBlarggMessage(b *ConsoleTest) string {
 		}
 		message = append(message, data)
 	}
-	return string(message)
+	return string(bytes.TrimSpace(message))
 }
 
 type PpuMessage struct {
