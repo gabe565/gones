@@ -22,7 +22,7 @@ func (m *Mapper7) SetCartridge(c *Cartridge) { m.cartridge = c }
 func (m *Mapper7) ReadMem(addr uint16) byte {
 	switch {
 	case addr < 0x2000:
-		return m.cartridge.Chr[addr]
+		return m.cartridge.Chr[addr&0x1FFF]
 	case 0x6000 <= addr && addr < 0x8000:
 		addr := uint(addr)
 		addr -= 0x6000
@@ -31,6 +31,7 @@ func (m *Mapper7) ReadMem(addr uint16) byte {
 		addr := uint(addr)
 		addr -= 0x8000
 		addr += m.PrgBank * 2 * consts.PrgChunkSize
+		addr %= uint(len(m.cartridge.prg))
 		return m.cartridge.prg[addr]
 	default:
 		log.Warnf("invalid mapper 7 read from $%04X", addr)
@@ -41,7 +42,7 @@ func (m *Mapper7) ReadMem(addr uint16) byte {
 func (m *Mapper7) WriteMem(addr uint16, data byte) {
 	switch {
 	case addr < 0x2000:
-		m.cartridge.Chr[addr] = data
+		m.cartridge.Chr[addr%0x1FFF] = data
 	case 0x6000 <= addr && addr < 0x8000:
 		addr := uint(addr)
 		addr -= 0x6000
