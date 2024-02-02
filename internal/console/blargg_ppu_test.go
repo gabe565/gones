@@ -12,11 +12,9 @@ import (
 var blarggPpuOpenBus string
 
 var blarggPpuOpenBusSuccess = `
-Decay value should become zero by one second
-
 ppu_open_bus
 
-Failed #3
+Passed
 `
 
 func Test_blarggPpuOpenBus(t *testing.T) {
@@ -32,7 +30,7 @@ func Test_blarggPpuOpenBus(t *testing.T) {
 		return
 	}
 
-	assert.EqualValues(t, 3, GetBlarggStatus(test))
+	assert.EqualValues(t, 0, GetBlarggStatus(test))
 	assert.EqualValues(t, blarggPpuOpenBusSuccess, GetBlarggMessage(test))
 }
 

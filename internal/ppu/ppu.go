@@ -396,6 +396,7 @@ func (p *PPU) Step(render bool) {
 		p.Status.SpriteOverflow = false
 		p.Status.SpriteZeroHit = false
 		p.VblRace = false
+		p.OpenBus = 0
 	}
 }
 
