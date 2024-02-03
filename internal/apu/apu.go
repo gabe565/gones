@@ -39,7 +39,7 @@ func New() *APU {
 		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},
 
-		buf: make(chan float32, 8*consts.AudioSampleRate/20),
+		buf: make(chan float32, consts.AudioSampleRate/20),
 	}
 }
 
