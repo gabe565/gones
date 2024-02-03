@@ -2,6 +2,7 @@
 import IconClose from "~icons/material-symbols/close-rounded";
 import IconUpload from "~icons/material-symbols/upload-rounded";
 import IconGithub from "~icons/simple-icons/github";
+import HeadingUrl from "../assets/images/heading.svg?url";
 import KeyTable from "./KeyTable.vue";
 import { ref } from "vue";
 
@@ -25,9 +26,9 @@ const cartridgeInput = ref();
       role="menu"
       aria-expanded="true"
     >
-      <div class="flex items-start justify-between pb-6">
-        <h1 class="text-4xl pb-2">GoNES</h1>
-
+      <div class="flex items-start pb-6">
+        <img :src="HeadingUrl" class="mt-2 pb-2 h-9" alt="GoNES" />
+        <div class="flex-grow" />
         <button
           class="p-1 bg-gray-800 hover:bg-gray-700 rounded-full transition-colors"
           @click.prevent="$emit('update:modelValue', !modelValue)"
