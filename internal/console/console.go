@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/gabe565/gones/internal/apu"
@@ -33,6 +34,7 @@ type Console struct {
 
 	audioCtx      *audio.Context
 	player        *audio.Player
+	playOnce      sync.Once
 	closeOnUpdate bool
 	enableTrace   bool
 	debug         Debug
@@ -72,7 +74,6 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 			return &console, err
 		}
 		console.player.SetBufferSize(time.Second / 20)
-		console.player.Play()
 	} else {
 		console.APU.Enabled = false
 	}
@@ -184,6 +185,9 @@ func (c *Console) Update() error {
 			}
 
 			if c.PPU.RenderDone || c.debug == DebugStepFrame {
+				c.playOnce.Do(func() {
+					c.player.Play()
+				})
 				break
 			}
 		}
