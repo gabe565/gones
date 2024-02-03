@@ -43,6 +43,7 @@ const cartridgeInput = ref();
           ref="cartridgeInput"
           type="file"
           class="hidden"
+          accept=".nes"
           @change="$emit('cartridge:insert', $event.target.files.item(0))"
         />
         <button
