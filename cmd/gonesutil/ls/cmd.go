@@ -21,9 +21,8 @@ func New() *cobra.Command {
 		Use:   "ls [path...]",
 		Short: "List ROM files and metadata",
 		RunE:  run,
-		ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-			return []string{"nes"}, cobra.ShellCompDirectiveFilterFileExt
-		},
+
+		ValidArgsFunction: cobra.FixedCompletions([]string{"nes"}, cobra.ShellCompDirectiveFilterFileExt),
 	}
 	cmd.Flags().StringToStringP("filter", "f", map[string]string{}, "Filter by a field")
 	_ = cmd.RegisterFlagCompletionFunc("filter", completeFilter)
@@ -31,9 +30,7 @@ func New() *cobra.Command {
 	cmd.Flags().StringP("sort", "s", "", "Sort by a field")
 	_ = cmd.RegisterFlagCompletionFunc(
 		"sort",
-		func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-			return []string{"path", "name", "mapper", "battery", "mirror"}, cobra.ShellCompDirectiveNoFileComp
-		},
+		cobra.FixedCompletions([]string{"path", "name", "mapper", "battery", "mirror"}, cobra.ShellCompDirectiveNoFileComp),
 	)
 
 	cmd.Flags().BoolP("reverse", "r", false, "Reverse the output")
