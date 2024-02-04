@@ -60,7 +60,7 @@ const cartridgeInput = ref();
 
       <div class="flex-grow" />
 
-      <div class="w-11/12 self-center py-2.5 px-5">
+      <div class="w-full self-center py-2.5 px-8">
         <key-table />
       </div>
 
