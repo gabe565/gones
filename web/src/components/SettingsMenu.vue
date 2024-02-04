@@ -2,7 +2,8 @@
 import IconClose from "~icons/material-symbols/close-rounded";
 import IconUpload from "~icons/material-symbols/upload-rounded";
 import IconGithub from "~icons/simple-icons/github";
-import HeadingUrl from "../assets/images/heading.svg?url";
+import IconLogo from "~icons/gones/icon";
+import IconHeading from "~icons/gones/heading?width=8em&height=2.5em";
 import KeyTable from "./KeyTable.vue";
 import { ref } from "vue";
 
@@ -22,15 +23,24 @@ const cartridgeInput = ref();
     <section
       v-if="modelValue"
       id="settings"
-      class="flex flex-col fixed h-full w-[22em] top-0 left-0 z-30 bg-gray-900 p-5 shadow-lg shadow-gray-950"
+      class="flex flex-col fixed h-full w-[22em] top-0 left-0 z-30 bg-gray-900 pb-5 shadow-lg shadow-gray-950"
       role="menu"
       aria-expanded="true"
     >
-      <div class="flex items-start pb-6">
-        <img :src="HeadingUrl" class="mt-2 pb-2 h-9" alt="GoNES" />
+      <div
+        class="h-16 flex items-center px-3 mb-3 bg-gradient-to-b from-gray-900 to-gray-950 border-b border-gray-700"
+      >
+        <div class="h-full p-3 pl-0 border-r border-gray-700">
+          <icon-logo class="text-4xl" aria-hidden="true" />
+        </div>
+        <div class="p-3">
+          <icon-heading alt="GoNES" />
+        </div>
+
         <div class="flex-grow" />
+
         <button
-          class="p-1 bg-gray-800 hover:bg-gray-700 rounded-full transition-colors"
+          class="p-1 bg-gray-800 hover:bg-gray-700 rounded-full border border-gray-700 transition-colors"
           @click.prevent="$emit('update:modelValue', !modelValue)"
         >
           <icon-close aria-hidden="true" />
@@ -47,7 +57,7 @@ const cartridgeInput = ref();
           @change="$emit('cartridge:insert', $event.target.files.item(0))"
         />
         <button
-          class="block bg-gray-800 hover:bg-gray-700 py-2 px-4 my-2 rounded-full border border-gray-600 transition-colors"
+          class="block bg-gray-800 hover:bg-gray-700 py-2 px-4 my-2 rounded-full border border-gray-700 transition-colors"
           @click="cartridgeInput.click()"
         >
           <icon-upload class="inline -mt-0.5" aria-hidden="true" />
@@ -57,7 +67,7 @@ const cartridgeInput = ref();
 
       <div class="flex-grow" />
 
-      <div class="w-11/12 self-center py-2.5">
+      <div class="w-11/12 self-center py-2.5 px-5">
         <key-table />
       </div>
 

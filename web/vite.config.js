@@ -23,7 +23,8 @@ export default defineConfig({
       autoInstall: true,
       customCollections: {
         gones: {
-          icon: () => fs.readFile("./public/images/icon.svg", "utf-8"),
+          icon: () => fs.readFile("./src/assets/images/icon.svg", "utf-8"),
+          heading: () => fs.readFile("./src/assets/images/heading.svg", "utf-8"),
         },
       },
     }),
