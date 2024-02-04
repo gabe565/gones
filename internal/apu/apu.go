@@ -1,6 +1,8 @@
 package apu
 
 import (
+	"time"
+
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/interrupt"
 	"github.com/gabe565/gones/internal/memory"
@@ -232,14 +234,20 @@ func (a *APU) Clear() {
 }
 
 func (a *APU) Read(p []byte) (int, error) {
-	for i := 0; i < len(p); i += 4 {
-		sample := <-a.buf
-		p := p[i : i+4 : i+4]
-		out := int16(sample * 32767)
-		lo := byte(out)
-		p[0], p[2] = lo, lo
-		hi := byte(out >> 8)
-		p[1], p[3] = hi, hi
+	after := time.After(time.Second / 30)
+	var i int
+	for i = 0; i < len(p); i += 4 {
+		select {
+		case sample := <-a.buf:
+			p := p[i : i+4 : i+4]
+			out := int16(sample * 32767)
+			lo := byte(out)
+			p[0], p[2] = lo, lo
+			hi := byte(out >> 8)
+			p[1], p[3] = hi, hi
+		case <-after:
+			return i, nil
+		}
 	}
-	return len(p), nil
+	return i, nil
 }
