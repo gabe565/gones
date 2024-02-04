@@ -2,14 +2,12 @@ package ls
 
 import (
 	"errors"
-	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
-	"text/tabwriter"
 
 	"github.com/gabe565/gones/internal/cartridge"
 	log "github.com/sirupsen/logrus"
@@ -24,6 +22,12 @@ func New() *cobra.Command {
 
 		ValidArgsFunction: cobra.FixedCompletions([]string{"nes"}, cobra.ShellCompDirectiveFilterFileExt),
 	}
+	cmd.Flags().StringP("output", "o", "table", "Output format. One of: (table, json, yaml)")
+	_ = cmd.RegisterFlagCompletionFunc(
+		"output",
+		cobra.FixedCompletions([]string{"table", "json", "yaml"}, cobra.ShellCompDirectiveNoFileComp),
+	)
+
 	cmd.Flags().StringToStringP("filter", "f", map[string]string{}, "Filter by a field")
 	_ = cmd.RegisterFlagCompletionFunc("filter", completeFilter)
 
@@ -35,24 +39,6 @@ func New() *cobra.Command {
 
 	cmd.Flags().BoolP("reverse", "r", false, "Reverse the output")
 	return cmd
-}
-
-func newEntry(file string, cart *cartridge.Cartridge) entry {
-	return entry{
-		path:    file,
-		name:    cart.Name(),
-		mapper:  cart.Mapper,
-		mirror:  cart.Mirror,
-		battery: cart.Battery,
-	}
-}
-
-type entry struct {
-	path    string
-	name    string
-	mapper  byte
-	mirror  cartridge.Mirror
-	battery bool
 }
 
 func run(cmd *cobra.Command, args []string) (err error) {
@@ -75,22 +61,12 @@ func run(cmd *cobra.Command, args []string) (err error) {
 		slices.Reverse(carts)
 	}
 
-	w := tabwriter.NewWriter(cmd.OutOrStdout(), 0, 0, 3, ' ', 0)
-	if _, err := fmt.Fprintln(w, "FILE\tNAME\tMAPPER\tMIRROR\tBATTERY\t"); err != nil {
+	format, err := cmd.Flags().GetString("output")
+	if err != nil {
 		return err
 	}
 
-	for _, entry := range carts {
-		_, _ = fmt.Fprintf(w, "%s\t%s\t%d\t%s\t%t\t\n",
-			entry.path,
-			entry.name,
-			entry.mapper,
-			entry.mirror,
-			entry.battery,
-		)
-	}
-
-	if err := w.Flush(); err != nil {
+	if err := printEntries(cmd.OutOrStdout(), carts, Format(format)); err != nil {
 		return err
 	}
 
@@ -168,21 +144,21 @@ func sortFunc(field string) func(a, b entry) int {
 	return func(a, b entry) int {
 		switch field {
 		case "path":
-			return strings.Compare(a.path, b.path)
+			return strings.Compare(a.Path, b.Path)
 		case "name":
-			return strings.Compare(a.name, b.name)
+			return strings.Compare(a.Name, b.Name)
 		case "mapper":
-			return int(a.mapper) - int(b.mapper)
+			return int(a.Mapper) - int(b.Mapper)
 		case "battery":
-			if a.battery && b.battery {
+			if a.Battery && b.Battery {
 				return 0
 			}
-			if a.battery && !b.battery {
+			if a.Battery && !b.Battery {
 				return 1
 			}
 			return -1
 		case "mirror":
-			return strings.Compare(a.mirror.String(), b.mirror.String())
+			return strings.Compare(a.Mirror, b.Mirror)
 		default:
 			log.WithField("field", field).Fatal("invalid sort field")
 		}
@@ -195,7 +171,7 @@ func filterFunc(filters map[string]string) func(e entry) bool {
 		for field, filter := range filters {
 			switch strings.ToLower(field) {
 			case "name":
-				if !strings.Contains(e.name, filter) {
+				if !strings.Contains(e.Name, filter) {
 					return true
 				}
 			case "mapper":
@@ -204,11 +180,11 @@ func filterFunc(filters map[string]string) func(e entry) bool {
 					log.WithError(err).Fatal("invalid mapper filter value")
 				}
 
-				if byte(parsed) != e.mapper {
+				if byte(parsed) != e.Mapper {
 					return true
 				}
 			case "mirror":
-				if !strings.Contains(strings.ToLower(e.mirror.String()), strings.ToLower(filter)) {
+				if !strings.Contains(strings.ToLower(e.Mirror), strings.ToLower(filter)) {
 					return true
 				}
 			case "battery":
@@ -217,7 +193,7 @@ func filterFunc(filters map[string]string) func(e entry) bool {
 					log.WithError(err).Fatal("invalid battery filter value")
 				}
 
-				if parsed != e.battery {
+				if parsed != e.Battery {
 					return true
 				}
 			}
@@ -238,13 +214,13 @@ func completeFilter(cmd *cobra.Command, args []string, toComplete string) ([]str
 	for _, cart := range carts {
 		switch param {
 		case "name":
-			matches = append(matches, param+"="+cart.name)
+			matches = append(matches, param+"="+cart.Name)
 		case "mapper":
-			matches = append(matches, param+"="+strconv.Itoa(int(cart.mapper)))
+			matches = append(matches, param+"="+strconv.Itoa(int(cart.Mapper)))
 		case "mirror":
-			matches = append(matches, param+"="+cart.mirror.String())
+			matches = append(matches, param+"="+cart.Mirror)
 		case "battery":
-			matches = append(matches, param+"="+strconv.FormatBool(cart.battery))
+			matches = append(matches, param+"="+strconv.FormatBool(cart.Battery))
 		}
 	}
 
