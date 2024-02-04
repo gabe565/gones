@@ -136,21 +136,6 @@ func (c *Console) Step(render bool) error {
 
 	c.CPU.IrqPending = irq
 
-	if c.autosave != nil {
-		select {
-		case <-c.autosave.C:
-			if err := c.SaveSram(); err != nil {
-				log.WithError(err).Error("Auto-save failed")
-			}
-			if config.K.Bool("state.resume") {
-				if err := c.SaveState(AutoSaveNum); err != nil {
-					log.WithError(err).Error("State auto-save failed")
-				}
-			}
-		default:
-		}
-	}
-
 	return err
 }
 
@@ -195,6 +180,21 @@ func (c *Console) Update() error {
 
 	if c.debug != DebugDisabled {
 		c.debug = DebugWait
+	}
+
+	if c.autosave != nil {
+		select {
+		case <-c.autosave.C:
+			if err := c.SaveSram(); err != nil {
+				log.WithError(err).Error("Auto-save failed")
+			}
+			if config.K.Bool("state.resume") {
+				if err := c.SaveState(AutoSaveNum); err != nil {
+					log.WithError(err).Error("State auto-save failed")
+				}
+			}
+		default:
+		}
 	}
 
 	return nil
