@@ -106,18 +106,14 @@ func (c *Console) Close() error {
 	return nil
 }
 
-func (c *Console) Step(render bool) error {
+func (c *Console) Step(render bool) {
 	if c.enableTrace {
 		fmt.Println(c.Trace())
 	}
 
 	var irq bool
 
-	cycles, err := c.CPU.Step()
-	if err != nil {
-		return err
-	}
-
+	cycles := c.CPU.Step()
 	if mapper, ok := c.Mapper.(cartridge.MapperOnCPUStep); ok {
 		mapper.OnCPUStep(cycles)
 	}
@@ -135,8 +131,6 @@ func (c *Console) Step(render bool) error {
 	}
 
 	c.CPU.IrqPending = irq
-
-	return err
 }
 
 func (c *Console) Reset() {
@@ -165,9 +159,7 @@ func (c *Console) Update() error {
 			c.PPU.RenderDone = false
 		}
 		for {
-			if err := c.Step(i == c.rate-1); err != nil {
-				return err
-			}
+			c.Step(i == c.rate-1)
 
 			if c.PPU.RenderDone || c.debug == DebugStepFrame {
 				c.playOnce.Do(func() {

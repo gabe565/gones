@@ -36,7 +36,7 @@ func Test_nestest(t *testing.T) {
 			return
 		}
 
-		if err := c.Step(true); !assert.NoError(t, err) {
+		if c.Step(true); !assert.NoError(t, c.CPU.StepErr) {
 			return
 		}
 		if c.CPU.Status.Break {

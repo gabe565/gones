@@ -6,6 +6,7 @@ import (
 
 	"github.com/gabe565/gones/internal/interrupts"
 	"github.com/gabe565/gones/internal/memory"
+	log "github.com/sirupsen/logrus"
 )
 
 func New(b memory.ReadSafeWrite) *CPU {
@@ -52,6 +53,8 @@ type CPU struct {
 	IrqPending bool
 
 	Stall uint16
+
+	StepErr error `msgpack:"-"`
 }
 
 // Reset resets the CPU and sets ProgramCounter to the value of the [Reset] Vector.
@@ -83,11 +86,11 @@ func (c *CPU) irq() {
 var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
 // Step steps through the next instruction
-func (c *CPU) Step() (uint, error) {
+func (c *CPU) Step() uint {
 	if c.Stall > 0 {
 		c.Stall -= 1
 		c.Cycles += 1
-		return 1, nil
+		return 1
 	}
 
 	cycles := c.Cycles
@@ -104,7 +107,9 @@ func (c *CPU) Step() (uint, error) {
 
 	op := OpCodes[code]
 	if op.Exec == nil {
-		return 0, fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
+		c.StepErr = fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
+		log.WithField("code", fmt.Sprintf("$%02X", code)).Error(ErrUnsupportedOpcode)
+		return 1
 	}
 
 	op.Exec(c, op.Mode)
@@ -115,7 +120,7 @@ func (c *CPU) Step() (uint, error) {
 		c.ProgramCounter += uint16(op.Len - 1)
 	}
 
-	return c.Cycles - cycles, nil
+	return c.Cycles - cycles
 }
 
 func (c *CPU) AddStall(stall uint16) {

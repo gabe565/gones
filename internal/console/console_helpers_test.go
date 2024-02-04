@@ -43,8 +43,8 @@ func (b *ConsoleTest) Run() error {
 			}
 		}
 
-		if err := b.Console.Step(true); err != nil {
-			return err
+		if b.Console.Step(true); b.Console.CPU.StepErr != nil {
+			return b.Console.CPU.StepErr
 		}
 	}
 }
