@@ -16,9 +16,10 @@ import (
 
 func New() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "ls [path...]",
-		Short: "List ROM files and metadata",
-		RunE:  run,
+		Use:     "ls [path...]",
+		Short:   "List ROM files and metadata",
+		Aliases: []string{"list"},
+		RunE:    run,
 
 		ValidArgsFunction: cobra.FixedCompletions([]string{"nes"}, cobra.ShellCompDirectiveFilterFileExt),
 	}
