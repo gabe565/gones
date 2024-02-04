@@ -4,13 +4,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gabe565/gones/internal/interrupts"
+	"github.com/gabe565/gones/internal/interrupt"
 	"github.com/gabe565/gones/internal/memory"
 	"github.com/gabe565/gones/internal/ppu/registers"
 )
 
 type CPU interface {
-	interrupts.Interruptible
+	interrupt.Interruptible
 }
 
 type Mapper interface {

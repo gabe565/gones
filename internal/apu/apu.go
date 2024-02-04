@@ -2,15 +2,15 @@ package apu
 
 import (
 	"github.com/gabe565/gones/internal/consts"
-	"github.com/gabe565/gones/internal/interrupts"
+	"github.com/gabe565/gones/internal/interrupt"
 	"github.com/gabe565/gones/internal/memory"
 	log "github.com/sirupsen/logrus"
 )
 
 type CPU interface {
 	memory.Read8
-	interrupts.Interruptible
-	interrupts.Stallable
+	interrupt.Interruptible
+	interrupt.Stallable
 }
 
 const (

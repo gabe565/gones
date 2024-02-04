@@ -1,4 +1,4 @@
-package interrupts
+package interrupt
 
 const (
 	ResetVector = 0xFFFC

@@ -6,7 +6,7 @@ import (
 
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/database"
-	"github.com/gabe565/gones/internal/interrupts"
+	"github.com/gabe565/gones/internal/interrupt"
 )
 
 type Cartridge struct {
@@ -38,7 +38,7 @@ func FromBytes(b []byte) *Cartridge {
 	cart.prg = make([]byte, consts.PrgRomAddr, consts.PrgChunkSize*2)
 	cart.prg = append(cart.prg, b...)
 	cart.prg = cart.prg[:cap(cart.prg)]
-	cart.prg[interrupts.ResetVector+1-consts.PrgChunkSize*2] = 0x86
+	cart.prg[interrupt.ResetVector+1-consts.PrgChunkSize*2] = 0x86
 
 	cart.Chr = make([]byte, consts.ChrChunkSize)
 

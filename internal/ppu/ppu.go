@@ -6,7 +6,7 @@ import (
 	"image/color"
 
 	"github.com/gabe565/gones/internal/cartridge"
-	"github.com/gabe565/gones/internal/interrupts"
+	"github.com/gabe565/gones/internal/interrupt"
 	"github.com/gabe565/gones/internal/memory"
 	"github.com/gabe565/gones/internal/ppu/palette"
 	"github.com/gabe565/gones/internal/ppu/registers"
@@ -16,8 +16,8 @@ import (
 type CPU interface {
 	memory.Read8
 	memory.HasCycles
-	interrupts.Interruptible
-	interrupts.Stallable
+	interrupt.Interruptible
+	interrupt.Stallable
 }
 
 func New(mapper cartridge.Mapper) *PPU {

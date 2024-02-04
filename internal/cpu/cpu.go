@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gabe565/gones/internal/interrupts"
+	"github.com/gabe565/gones/internal/interrupt"
 	"github.com/gabe565/gones/internal/memory"
 	log "github.com/sirupsen/logrus"
 )
@@ -16,7 +16,7 @@ func New(b memory.ReadSafeWrite) *CPU {
 		bus:          b,
 		Cycles:       7,
 	}
-	cpu.ProgramCounter = cpu.ReadMem16(interrupts.ResetVector)
+	cpu.ProgramCounter = cpu.ReadMem16(interrupt.ResetVector)
 	return &cpu
 }
 
@@ -61,7 +61,7 @@ type CPU struct {
 func (c *CPU) Reset() {
 	c.StackPointer -= 3
 	sei(c, 0)
-	c.ProgramCounter = c.ReadMem16(interrupts.ResetVector)
+	c.ProgramCounter = c.ReadMem16(interrupt.ResetVector)
 }
 
 func (c *CPU) nmi() {
@@ -69,7 +69,7 @@ func (c *CPU) nmi() {
 	php(c, 0)
 	sei(c, 0)
 	c.Cycles += 7
-	c.ProgramCounter = c.ReadMem16(interrupts.NmiVector)
+	c.ProgramCounter = c.ReadMem16(interrupt.NmiVector)
 	c.NmiPending = false
 }
 
@@ -78,7 +78,7 @@ func (c *CPU) irq() {
 	php(c, 0)
 	sei(c, 0)
 	c.Cycles += 7
-	c.ProgramCounter = c.ReadMem16(interrupts.IrqVector)
+	c.ProgramCounter = c.ReadMem16(interrupt.IrqVector)
 	c.IrqPending = false
 }
 
