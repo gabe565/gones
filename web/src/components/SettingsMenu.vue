@@ -60,9 +60,7 @@ const cartridgeInput = ref();
 
       <div class="flex-grow" />
 
-      <div class="w-full self-center py-2.5 px-8">
-        <key-table />
-      </div>
+      <key-table />
 
       <p class="text-center text-gray-300 text-sm mt-2">
         <a href="https://github.com/gabe565/gones" target="_blank">
