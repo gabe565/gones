@@ -9,7 +9,6 @@ import (
 
 type CPU interface {
 	memory.Read8
-	interrupt.Interruptible
 	interrupt.Stallable
 }
 

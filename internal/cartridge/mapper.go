@@ -4,23 +4,14 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gabe565/gones/internal/interrupt"
 	"github.com/gabe565/gones/internal/memory"
 	"github.com/gabe565/gones/internal/ppu/registers"
 )
-
-type CPU interface {
-	interrupt.Interruptible
-}
 
 type Mapper interface {
 	memory.ReadWrite8
 	Cartridge() *Cartridge
 	SetCartridge(*Cartridge)
-}
-
-type MapperInterrupts interface {
-	SetCpu(CPU)
 }
 
 type MapperOnCPUStep interface {

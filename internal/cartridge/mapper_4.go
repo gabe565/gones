@@ -16,7 +16,6 @@ func NewMapper4(cartridge *Cartridge) Mapper {
 
 type Mapper4 struct {
 	cartridge  *Cartridge
-	cpu        CPU
 	Register   byte
 	Registers  [8]byte
 	PrgMode    bool
@@ -33,8 +32,6 @@ type Mapper4 struct {
 func (m *Mapper4) Cartridge() *Cartridge { return m.cartridge }
 
 func (m *Mapper4) SetCartridge(c *Cartridge) { m.cartridge = c }
-
-func (m *Mapper4) SetCpu(c CPU) { m.cpu = c }
 
 func (m *Mapper4) OnScanline() {
 	if m.Counter == 0 {

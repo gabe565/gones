@@ -16,7 +16,6 @@ func NewMapper69(cartridge *Cartridge) Mapper {
 
 type Mapper69 struct {
 	cartridge *Cartridge
-	cpu       CPU
 	Command   byte
 
 	PrgCount   byte
@@ -35,8 +34,6 @@ type Mapper69 struct {
 func (m *Mapper69) Cartridge() *Cartridge { return m.cartridge }
 
 func (m *Mapper69) SetCartridge(c *Cartridge) { m.cartridge = c }
-
-func (m *Mapper69) SetCpu(c CPU) { m.cpu = c }
 
 func (m *Mapper69) OnCPUStep(cycles uint) {
 	if m.IrqCounterEnable {

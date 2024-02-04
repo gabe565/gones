@@ -26,9 +26,6 @@ func stubConsole(r io.ReadSeeker) (*Console, error) {
 	console.Bus = bus.New(console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)
 
-	if mapper, ok := console.Mapper.(cartridge.MapperInterrupts); ok {
-		mapper.SetCpu(console.CPU)
-	}
 	console.PPU.SetCpu(console.CPU)
 	console.APU.SetCpu(console.CPU)
 
