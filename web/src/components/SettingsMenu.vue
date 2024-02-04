@@ -1,6 +1,6 @@
 <script setup>
 import IconClose from "~icons/material-symbols/close-rounded";
-import IconUpload from "~icons/material-symbols/upload-rounded";
+import IconOpen from "~icons/material-symbols/folder-open-rounded";
 import IconGithub from "~icons/simple-icons/github";
 import IconLogo from "~icons/gones/icon";
 import IconHeading from "~icons/gones/heading?width=8em&height=2.5em";
@@ -60,8 +60,8 @@ const cartridgeInput = ref();
           class="block bg-gray-800 hover:bg-gray-700 py-2 px-4 my-2 rounded-full border border-gray-700 transition-colors"
           @click="cartridgeInput.click()"
         >
-          <icon-upload class="inline -mt-0.5" aria-hidden="true" />
-          Load Game
+          <IconOpen class="inline -mt-0.5" aria-hidden="true" />
+          Open ROM
         </button>
       </div>
 
