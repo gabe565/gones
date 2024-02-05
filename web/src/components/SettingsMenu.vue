@@ -68,7 +68,7 @@ const cartridgeInput = ref();
       <div class="flex flex-col items-center pb-6 gap-2 text-center">
         <h2>Game</h2>
         <div v-if="name" class="w-full px-3 truncate" :title="name"><b>Name:</b> {{ name }}</div>
-        <div class="flex justify-center gap-2 mb-3">
+        <div class="flex justify-center mb-3">
           <input
             ref="cartridgeInput"
             type="file"
@@ -76,22 +76,29 @@ const cartridgeInput = ref();
             accept=".nes"
             @change="$emit('gones:cartridge', $event.target.files.item(0))"
           />
-          <gones-button text="Open ROM" :prepend-icon="IconOpen" @click="cartridgeInput.click()" />
+          <gones-button
+            text="Open ROM"
+            :prepend-icon="IconOpen"
+            class="rounded-r-none border-r-0"
+            @click="cartridgeInput.click()"
+          />
           <gones-button
             :disabled="!running"
             text="Stop"
             :prepend-icon="IconStop"
+            class="rounded-l-none"
             @click="$emit('gones:stop')"
           />
         </div>
 
         <h2>State</h2>
-        <div class="flex justify-center gap-2">
+        <div class="flex justify-center">
           <gones-button
             :disabled="!running"
             :prepend-icon="IconSave"
             text="Save State"
             size="small"
+            class="rounded-r-none border-r-0"
             @click="$emit('gones:saveState')"
           />
           <gones-button
@@ -99,6 +106,7 @@ const cartridgeInput = ref();
             :prepend-icon="IconLoad"
             text="Load State"
             size="small"
+            class="rounded-l-none"
             @click="$emit('gones:loadState')"
           />
         </div>
