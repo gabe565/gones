@@ -44,8 +44,10 @@ const cartridgeInserted = async (val) => {
     promise = new Promise((r) => {
       resolve = r;
     });
-    iframe.value.contentWindow.Gones.exit();
-    await wait(100);
+    if (iframe.value.contentWindow.Gones) {
+      iframe.value.contentWindow.Gones.exit();
+      await wait(100);
+    }
     await iframe.value.contentWindow.location.reload();
     await promise;
   }
@@ -64,22 +66,28 @@ watch(showSettings, (val) => {
 });
 
 const stop = async () => {
-  running.value = false;
-  iframe.value.contentWindow.Gones.exit();
-  await wait(100);
-  await iframe.value.contentWindow.location.reload();
-  name.value = "";
-  document.title = defaultTitle;
+  if (iframe.value.contentWindow.Gones) {
+    running.value = false;
+    iframe.value.contentWindow.Gones.exit();
+    await wait(100);
+    await iframe.value.contentWindow.location.reload();
+    name.value = "";
+    document.title = defaultTitle;
+  }
 };
 
 const saveState = () => {
-  iframe.value.contentWindow.Gones.saveState();
-  showSettings.value = false;
+  if (iframe.value.contentWindow.Gones) {
+    iframe.value.contentWindow.Gones.saveState();
+    showSettings.value = false;
+  }
 };
 
 const loadState = () => {
-  iframe.value.contentWindow.Gones.loadState();
-  showSettings.value = false;
+  if (iframe.value.contentWindow.Gones) {
+    iframe.value.contentWindow.Gones.loadState();
+    showSettings.value = false;
+  }
 };
 </script>
 
