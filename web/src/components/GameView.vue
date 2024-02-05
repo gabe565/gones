@@ -1,15 +1,9 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import MenuButton from "./MenuButton.vue";
+import SettingsMenu from "./SettingsMenu.vue";
 
-const props = defineProps({
-  cartridge: {
-    type: File,
-    default: null,
-  },
-  showSettings: {
-    type: Boolean,
-  },
-});
+const showSettings = ref(true);
 
 // Promise that will resolve when the iframe is done reloading
 let resolve;
@@ -33,37 +27,35 @@ onBeforeUnmount(() => {
 const iframe = ref();
 let running = false;
 
-watch(
-  () => props.cartridge,
-  async (val) => {
-    if (running) {
-      running = true;
-      promise = new Promise((r) => {
-        resolve = r;
-      });
-      iframe.value.contentWindow.location.reload();
-      await promise;
-    }
-    iframe.value.contentWindow.postMessage({
-      type: "play",
-      cartridge: new Uint8Array(await val.arrayBuffer()),
-    });
-    iframe.value.contentWindow.focus();
+const cartridgeInserted = async (val) => {
+  showSettings.value = false;
+  if (running) {
     running = true;
-  },
-);
+    promise = new Promise((r) => {
+      resolve = r;
+    });
+    iframe.value.contentWindow.location.reload();
+    await promise;
+  }
+  iframe.value.contentWindow.postMessage({
+    type: "play",
+    cartridge: new Uint8Array(await val.arrayBuffer()),
+  });
+  iframe.value.contentWindow.focus();
+  running = true;
+};
 
-watch(
-  () => props.showSettings,
-  (val) => {
-    if (!val && running) {
-      iframe.value.contentWindow.focus();
-    }
-  },
-);
+watch(showSettings, (val) => {
+  if (!val && running) {
+    iframe.value.contentWindow.focus();
+  }
+});
 </script>
 
 <template>
+  <settings-menu v-model="showSettings" @cartridge:insert="cartridgeInserted($event)" />
+  <menu-button v-model="showSettings" />
+
   <iframe
     ref="iframe"
     src="game_frame/index.html"
