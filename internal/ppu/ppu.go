@@ -335,7 +335,7 @@ func (p *PPU) Step(render bool) {
 
 	if p.Mask.RenderingEnabled() {
 		// Background
-		if renderLine && fetchCycle && render {
+		if renderLine && fetchCycle {
 			p.BgTile.Data <<= 4
 
 			switch p.Cycles % 8 {
