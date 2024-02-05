@@ -63,6 +63,15 @@ watch(showSettings, (val) => {
   }
 });
 
+const stop = async () => {
+  running.value = false;
+  iframe.value.contentWindow.Gones.exit();
+  await wait(100);
+  await iframe.value.contentWindow.location.reload();
+  name.value = "";
+  document.title = defaultTitle;
+};
+
 const saveState = () => {
   iframe.value.contentWindow.Gones.saveState();
   showSettings.value = false;
@@ -80,6 +89,7 @@ const loadState = () => {
     :running="running"
     :name="name"
     @gones:cartridge="cartridgeInserted($event)"
+    @gones:stop="stop"
     @gones:save-state="saveState"
     @gones:load-state="loadState"
   />

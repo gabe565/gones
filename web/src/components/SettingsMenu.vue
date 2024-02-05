@@ -1,6 +1,7 @@
 <script setup>
 import IconClose from "~icons/material-symbols/close-rounded";
 import IconOpen from "~icons/material-symbols/folder-open-rounded";
+import IconStop from "~icons/material-symbols/stop-rounded";
 import IconGithub from "~icons/simple-icons/github";
 import IconSave from "~icons/material-symbols/save-rounded";
 import IconLoad from "~icons/material-symbols/restore-page-rounded";
@@ -25,7 +26,13 @@ defineProps({
   },
 });
 
-defineEmits(["update:modelValue", "gones:cartridge", "gones:saveState", "gones:loadState"]);
+defineEmits([
+  "update:modelValue",
+  "gones:cartridge",
+  "gones:stop",
+  "gones:saveState",
+  "gones:loadState",
+]);
 const cartridgeInput = ref();
 </script>
 
@@ -61,19 +68,22 @@ const cartridgeInput = ref();
       <div class="flex flex-col items-center pb-6 gap-2 text-center">
         <h2>Game</h2>
         <div v-if="name" class="w-full px-3 truncate" :title="name"><b>Name:</b> {{ name }}</div>
-        <input
-          ref="cartridgeInput"
-          type="file"
-          class="hidden"
-          accept=".nes"
-          @change="$emit('gones:cartridge', $event.target.files.item(0))"
-        />
-        <gones-button
-          text="Open ROM"
-          class="mb-3"
-          :prepend-icon="IconOpen"
-          @click="cartridgeInput.click()"
-        />
+        <div class="flex justify-center gap-2 mb-3">
+          <input
+            ref="cartridgeInput"
+            type="file"
+            class="hidden"
+            accept=".nes"
+            @change="$emit('gones:cartridge', $event.target.files.item(0))"
+          />
+          <gones-button text="Open ROM" :prepend-icon="IconOpen" @click="cartridgeInput.click()" />
+          <gones-button
+            :disabled="!running"
+            text="Stop"
+            :prepend-icon="IconStop"
+            @click="$emit('gones:stop')"
+          />
+        </div>
 
         <h2>State</h2>
         <div class="flex justify-center gap-2">
