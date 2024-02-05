@@ -22,6 +22,8 @@ func newConsole(_ string) (*console.Console, error) {
 	}
 	log.WithField("title", cart.Name()).Info("Loaded cartridge")
 
+	js.Global().Call("SetRomName", cart.Name())
+
 	c, err := console.New(cart)
 	if err != nil {
 		return c, err

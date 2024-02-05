@@ -19,6 +19,10 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  name: {
+    type: String,
+    default: "",
+  },
 });
 
 defineEmits(["update:modelValue", "gones:cartridge", "gones:saveState", "gones:loadState"]);
@@ -54,8 +58,9 @@ const cartridgeInput = ref();
         />
       </div>
 
-      <div class="flex flex-col items-center pb-6 gap-2">
+      <div class="flex flex-col items-center pb-6 gap-2 text-center">
         <h2>Game</h2>
+        <div v-if="name" class="w-full px-3 truncate" :title="name"><b>Name:</b> {{ name }}</div>
         <input
           ref="cartridgeInput"
           type="file"

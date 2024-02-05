@@ -5,6 +5,8 @@ import SettingsMenu from "./SettingsMenu.vue";
 import { wait } from "../util/wait";
 
 const showSettings = ref(true);
+const name = ref("");
+const defaultTitle = document.title;
 
 // Promise that will resolve when the iframe is done reloading
 let resolve;
@@ -16,6 +18,13 @@ let promise = new Promise((r) => {
 const iframeMessage = ({ data }) => {
   if (data.type === "ready") {
     resolve();
+  } else if (data.type === "name") {
+    name.value = data.value;
+    if (data.value) {
+      document.title = data.value + " - " + defaultTitle;
+    } else {
+      document.title = defaultTitle;
+    }
   }
 };
 onMounted(() => {
@@ -69,6 +78,7 @@ const loadState = () => {
   <settings-menu
     v-model="showSettings"
     :running="running"
+    :name="name"
     @gones:cartridge="cartridgeInserted($event)"
     @gones:save-state="saveState"
     @gones:load-state="loadState"

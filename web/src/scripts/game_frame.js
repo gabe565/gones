@@ -30,3 +30,7 @@ window.addEventListener("message", async ({ data }) => {
 
 // Focus the canvas when iframe is focused
 window.addEventListener("focus", () => document.querySelector("canvas")?.focus());
+
+window.SetRomName = (value) => {
+  window.parent.postMessage({ type: "name", value });
+};
