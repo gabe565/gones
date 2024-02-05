@@ -69,12 +69,12 @@ func (g *Downloader) Run() (err error) {
 		return err
 	}
 
-	url, err := g.prepareDownload(postParams)
+	url, name, value, err := g.prepareDownload(postParams)
 	if err != nil {
 		return err
 	}
 
-	res, err := g.download(url)
+	res, err := g.download(url, name, value)
 	if err != nil {
 		return err
 	}
@@ -119,7 +119,7 @@ func (g *Downloader) buildPostForm(fields map[string]string) (io.Reader, string,
 
 var ErrSystemNotFound = errors.New("could not find system ID")
 
-var ErrNoForm = errors.New(`could not find form with name "main_form"`)
+var ErrNoForm = errors.New(`could not find form"`)
 
 func (g *Downloader) getSystemId(systemName string) (string, error) {
 	log.WithFields(log.Fields{"url": g.Url(), "systemName": g.SystemName}).Info("Get system ID")
@@ -237,13 +237,16 @@ func (g *Downloader) getFormParams() (map[string]string, error) {
 	return postParams, nil
 }
 
-var ErrMissingLocation = errors.New("missing location")
+var (
+	ErrMissingLocation = errors.New("missing location")
+	ErrNoButton        = errors.New(`could not find download button`)
+)
 
-func (g *Downloader) prepareDownload(postFields map[string]string) (string, error) {
+func (g *Downloader) prepareDownload(postFields map[string]string) (string, string, string, error) {
 	// Get form params to request a download
 	body, contentType, err := g.buildPostForm(postFields)
 	if err != nil {
-		return "", err
+		return "", "", "", err
 	}
 
 	// Disable following redirects since we want the destination URL
@@ -259,7 +262,7 @@ func (g *Downloader) prepareDownload(postFields map[string]string) (string, erro
 	log.WithField("url", g.Url()).Info("Request download")
 	res, err := g.client.Post(g.Url(), contentType, body)
 	if err != nil {
-		return "", err
+		return "", "", "", err
 	}
 
 	// Drain response body
@@ -267,25 +270,59 @@ func (g *Downloader) prepareDownload(postFields map[string]string) (string, erro
 	_ = res.Body.Close()
 
 	if err := checkStatusCode(res, http.StatusFound); err != nil {
-		return "", err
+		return "", "", "", err
 	}
 
 	location := res.Header.Get("Location")
 	if location == "" {
-		return "", ErrMissingLocation
+		return "", "", "", ErrMissingLocation
 	}
 
 	url, err := res.Request.URL.Parse(location)
 	if err != nil {
-		return "", err
+		return "", "", "", err
 	}
 
-	return url.String(), nil
+	res, err = g.client.Get(url.String())
+	if err != nil {
+		return "", "", "", err
+	}
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	sel := doc.Find(`#content form`)
+	if sel.Length() == 0 {
+		return "", "", "", ErrNoForm
+	}
+	node := sel.Eq(0)
+
+	// Iterate over selects
+	sel = node.Find(`input[type="submit"]`)
+	node = sel.Eq(0)
+
+	name, ok := node.Attr("name")
+	if !ok {
+		return "", "", "", ErrNoButton
+	}
+
+	value, ok := node.Attr("value")
+	if !ok {
+		return "", "", "", ErrNoButton
+	}
+
+	// Drain response body
+	_, _ = io.Copy(io.Discard, res.Body)
+	_ = res.Body.Close()
+
+	return url.String(), name, value, nil
 }
 
-func (g *Downloader) download(url string) (*http.Response, error) {
+func (g *Downloader) download(url, name, value string) (*http.Response, error) {
 	body, contentType, err := g.buildPostForm(map[string]string{
-		"lazy_mode": "Download",
+		name: value,
 	})
 	if err != nil {
 		return nil, err
