@@ -1,6 +1,6 @@
 import "./wasm_exec";
 import wasmUrl from "../assets/gones.wasm?url";
-import { waitForElement } from "./helpers";
+import { waitForElement } from "../util/element";
 
 // Polyfill
 if (!WebAssembly.instantiateStreaming) {

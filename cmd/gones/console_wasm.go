@@ -22,5 +22,17 @@ func newConsole(_ string) (*console.Console, error) {
 	}
 	log.WithField("title", cart.Name()).Info("Loaded cartridge")
 
-	return console.New(cart)
+	c, err := console.New(cart)
+	if err != nil {
+		return c, err
+	}
+
+	js.Global().Set("Gones", js.ValueOf(map[string]any{
+		"exit": js.FuncOf(func(this js.Value, args []js.Value) any {
+			c.CloseOnUpdate()
+			return nil
+		}),
+	}))
+
+	return c, nil
 }

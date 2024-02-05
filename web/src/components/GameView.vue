@@ -2,6 +2,7 @@
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import MenuButton from "./MenuButton.vue";
 import SettingsMenu from "./SettingsMenu.vue";
+import { wait } from "../util/wait";
 
 const showSettings = ref(true);
 
@@ -34,7 +35,9 @@ const cartridgeInserted = async (val) => {
     promise = new Promise((r) => {
       resolve = r;
     });
-    iframe.value.contentWindow.location.reload();
+    iframe.value.contentWindow.Gones.exit();
+    await wait(100);
+    await iframe.value.contentWindow.location.reload();
     await promise;
   }
   iframe.value.contentWindow.postMessage({
