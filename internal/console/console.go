@@ -23,6 +23,15 @@ const AutoSaveNum = 0
 
 var ErrExit = errors.New("exit")
 
+type UpdateAction uint8
+
+const (
+	ActionNone UpdateAction = iota
+	ActionExit
+	ActionSaveState
+	ActionLoadState
+)
+
 type Console struct {
 	CPU *cpu.CPU
 	Bus *bus.Bus
@@ -32,12 +41,12 @@ type Console struct {
 	Cartridge *cartridge.Cartridge
 	Mapper    cartridge.Mapper
 
-	audioCtx      *audio.Context
-	player        *audio.Player
-	playOnce      sync.Once
-	closeOnUpdate bool
-	enableTrace   bool
-	debug         Debug
+	audioCtx       *audio.Context
+	player         *audio.Player
+	playOnce       sync.Once
+	actionOnUpdate UpdateAction
+	enableTrace    bool
+	debug          Debug
 
 	autosave *time.Ticker
 	rate     uint8
@@ -141,8 +150,19 @@ func (c *Console) Layout(_, _ int) (int, int) {
 }
 
 func (c *Console) Update() error {
-	if c.closeOnUpdate {
+	switch c.actionOnUpdate {
+	case ActionExit:
 		return ErrExit
+	case ActionSaveState:
+		if err := c.SaveState(1); err != nil {
+			log.WithError(err).Error("Failed to save state")
+		}
+		c.actionOnUpdate = ActionNone
+	case ActionLoadState:
+		if err := c.LoadState(1); err != nil {
+			log.WithError(err).Error("Failed to load state")
+		}
+		c.actionOnUpdate = ActionNone
 	}
 
 	c.CheckInput()
@@ -197,9 +217,11 @@ func (c *Console) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (c *Console) CloseOnUpdate() {
-	c.closeOnUpdate = true
-	ebiten.SetRunnableOnUnfocused(true)
+func (c *Console) SetUpdateAction(action UpdateAction) {
+	c.actionOnUpdate = action
+	if action == ActionExit {
+		ebiten.SetRunnableOnUnfocused(true)
+	}
 }
 
 func (c *Console) SetTrace(v bool) {

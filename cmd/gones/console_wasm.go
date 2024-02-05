@@ -29,7 +29,15 @@ func newConsole(_ string) (*console.Console, error) {
 
 	js.Global().Set("Gones", js.ValueOf(map[string]any{
 		"exit": js.FuncOf(func(this js.Value, args []js.Value) any {
-			c.CloseOnUpdate()
+			c.SetUpdateAction(console.ActionExit)
+			return nil
+		}),
+		"saveState": js.FuncOf(func(this js.Value, args []js.Value) any {
+			c.SetUpdateAction(console.ActionSaveState)
+			return nil
+		}),
+		"loadState": js.FuncOf(func(this js.Value, args []js.Value) any {
+			c.SetUpdateAction(console.ActionLoadState)
 			return nil
 		}),
 	}))

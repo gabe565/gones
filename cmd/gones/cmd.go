@@ -60,7 +60,7 @@ func run(cmd *cobra.Command, args []string) error {
 		signal.Notify(ch, os.Interrupt)
 		for range ch {
 			log.Info("Exiting...")
-			c.CloseOnUpdate()
+			c.SetUpdateAction(console.ActionExit)
 		}
 	}()
 

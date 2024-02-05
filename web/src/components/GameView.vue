@@ -26,12 +26,12 @@ onBeforeUnmount(() => {
 });
 
 const iframe = ref();
-let running = false;
+let running = ref(false);
 
 const cartridgeInserted = async (val) => {
   showSettings.value = false;
-  if (running) {
-    running = true;
+  if (running.value) {
+    running.value = true;
     promise = new Promise((r) => {
       resolve = r;
     });
@@ -45,7 +45,7 @@ const cartridgeInserted = async (val) => {
     cartridge: new Uint8Array(await val.arrayBuffer()),
   });
   iframe.value.contentWindow.focus();
-  running = true;
+  running.value = true;
 };
 
 watch(showSettings, (val) => {
@@ -53,10 +53,26 @@ watch(showSettings, (val) => {
     iframe.value.contentWindow.focus();
   }
 });
+
+const saveState = () => {
+  iframe.value.contentWindow.Gones.saveState();
+  showSettings.value = false;
+};
+
+const loadState = () => {
+  iframe.value.contentWindow.Gones.loadState();
+  showSettings.value = false;
+};
 </script>
 
 <template>
-  <settings-menu v-model="showSettings" @cartridge:insert="cartridgeInserted($event)" />
+  <settings-menu
+    v-model="showSettings"
+    :running="running"
+    @gones:cartridge="cartridgeInserted($event)"
+    @gones:save-state="saveState"
+    @gones:load-state="loadState"
+  />
   <menu-button v-model="showSettings" />
 
   <iframe

@@ -2,6 +2,8 @@
 import IconClose from "~icons/material-symbols/close-rounded";
 import IconOpen from "~icons/material-symbols/folder-open-rounded";
 import IconGithub from "~icons/simple-icons/github";
+import IconSave from "~icons/material-symbols/save-rounded";
+import IconLoad from "~icons/material-symbols/restore-page-rounded";
 import IconLogo from "~icons/gones/icon";
 import IconHeading from "~icons/gones/heading?width=8em&height=2.5em";
 import KeyTable from "./KeyTable.vue";
@@ -13,9 +15,13 @@ defineProps({
     type: Boolean,
     default: true,
   },
+  running: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-defineEmits(["update:modelValue", "cartridge:insert"]);
+defineEmits(["update:modelValue", "gones:cartridge", "gones:saveState", "gones:loadState"]);
 const cartridgeInput = ref();
 </script>
 
@@ -35,7 +41,8 @@ const cartridgeInput = ref();
           <icon-logo class="text-4xl" aria-hidden="true" />
         </div>
         <div class="p-3">
-          <icon-heading alt="GoNES" />
+          <icon-heading aria-hidden="true" />
+          <h1 class="sr-only">GoNES</h1>
         </div>
 
         <div class="flex-grow" />
@@ -47,15 +54,39 @@ const cartridgeInput = ref();
         />
       </div>
 
-      <div class="flex flex-col items-center pb-6">
+      <div class="flex flex-col items-center pb-6 gap-2">
+        <h2>Game</h2>
         <input
           ref="cartridgeInput"
           type="file"
           class="hidden"
           accept=".nes"
-          @change="$emit('cartridge:insert', $event.target.files.item(0))"
+          @change="$emit('gones:cartridge', $event.target.files.item(0))"
         />
-        <gones-button text="Open ROM" :prepend-icon="IconOpen" @click="cartridgeInput.click()" />
+        <gones-button
+          text="Open ROM"
+          class="mb-3"
+          :prepend-icon="IconOpen"
+          @click="cartridgeInput.click()"
+        />
+
+        <h2>State</h2>
+        <div class="flex justify-center gap-2">
+          <gones-button
+            :disabled="!running"
+            :prepend-icon="IconSave"
+            text="Save State"
+            size="small"
+            @click="$emit('gones:saveState')"
+          />
+          <gones-button
+            :disabled="!running"
+            :prepend-icon="IconLoad"
+            text="Load State"
+            size="small"
+            @click="$emit('gones:loadState')"
+          />
+        </div>
       </div>
 
       <div class="flex-grow" />
