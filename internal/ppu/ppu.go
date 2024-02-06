@@ -325,8 +325,8 @@ func (p *PPU) Step(render bool) {
 	preLine := p.Scanline == 261
 	visibleLine := p.Scanline < 240
 	renderLine := preLine || visibleLine
-	preFetchCycle := p.Cycles >= 321 && p.Cycles <= 336
-	visibleCycle := p.Cycles >= 1 && p.Cycles <= 256
+	visibleCycle := 1 <= p.Cycles && p.Cycles <= 256
+	preFetchCycle := 321 <= p.Cycles && p.Cycles <= 336
 	fetchCycle := preFetchCycle || visibleCycle
 
 	if visibleLine && visibleCycle {
@@ -352,7 +352,7 @@ func (p *PPU) Step(render bool) {
 			}
 		}
 
-		if preLine && p.Cycles >= 280 && p.Cycles <= 304 {
+		if preLine && 280 <= p.Cycles && p.Cycles <= 304 {
 			p.Addr.LoadY(p.TmpAddr)
 		}
 
