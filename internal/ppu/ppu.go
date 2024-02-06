@@ -307,12 +307,13 @@ func (p *PPU) tick() {
 		}
 	}
 
-	p.Cycles += 1
-
-	if p.Cycles > 340 {
+	if p.Cycles < 340 {
+		p.Cycles += 1
+	} else {
 		p.Cycles = 0
-		p.Scanline += 1
-		if p.Scanline > 261 {
+		if p.Scanline < 261 {
+			p.Scanline += 1
+		} else {
 			p.Scanline = 0
 			p.OddFrame = !p.OddFrame
 		}
