@@ -11,7 +11,7 @@ import (
 func (c *CPU) Trace() string {
 	code := c.ReadMem(c.ProgramCounter)
 	op := OpCodes[code]
-	if op.Exec == nil {
+	if op == nil {
 		return ""
 	}
 

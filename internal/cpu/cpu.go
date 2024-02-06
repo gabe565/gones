@@ -106,7 +106,7 @@ func (c *CPU) Step() uint {
 	prevPC := c.ProgramCounter
 
 	op := OpCodes[code]
-	if op.Exec == nil {
+	if op == nil {
 		c.StepErr = fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
 		log.WithField("code", fmt.Sprintf("$%02X", code)).Error(ErrUnsupportedOpcode)
 		return 1
