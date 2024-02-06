@@ -335,35 +335,34 @@ func (p *PPU) Step(render bool) {
 
 	if p.Mask.RenderingEnabled() {
 		// Background
-		if renderLine && fetchCycle {
-			p.BgTile.Data <<= 4
-
-			switch p.Cycles % 8 {
-			case 1:
-				p.BgTile.NametableByte = p.fetchNametableByte()
-			case 3:
-				p.BgTile.AttrByte = p.fetchAttrTableByte()
-			case 5:
-				p.BgTile.LoByte = p.fetchLoTileByte()
-			case 7:
-				p.BgTile.HiByte = p.fetchHiTileByte()
-			case 0:
-				p.storeTileData()
-			}
-		}
-
-		if preLine && 280 <= p.Cycles && p.Cycles <= 304 {
-			p.Addr.LoadY(p.TmpAddr)
-		}
-
 		if renderLine {
-			if fetchCycle && p.Cycles%8 == 0 {
+			if fetchCycle {
+				p.BgTile.Data <<= 4
+
+				switch p.Cycles % 8 {
+				case 1:
+					p.BgTile.NametableByte = p.fetchNametableByte()
+				case 3:
+					p.BgTile.AttrByte = p.fetchAttrTableByte()
+				case 5:
+					p.BgTile.LoByte = p.fetchLoTileByte()
+				case 7:
+					p.BgTile.HiByte = p.fetchHiTileByte()
+				case 0:
+					p.storeTileData()
+				}
+			}
+
+			if preLine && 280 <= p.Cycles && p.Cycles <= 304 {
+				p.Addr.LoadY(p.TmpAddr)
+			} else if fetchCycle && p.Cycles%8 == 0 {
 				p.Addr.IncrementX()
 			}
-			if p.Cycles == 256 {
+
+			switch p.Cycles {
+			case 256:
 				p.Addr.IncrementY()
-			}
-			if p.Cycles == 257 {
+			case 257:
 				p.Addr.LoadX(p.TmpAddr)
 			}
 		}
@@ -378,25 +377,26 @@ func (p *PPU) Step(render bool) {
 		}
 	}
 
-	if p.Scanline == 241 && p.Cycles == 1 && !p.VblRace {
-		p.Status.Vblank = true
-		p.updateNmi()
-		p.RenderDone = true
-	}
-
-	if p.Cycles == 280 && renderLine && p.Mask.RenderingEnabled() {
-		if mapper, ok := p.mapper.(cartridge.MapperOnScanline); ok {
-			mapper.OnScanline()
+	switch p.Cycles {
+	case 1:
+		if p.Scanline == 241 && !p.VblRace {
+			p.Status.Vblank = true
+			p.updateNmi()
+			p.RenderDone = true
+		} else if preLine {
+			p.Status.Vblank = false
+			p.updateNmi()
+			p.Status.SpriteOverflow = false
+			p.Status.SpriteZeroHit = false
+			p.VblRace = false
+			p.OpenBus = 0
 		}
-	}
-
-	if preLine && p.Cycles == 1 {
-		p.Status.Vblank = false
-		p.updateNmi()
-		p.Status.SpriteOverflow = false
-		p.Status.SpriteZeroHit = false
-		p.VblRace = false
-		p.OpenBus = 0
+	case 280:
+		if renderLine && p.Mask.RenderingEnabled() {
+			if mapper, ok := p.mapper.(cartridge.MapperOnScanline); ok {
+				mapper.OnScanline()
+			}
+		}
 	}
 }
 
