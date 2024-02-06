@@ -151,6 +151,7 @@ func (c *Console) Layout(_, _ int) (int, int) {
 
 func (c *Console) Update() error {
 	switch c.actionOnUpdate {
+	case ActionNone:
 	case ActionExit:
 		return ErrExit
 	case ActionSaveState:
