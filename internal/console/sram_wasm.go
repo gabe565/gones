@@ -14,11 +14,12 @@ func (c *Console) SaveSram() error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Writing save to localstorage")
+	log.WithField("file", filepath.Base(path)).Info("Writing save to db")
 
 	data := base64.StdEncoding.EncodeToString(c.Cartridge.Sram)
-	js.Global().Get("localStorage").Call("setItem", path, data)
-	return nil
+
+	_, err = await(js.Global().Call("SaveToIndexedDb", "saves", path, data))
+	return err
 }
 
 func (c *Console) LoadSram() error {
@@ -27,12 +28,17 @@ func (c *Console) LoadSram() error {
 		return err
 	}
 
-	data := js.Global().Get("localStorage").Call("getItem", path)
+	vals, err := await(js.Global().Call("GetFromIndexedDb", "saves", path))
+	if err != nil {
+		return err
+	}
+	data := vals[0]
+
 	if data.IsNull() {
 		return nil
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Loading save from localstorage")
+	log.WithField("file", filepath.Base(path)).Info("Loading save from db")
 
 	if _, err := base64.StdEncoding.Decode(c.Cartridge.Sram, []byte(data.String())); err != nil {
 		return err

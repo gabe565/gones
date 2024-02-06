@@ -1,6 +1,7 @@
 import "./wasm_exec";
 import wasmUrl from "../assets/gones.wasm?url";
 import { waitForElement } from "../util/element";
+import { dbGet, dbPut } from "../plugins/db";
 
 // Polyfill
 if (!WebAssembly.instantiateStreaming) {
@@ -34,3 +35,6 @@ window.addEventListener("focus", () => document.querySelector("canvas")?.focus()
 window.SetRomName = (value) => {
   window.parent.postMessage({ type: "name", value });
 };
+
+window.SaveToIndexedDb = dbPut;
+window.GetFromIndexedDb = dbGet;

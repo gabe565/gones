@@ -17,7 +17,7 @@ func (c *Console) SaveState(num uint8) error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Saving state to localstorage")
+	log.WithField("file", filepath.Base(path)).Info("Saving state to db")
 
 	var buf strings.Builder
 
@@ -45,8 +45,8 @@ func (c *Console) SaveState(num uint8) error {
 		return err
 	}
 
-	js.Global().Get("localStorage").Call("setItem", path, buf.String())
-	return nil
+	_, err = await(js.Global().Call("SaveToIndexedDb", "states", path, buf.String()))
+	return err
 }
 
 func (c *Console) LoadState(num uint8) error {
@@ -55,12 +55,17 @@ func (c *Console) LoadState(num uint8) error {
 		return err
 	}
 
-	data := js.Global().Get("localStorage").Call("getItem", path)
+	vals, err := await(js.Global().Call("GetFromIndexedDb", "states", path))
+	if err != nil {
+		return err
+	}
+	data := vals[0]
+
 	if data.IsNull() {
 		return nil
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Loading state from localstorage")
+	log.WithField("file", filepath.Base(path)).Info("Loading state from db")
 
 	r := strings.NewReader(data.String())
 
