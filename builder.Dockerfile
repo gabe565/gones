@@ -1,4 +1,4 @@
-FROM golang:1.21
+FROM golang:1.21.6
 WORKDIR /app
 
 RUN set -x \
