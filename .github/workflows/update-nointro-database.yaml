@@ -12,9 +12,16 @@ jobs:
     env:
       COMMIT_MESSAGE: ":arrow_up: Update NoIntro database"
     steps:
+      - name: Generate Token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          token: ${{ steps.app-token.outputs.token }}
           submodules: true
       - name: Change Cache Key
         run: echo '// ${{ github.job }}' >> go.sum
@@ -29,7 +36,9 @@ jobs:
         id: pr
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ steps.app-token.outputs.token }}
+          committer: gones-bot[bot] <159408161+gones-bot[bot]@users.noreply.github.com>
+          author: gones-bot[bot] <159408161+gones-bot[bot]@users.noreply.github.com>
           add-paths: "*.csv"
           commit-message: ${{ env.COMMIT_MESSAGE }}
           branch: update-nointro-database
@@ -43,5 +52,6 @@ jobs:
       - uses: peter-evans/enable-pull-request-automerge@v3
         if: steps.pr.outputs.pull-request-operation == 'created'
         with:
+          token: ${{ steps.app-token.outputs.token }}
           pull-request-number: ${{ steps.pr.outputs.pull-request-number }}
           merge-method: squash
