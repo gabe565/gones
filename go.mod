@@ -5,7 +5,7 @@ go 1.22.0
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/dave/jennifer v1.7.0
-	github.com/hajimehoshi/ebiten/v2 v2.6.3
+	github.com/hajimehoshi/ebiten/v2 v2.6.5
 	github.com/knadh/koanf/parsers/yaml v0.1.0
 	github.com/knadh/koanf/providers/confmap v0.1.0
 	github.com/knadh/koanf/providers/posflag v0.1.0
