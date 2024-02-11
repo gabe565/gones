@@ -12,6 +12,7 @@
   "dependencies": {
     "@iconify-json/material-symbols": "1.x",
     "@iconify-json/simple-icons": "1.x",
+    "@types/golang-wasm-exec": "1.15.2",
     "@vitejs/plugin-vue": "5.0.4",
     "autoprefixer": "10.4.17",
     "postcss": "8.4.35",
