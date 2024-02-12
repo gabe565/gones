@@ -5,7 +5,7 @@ go 1.22.0
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/dave/jennifer v1.7.0
-	github.com/hajimehoshi/ebiten/v2 v2.6.5
+	github.com/hajimehoshi/ebiten/v2 v2.6.6
 	github.com/knadh/koanf/parsers/yaml v0.1.0
 	github.com/knadh/koanf/providers/confmap v0.1.0
 	github.com/knadh/koanf/providers/posflag v0.1.0
@@ -26,7 +26,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dchest/jsmin v0.0.0-20220218165748-59f39799265f // indirect
 	github.com/ebitengine/oto/v3 v3.1.0 // indirect
-	github.com/ebitengine/purego v0.5.0 // indirect
+	github.com/ebitengine/purego v0.6.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.0.0-alpha.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jezek/xgb v1.1.0 // indirect
