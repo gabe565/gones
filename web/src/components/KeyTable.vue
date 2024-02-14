@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from "vue";
+import { reactive } from "vue";
 
-const keys = ref({
+const keys = reactive({
   "A button": ["M"],
   "B button": ["N"],
   "Start button": ["Enter"],
