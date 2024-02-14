@@ -53,9 +53,9 @@ window.addEventListener(loadStateEvent, () => {
 });
 
 window.GonesClient = {
-  SetRomName(value) {
+  setRomName(value) {
     window.parent.dispatchEvent(newNameEvent(value));
   },
-  DbPut: dbPut,
-  DbGet: dbGet,
+  dbPut,
+  dbGet,
 };

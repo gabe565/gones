@@ -45,7 +45,7 @@ func (c *Console) SaveState(num uint8) error {
 		return err
 	}
 
-	_, err = await(js.Global().Get("GonesClient").Call("DbPut", "states", path, buf.String()))
+	_, err = await(js.Global().Get("GonesClient").Call("dbPut", "states", path, buf.String()))
 	return err
 }
 
@@ -55,7 +55,7 @@ func (c *Console) LoadState(num uint8) error {
 		return err
 	}
 
-	vals, err := await(js.Global().Get("GonesClient").Call("DbGet", "states", path))
+	vals, err := await(js.Global().Get("GonesClient").Call("dbGet", "states", path))
 	if err != nil {
 		return err
 	}

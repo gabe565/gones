@@ -18,7 +18,7 @@ func (c *Console) SaveSram() error {
 
 	data := base64.StdEncoding.EncodeToString(c.Cartridge.Sram)
 
-	_, err = await(js.Global().Get("GonesClient").Call("DbPut", "saves", path, data))
+	_, err = await(js.Global().Get("GonesClient").Call("dbPut", "saves", path, data))
 	return err
 }
 
@@ -28,7 +28,7 @@ func (c *Console) LoadSram() error {
 		return err
 	}
 
-	vals, err := await(js.Global().Get("GonesClient").Call("DbGet", "saves", path))
+	vals, err := await(js.Global().Get("GonesClient").Call("dbGet", "saves", path))
 	if err != nil {
 		return err
 	}
