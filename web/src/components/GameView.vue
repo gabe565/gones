@@ -52,7 +52,6 @@ let running = ref(false);
 const cartridgeInserted = async (val) => {
   showSettings.value = false;
   if (running.value) {
-    running.value = true;
     iframe.value.contentWindow.dispatchEvent(newExitEvent());
     await exit;
     ({ promise: ready, resolve: readyResolve } = newEventPromise());
