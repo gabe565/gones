@@ -5,6 +5,7 @@ import { dbGet, dbPut } from "../plugins/db";
 import {
   exitEvent,
   loadStateEvent,
+  newExitEvent,
   newNameEvent,
   newReadyEvent,
   playEvent,
@@ -35,8 +36,8 @@ window.addEventListener("focus", handleFocus);
 
 window.addEventListener(playEvent, async ({ detail: { cartridge } }) => {
   window.cartridge = new Uint8Array(await cartridge);
-  go.run(inst);
-  await handleFocus();
+  await Promise.all([go.run(inst), handleFocus()]);
+  window.parent.dispatchEvent(newExitEvent());
 });
 
 window.addEventListener(exitEvent, () => {

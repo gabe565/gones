@@ -2,9 +2,10 @@
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import MenuButton from "./MenuButton.vue";
 import SettingsMenu from "./SettingsMenu.vue";
-import { wait } from "../util/wait";
 import {
+  exitEvent,
   nameEvent,
+  newEventPromise,
   newExitEvent,
   newLoadStateEvent,
   newPlayEvent,
@@ -17,12 +18,12 @@ const name = ref("");
 const defaultTitle = document.title;
 
 // Promise that will resolve when the iframe is done reloading
-let resolve;
-let promise = new Promise((r) => {
-  resolve = r;
-});
+let { promise: ready, resolve: readyResolve } = newEventPromise();
+const handleReady = () => readyResolve();
 
-const handleReady = () => resolve();
+// Promise that will resolve when the game exits
+let { promise: exit, resolve: exitResolve } = newEventPromise();
+const handleExit = () => exitResolve();
 
 const handleName = ({ detail: { value } }) => {
   name.value = value;
@@ -36,11 +37,13 @@ const handleName = ({ detail: { value } }) => {
 onMounted(() => {
   window.addEventListener(readyEvent, handleReady);
   window.addEventListener(nameEvent, handleName);
+  window.addEventListener(exitEvent, handleExit);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener(readyEvent, handleReady);
   window.removeEventListener(nameEvent, handleName);
+  window.removeEventListener(exitEvent, handleExit);
 });
 
 const iframe = ref();
@@ -50,13 +53,12 @@ const cartridgeInserted = async (val) => {
   showSettings.value = false;
   if (running.value) {
     running.value = true;
-    promise = new Promise((r) => {
-      resolve = r;
-    });
     iframe.value.contentWindow.dispatchEvent(newExitEvent());
-    await wait(100);
+    await exit;
+    ({ promise: ready, resolve: readyResolve } = newEventPromise());
+    ({ promise: exit, resolve: exitResolve } = newEventPromise());
     await iframe.value.contentWindow.location.reload();
-    await promise;
+    await ready;
   }
   iframe.value.contentWindow.dispatchEvent(newPlayEvent(val.arrayBuffer()));
   iframe.value.contentWindow.focus();
@@ -72,7 +74,8 @@ watch(showSettings, (val) => {
 const stop = async () => {
   running.value = false;
   iframe.value.contentWindow.dispatchEvent(newExitEvent());
-  await wait(100);
+  await exit;
+  ({ promise: exit, resolve: exitResolve } = newEventPromise());
   await iframe.value.contentWindow.location.reload();
   name.value = "";
   document.title = defaultTitle;
