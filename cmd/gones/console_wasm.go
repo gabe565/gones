@@ -29,7 +29,7 @@ func newConsole(_ string) (*console.Console, error) {
 		return c, err
 	}
 
-	js.Global().Set("Gones", js.ValueOf(map[string]any{
+	js.Global().Set("Gones", js.Global().Get("Object").Call("freeze", js.ValueOf(map[string]any{
 		"exit": js.FuncOf(func(this js.Value, args []js.Value) any {
 			c.SetUpdateAction(console.ActionExit)
 			return nil
@@ -42,7 +42,7 @@ func newConsole(_ string) (*console.Console, error) {
 			c.SetUpdateAction(console.ActionLoadState)
 			return nil
 		}),
-	}))
+	})))
 
 	return c, nil
 }

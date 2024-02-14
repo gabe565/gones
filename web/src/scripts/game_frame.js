@@ -52,10 +52,10 @@ window.addEventListener(loadStateEvent, () => {
   if (window.Gones) window.Gones.loadState();
 });
 
-window.GonesClient = {
+window.GonesClient = Object.freeze({
   setRomName(value) {
     window.parent.dispatchEvent(newNameEvent(value));
   },
   dbPut,
   dbGet,
-};
+});
