@@ -2,6 +2,14 @@ import "./wasm_exec";
 import wasmUrl from "../assets/gones.wasm?url";
 import { waitForElement } from "../util/element";
 import { dbGet, dbPut } from "../plugins/db";
+import {
+  exitEvent,
+  loadStateEvent,
+  newNameEvent,
+  newReadyEvent,
+  playEvent,
+  saveStateEvent,
+} from "../util/events";
 
 // Polyfill
 if (!WebAssembly.instantiateStreaming) {
@@ -16,30 +24,36 @@ const go = new Go();
 let inst;
 WebAssembly.instantiateStreaming(fetch(wasmUrl), go.importObject).then((result) => {
   inst = result.instance;
-  // Notify parent that iframe is ready
-  window.parent.postMessage({ type: "ready" });
+  window.parent.dispatchEvent(newReadyEvent());
 });
 
-const focusCanvas = async () => {
+const handleFocus = async () => {
   const el = await waitForElement("canvas");
   el.focus();
 };
+window.addEventListener("focus", handleFocus);
 
-// Begin a game
-window.addEventListener("message", async ({ data }) => {
-  if (data.type === "play") {
-    window.cartridge = data.cartridge;
-    go.run(inst);
-    await focusCanvas();
-  }
+window.addEventListener(playEvent, async ({ detail: { cartridge } }) => {
+  window.cartridge = new Uint8Array(await cartridge);
+  go.run(inst);
+  await handleFocus();
 });
 
-// Focus the canvas when iframe is focused
-window.addEventListener("focus", focusCanvas);
+window.addEventListener(exitEvent, () => {
+  if (window.Gones) window.Gones.exit();
+});
+
+window.addEventListener(saveStateEvent, () => {
+  if (window.Gones) window.Gones.saveState();
+});
+
+window.addEventListener(loadStateEvent, () => {
+  if (window.Gones) window.Gones.loadState();
+});
 
 window.GonesClient = {
   SetRomName(value) {
-    window.parent.postMessage({ type: "name", value });
+    window.parent.dispatchEvent(newNameEvent(value));
   },
   DbPut: dbPut,
   DbGet: dbGet,

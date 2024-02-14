@@ -3,6 +3,14 @@ import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import MenuButton from "./MenuButton.vue";
 import SettingsMenu from "./SettingsMenu.vue";
 import { wait } from "../util/wait";
+import {
+  nameEvent,
+  newExitEvent,
+  newLoadStateEvent,
+  newPlayEvent,
+  newSaveStateEvent,
+  readyEvent,
+} from "../util/events";
 
 const showSettings = ref(true);
 const name = ref("");
@@ -14,24 +22,25 @@ let promise = new Promise((r) => {
   resolve = r;
 });
 
-// Handle messages from the iframe
-const iframeMessage = ({ data }) => {
-  if (data.type === "ready") {
-    resolve();
-  } else if (data.type === "name") {
-    name.value = data.value;
-    if (data.value) {
-      document.title = data.value + " - " + defaultTitle;
-    } else {
-      document.title = defaultTitle;
-    }
+const handleReady = () => resolve();
+
+const handleName = ({ detail: { value } }) => {
+  name.value = value;
+  if (value) {
+    document.title = value + " - " + defaultTitle;
+  } else {
+    document.title = defaultTitle;
   }
 };
+
 onMounted(() => {
-  window.addEventListener("message", iframeMessage);
+  window.addEventListener(readyEvent, handleReady);
+  window.addEventListener(nameEvent, handleName);
 });
+
 onBeforeUnmount(() => {
-  window.removeEventListener("message", iframeMessage);
+  window.removeEventListener(readyEvent, handleReady);
+  window.removeEventListener(nameEvent, handleName);
 });
 
 const iframe = ref();
@@ -44,17 +53,12 @@ const cartridgeInserted = async (val) => {
     promise = new Promise((r) => {
       resolve = r;
     });
-    if (iframe.value.contentWindow.Gones) {
-      iframe.value.contentWindow.Gones.exit();
-      await wait(100);
-    }
+    iframe.value.contentWindow.dispatchEvent(newExitEvent());
+    await wait(100);
     await iframe.value.contentWindow.location.reload();
     await promise;
   }
-  iframe.value.contentWindow.postMessage({
-    type: "play",
-    cartridge: new Uint8Array(await val.arrayBuffer()),
-  });
+  iframe.value.contentWindow.dispatchEvent(newPlayEvent(val.arrayBuffer()));
   iframe.value.contentWindow.focus();
   running.value = true;
 };
@@ -66,28 +70,22 @@ watch(showSettings, (val) => {
 });
 
 const stop = async () => {
-  if (iframe.value.contentWindow.Gones) {
-    running.value = false;
-    iframe.value.contentWindow.Gones.exit();
-    await wait(100);
-    await iframe.value.contentWindow.location.reload();
-    name.value = "";
-    document.title = defaultTitle;
-  }
+  running.value = false;
+  iframe.value.contentWindow.dispatchEvent(newExitEvent());
+  await wait(100);
+  await iframe.value.contentWindow.location.reload();
+  name.value = "";
+  document.title = defaultTitle;
 };
 
 const saveState = () => {
-  if (iframe.value.contentWindow.Gones) {
-    iframe.value.contentWindow.Gones.saveState();
-    showSettings.value = false;
-  }
+  iframe.value.contentWindow.dispatchEvent(newSaveStateEvent());
+  showSettings.value = false;
 };
 
 const loadState = () => {
-  if (iframe.value.contentWindow.Gones) {
-    iframe.value.contentWindow.Gones.loadState();
-    showSettings.value = false;
-  }
+  iframe.value.contentWindow.dispatchEvent(newLoadStateEvent());
+  showSettings.value = false;
 };
 </script>
 
