@@ -20,17 +20,22 @@ WebAssembly.instantiateStreaming(fetch(wasmUrl), go.importObject).then((result) 
   window.parent.postMessage({ type: "ready" });
 });
 
+const focusCanvas = async () => {
+  const el = await waitForElement("canvas");
+  el.focus();
+};
+
 // Begin a game
 window.addEventListener("message", async ({ data }) => {
   if (data.type === "play") {
     window.cartridge = data.cartridge;
     go.run(inst);
-    (await waitForElement("canvas")).focus();
+    await focusCanvas();
   }
 });
 
 // Focus the canvas when iframe is focused
-window.addEventListener("focus", () => document.querySelector("canvas")?.focus());
+window.addEventListener("focus", focusCanvas);
 
 window.GonesClient = {
   SetRomName(value) {
