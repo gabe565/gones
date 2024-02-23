@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/knadh/koanf/parsers/yaml"
+	"github.com/knadh/koanf/parsers/toml"
 	"github.com/knadh/koanf/providers/confmap"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/providers/rawbytes"
@@ -33,7 +33,7 @@ func Load(cmd *cobra.Command) error {
 			return err
 		}
 
-		cfgFile = filepath.Join(cfgDir, "config.yaml")
+		cfgFile = filepath.Join(cfgDir, "config.toml")
 	}
 
 	var cfgNotExists bool
@@ -48,7 +48,7 @@ func Load(cmd *cobra.Command) error {
 	}
 
 	// Parse config file
-	parser := yaml.Parser()
+	parser := toml.Parser()
 	if err := K.Load(rawbytes.Provider(cfgContents), parser); err != nil {
 		return err
 	}
