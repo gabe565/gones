@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/knadh/koanf/parsers/toml"
 	"github.com/knadh/koanf/providers/confmap"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/providers/rawbytes"
@@ -48,7 +47,7 @@ func Load(cmd *cobra.Command) error {
 	}
 
 	// Parse config file
-	parser := toml.Parser()
+	parser := TOMLParser{}
 	if err := K.Load(rawbytes.Provider(cfgContents), parser); err != nil {
 		return err
 	}
