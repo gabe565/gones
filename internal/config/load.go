@@ -68,19 +68,7 @@ func Load(cmd *cobra.Command) error {
 			log.WithField("file", cfgFile).Info("Updating config")
 		}
 
-		f, err := os.Create(cfgFile)
-		if err != nil {
-			return err
-		}
-		defer func(f *os.File) {
-			_ = f.Close()
-		}(f)
-
-		if _, err := f.Write(newCfg); err != nil {
-			return err
-		}
-
-		if err := f.Close(); err != nil {
+		if err := os.WriteFile(cfgFile, newCfg, 0o666); err != nil {
 			return err
 		}
 	}
