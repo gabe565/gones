@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: '3'
+
+tasks:
+  deps:
+    dir: web
+    sources: [package*.json]
+    cmd: npm install
+
+  build-wasm:
+    env:
+      GOOS: js
+      GOARCH: wasm
+    cmds:
+      - GOROOT="$(go env GOROOT)" && cp $GOROOT/misc/wasm/wasm_exec.js web/src/scripts
+      - go build -ldflags='-w -s' -trimpath -o web/src/assets/gones.wasm
+
+  build:
+    deps: [build-wasm, deps]
+    dir: web
+    cmd: npm run build

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: '3'
+
+tasks:
+  generate:
+    dir: internal/ppu/palette
+    sources:
+      - generate/main.go
+      - palette.go
+    generates:
+      - palette_emphasis.go
+    cmd: go run ./generate/main.go

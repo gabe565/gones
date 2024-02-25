@@ -1,48 +1,14 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: '3'
 
+includes:
+  icons: .taskfiles/icons.yaml
+  linux: .taskfiles/linux.yaml
+  nointro: .taskfiles/nointro.yaml
+  palette: .taskfiles/palette.yaml
+  web: .taskfiles/web.yaml
+
 tasks:
-  deps:linux:
-    platforms: [linux]
-    cmd: |
-      sudo apt-get install -y --no-install-recommends
-        libasound2-dev
-        libc6-dev
-        libgl1-mesa-dev
-        libglu1-mesa-dev
-        libxcursor-dev
-        libxi-dev
-        libxinerama-dev
-        libxrandr-dev
-        libxxf86vm-dev
-
-  icon:rasterize:
-    dir: assets
-    sources:
-      - icon.svg
-      - hack/rasterize-icons.sh
-    generates:
-      - GoNES.iconset/icon_16x16.png
-      - GoNES.iconset/icon_16x16@2x.png
-      - GoNES.iconset/icon_32x32.png
-      - GoNES.iconset/icon_32x32@2x.png
-      - GoNES.iconset/icon_64x64.png
-      - GoNES.iconset/icon_64x64@2x.png
-      - GoNES.iconset/icon_128x128.png
-      - GoNES.iconset/icon_128x128@2x.png
-      - GoNES.iconset/icon_256x256.png
-      - GoNES.iconset/icon_256x256@2x.png
-      - GoNES.iconset/icon_512x512.png
-    cmd: ../hack/rasterize-icons.sh
-
-  icon:macos:
-    platforms: [darwin]
-    dir: assets
-    sources: [GoNES.iconset/*]
-    generates: [GoNES.icns]
-    deps: [icon:rasterize]
-    cmd: iconutil --convert icns --output GoNES.icns GoNES.iconset
-
   build:
     cmds:
       - cmd: sh ./hack/build-app.sh
@@ -51,33 +17,3 @@ tasks:
         platforms: [linux]
       - cmd: go build -ldflags='-w -s' -trimpath -o dist/gones.exe
         platforms: [windows]
-
-  build:wasm:
-    env:
-      GOOS: js
-      GOARCH: wasm
-    cmds:
-      - GOROOT="$(go env GOROOT)" && cp $GOROOT/misc/wasm/wasm_exec.js web/src/scripts
-      - go build -ldflags='-w -s' -trimpath -o web/src/assets/gones.wasm
-
-  deps:web:
-    dir: web
-    sources: [package*.json]
-    cmd: npm install
-
-  build:web:
-    deps: [build:wasm, deps:web]
-    dir: web
-    cmd: npm run build
-
-  update:nointro:
-    cmd: go generate ./internal/database/...
-
-  gen:palette:
-    dir: internal/ppu/palette
-    sources:
-      - generate/main.go
-      - palette.go
-    generates:
-      - palette_emphasis.go
-    cmd: go run ./generate/main.go

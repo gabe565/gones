@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: '3'
+
+tasks:
+  rasterize:
+    dir: assets
+    sources:
+      - icon.svg
+      - ../hack/rasterize-icons.sh
+    generates:
+      - GoNES.iconset/icon_16x16.png
+      - GoNES.iconset/icon_16x16@2x.png
+      - GoNES.iconset/icon_32x32.png
+      - GoNES.iconset/icon_32x32@2x.png
+      - GoNES.iconset/icon_64x64.png
+      - GoNES.iconset/icon_64x64@2x.png
+      - GoNES.iconset/icon_128x128.png
+      - GoNES.iconset/icon_128x128@2x.png
+      - GoNES.iconset/icon_256x256.png
+      - GoNES.iconset/icon_256x256@2x.png
+      - GoNES.iconset/icon_512x512.png
+    cmd: ../hack/rasterize-icons.sh
+
+  macos:
+    platforms: [darwin]
+    dir: assets
+    sources: [GoNES.iconset/*]
+    generates: [GoNES.icns]
+    deps: [rasterize]
+    cmd: iconutil --convert icns --output GoNES.icns GoNES.iconset
