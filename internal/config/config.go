@@ -9,7 +9,7 @@ import (
 
 type Config struct {
 	Audio Audio `toml:"audio"`
-	Debug Debug `toml:"debug"`
+	Debug Debug `toml:"debug,omitempty"`
 	State State `toml:"state"`
 	UI    UI    `toml:"ui"`
 	Input Input `toml:"input"`
