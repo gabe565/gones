@@ -13,8 +13,6 @@ var flagConfigTable = map[string]string{
 	"resume":     "state.resume",
 }
 
-var excludeFromConfig = [...]string{"config", "help", "version"}
-
 func Flags(cmd *cobra.Command) {
 	cmd.Flags().StringP("config", "c", "", "Config file (default is $HOME/.config/gones/config.yaml)")
 	_ = cmd.RegisterFlagCompletionFunc("config", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
