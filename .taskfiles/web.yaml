@@ -19,3 +19,8 @@ tasks:
     deps: [build-wasm, deps]
     dir: web
     cmd: npm run build
+
+  serve:
+    deps: [build-wasm, deps]
+    dir: web
+    cmd: npm run dev
