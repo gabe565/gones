@@ -7,7 +7,7 @@ set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
 
-rm -rf dist assets/GoNES.iconset
+rm -rf dist/*.app assets/GoNES.iconset
 mkdir -p dist
 
 # Generate icns

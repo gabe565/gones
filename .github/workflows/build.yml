@@ -73,10 +73,10 @@ jobs:
               sudo apt-get install --no-install-recommends $LINUX_DEPENDENCIES
           - platform: darwin
             runs-on: macos-12
-            build: ./hack/build-app.sh
-          - platform: windows-amd64
+            build: ./hack/build-macos.sh
+          - platform: windows
             runs-on: windows-latest
-            extension: .exe
+            build: ./hack/build-windows.sh
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -115,7 +115,7 @@ jobs:
       - name: Build (Default)
         if: ${{ !matrix.build }}
         run: |
-          go build -ldflags='-w -s' -trimpath -o dist/gones${{ matrix.extension }}
+          go build -ldflags='-w -s' -trimpath -o dist/gones
         env:
           CGO_ENABLED: "1"
       - name: Compress
@@ -180,7 +180,7 @@ jobs:
             -v "$(go env GOMODCACHE):/go/pkg/mod" \
             -v "$PWD:/app" \
             builder \
-            go build -ldflags='-w -s' -trimpath -o dist/gones${{ matrix.extension }}
+            go build -ldflags='-w -s' -trimpath -o dist/gones
       - name: Compress
         run: tar -cvf gones.tar -C dist .
       - name: Upload Artifact

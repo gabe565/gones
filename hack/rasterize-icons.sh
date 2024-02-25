@@ -6,7 +6,7 @@ cd "$(git rev-parse --show-toplevel)/assets"
 rm -rf png
 mkdir -p png
 
-for SIZE in 16 32 64 128 256 512; do (
+for SIZE in 16 32 48 64 128 256 512; do (
     DEST="png/icon_${SIZE}x${SIZE}.png"
     basename "$DEST"
 

@@ -6,3 +6,4 @@
 /gones
 gones.wasm
 wasm_exec.js
+*.syso

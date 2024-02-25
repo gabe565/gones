@@ -11,9 +11,9 @@ includes:
 tasks:
   build:
     cmds:
-      - cmd: sh ./hack/build-app.sh
+      - cmd: ./hack/build-macos.sh
         platforms: [darwin]
       - cmd: go build -ldflags='-w -s' -trimpath -o dist/gones
         platforms: [linux]
-      - cmd: go build -ldflags='-w -s' -trimpath -o dist/gones.exe
+      - cmd: ./hack/build-windows.sh
         platforms: [windows]
