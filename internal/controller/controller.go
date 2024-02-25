@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"github.com/gabe565/gones/internal/config"
+	"github.com/gabe565/gones/internal/controller/button"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -11,8 +13,8 @@ const (
 	Player2 Player = "player2"
 )
 
-func NewController(player Player) Controller {
-	controller := Controller{Keymap: NewKeymap(player)}
+func NewController(conf *config.Config, player Player) Controller {
+	controller := Controller{Keymap: NewKeymap(conf, player)}
 	if len(controller.Keymap.Regular) != 0 {
 		controller.Enabled = true
 	}
@@ -72,11 +74,11 @@ func (j *Controller) UpdateInput() {
 	}
 
 	// Directional safety
-	if j.buttons[Left] && j.buttons[Right] {
-		j.buttons[Right] = false
+	if j.buttons[button.Left] && j.buttons[button.Right] {
+		j.buttons[button.Right] = false
 	}
-	if j.buttons[Up] && j.buttons[Down] {
-		j.buttons[Down] = false
+	if j.buttons[button.Up] && j.buttons[button.Down] {
+		j.buttons[button.Down] = false
 	}
 
 	if turboPressed {

@@ -3,71 +3,53 @@ package config
 import (
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/knadh/koanf/v2"
 )
 
-var K = koanf.New(".")
+type Config struct {
+	Audio Audio `toml:"audio"`
+	Debug Debug `toml:"debug"`
+	State State `toml:"state"`
+	UI    UI    `toml:"ui"`
+	Input Input `toml:"input"`
+}
+
+type Audio struct {
+	Enabled bool `toml:"enabled"`
+}
+
+type Debug struct {
+	Enabled bool `toml:"enabled"`
+	Trace   bool `toml:"trace"`
+}
+
+type State struct {
+	Resume   bool     `toml:"resume"`
+	Interval Duration `toml:"interval"`
+}
+
+type UI struct {
+	Fullscreen     bool    `toml:"fullscreen"`
+	Scale          float64 `toml:"scale"`
+	PauseUnfocused bool    `toml:"pause_unfocused"`
+}
+
+type Input struct {
+	Keys Keys `toml:"keys"`
+}
+
+type Keys struct {
+	Reset       ebiten.Key `toml:"reset"`
+	State1Save  ebiten.Key `toml:"state1_save"`
+	State1Load  ebiten.Key `toml:"state1_load"`
+	FastForward ebiten.Key `toml:"fast_forward"`
+	Fullscreen  ebiten.Key `toml:"fullscreen"`
+	Player1     Keymap     `toml:"player1"`
+	Player2     Keymap     `toml:"player2"`
+}
 
 var configDir = "gones"
-
-func defaultConfig() map[string]any {
-	return map[string]any{
-		"audio": map[string]any{
-			"enabled": true,
-		},
-		"debug": map[string]any{
-			"enabled": false,
-			"trace":   false,
-		},
-		"state": map[string]any{
-			"resume":   true,
-			"interval": time.Minute,
-		},
-		"ui": map[string]any{
-			"fullscreen":      false,
-			"scale":           3,
-			"pause_unfocused": true,
-		},
-		"input": map[string]any{
-			"keys": map[string]any{
-				"reset":       ebiten.KeyR.String(),
-				"state1_save": ebiten.KeyF1.String(),
-				"state1_load": ebiten.KeyF5.String(),
-
-				"fast_forward": ebiten.KeyF.String(),
-				"fullscreen":   ebiten.KeyF11.String(),
-
-				"player1": map[string]any{
-					"up":      ebiten.KeyW.String(),
-					"left":    ebiten.KeyA.String(),
-					"down":    ebiten.KeyS.String(),
-					"right":   ebiten.KeyD.String(),
-					"start":   ebiten.KeyEnter.String(),
-					"select":  ebiten.KeyShiftRight.String(),
-					"a":       ebiten.KeyM.String(),
-					"b":       ebiten.KeyN.String(),
-					"a_turbo": ebiten.KeyK.String(),
-					"b_turbo": ebiten.KeyJ.String(),
-				},
-				"player2": map[string]any{
-					"up":      ebiten.KeyHome.String(),
-					"left":    ebiten.KeyDelete.String(),
-					"down":    ebiten.KeyEnd.String(),
-					"right":   ebiten.KeyPageDown.String(),
-					"start":   ebiten.KeyKPEnter.String(),
-					"select":  ebiten.KeyKPAdd.String(),
-					"a":       ebiten.KeyKP3.String(),
-					"b":       ebiten.KeyKP2.String(),
-					"a_turbo": ebiten.KeyKP6.String(),
-					"b_turbo": ebiten.KeyKP5.String(),
-				},
-			},
-		},
-	}
-}
 
 func GetDir() (string, error) {
 	if xdgConfigDir := os.Getenv("XDG_CONFIG_DIR"); xdgConfigDir != "" {

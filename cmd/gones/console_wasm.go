@@ -5,11 +5,12 @@ import (
 	"syscall/js"
 
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
 	log "github.com/sirupsen/logrus"
 )
 
-func newConsole(_ string) (*console.Console, error) {
+func newConsole(conf *config.Config, _ string) (*console.Console, error) {
 	jsData := js.Global().Get("cartridge")
 	goData := make([]byte, jsData.Get("length").Int())
 	js.CopyBytesToGo(goData, jsData)
@@ -24,7 +25,7 @@ func newConsole(_ string) (*console.Console, error) {
 
 	js.Global().Get("GonesClient").Call("setRomName", cart.Name())
 
-	c, err := console.New(cart)
+	c, err := console.New(conf, cart)
 	if err != nil {
 		return c, err
 	}

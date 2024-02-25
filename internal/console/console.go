@@ -33,6 +33,8 @@ const (
 )
 
 type Console struct {
+	Config *config.Config
+
 	CPU *cpu.CPU
 	Bus *bus.Bus
 	PPU *ppu.PPU
@@ -52,8 +54,12 @@ type Console struct {
 	rate     uint8
 }
 
-func New(cart *cartridge.Cartridge) (*Console, error) {
-	console := Console{Cartridge: cart, rate: 1}
+func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
+	console := Console{
+		Config:    conf,
+		Cartridge: cart,
+		rate:      1,
+	}
 
 	var err error
 	console.Mapper, err = cartridge.NewMapper(cart)
@@ -67,13 +73,13 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 
 	console.PPU = ppu.New(console.Mapper)
 	console.APU = apu.New()
-	console.Bus = bus.New(console.Mapper, console.PPU, console.APU)
+	console.Bus = bus.New(conf, console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)
 
 	console.PPU.SetCpu(console.CPU)
 	console.APU.SetCpu(console.CPU)
 
-	if config.K.Bool("audio.enabled") {
+	if conf.Audio.Enabled {
 		console.audioCtx = audio.NewContext(consts.AudioSampleRate)
 		console.player, err = console.audioCtx.NewPlayer(console.APU)
 		if err != nil {
@@ -84,7 +90,7 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 		console.APU.Enabled = false
 	}
 
-	if config.K.Bool("state.resume") {
+	if conf.State.Resume {
 		if err := console.LoadState(AutoSaveNum); err != nil {
 			if !errors.Is(err, os.ErrNotExist) {
 				return &console, err
@@ -92,8 +98,8 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 		}
 	}
 
-	if duration := config.K.Duration("state.interval"); duration != 0 {
-		console.autosave = time.NewTicker(config.K.Duration("state.interval"))
+	if duration := conf.State.Interval; duration != 0 {
+		console.autosave = time.NewTicker(time.Duration(duration))
 	}
 
 	return &console, nil
@@ -101,7 +107,7 @@ func New(cart *cartridge.Cartridge) (*Console, error) {
 
 func (c *Console) Close() error {
 	c.autosave.Stop()
-	if config.K.Bool("state.resume") {
+	if c.Config.State.Resume {
 		if err := c.SaveState(AutoSaveNum); err != nil {
 			return err
 		}
@@ -198,7 +204,7 @@ func (c *Console) Update() error {
 			if err := c.SaveSram(); err != nil {
 				log.WithError(err).Error("Auto-save failed")
 			}
-			if config.K.Bool("state.resume") {
+			if c.Config.State.Resume {
 				if err := c.SaveState(AutoSaveNum); err != nil {
 					log.WithError(err).Error("State auto-save failed")
 				}

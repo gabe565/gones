@@ -6,6 +6,7 @@ import (
 	"github.com/gabe565/gones/internal/apu"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,7 +16,8 @@ func stubCpu(program []byte) *CPU {
 	mapper := cartridge.NewMapper2(cart)
 	ppu := ppu.New(mapper)
 	apu := apu.New()
-	bus := bus.New(mapper, ppu, apu)
+	conf := config.NewDefault()
+	bus := bus.New(&conf, mapper, ppu, apu)
 	cpu := New(bus)
 	apu.SetCpu(cpu)
 	return cpu

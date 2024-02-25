@@ -1,4 +1,4 @@
-package controller
+package button
 
 import (
 	"errors"
@@ -10,14 +10,14 @@ import (
 type Button uint8
 
 const (
-	ButtonA Button = iota // a
-	ButtonB               // b
-	Select                // select
-	Start                 // start
-	Up                    // up
-	Down                  // down
-	Left                  // left
-	Right                 // right
+	A      Button = iota // a
+	B                    // b
+	Select               // select
+	Start                // start
+	Up                   // up
+	Down                 // down
+	Left                 // left
+	Right                // right
 )
 
 var ErrInvalidButton = errors.New("invalid button")

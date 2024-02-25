@@ -34,10 +34,11 @@ func New() *cobra.Command {
 }
 
 func run(cmd *cobra.Command, args []string) error {
-	if err := config.Load(cmd); err != nil {
+	conf, err := config.Load(cmd)
+	if err != nil {
 		return err
 	}
-	controller.LoadKeys()
+	controller.LoadKeys(conf)
 
 	var path string
 	if len(args) > 0 {
@@ -45,7 +46,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 	cmd.SilenceUsage = true
 
-	c, err := newConsole(path)
+	c, err := newConsole(conf, path)
 	if err != nil {
 		return err
 	}
@@ -64,15 +65,15 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 	}()
 
-	c.SetTrace(config.K.Bool("debug.trace"))
-	c.SetDebug(config.K.Bool("debug.enabled"))
+	c.SetTrace(conf.Debug.Trace)
+	c.SetDebug(conf.Debug.Enabled)
 
-	scale := config.K.Float64("ui.scale")
+	scale := conf.UI.Scale
 	ebiten.SetWindowSize(int(scale*ppu.Width), int(scale*ppu.TrimmedHeight))
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
-	ebiten.SetFullscreen(config.K.Bool("ui.fullscreen"))
+	ebiten.SetFullscreen(conf.UI.Fullscreen)
 	ebiten.SetScreenClearedEveryFrame(false)
-	ebiten.SetRunnableOnUnfocused(!config.K.Bool("ui.pause_unfocused"))
+	ebiten.SetRunnableOnUnfocused(!conf.UI.PauseUnfocused)
 
 	name := c.Cartridge.Name()
 	if name == "" {

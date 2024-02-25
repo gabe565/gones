@@ -8,28 +8,33 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/knadh/koanf/providers/confmap"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/providers/rawbytes"
+	"github.com/knadh/koanf/providers/structs"
+	"github.com/knadh/koanf/v2"
+	"github.com/pelletier/go-toml/v2"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-func Load(cmd *cobra.Command) error {
+func Load(cmd *cobra.Command) (*Config, error) {
+	k := koanf.New(".")
+	conf := NewDefault()
+
 	// Load default config
-	if err := K.Load(confmap.Provider(defaultConfig(), ""), nil); err != nil {
-		return err
+	if err := k.Load(structs.Provider(conf, "toml"), nil); err != nil {
+		return nil, err
 	}
 
 	// Find config file
 	cfgFile, err := cmd.Flags().GetString("config")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if cfgFile == "" {
 		cfgDir, err := GetDir()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		cfgFile = filepath.Join(cfgDir, "config.toml")
@@ -42,19 +47,23 @@ func Load(cmd *cobra.Command) error {
 		if errors.Is(err, os.ErrNotExist) {
 			cfgNotExists = true
 		} else {
-			return err
+			return nil, err
 		}
 	}
 
 	// Parse config file
 	parser := TOMLParser{}
-	if err := K.Load(rawbytes.Provider(cfgContents), parser); err != nil {
-		return err
+	if err := k.Load(rawbytes.Provider(cfgContents), parser); err != nil {
+		return nil, err
 	}
 
-	newCfg, err := K.Marshal(parser)
+	if err := k.UnmarshalWithConf("", &conf, koanf.UnmarshalConf{Tag: "toml"}); err != nil {
+		return nil, err
+	}
+
+	newCfg, err := toml.Marshal(conf)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if !bytes.Equal(cfgContents, newCfg) {
@@ -62,19 +71,19 @@ func Load(cmd *cobra.Command) error {
 			log.WithField("file", cfgFile).Info("Creating config")
 
 			if err := os.MkdirAll(filepath.Dir(cfgFile), 0o777); err != nil {
-				return err
+				return nil, err
 			}
 		} else {
 			log.WithField("file", cfgFile).Info("Updating config")
 		}
 
 		if err := os.WriteFile(cfgFile, newCfg, 0o666); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
 	// Load flags
-	err = K.Load(posflag.ProviderWithValue(cmd.Flags(), ".", K, func(key string, value string) (string, any) {
+	err = k.Load(posflag.ProviderWithValue(cmd.Flags(), ".", k, func(key string, value string) (string, any) {
 		if k, ok := flagConfigTable[key]; ok {
 			key = k
 		}
@@ -86,10 +95,13 @@ func Load(cmd *cobra.Command) error {
 		return key, value
 	}), nil)
 	if err != nil {
-		return err
+		return nil, err
+	}
+
+	if err := k.UnmarshalWithConf("", &conf, koanf.UnmarshalConf{Tag: "toml"}); err != nil {
+		return nil, err
 	}
 
 	log.WithField("file", cfgFile).Info("Loaded config")
-
-	return nil
+	return &conf, err
 }

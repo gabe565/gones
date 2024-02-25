@@ -3,18 +3,19 @@ package bus
 import (
 	"github.com/gabe565/gones/internal/apu"
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/controller"
 	"github.com/gabe565/gones/internal/ppu"
 	log "github.com/sirupsen/logrus"
 )
 
-func New(mapper cartridge.Mapper, ppu *ppu.PPU, apu *apu.APU) *Bus {
+func New(conf *config.Config, mapper cartridge.Mapper, ppu *ppu.PPU, apu *apu.APU) *Bus {
 	return &Bus{
 		mapper:      mapper,
 		apu:         apu,
 		ppu:         ppu,
-		controller1: controller.NewController(controller.Player1),
-		controller2: controller.NewController(controller.Player2),
+		controller1: controller.NewController(conf, controller.Player1),
+		controller2: controller.NewController(conf, controller.Player2),
 	}
 }
 

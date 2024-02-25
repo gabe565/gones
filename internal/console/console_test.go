@@ -6,6 +6,7 @@ import (
 	"github.com/gabe565/gones/internal/apu"
 	"github.com/gabe565/gones/internal/bus"
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/cpu"
 	"github.com/gabe565/gones/internal/ppu"
 )
@@ -19,11 +20,17 @@ func stubConsole(r io.ReadSeeker) (*Console, error) {
 	if err != nil {
 		return nil, err
 	}
-	console := Console{Cartridge: cart, Mapper: mapper}
+
+	conf := config.NewDefault()
+	console := Console{
+		Config:    &conf,
+		Cartridge: cart,
+		Mapper:    mapper,
+	}
 
 	console.PPU = ppu.New(console.Mapper)
 	console.APU = apu.New()
-	console.Bus = bus.New(console.Mapper, console.PPU, console.APU)
+	console.Bus = bus.New(&conf, console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)
 
 	console.PPU.SetCpu(console.CPU)

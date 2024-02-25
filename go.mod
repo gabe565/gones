@@ -6,9 +6,9 @@ require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/dave/jennifer v1.7.0
 	github.com/hajimehoshi/ebiten/v2 v2.6.6
-	github.com/knadh/koanf/providers/confmap v0.1.0
 	github.com/knadh/koanf/providers/posflag v0.1.0
 	github.com/knadh/koanf/providers/rawbytes v0.1.0
+	github.com/knadh/koanf/providers/structs v0.1.0
 	github.com/knadh/koanf/v2 v2.1.0
 	github.com/ncruces/zenity v0.10.11
 	github.com/pelletier/go-toml/v2 v2.1.1
@@ -27,6 +27,7 @@ require (
 	github.com/dchest/jsmin v0.0.0-20220218165748-59f39799265f // indirect
 	github.com/ebitengine/oto/v3 v3.1.0 // indirect
 	github.com/ebitengine/purego v0.6.0 // indirect
+	github.com/fatih/structs v1.1.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.0.0-alpha.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jezek/xgb v1.1.0 // indirect
