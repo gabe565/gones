@@ -187,7 +187,9 @@ func (c *Console) Update() error {
 
 			if c.PPU.RenderDone || c.debug == DebugStepFrame {
 				c.playOnce.Do(func() {
-					c.player.Play()
+					if c.Config.Audio.Enabled {
+						c.player.Play()
+					}
 				})
 				break
 			}
