@@ -108,9 +108,11 @@ jobs:
           ENVS: ${{ matrix.envs }}
       - name: Pre-build
         if: matrix.pre-build
+        shell: bash
         run: ${{ matrix.pre-build }}
       - name: Build (Matrix)
         if: ${{ matrix.build }}
+        shell: bash
         run: ${{ matrix.build }}
       - name: Build (Default)
         if: ${{ !matrix.build }}
