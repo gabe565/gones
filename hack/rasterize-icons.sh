@@ -1,23 +1,18 @@
 #!/usr/bin/env bash
-
-SRC='../assets/icon.svg'
-DIST='../assets'
-
 set -euo pipefail
 
-SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+ICONSET=GoNES.iconset
 
-ICONSET="$SCRIPT_DIR/$DIST/GoNES.iconset"
-ICNS="$SCRIPT_DIR/$DIST/GoNES.icns"
+cd "$(git rev-parse --show-toplevel)/assets"
 
-rm -rf "$ICONSET" "$ICNS"
+rm -rf "$ICONSET"
 mkdir -p "$ICONSET"
 
 for SIZE in 16 32 64 128 256 512; do (
     DEST="$ICONSET/icon_${SIZE}x${SIZE}.png"
     basename "$DEST"
 
-    inkscape "$SCRIPT_DIR/$SRC" \
+    inkscape icon.svg \
       --export-width="$SIZE" \
       --export-type=png \
       --export-filename=- \
@@ -35,9 +30,3 @@ for SIZE in 16 32 64 128 256 512; do (
       cp "$DEST" "$HALF_DEST"
     ) fi
 ) done
-
-echo Generate "$(basename "$ICNS")"
-iconutil \
-  --convert icns \
-  --output "$ICNS" \
-  "$ICONSET"

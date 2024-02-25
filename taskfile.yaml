@@ -16,6 +16,33 @@ tasks:
         libxrandr-dev
         libxxf86vm-dev
 
+  icon:rasterize:
+    dir: assets
+    sources:
+      - icon.svg
+      - hack/rasterize-icons.sh
+    generates:
+      - GoNES.iconset/icon_16x16.png
+      - GoNES.iconset/icon_16x16@2x.png
+      - GoNES.iconset/icon_32x32.png
+      - GoNES.iconset/icon_32x32@2x.png
+      - GoNES.iconset/icon_64x64.png
+      - GoNES.iconset/icon_64x64@2x.png
+      - GoNES.iconset/icon_128x128.png
+      - GoNES.iconset/icon_128x128@2x.png
+      - GoNES.iconset/icon_256x256.png
+      - GoNES.iconset/icon_256x256@2x.png
+      - GoNES.iconset/icon_512x512.png
+    cmd: ../hack/rasterize-icons.sh
+
+  icon:macos:
+    platforms: [darwin]
+    dir: assets
+    sources: [GoNES.iconset/*]
+    generates: [GoNES.icns]
+    deps: [icon:rasterize]
+    cmd: iconutil --convert icns --output GoNES.icns GoNES.iconset
+
   build:
     cmds:
       - cmd: sh ./hack/build-app.sh
@@ -42,9 +69,6 @@ tasks:
     deps: [build:wasm, deps:web]
     dir: web
     cmd: npm run build
-
-  icons:
-    cmd: sh ./hack/build-icns.sh
 
   update:nointro:
     cmd: go generate ./internal/database/...
