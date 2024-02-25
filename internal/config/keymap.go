@@ -14,8 +14,8 @@ type Keymap struct {
 	Select ebiten.Key `toml:"select"`
 	A      ebiten.Key `toml:"a"`
 	B      ebiten.Key `toml:"b"`
-	ATurbo ebiten.Key `toml:"a_turbo"`
-	BTurbo ebiten.Key `toml:"b_turbo"`
+	ATurbo ebiten.Key `toml:"a_turbo" comment:"Key to press the A button repeatedly (must be held)."`
+	BTurbo ebiten.Key `toml:"b_turbo" comment:"Key to press the B button repeatedly (must be held)."`
 }
 
 func (k Keymap) GetMap() map[button.Button]ebiten.Key {

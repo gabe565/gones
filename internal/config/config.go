@@ -16,7 +16,7 @@ type Config struct {
 }
 
 type Audio struct {
-	Enabled bool `toml:"enabled"`
+	Enabled bool `toml:"enabled" comment:"Enables audio output."`
 }
 
 type Debug struct {
@@ -25,28 +25,28 @@ type Debug struct {
 }
 
 type State struct {
-	Resume   bool     `toml:"resume"`
-	Interval Duration `toml:"interval"`
+	Resume   bool     `toml:"resume" comment:"Automatically resumes the previous game state."`
+	Interval Duration `toml:"interval" comment:"Time interval to save the game state."`
 }
 
 type UI struct {
-	Fullscreen     bool    `toml:"fullscreen"`
-	Scale          float64 `toml:"scale"`
-	PauseUnfocused bool    `toml:"pause_unfocused"`
+	Fullscreen     bool    `toml:"fullscreen" comment:"Default fullscreen state. Fullscreen can also be toggled with a key (F11 by default)."`
+	Scale          float64 `toml:"scale" comment:"Multiplier used to scale the UI."`
+	PauseUnfocused bool    `toml:"pause_unfocused" comment:"Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background."`
 }
 
 type Input struct {
-	Keys Keys `toml:"keys"`
+	Keys Keys `toml:"keys" comment:"Global keys."`
 }
 
 type Keys struct {
-	Reset       ebiten.Key `toml:"reset"`
-	State1Save  ebiten.Key `toml:"state1_save"`
-	State1Load  ebiten.Key `toml:"state1_load"`
-	FastForward ebiten.Key `toml:"fast_forward"`
-	Fullscreen  ebiten.Key `toml:"fullscreen"`
-	Player1     Keymap     `toml:"player1"`
-	Player2     Keymap     `toml:"player2"`
+	Reset       ebiten.Key `toml:"reset" comment:"Key to reset the game (must be held)."`
+	State1Save  ebiten.Key `toml:"state1_save" comment:"Key to save the game state (separate from auto resume state)."`
+	State1Load  ebiten.Key `toml:"state1_load" comment:"Key to load the last save state."`
+	FastForward ebiten.Key `toml:"fast_forward" comment:"Key to fast-forward the game (must be held)."`
+	Fullscreen  ebiten.Key `toml:"fullscreen" comment:"Key to toggle fullscreen."`
+	Player1     Keymap     `toml:"player1" comment:"Player 1 keymap."`
+	Player2     Keymap     `toml:"player2" comment:"Player 2 keymap."`
 }
 
 var configDir = "gones"
