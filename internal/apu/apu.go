@@ -17,6 +17,7 @@ type CPU interface {
 const (
 	FrameCounterRate  = consts.CpuFrequency / 240.0
 	DefaultSampleRate = consts.CpuFrequency / consts.AudioSampleRate * consts.FrameRateDifference
+	BufferCap         = consts.AudioSampleRate / 20
 )
 
 var lengthTable = [...]byte{
@@ -54,7 +55,7 @@ func New() *APU {
 		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},
 
-		buf: make(chan float32, consts.AudioSampleRate/20),
+		buf: make(chan float32, BufferCap),
 	}
 }
 
@@ -193,9 +194,8 @@ func (a *APU) stepFrameCounter() {
 }
 
 func (a *APU) sendSample() {
-	select {
-	case a.buf <- a.output():
-	default:
+	if len(a.buf) < BufferCap {
+		a.buf <- a.output()
 	}
 }
 
