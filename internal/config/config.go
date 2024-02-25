@@ -56,12 +56,13 @@ func GetDir() (string, error) {
 		return filepath.Join(xdgConfigHome, configDir), nil
 	}
 
-	home, err := os.UserHomeDir()
+	dir, err := os.UserConfigDir()
 	if err != nil {
 		return "", err
 	}
 
-	return filepath.Join(home, ".config", configDir), nil
+	dir = filepath.Join(dir, configDir)
+	return dir, nil
 }
 
 func GetStatesDir() (string, error) {
