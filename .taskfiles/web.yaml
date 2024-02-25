@@ -8,20 +8,29 @@ tasks:
     sources: [package*.json]
     cmd: npm install
 
+  cp-js:
+    internal: true
+    dir: web
+    vars:
+      GOROOT:
+        sh: go env GOROOT
+    sources: ["{{ .GOROOT }}/misc/wasm/wasm_exec.js"]
+    generates: [src/scripts/wasm_exec.js]
+    cmd: cp "{{ .GOROOT }}/misc/wasm/wasm_exec.js" src/scripts/wasm_exec.js
+
   build-wasm:
     env:
       GOOS: js
       GOARCH: wasm
     cmds:
-      - cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" web/src/scripts
       - go build -ldflags='-w -s' -trimpath -o web/src/assets/gones.wasm
 
   build:
-    deps: [build-wasm, npm]
+    deps: [build-wasm, cp-js, npm]
     dir: web
     cmd: npm run build
 
   serve:
-    deps: [build-wasm, npm]
+    deps: [build-wasm, cp-js, npm]
     dir: web
     cmd: npm run dev
