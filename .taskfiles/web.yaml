@@ -2,7 +2,8 @@
 version: '3'
 
 tasks:
-  deps:
+  npm:
+    internal: true
     dir: web
     sources: [package*.json]
     cmd: npm install
@@ -16,11 +17,11 @@ tasks:
       - go build -ldflags='-w -s' -trimpath -o web/src/assets/gones.wasm
 
   build:
-    deps: [build-wasm, deps]
+    deps: [build-wasm, npm]
     dir: web
     cmd: npm run build
 
   serve:
-    deps: [build-wasm, deps]
+    deps: [build-wasm, npm]
     dir: web
     cmd: npm run dev
