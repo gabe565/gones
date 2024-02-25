@@ -12,7 +12,7 @@ tasks:
       GOOS: js
       GOARCH: wasm
     cmds:
-      - GOROOT="$(go env GOROOT)" && cp $GOROOT/misc/wasm/wasm_exec.js web/src/scripts
+      - cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" web/src/scripts
       - go build -ldflags='-w -s' -trimpath -o web/src/assets/gones.wasm
 
   build:
