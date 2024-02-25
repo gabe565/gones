@@ -52,8 +52,8 @@ type Keys struct {
 var configDir = "gones"
 
 func GetDir() (string, error) {
-	if xdgConfigDir := os.Getenv("XDG_CONFIG_DIR"); xdgConfigDir != "" {
-		return filepath.Join(xdgConfigDir, configDir), nil
+	if xdgConfigHome := os.Getenv("XDG_CONFIG_HOME"); xdgConfigHome != "" {
+		return filepath.Join(xdgConfigHome, configDir), nil
 	}
 
 	home, err := os.UserHomeDir()
