@@ -23,6 +23,7 @@ func NewDefault() Config {
 		Input: Input{
 			Keys: Keys{
 				Reset:      ebiten.KeyR,
+				ResetHold:  Duration(500 * time.Millisecond),
 				State1Save: ebiten.KeyF1,
 				State1Load: ebiten.KeyF5,
 

@@ -10,8 +10,10 @@ import (
 func (c *Console) CheckInput() {
 	c.Bus.UpdateInput()
 
-	if inpututil.KeyPressDuration(controller.Reset) == 30 {
-		c.Reset()
+	if duration := inpututil.KeyPressDuration(controller.Reset); duration != 0 {
+		if duration == c.Config.Input.Keys.ResetHoldFrames() {
+			c.Reset()
+		}
 	}
 
 	if inpututil.IsKeyJustPressed(controller.FastForward) {

@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -36,6 +37,7 @@ type Input struct {
 
 type Keys struct {
 	Reset           ebiten.Key `toml:"reset" comment:"Key to reset the game (must be held)."`
+	ResetHold       Duration   `toml:"reset_hold" comment:"Time the reset button must be held."`
 	State1Save      ebiten.Key `toml:"state1_save" comment:"Key to save the game state (separate from auto resume state)."`
 	State1Load      ebiten.Key `toml:"state1_load" comment:"Key to load the last save state."`
 	FastForward     ebiten.Key `toml:"fast_forward" comment:"Key to fast-forward the game (must be held)."`
@@ -43,6 +45,14 @@ type Keys struct {
 	Fullscreen      ebiten.Key `toml:"fullscreen" comment:"Key to toggle fullscreen."`
 	Player1         Keymap     `toml:"player1" comment:"Player 1 keymap."`
 	Player2         Keymap     `toml:"player2" comment:"Player 2 keymap."`
+}
+
+func (k Keys) ResetHoldFrames() int {
+	frames := int(time.Duration(k.ResetHold).Seconds() * 60)
+	if frames == 0 {
+		return 1
+	}
+	return frames
 }
 
 type Debug struct {
