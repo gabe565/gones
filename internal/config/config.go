@@ -39,6 +39,7 @@ type Input struct {
 	FastForward     ebiten.Key `toml:"fast_forward" comment:"Key to fast-forward the game (must be held)."`
 	FastForwardRate uint8      `toml:"fast_forward_rate" comment:"Fast-forward rate multiplier."`
 	Fullscreen      ebiten.Key `toml:"fullscreen" comment:"Key to toggle fullscreen."`
+	TurboDutyCycle  uint16     `toml:"turbo_duty_cycle" comment:"Frame duty cycle when turbo key is held (minimum: 2)."`
 	Player1         Keymap     `toml:"player1" comment:"Player 1 keymap."`
 	Player2         Keymap     `toml:"player2" comment:"Player 2 keymap."`
 }

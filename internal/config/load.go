@@ -117,5 +117,13 @@ func fixConfig(k *koanf.Koanf) error {
 		k.Delete("input.keys")
 	}
 
+	// Turbo duty cycle min
+	if val := k.Int("input.turbo_duty_cycle"); val < 2 {
+		log.Warn("Turbo duty cycle must be 2 or greater. Setting value to 2.")
+		if err := k.Set("input.turbo_duty_cycle", 2); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

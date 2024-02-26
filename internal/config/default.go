@@ -30,6 +30,8 @@ func NewDefault() Config {
 			FastForwardRate: 3,
 			Fullscreen:      ebiten.KeyF11,
 
+			TurboDutyCycle: 4,
+
 			Player1: Keymap{
 				A:      ebiten.KeyM,
 				B:      ebiten.KeyN,
@@ -42,6 +44,7 @@ func NewDefault() Config {
 				ATurbo: ebiten.KeyK,
 				BTurbo: ebiten.KeyJ,
 			},
+
 			Player2: Keymap{
 				A:      ebiten.KeyKP3,
 				B:      ebiten.KeyKP2,

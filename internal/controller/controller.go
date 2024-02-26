@@ -14,7 +14,10 @@ const (
 )
 
 func NewController(conf *config.Config, player Player) Controller {
-	controller := Controller{Keymap: NewKeymap(conf, player)}
+	controller := Controller{
+		Keymap:         NewKeymap(conf, player),
+		turboDutyCycle: conf.Input.TurboDutyCycle,
+	}
 	if len(controller.Keymap.Regular) != 0 {
 		controller.Enabled = true
 	}
@@ -28,7 +31,9 @@ type Controller struct {
 	buttons [8]bool
 
 	Keymap Keymap
-	turbo  bool
+
+	turboDutyCycle uint16
+	turbo          uint16
 }
 
 func (j *Controller) Write(data byte) {
@@ -66,7 +71,7 @@ func (j *Controller) UpdateInput() {
 			turboKey, ok := j.Keymap.Turbo[button]
 			if ok && ebiten.IsKeyPressed(turboKey) {
 				turboPressed = true
-				j.buttons[button] = j.turbo
+				j.buttons[button] = j.turbo < j.turboDutyCycle/2
 				continue
 			}
 		}
@@ -82,8 +87,12 @@ func (j *Controller) UpdateInput() {
 	}
 
 	if turboPressed {
-		j.turbo = !j.turbo
+		if j.turbo == j.turboDutyCycle-1 {
+			j.turbo = 0
+		} else {
+			j.turbo++
+		}
 	} else {
-		j.turbo = false
+		j.turbo = 0
 	}
 }
