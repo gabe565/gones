@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/providers/rawbytes"
@@ -121,6 +122,14 @@ func fixConfig(k *koanf.Koanf) error {
 	if val := k.Int("input.turbo_duty_cycle"); val < 2 {
 		log.Warn("Turbo duty cycle must be 2 or greater. Setting value to 2.")
 		if err := k.Set("input.turbo_duty_cycle", 2); err != nil {
+			return err
+		}
+	}
+
+	// Autosave interval min
+	if val := k.Duration("state.interval"); val < 10*time.Second {
+		log.Warn("Autosave interval must be 10s or greater. Setting value to 10s.")
+		if err := k.Set("state.interval", 10*time.Second); err != nil {
 			return err
 		}
 	}
