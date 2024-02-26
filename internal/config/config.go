@@ -32,10 +32,6 @@ type State struct {
 }
 
 type Input struct {
-	Keys Keys `toml:"keys" comment:"Global keys."`
-}
-
-type Keys struct {
 	Reset           ebiten.Key `toml:"reset" comment:"Key to reset the game (must be held)."`
 	ResetHold       Duration   `toml:"reset_hold" comment:"Time the reset button must be held."`
 	State1Save      ebiten.Key `toml:"state1_save" comment:"Key to save the game state (separate from auto resume state)."`
@@ -47,8 +43,8 @@ type Keys struct {
 	Player2         Keymap     `toml:"player2" comment:"Player 2 keymap."`
 }
 
-func (k Keys) ResetHoldFrames() int {
-	frames := int(time.Duration(k.ResetHold).Seconds() * 60)
+func (i Input) ResetHoldFrames() int {
+	frames := int(time.Duration(i.ResetHold).Seconds() * 60)
 	if frames == 0 {
 		return 1
 	}

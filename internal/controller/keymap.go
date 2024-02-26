@@ -15,9 +15,9 @@ func NewKeymap(conf *config.Config, player Player) Keymap {
 	var keymap config.Keymap
 	switch player {
 	case Player1:
-		keymap = conf.Input.Keys.Player1
+		keymap = conf.Input.Player1
 	case Player2:
-		keymap = conf.Input.Keys.Player2
+		keymap = conf.Input.Player2
 	default:
 		panic("invalid player: " + player)
 	}
@@ -29,11 +29,11 @@ func NewKeymap(conf *config.Config, player Player) Keymap {
 }
 
 func LoadKeys(conf *config.Config) {
-	Reset = conf.Input.Keys.Reset
-	SaveState1 = conf.Input.Keys.State1Save
-	LoadState1 = conf.Input.Keys.State1Load
-	FastForward = conf.Input.Keys.FastForward
-	ToggleFullscreen = conf.Input.Keys.Fullscreen
+	Reset = conf.Input.Reset
+	SaveState1 = conf.Input.State1Save
+	LoadState1 = conf.Input.State1Load
+	FastForward = conf.Input.FastForward
+	ToggleFullscreen = conf.Input.Fullscreen
 }
 
 var (

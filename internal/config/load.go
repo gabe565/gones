@@ -57,6 +57,10 @@ func Load(cmd *cobra.Command) (*Config, error) {
 		return nil, err
 	}
 
+	if err := fixConfig(k); err != nil {
+		return nil, err
+	}
+
 	if err := k.UnmarshalWithConf("", &conf, koanf.UnmarshalConf{Tag: "toml"}); err != nil {
 		return nil, err
 	}
@@ -101,4 +105,17 @@ func Load(cmd *cobra.Command) (*Config, error) {
 
 	log.WithField("file", cfgFile).Info("Loaded config")
 	return &conf, err
+}
+
+func fixConfig(k *koanf.Koanf) error {
+	// Migrate `input.keys` to `input`
+	if k.Exists("input.keys") {
+		inputKeys := k.Get("input.keys").(map[string]any)
+		if err := k.Set("input", inputKeys); err != nil {
+			return err
+		}
+		k.Delete("input.keys")
+	}
+
+	return nil
 }
