@@ -8,21 +8,17 @@ import (
 
 func NewDefault() Config {
 	return Config{
-		Audio: Audio{
-			Enabled: true,
-		},
-		Debug: Debug{
-			Enabled: false,
-			Trace:   false,
-		},
-		State: State{
-			Resume:   true,
-			Interval: Duration(time.Minute),
-		},
 		UI: UI{
 			Fullscreen:     false,
 			Scale:          3,
 			PauseUnfocused: true,
+		},
+		Audio: Audio{
+			Enabled: true,
+		},
+		State: State{
+			Resume:   true,
+			Interval: Duration(time.Minute),
 		},
 		Input: Input{
 			Keys: Keys{

@@ -8,31 +8,26 @@ import (
 )
 
 type Config struct {
-	Audio Audio `toml:"audio"`
-	Debug Debug `toml:"debug,omitempty"`
-	State State `toml:"state"`
 	UI    UI    `toml:"ui"`
+	Audio Audio `toml:"audio"`
+	State State `toml:"state"`
 	Input Input `toml:"input"`
-}
-
-type Audio struct {
-	Enabled bool `toml:"enabled" comment:"Enables audio output."`
-}
-
-type Debug struct {
-	Enabled bool `toml:"enabled"`
-	Trace   bool `toml:"trace"`
-}
-
-type State struct {
-	Resume   bool     `toml:"resume" comment:"Automatically resumes the previous game state."`
-	Interval Duration `toml:"interval" comment:"Time interval to save the game state."`
+	Debug Debug `toml:"debug,omitempty"`
 }
 
 type UI struct {
 	Fullscreen     bool    `toml:"fullscreen" comment:"Default fullscreen state. Fullscreen can also be toggled with a key (F11 by default)."`
 	Scale          float64 `toml:"scale" comment:"Multiplier used to scale the UI."`
 	PauseUnfocused bool    `toml:"pause_unfocused" comment:"Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background."`
+}
+
+type Audio struct {
+	Enabled bool `toml:"enabled" comment:"Enables audio output."`
+}
+
+type State struct {
+	Resume   bool     `toml:"resume" comment:"Automatically resumes the previous game state."`
+	Interval Duration `toml:"interval" comment:"Time interval to save the game state."`
 }
 
 type Input struct {
@@ -47,6 +42,11 @@ type Keys struct {
 	Fullscreen  ebiten.Key `toml:"fullscreen" comment:"Key to toggle fullscreen."`
 	Player1     Keymap     `toml:"player1" comment:"Player 1 keymap."`
 	Player2     Keymap     `toml:"player2" comment:"Player 2 keymap."`
+}
+
+type Debug struct {
+	Enabled bool `toml:"enabled"`
+	Trace   bool `toml:"trace"`
 }
 
 var configDir = "gones"
