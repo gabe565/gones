@@ -3,7 +3,6 @@ package ppu
 import (
 	"fmt"
 	"image"
-	"image/color"
 
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/interrupt"
@@ -44,7 +43,7 @@ type PPU struct {
 
 	OamAddr       byte
 	Oam           [0x100]byte
-	systemPalette *[0x40]color.RGBA
+	systemPalette *palette.Palette
 	Palette       [0x20]byte
 
 	Scanline int
