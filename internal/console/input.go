@@ -17,11 +17,11 @@ func (c *Console) CheckInput() {
 	}
 
 	if inpututil.IsKeyJustPressed(controller.FastForward) {
-		c.player.SetVolume(0.4)
+		c.player.SetVolume(c.config.Audio.Volume / 2)
 		c.SetRate(c.config.Input.FastForwardRate)
 	} else if inpututil.IsKeyJustReleased(controller.FastForward) {
 		c.SetRate(1)
-		c.player.SetVolume(1)
+		c.player.SetVolume(c.config.Audio.Volume)
 	}
 
 	if inpututil.IsKeyJustPressed(controller.ToggleDebug) {

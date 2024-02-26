@@ -23,7 +23,8 @@ type UI struct {
 }
 
 type Audio struct {
-	Enabled bool `toml:"enabled" comment:"Enables audio output."`
+	Enabled bool    `toml:"enabled" comment:"Enables audio output."`
+	Volume  float64 `toml:"volume" comment:"Output volume (between 0 and 1)."`
 }
 
 type State struct {

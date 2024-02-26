@@ -15,6 +15,7 @@ func NewDefault() Config {
 		},
 		Audio: Audio{
 			Enabled: true,
+			Volume:  1,
 		},
 		State: State{
 			Resume:   true,

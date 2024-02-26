@@ -86,6 +86,7 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 			return &console, err
 		}
 		console.player.SetBufferSize(time.Second / 10)
+		console.player.SetVolume(conf.Audio.Volume)
 	} else {
 		console.APU.Enabled = false
 	}

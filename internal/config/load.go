@@ -134,5 +134,18 @@ func fixConfig(k *koanf.Koanf) error {
 		}
 	}
 
+	// Volume min/max
+	if val := k.Float64("audio.volume"); val < 0 {
+		log.Warn("Minimum volume is 0. Setting to 0.")
+		if err := k.Set("audio.volume", 0); err != nil {
+			return err
+		}
+	} else if val > 1 {
+		log.Warn("Maximum volume is 1. Setting to 1.")
+		if err := k.Set("audio.volume", 1); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
