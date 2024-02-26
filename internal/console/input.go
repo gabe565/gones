@@ -11,14 +11,14 @@ func (c *Console) CheckInput() {
 	c.Bus.UpdateInput()
 
 	if duration := inpututil.KeyPressDuration(controller.Reset); duration != 0 {
-		if duration == c.Config.Input.ResetHoldFrames() {
+		if duration == c.config.Input.ResetHoldFrames() {
 			c.Reset()
 		}
 	}
 
 	if inpututil.IsKeyJustPressed(controller.FastForward) {
 		c.player.SetVolume(0.4)
-		c.SetRate(c.Config.Input.FastForwardRate)
+		c.SetRate(c.config.Input.FastForwardRate)
 	} else if inpututil.IsKeyJustReleased(controller.FastForward) {
 		c.SetRate(1)
 		c.player.SetVolume(1)

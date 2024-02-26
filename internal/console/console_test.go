@@ -23,7 +23,7 @@ func stubConsole(r io.ReadSeeker) (*Console, error) {
 
 	conf := config.NewDefault()
 	console := Console{
-		Config:    &conf,
+		config:    &conf,
 		Cartridge: cart,
 		Mapper:    mapper,
 	}

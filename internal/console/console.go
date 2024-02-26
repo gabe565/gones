@@ -33,7 +33,7 @@ const (
 )
 
 type Console struct {
-	Config *config.Config
+	config *config.Config
 
 	CPU *cpu.CPU
 	Bus *bus.Bus
@@ -56,7 +56,7 @@ type Console struct {
 
 func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 	console := Console{
-		Config:    conf,
+		config:    conf,
 		Cartridge: cart,
 		rate:      1,
 	}
@@ -107,7 +107,7 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 
 func (c *Console) Close() error {
 	c.autosave.Stop()
-	if c.Config.State.Resume {
+	if c.config.State.Resume {
 		if err := c.SaveState(AutoSaveNum); err != nil {
 			return err
 		}
@@ -187,7 +187,7 @@ func (c *Console) Update() error {
 
 			if c.PPU.RenderDone || c.debug == DebugStepFrame {
 				c.playOnce.Do(func() {
-					if c.Config.Audio.Enabled {
+					if c.config.Audio.Enabled {
 						c.player.Play()
 					}
 				})
@@ -206,7 +206,7 @@ func (c *Console) Update() error {
 			if err := c.SaveSram(); err != nil {
 				log.WithError(err).Error("Auto-save failed")
 			}
-			if c.Config.State.Resume {
+			if c.config.State.Resume {
 				if err := c.SaveState(AutoSaveNum); err != nil {
 					log.WithError(err).Error("State auto-save failed")
 				}
