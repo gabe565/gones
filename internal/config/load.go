@@ -104,6 +104,15 @@ func Load(cmd *cobra.Command) (*Config, error) {
 		return nil, err
 	}
 
+	paletteDir, err := GetPaletteDir()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := os.MkdirAll(paletteDir, 0o777); err != nil && !errors.Is(err, os.ErrExist) {
+		return nil, err
+	}
+
 	log.WithField("file", cfgFile).Info("Loaded config")
 	return &conf, err
 }

@@ -4,6 +4,10 @@ import (
 	"encoding/binary"
 	"image/color"
 	"io"
+	"os"
+	"path/filepath"
+
+	"github.com/gabe565/gones/internal/config"
 )
 
 type PalColor struct {
@@ -29,4 +33,30 @@ func LoadPal(r io.Reader) error {
 	}
 	UpdateEmphasized()
 	return nil
+}
+
+func LoadPalFile(path string) error {
+	if path == "" {
+		UpdateEmphasized()
+		return nil
+	} else {
+		if !filepath.IsAbs(path) {
+			palDir, err := config.GetPaletteDir()
+			if err != nil {
+				return err
+			}
+
+			path = filepath.Join(palDir, path)
+		}
+
+		f, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer func(f *os.File) {
+			_ = f.Close()
+		}(f)
+
+		return LoadPal(f)
+	}
 }

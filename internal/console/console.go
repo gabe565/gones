@@ -14,6 +14,7 @@ import (
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/cpu"
 	"github.com/gabe565/gones/internal/ppu"
+	"github.com/gabe565/gones/internal/ppu/palette"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	log "github.com/sirupsen/logrus"
@@ -68,6 +69,10 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 	}
 
 	if err := console.LoadSram(); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return &console, err
+	}
+
+	if err := palette.LoadPalFile(conf.UI.Palette); err != nil {
 		return &console, err
 	}
 

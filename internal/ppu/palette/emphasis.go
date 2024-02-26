@@ -22,10 +22,6 @@ const (
 	Attenuate = 0.746
 )
 
-func init() {
-	UpdateEmphasized()
-}
-
 func UpdateEmphasized() {
 	type EmphasizedPalette struct {
 		Palette *Palette
