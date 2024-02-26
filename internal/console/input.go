@@ -16,7 +16,7 @@ func (c *Console) CheckInput() {
 
 	if inpututil.IsKeyJustPressed(controller.FastForward) {
 		c.player.SetVolume(0.4)
-		c.SetRate(3)
+		c.SetRate(c.Config.Input.Keys.FastForwardRate)
 	} else if inpututil.IsKeyJustReleased(controller.FastForward) {
 		c.SetRate(1)
 		c.player.SetVolume(1)

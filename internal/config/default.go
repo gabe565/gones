@@ -26,8 +26,9 @@ func NewDefault() Config {
 				State1Save: ebiten.KeyF1,
 				State1Load: ebiten.KeyF5,
 
-				FastForward: ebiten.KeyF,
-				Fullscreen:  ebiten.KeyF11,
+				FastForward:     ebiten.KeyF,
+				FastForwardRate: 3,
+				Fullscreen:      ebiten.KeyF11,
 
 				Player1: Keymap{
 					Up:     ebiten.KeyW,

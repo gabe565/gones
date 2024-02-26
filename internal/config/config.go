@@ -35,13 +35,14 @@ type Input struct {
 }
 
 type Keys struct {
-	Reset       ebiten.Key `toml:"reset" comment:"Key to reset the game (must be held)."`
-	State1Save  ebiten.Key `toml:"state1_save" comment:"Key to save the game state (separate from auto resume state)."`
-	State1Load  ebiten.Key `toml:"state1_load" comment:"Key to load the last save state."`
-	FastForward ebiten.Key `toml:"fast_forward" comment:"Key to fast-forward the game (must be held)."`
-	Fullscreen  ebiten.Key `toml:"fullscreen" comment:"Key to toggle fullscreen."`
-	Player1     Keymap     `toml:"player1" comment:"Player 1 keymap."`
-	Player2     Keymap     `toml:"player2" comment:"Player 2 keymap."`
+	Reset           ebiten.Key `toml:"reset" comment:"Key to reset the game (must be held)."`
+	State1Save      ebiten.Key `toml:"state1_save" comment:"Key to save the game state (separate from auto resume state)."`
+	State1Load      ebiten.Key `toml:"state1_load" comment:"Key to load the last save state."`
+	FastForward     ebiten.Key `toml:"fast_forward" comment:"Key to fast-forward the game (must be held)."`
+	FastForwardRate uint8      `toml:"fast_forward_rate" comment:"Fast-forward rate multiplier."`
+	Fullscreen      ebiten.Key `toml:"fullscreen" comment:"Key to toggle fullscreen."`
+	Player1         Keymap     `toml:"player1" comment:"Player 1 keymap."`
+	Player2         Keymap     `toml:"player2" comment:"Player 2 keymap."`
 }
 
 type Debug struct {
