@@ -3,6 +3,7 @@ package apu
 import (
 	"time"
 
+	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/interrupt"
 	"github.com/gabe565/gones/internal/memory"
@@ -47,10 +48,11 @@ func init() {
 	}
 }
 
-func New() *APU {
+func New(conf *config.Config) *APU {
 	return &APU{
 		Enabled:    true,
 		SampleRate: DefaultSampleRate,
+		conf:       &conf.Audio,
 
 		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},
@@ -62,6 +64,7 @@ func New() *APU {
 type APU struct {
 	Enabled    bool    `msgpack:"-"`
 	SampleRate float64 `msgpack:"-"`
+	conf       *config.Audio
 
 	Square   [2]Square
 	Triangle Triangle
@@ -229,13 +232,25 @@ func (a *APU) stepLength() {
 }
 
 func (a *APU) output() float32 {
-	p1 := a.Square[0].output()
-	p2 := a.Square[1].output()
+	var p1, p2 byte
+	if a.conf.Channels.Square1 {
+		p1 = a.Square[0].output()
+	}
+	if a.conf.Channels.Square2 {
+		p2 = a.Square[1].output()
+	}
 	pulseOut := squareTable[p1+p2]
 
-	t := a.Triangle.output()
-	n := a.Noise.output()
-	d := a.DMC.output()
+	var t, n, d byte
+	if a.conf.Channels.Triangle {
+		t = a.Triangle.output()
+	}
+	if a.conf.Channels.Noise {
+		n = a.Noise.output()
+	}
+	if a.conf.Channels.PCM {
+		d = a.DMC.output()
+	}
 	tndOut := tndTable[3*t+2*n+d]
 
 	return pulseOut + tndOut

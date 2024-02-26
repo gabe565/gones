@@ -13,10 +13,6 @@ func NewDefault() Config {
 			Scale:          3,
 			PauseUnfocused: true,
 		},
-		Audio: Audio{
-			Enabled: true,
-			Volume:  1,
-		},
 		State: State{
 			Resume:   true,
 			Interval: Duration(time.Minute),
@@ -57,6 +53,17 @@ func NewDefault() Config {
 				Right:  ebiten.KeyPageDown,
 				ATurbo: ebiten.KeyKP6,
 				BTurbo: ebiten.KeyKP5,
+			},
+		},
+		Audio: Audio{
+			Enabled: true,
+			Volume:  1,
+			Channels: AudioChannels{
+				Triangle: true,
+				Square1:  true,
+				Square2:  true,
+				Noise:    true,
+				PCM:      true,
 			},
 		},
 	}

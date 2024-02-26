@@ -10,9 +10,9 @@ import (
 
 type Config struct {
 	UI    UI    `toml:"ui"`
-	Audio Audio `toml:"audio"`
 	State State `toml:"state"`
 	Input Input `toml:"input"`
+	Audio Audio `toml:"audio"`
 	Debug Debug `toml:"debug,omitempty"`
 }
 
@@ -20,11 +20,6 @@ type UI struct {
 	Fullscreen     bool    `toml:"fullscreen" comment:"Default fullscreen state. Fullscreen can also be toggled with a key (F11 by default)."`
 	Scale          float64 `toml:"scale" comment:"Multiplier used to scale the UI."`
 	PauseUnfocused bool    `toml:"pause_unfocused" comment:"Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background."`
-}
-
-type Audio struct {
-	Enabled bool    `toml:"enabled" comment:"Enables audio output."`
-	Volume  float64 `toml:"volume" comment:"Output volume (between 0 and 1)."`
 }
 
 type State struct {
@@ -51,6 +46,20 @@ func (i Input) ResetHoldFrames() int {
 		return 1
 	}
 	return frames
+}
+
+type Audio struct {
+	Enabled  bool          `toml:"enabled" comment:"Enables audio output."`
+	Volume   float64       `toml:"volume" comment:"Output volume (between 0 and 1)."`
+	Channels AudioChannels `toml:"channels" comment:"Toggles specific audio channels."`
+}
+
+type AudioChannels struct {
+	Triangle bool `toml:"triangle"`
+	Square1  bool `toml:"square_1"`
+	Square2  bool `toml:"square_2"`
+	Noise    bool `toml:"noise"`
+	PCM      bool `toml:"pcm"`
 }
 
 type Debug struct {
