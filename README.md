@@ -1,10 +1,14 @@
-# GoNES
+<img src="assets/icon.svg" width="192" align="left" alt="GoNES Logo">
 
-<img src="assets/icon.svg" width="192" align="right" alt="GoNES Logo">
+<div align="center">
+
+# GoNES
 
 [![Build](https://github.com/gabe565/gones/actions/workflows/build.yml/badge.svg)](https://github.com/gabe565/gones/actions/workflows/build.yml)
 
-NES emulator written in Go.
+_An NES emulator written in Go._
+
+</div>
 
 ## Install
 
