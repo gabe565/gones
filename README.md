@@ -6,6 +6,7 @@
 
 [![Build](https://github.com/gabe565/gones/actions/workflows/build.yml/badge.svg)](https://github.com/gabe565/gones/actions/workflows/build.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gabe565/gones)](https://goreportcard.com/report/github.com/gabe565/gones)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gabe565_gones&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=gabe565_gones)
 
 _An NES emulator written in Go._
 
