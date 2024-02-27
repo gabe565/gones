@@ -263,20 +263,27 @@ func (a *APU) Clear() {
 }
 
 func (a *APU) Read(p []byte) (int, error) {
-	after := time.After(time.Second / 30)
+	timer := time.NewTimer(time.Second / 60 * 2)
+	defer timer.Stop()
+
 	var i int
+	var sample float32
 	for i = 0; i < len(p); i += 4 {
-		select {
-		case sample := <-a.buf:
-			p := p[i : i+4 : i+4]
-			out := int16(sample * 32767)
-			lo := byte(out)
-			p[0], p[2] = lo, lo
-			hi := byte(out >> 8)
-			p[1], p[3] = hi, hi
-		case <-after:
-			return i, nil
+		if len(a.buf) == 0 {
+			select {
+			case sample = <-a.buf:
+			case <-timer.C:
+				return i, nil
+			}
+		} else {
+			sample = <-a.buf
 		}
+		p := p[i : i+4 : i+4]
+		out := int16(sample * 32767)
+		lo := byte(out)
+		p[0], p[2] = lo, lo
+		hi := byte(out >> 8)
+		p[1], p[3] = hi, hi
 	}
 	return i, nil
 }
