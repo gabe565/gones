@@ -118,7 +118,9 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 }
 
 func (c *Console) Close() error {
-	c.autosave.Stop()
+	if c.autosave != nil {
+		c.autosave.Stop()
+	}
 	if c.config.State.Resume {
 		if err := c.SaveStateNum(AutoSaveNum, false); err != nil {
 			return err
