@@ -3,16 +3,14 @@
 package console
 
 import (
-	"compress/gzip"
 	"errors"
 	"os"
 	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/vmihailenco/msgpack/v5"
 )
 
-func (c *Console) SaveState(num uint8) error {
+func (c *Console) SaveStateNum(num uint8) error {
 	path, err := c.Cartridge.StatePath(num)
 	if err != nil {
 		return err
@@ -40,28 +38,14 @@ func (c *Console) SaveState(num uint8) error {
 		_ = f.Close()
 	}(f)
 
-	gzw := gzip.NewWriter(f)
-	defer func() {
-		_ = gzw.Close()
-	}()
-
-	encoder := msgpack.NewEncoder(gzw)
-	encoder.UseCompactFloats(true)
-	encoder.UseCompactInts(true)
-	encoder.SetSortMapKeys(true)
-
-	if err := encoder.Encode(c); err != nil {
-		return err
-	}
-
-	if err := gzw.Close(); err != nil {
+	if err := c.SaveState(f); err != nil {
 		return err
 	}
 
 	return f.Close()
 }
 
-func (c *Console) LoadState(num uint8) error {
+func (c *Console) LoadStateNum(num uint8) error {
 	path, err := c.Cartridge.StatePath(num)
 	if err != nil {
 		return err
@@ -77,15 +61,7 @@ func (c *Console) LoadState(num uint8) error {
 
 	log.WithField("file", filepath.Base(path)).Info("Loading state")
 
-	gzr, err := gzip.NewReader(f)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		_ = gzr.Close()
-	}()
-
-	if err := msgpack.NewDecoder(gzr).Decode(c); err != nil {
+	if err := c.LoadState(f); err != nil {
 		if num == AutoSaveNum {
 			log.WithError(err).Error("Load state failed. Moving state file and continuing.")
 			if err := os.Rename(path, path+".failed"); err != nil {
@@ -96,12 +72,6 @@ func (c *Console) LoadState(num uint8) error {
 
 		return err
 	}
-
-	if err := gzr.Close(); err != nil {
-		return err
-	}
-
-	c.PPU.UpdatePalette(c.PPU.Mask.Get())
 
 	return nil
 }

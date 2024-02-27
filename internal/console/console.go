@@ -97,7 +97,7 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 	}
 
 	if conf.State.Resume {
-		if err := console.LoadState(AutoSaveNum); err != nil {
+		if err := console.LoadStateNum(AutoSaveNum); err != nil {
 			if !errors.Is(err, os.ErrNotExist) {
 				return &console, err
 			}
@@ -114,7 +114,7 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 func (c *Console) Close() error {
 	c.autosave.Stop()
 	if c.config.State.Resume {
-		if err := c.SaveState(AutoSaveNum); err != nil {
+		if err := c.SaveStateNum(AutoSaveNum); err != nil {
 			return err
 		}
 	}
@@ -167,12 +167,12 @@ func (c *Console) Update() error {
 	case ActionExit:
 		return ErrExit
 	case ActionSaveState:
-		if err := c.SaveState(1); err != nil {
+		if err := c.SaveStateNum(1); err != nil {
 			log.WithError(err).Error("Failed to save state")
 		}
 		c.actionOnUpdate = ActionNone
 	case ActionLoadState:
-		if err := c.LoadState(1); err != nil {
+		if err := c.LoadStateNum(1); err != nil {
 			log.WithError(err).Error("Failed to load state")
 		}
 		c.actionOnUpdate = ActionNone
@@ -213,7 +213,7 @@ func (c *Console) Update() error {
 				log.WithError(err).Error("Auto-save failed")
 			}
 			if c.config.State.Resume {
-				if err := c.SaveState(AutoSaveNum); err != nil {
+				if err := c.SaveStateNum(AutoSaveNum); err != nil {
 					log.WithError(err).Error("State auto-save failed")
 				}
 			}

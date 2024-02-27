@@ -55,13 +55,13 @@ func (c *Console) CheckInput() {
 	}
 
 	if inpututil.IsKeyJustPressed(controller.SaveState1) {
-		if err := c.SaveState(1); err != nil {
+		if err := c.SaveStateNum(1); err != nil {
 			log.WithError(err).Error("Failed to save state")
 		}
 	}
 
 	if inpututil.IsKeyJustPressed(controller.LoadState1) {
-		if err := c.LoadState(1); err != nil {
+		if err := c.LoadStateNum(1); err != nil {
 			log.WithError(err).Error("Failed to load state")
 		}
 	}
