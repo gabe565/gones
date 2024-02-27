@@ -42,10 +42,17 @@ gones ROM_FILE
 
 See [docs](./docs/gones.md) for the full command line usage documentation.
 
+## Configuration
+
+A configuration file will be generated the first time GoNES is run. Depending on your operating system, the file will be available at:
+- **Windows:** `%AppData%/gones`
+- **Linux, macOS:** `~/.config/gones/config.toml`
+
+An example configuration is also available at [`config_example.toml`](config_example.toml).
+
 ## Keybinds
 
-Keys are currently hardcoded in [`internal/controller/keymap.go`](./internal/controller/keymap.go).
-Eventually, this will be configurable in the UI.
+Keys are configurable, but the default values are listed below.
 
 ### Player 1
 
