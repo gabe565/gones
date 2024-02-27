@@ -51,6 +51,8 @@ type Console struct {
 	enableTrace    bool
 	debug          Debug
 
+	undoLoadStates [][]byte
+
 	autosave *time.Ticker
 	rate     uint8
 }
@@ -60,6 +62,8 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 		config:    conf,
 		Cartridge: cart,
 		rate:      1,
+
+		undoLoadStates: make([][]byte, 0, conf.State.UndoStateCount),
 	}
 
 	var err error

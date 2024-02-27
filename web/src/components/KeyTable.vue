@@ -11,6 +11,7 @@ const keys = reactive({
   "B turbo": ["J"],
   "Save State": ["F1"],
   "Load State": ["F5"],
+  "Undo Load State": ["Shift+F5"],
 });
 </script>
 

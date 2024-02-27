@@ -61,8 +61,16 @@ func (c *Console) CheckInput() {
 	}
 
 	if inpututil.IsKeyJustPressed(controller.LoadState1) {
-		if err := c.LoadStateNum(1); err != nil {
-			log.WithError(err).Error("Failed to load state")
+		if ebiten.IsKeyPressed(c.config.Input.StateUndoModifier) {
+			if err := c.UndoLoadState(); err == nil {
+				log.Info("Undo load state")
+			} else {
+				log.WithError(err).Error("Failed to undo load state")
+			}
+		} else {
+			if err := c.LoadStateNum(1); err != nil {
+				log.WithError(err).Error("Failed to load state")
+			}
 		}
 	}
 }

@@ -14,14 +14,16 @@ func NewDefault() Config {
 			PauseUnfocused: true,
 		},
 		State: State{
-			Resume:   true,
-			Interval: Duration(time.Minute),
+			Resume:         true,
+			Interval:       Duration(time.Minute),
+			UndoStateCount: 5,
 		},
 		Input: Input{
-			Reset:      ebiten.KeyR,
-			ResetHold:  Duration(500 * time.Millisecond),
-			State1Save: ebiten.KeyF1,
-			State1Load: ebiten.KeyF5,
+			Reset:             ebiten.KeyR,
+			ResetHold:         Duration(500 * time.Millisecond),
+			State1Save:        ebiten.KeyF1,
+			State1Load:        ebiten.KeyF5,
+			StateUndoModifier: ebiten.KeyShiftLeft,
 
 			FastForward:     ebiten.KeyF,
 			FastForwardRate: 3,

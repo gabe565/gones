@@ -1,8 +1,11 @@
 package console
 
 import (
+	"bytes"
 	"compress/gzip"
+	"errors"
 	"io"
+	"slices"
 
 	"github.com/vmihailenco/msgpack/v5"
 )
@@ -43,5 +46,35 @@ func (c *Console) LoadState(r io.Reader) error {
 	}
 
 	c.PPU.UpdatePalette(c.PPU.Mask.Get())
+	return nil
+}
+
+var ErrNoPreviousState = errors.New("no previous state available")
+
+func (c *Console) CreateUndoLoadState() error {
+	var buf bytes.Buffer
+	if err := c.SaveState(&buf); err != nil {
+		return err
+	}
+
+	if len(c.undoLoadStates) >= c.config.State.UndoStateCount {
+		c.undoLoadStates = slices.Delete(c.undoLoadStates, 0, 1)
+	}
+	c.undoLoadStates = append(c.undoLoadStates, buf.Bytes())
+
+	return nil
+}
+
+func (c *Console) UndoLoadState() error {
+	if len(c.undoLoadStates) == 0 {
+		return ErrNoPreviousState
+	}
+
+	prev := c.undoLoadStates[len(c.undoLoadStates)-1]
+	if err := c.LoadState(bytes.NewReader(prev)); err != nil {
+		return err
+	}
+
+	c.undoLoadStates = slices.Delete(c.undoLoadStates, len(c.undoLoadStates)-1, len(c.undoLoadStates))
 	return nil
 }

@@ -61,6 +61,10 @@ func (c *Console) LoadStateNum(num uint8) error {
 
 	log.WithField("file", filepath.Base(path)).Info("Loading state")
 
+	if err := c.CreateUndoLoadState(); err != nil {
+		return err
+	}
+
 	if err := c.LoadState(f); err != nil {
 		if num == AutoSaveNum {
 			log.WithError(err).Error("Load state failed. Moving state file and continuing.")

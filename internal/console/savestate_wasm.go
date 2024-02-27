@@ -48,6 +48,10 @@ func (c *Console) LoadStateNum(num uint8) error {
 
 	log.WithField("file", filepath.Base(path)).Info("Loading state from db")
 
+	if err := c.CreateUndoLoadState(); err != nil {
+		return err
+	}
+
 	r := strings.NewReader(data.String())
 	b64r := base64.NewDecoder(base64.StdEncoding, r)
 	if err := c.LoadState(b64r); err != nil {

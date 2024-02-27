@@ -24,21 +24,23 @@ type UI struct {
 }
 
 type State struct {
-	Resume   bool     `toml:"resume" comment:"Automatically resumes the previous game state."`
-	Interval Duration `toml:"interval" comment:"Time interval to save the game state."`
+	Resume         bool     `toml:"resume" comment:"Automatically resumes the previous game state."`
+	Interval       Duration `toml:"interval" comment:"Time interval to save the game state."`
+	UndoStateCount int      `toml:"undo_state_count" comment:"Number of undo states to keep in memory."`
 }
 
 type Input struct {
-	Reset           ebiten.Key `toml:"reset" comment:"Key to reset the game (must be held)."`
-	ResetHold       Duration   `toml:"reset_hold" comment:"Time the reset button must be held."`
-	State1Save      ebiten.Key `toml:"state1_save" comment:"Key to save the game state (separate from auto resume state)."`
-	State1Load      ebiten.Key `toml:"state1_load" comment:"Key to load the last save state."`
-	FastForward     ebiten.Key `toml:"fast_forward" comment:"Key to fast-forward the game (must be held)."`
-	FastForwardRate uint8      `toml:"fast_forward_rate" comment:"Fast-forward rate multiplier."`
-	Fullscreen      ebiten.Key `toml:"fullscreen" comment:"Key to toggle fullscreen."`
-	TurboDutyCycle  uint16     `toml:"turbo_duty_cycle" comment:"Frame duty cycle when turbo key is held (minimum: 2)."`
-	Player1         Keymap     `toml:"player1" comment:"Player 1 keymap."`
-	Player2         Keymap     `toml:"player2" comment:"Player 2 keymap."`
+	Reset             ebiten.Key `toml:"reset" comment:"Key to reset the game (must be held)."`
+	ResetHold         Duration   `toml:"reset_hold" comment:"Time the reset button must be held."`
+	State1Save        ebiten.Key `toml:"state1_save" comment:"Key to save the game state (separate from auto resume state)."`
+	State1Load        ebiten.Key `toml:"state1_load" comment:"Key to load the last save state."`
+	StateUndoModifier ebiten.Key `toml:"state_undo_modifier" comment:"Hold this key and press the \"load state\" key, and content will go back to the state prior to loading."`
+	FastForward       ebiten.Key `toml:"fast_forward" comment:"Key to fast-forward the game (must be held)."`
+	FastForwardRate   uint8      `toml:"fast_forward_rate" comment:"Fast-forward rate multiplier."`
+	Fullscreen        ebiten.Key `toml:"fullscreen" comment:"Key to toggle fullscreen."`
+	TurboDutyCycle    uint16     `toml:"turbo_duty_cycle" comment:"Frame duty cycle when turbo key is held (minimum: 2)."`
+	Player1           Keymap     `toml:"player1" comment:"Player 1 keymap."`
+	Player2           Keymap     `toml:"player2" comment:"Player 2 keymap."`
 }
 
 func (i Input) ResetHoldFrames() int {
