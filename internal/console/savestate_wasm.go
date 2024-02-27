@@ -9,13 +9,25 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (c *Console) SaveStateNum(num uint8) error {
+func (c *Console) SaveStateNum(num uint8, createUndo bool) error {
 	path, err := c.Cartridge.StatePath(num)
 	if err != nil {
 		return err
 	}
 
 	log.WithField("file", filepath.Base(path)).Info("Saving state to db")
+
+	if createUndo && num != AutoSaveNum {
+		vals, err := await(js.Global().Get("GonesClient").Call("dbGet", "states", path))
+		if err == nil {
+			data, err := base64.StdEncoding.DecodeString(vals[0].String())
+			if err == nil {
+				if err := c.CreateUndoSaveState(data); err != nil {
+					return err
+				}
+			}
+		}
+	}
 
 	var buf strings.Builder
 	b64w := base64.NewEncoder(base64.StdEncoding, &buf)

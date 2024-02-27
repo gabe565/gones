@@ -51,6 +51,42 @@ func (c *Console) LoadState(r io.Reader) error {
 
 var ErrNoPreviousState = errors.New("no previous state available")
 
+func (c *Console) CreateUndoSaveState(oldState []byte) error {
+	if len(c.undoSaveStates) >= c.config.State.UndoStateCount {
+		c.undoSaveStates = slices.Delete(c.undoSaveStates, 0, 1)
+	}
+	c.undoSaveStates = append(c.undoSaveStates, oldState)
+
+	return nil
+}
+
+func (c *Console) UndoSaveState() error {
+	if len(c.undoSaveStates) == 0 {
+		return ErrNoPreviousState
+	}
+
+	// Keep current state
+	var curr bytes.Buffer
+	if err := c.SaveState(&curr); err != nil {
+		return err
+	}
+	defer func() {
+		_ = c.LoadState(&curr)
+	}()
+
+	// Load previous state
+	prev := c.undoSaveStates[len(c.undoSaveStates)-1]
+	if err := c.LoadState(bytes.NewReader(prev)); err != nil {
+		return err
+	}
+	if err := c.SaveStateNum(1, false); err != nil {
+		return err
+	}
+
+	c.undoSaveStates = slices.Delete(c.undoSaveStates, len(c.undoSaveStates)-1, len(c.undoSaveStates))
+	return nil
+}
+
 func (c *Console) CreateUndoLoadState() error {
 	var buf bytes.Buffer
 	if err := c.SaveState(&buf); err != nil {

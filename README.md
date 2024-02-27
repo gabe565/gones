@@ -77,6 +77,7 @@ Eventually, this will be configurable in the UI.
 |-------------------|----------|
 | Save State        | F1       |
 | Load State        | F5       |
+| Undo Save State   | Shift+F1 |
 | Undo Load State   | Shift+F5 |
 | Fast Forward      | F (Hold) |
 | Reset             | R (Hold) |

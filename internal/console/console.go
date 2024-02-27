@@ -51,6 +51,7 @@ type Console struct {
 	enableTrace    bool
 	debug          Debug
 
+	undoSaveStates [][]byte
 	undoLoadStates [][]byte
 
 	autosave *time.Ticker
@@ -63,6 +64,7 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 		Cartridge: cart,
 		rate:      1,
 
+		undoSaveStates: make([][]byte, 0, conf.State.UndoStateCount),
 		undoLoadStates: make([][]byte, 0, conf.State.UndoStateCount),
 	}
 
@@ -118,7 +120,7 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 func (c *Console) Close() error {
 	c.autosave.Stop()
 	if c.config.State.Resume {
-		if err := c.SaveStateNum(AutoSaveNum); err != nil {
+		if err := c.SaveStateNum(AutoSaveNum, false); err != nil {
 			return err
 		}
 	}
@@ -171,7 +173,7 @@ func (c *Console) Update() error {
 	case ActionExit:
 		return ErrExit
 	case ActionSaveState:
-		if err := c.SaveStateNum(1); err != nil {
+		if err := c.SaveStateNum(1, true); err != nil {
 			log.WithError(err).Error("Failed to save state")
 		}
 		c.actionOnUpdate = ActionNone
@@ -217,7 +219,7 @@ func (c *Console) Update() error {
 				log.WithError(err).Error("Auto-save failed")
 			}
 			if c.config.State.Resume {
-				if err := c.SaveStateNum(AutoSaveNum); err != nil {
+				if err := c.SaveStateNum(AutoSaveNum, false); err != nil {
 					log.WithError(err).Error("State auto-save failed")
 				}
 			}

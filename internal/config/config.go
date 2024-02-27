@@ -34,7 +34,7 @@ type Input struct {
 	ResetHold         Duration   `toml:"reset_hold" comment:"Time the reset button must be held."`
 	State1Save        ebiten.Key `toml:"state1_save" comment:"Key to save the game state (separate from auto resume state)."`
 	State1Load        ebiten.Key `toml:"state1_load" comment:"Key to load the last save state."`
-	StateUndoModifier ebiten.Key `toml:"state_undo_modifier" comment:"Hold this key and press the \"load state\" key, and content will go back to the state prior to loading."`
+	StateUndoModifier ebiten.Key `toml:"state_undo_modifier" comment:"Hold this key and press the save/load state key, and the action will be undone."`
 	FastForward       ebiten.Key `toml:"fast_forward" comment:"Key to fast-forward the game (must be held)."`
 	FastForwardRate   uint8      `toml:"fast_forward_rate" comment:"Fast-forward rate multiplier."`
 	Fullscreen        ebiten.Key `toml:"fullscreen" comment:"Key to toggle fullscreen."`

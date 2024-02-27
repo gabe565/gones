@@ -55,8 +55,16 @@ func (c *Console) CheckInput() {
 	}
 
 	if inpututil.IsKeyJustPressed(controller.SaveState1) {
-		if err := c.SaveStateNum(1); err != nil {
-			log.WithError(err).Error("Failed to save state")
+		if ebiten.IsKeyPressed(c.config.Input.StateUndoModifier) {
+			if err := c.UndoSaveState(); err == nil {
+				log.Info("Undo save state")
+			} else {
+				log.WithError(err).Error("Failed to undo save state")
+			}
+		} else {
+			if err := c.SaveStateNum(1, true); err != nil {
+				log.WithError(err).Error("Failed to save state")
+			}
 		}
 	}
 

@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (c *Console) SaveStateNum(num uint8) error {
+func (c *Console) SaveStateNum(num uint8, createUndo bool) error {
 	path, err := c.Cartridge.StatePath(num)
 	if err != nil {
 		return err
@@ -24,6 +24,14 @@ func (c *Console) SaveStateNum(num uint8) error {
 
 	if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
 		return err
+	}
+
+	if createUndo && num != AutoSaveNum {
+		if oldState, err := os.ReadFile(path); err == nil {
+			if err := c.CreateUndoSaveState(oldState); err != nil {
+				return err
+			}
+		}
 	}
 
 	if err := os.Rename(path, path+".bak"); err != nil && !errors.Is(err, os.ErrNotExist) {
