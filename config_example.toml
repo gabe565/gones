@@ -1,0 +1,81 @@
+[ui]
+# Default fullscreen state. Fullscreen can also be toggled with a key (F11 by default).
+fullscreen = false
+# Multiplier used to scale the UI.
+scale = 3.0
+# Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background.
+pause_unfocused = true
+# Palette (.pal) file to use. An embedded palette will be used when blank.
+palette = ''
+
+[state]
+# Automatically resumes the previous game state.
+resume = true
+# If resume is enabled, the game state will be saved regularly at the configured interval.
+autosave_interval = '1m0s'
+# Number of undo states to keep in memory.
+undo_state_count = 5
+
+[input]
+# Key to reset the game (must be held).
+reset = 'R'
+# Time the reset button must be held.
+reset_hold = '500ms'
+# Key to save the game state (separate from auto resume state).
+state1_save = 'F1'
+# Key to load the last save state.
+state1_load = 'F5'
+# Hold this key and press the save/load state key, and the action will be undone.
+state_undo_modifier = 'ShiftLeft'
+# Key to fast-forward the game (must be held).
+fast_forward = 'F'
+# Fast-forward rate multiplier.
+fast_forward_rate = 3
+# Key to toggle fullscreen.
+fullscreen = 'F11'
+# Frame duty cycle when turbo key is held (minimum: 2).
+turbo_duty_cycle = 4
+
+# Player 1 keymap.
+[input.player1]
+a = 'M'
+b = 'N'
+start = 'Enter'
+select = 'ShiftRight'
+up = 'W'
+down = 'S'
+left = 'A'
+right = 'D'
+# Key to press the A button repeatedly (must be held).
+a_turbo = 'K'
+# Key to press the B button repeatedly (must be held).
+b_turbo = 'J'
+
+# Player 2 keymap.
+[input.player2]
+a = 'Numpad3'
+b = 'Numpad2'
+start = 'NumpadEnter'
+select = 'NumpadAdd'
+up = 'Home'
+down = 'End'
+left = 'Delete'
+right = 'PageDown'
+# Key to press the A button repeatedly (must be held).
+a_turbo = 'Numpad6'
+# Key to press the B button repeatedly (must be held).
+b_turbo = 'Numpad5'
+
+[audio]
+# Enables audio output.
+enabled = true
+# Output volume (between 0 and 1).
+volume = 1.0
+
+# Toggles specific audio channels.
+[audio.channels]
+triangle = true
+square_1 = true
+square_2 = true
+noise = true
+pcm = true

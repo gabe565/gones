@@ -28,3 +28,9 @@ repos:
         language: system
         types: [go]
         pass_filenames: false
+      - id: config-example
+        name: config-example
+        entry: go run ./internal/config/generate_example
+        language: system
+        types: [go]
+        pass_filenames: false
