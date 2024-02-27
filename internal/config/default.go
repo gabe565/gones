@@ -14,9 +14,9 @@ func NewDefault() Config {
 			PauseUnfocused: true,
 		},
 		State: State{
-			Resume:         true,
-			Interval:       Duration(time.Minute),
-			UndoStateCount: 5,
+			Resume:           true,
+			AutosaveInterval: Duration(time.Minute),
+			UndoStateCount:   5,
 		},
 		Input: Input{
 			Reset:             ebiten.KeyR,

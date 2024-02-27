@@ -136,7 +136,7 @@ func fixConfig(k *koanf.Koanf) error {
 	}
 
 	// Autosave interval min
-	if val := k.Duration("state.interval"); val < 10*time.Second {
+	if val := k.Duration("state.autosave_interval"); val < 10*time.Second {
 		log.Warn("Autosave interval must be 10s or greater. Setting value to 10s.")
 		if err := k.Set("state.interval", 10*time.Second); err != nil {
 			return err

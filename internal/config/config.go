@@ -24,9 +24,9 @@ type UI struct {
 }
 
 type State struct {
-	Resume         bool     `toml:"resume" comment:"Automatically resumes the previous game state."`
-	Interval       Duration `toml:"interval" comment:"Time interval to save the game state."`
-	UndoStateCount int      `toml:"undo_state_count" comment:"Number of undo states to keep in memory."`
+	Resume           bool     `toml:"resume" comment:"Automatically resumes the previous game state."`
+	AutosaveInterval Duration `toml:"autosave_interval" comment:"If resume is enabled, the game state will be saved regularly at the configured interval."`
+	UndoStateCount   int      `toml:"undo_state_count" comment:"Number of undo states to keep in memory."`
 }
 
 type Input struct {

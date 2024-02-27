@@ -110,7 +110,7 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 		}
 	}
 
-	if duration := conf.State.Interval; duration != 0 {
+	if duration := conf.State.AutosaveInterval; duration != 0 {
 		console.autosave = time.NewTicker(time.Duration(duration))
 	}
 
