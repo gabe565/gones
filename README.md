@@ -74,6 +74,9 @@ Keys are configurable, but the default values are listed below.
 
 ### Player 2
 
+<details>
+  <summary>Click to expand</summary>
+
 | Nintendo   | Emulator          |
 |------------|-------------------|
 | A          | Num Pad 3         |
@@ -83,6 +86,8 @@ Keys are configurable, but the default values are listed below.
 | Select     | Num Pad Plus      |
 | A (Turbo)  | Num Pad 6         |
 | B (Turbo)  | Num Pad 5         |
+
+</details>
 
 ### Other
 
@@ -98,12 +103,17 @@ Keys are configurable, but the default values are listed below.
 
 #### Debugging
 
+<details>
+  <summary>Click to expand</summary>
+
 | Action                                            | Key |
 |---------------------------------------------------|-----|
 | Toggle step debugging                             | `   |
 | Toggle stdout trace log (when step debug enabled) | Tab |
 | Step to next frame                                | 1   |
 | Run to next render                                | 2   |
+
+</details>
 
 ## Milestones
 
