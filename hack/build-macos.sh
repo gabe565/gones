@@ -24,7 +24,7 @@ iconutil --convert icns --output assets/GoNES.icns assets/GoNES.iconset
 export GOOS=darwin CGO_ENABLED=1
 for ARCH in amd64 arm64; do
   echo Build "$BINARY_NAME-$ARCH"
-  GOARCH="$ARCH" go build -ldflags='-w -s' -trimpath -o "dist/$BINARY_NAME-$ARCH" "$(git rev-parse --show-toplevel)"
+  GOARCH="$ARCH" go build -ldflags='-w -s' -trimpath -o "dist/$BINARY_NAME-$ARCH" .
 done
 
 # Merge binaries
@@ -40,6 +40,5 @@ cp "assets/info.plist" "$APP_CONTENTS"
 mkdir "$APP_CONTENTS/Resources"
 cp "assets/GoNES.icns" "$APP_CONTENTS/Resources"
 mkdir "$APP_CONTENTS/MacOS"
-cp -p "dist/$BINARY_NAME" "$APP_CONTENTS/MacOS"
-rm "dist/$BINARY_NAME"
+mv "dist/$BINARY_NAME" "$APP_CONTENTS/MacOS"
 echo ...done

@@ -24,5 +24,5 @@ go-winres make --arch=amd64,arm64 --in=assets/winres/winres.json
 export GOOS=windows CGO_ENABLED=1
 for ARCH in amd64 arm64; do
   echo Build "$BINARY_NAME-$ARCH.exe"
-  GOARCH="$ARCH" go build -ldflags='-w -s -H=windowsgui' -trimpath -o "dist/$BINARY_NAME-$ARCH.exe" "$(git rev-parse --show-toplevel)"
+  GOARCH="$ARCH" go build -ldflags='-w -s -H=windowsgui' -trimpath -o "dist/$BINARY_NAME-$ARCH.exe" .
 done
