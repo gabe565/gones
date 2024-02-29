@@ -19,7 +19,7 @@
           "version": ""
         },
         "description": "NES emulator written in Go",
-        "minimum-os": "win7",
+        "minimum-os": "win8",
         "execution-level": "as invoker",
         "ui-access": false,
         "auto-elevate": false,
