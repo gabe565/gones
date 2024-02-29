@@ -2,8 +2,8 @@
 
 BINARY_NAME='gones'
 APP_NAME='GoNES'
-ICONSET=GoNES.iconset
-ICNS=GoNES.icns
+ICONSET=darwin/GoNES.iconset
+ICNS=darwin/GoNES.icns
 
 set -euo pipefail
 
@@ -38,7 +38,7 @@ echo ...done
 echo Generate "$APP_NAME.app"
 APP_CONTENTS="dist/$APP_NAME.app/Contents"
 mkdir -p "$APP_CONTENTS"
-cp "assets/info.plist" "$APP_CONTENTS"
+cp assets/darwin/info.plist "$APP_CONTENTS"
 mkdir "$APP_CONTENTS/Resources"
 cp "assets/$ICNS" "$APP_CONTENTS/Resources"
 mkdir "$APP_CONTENTS/MacOS"
