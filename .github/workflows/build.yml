@@ -73,7 +73,7 @@ jobs:
               sudo apt-get install --no-install-recommends $LINUX_DEPENDENCIES
           - platform: darwin
             runs-on: macos-12
-            build: ./hack/build-macos.sh
+            build: ./hack/build-darwin.sh
           - platform: windows
             runs-on: windows-latest
             build: ./hack/build-windows.sh
