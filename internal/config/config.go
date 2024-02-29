@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -73,17 +74,21 @@ type Debug struct {
 var configDir = "gones"
 
 func GetDir() (string, error) {
-	if xdgConfigHome := os.Getenv("XDG_CONFIG_HOME"); xdgConfigHome != "" {
-		return filepath.Join(xdgConfigHome, configDir), nil
-	}
+	switch runtime.GOOS {
+	case "darwin":
+		if xdgConfigHome := os.Getenv("XDG_CONFIG_HOME"); xdgConfigHome != "" {
+			return filepath.Join(xdgConfigHome, configDir), nil
+		}
+		fallthrough
+	default:
+		dir, err := os.UserConfigDir()
+		if err != nil {
+			return "", err
+		}
 
-	dir, err := os.UserConfigDir()
-	if err != nil {
-		return "", err
+		dir = filepath.Join(dir, configDir)
+		return dir, nil
 	}
-
-	dir = filepath.Join(dir, configDir)
-	return dir, nil
 }
 
 func GetStatesDir() (string, error) {
