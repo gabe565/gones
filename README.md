@@ -1,8 +1,8 @@
-<img src="assets/icon.svg" width="192" align="left" alt="GoNES Logo">
-
 <div align="center">
-
-# GoNES
+<h1>
+  <img src="assets/icon.svg" width="192" align="left"/>
+  GoNES
+</h1>
 
 [![Build](https://github.com/gabe565/gones/actions/workflows/build.yml/badge.svg)](https://github.com/gabe565/gones/actions/workflows/build.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gabe565/gones)](https://goreportcard.com/report/github.com/gabe565/gones)
