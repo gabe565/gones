@@ -29,11 +29,11 @@ func NewKeymap(conf *config.Config, player Player) Keymap {
 }
 
 func LoadKeys(conf *config.Config) {
-	Reset = conf.Input.Reset
-	SaveState1 = conf.Input.State1Save
-	LoadState1 = conf.Input.State1Load
-	FastForward = conf.Input.FastForward
-	ToggleFullscreen = conf.Input.Fullscreen
+	Reset = ebiten.Key(conf.Input.Reset)
+	SaveState1 = ebiten.Key(conf.Input.State1Save)
+	LoadState1 = ebiten.Key(conf.Input.State1Load)
+	FastForward = ebiten.Key(conf.Input.FastForward)
+	ToggleFullscreen = ebiten.Key(conf.Input.Fullscreen)
 }
 
 var (

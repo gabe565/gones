@@ -5,8 +5,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"time"
-
-	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Config struct {
@@ -31,17 +29,17 @@ type State struct {
 }
 
 type Input struct {
-	Reset             ebiten.Key `toml:"reset" comment:"Key to reset the game (must be held)."`
-	ResetHold         Duration   `toml:"reset_hold" comment:"Time the reset button must be held."`
-	State1Save        ebiten.Key `toml:"state1_save" comment:"Key to save the game state (separate from auto resume state)."`
-	State1Load        ebiten.Key `toml:"state1_load" comment:"Key to load the last save state."`
-	StateUndoModifier ebiten.Key `toml:"state_undo_modifier" comment:"Hold this key and press the save/load state key, and the action will be undone."`
-	FastForward       ebiten.Key `toml:"fast_forward" comment:"Key to fast-forward the game (must be held)."`
-	FastForwardRate   uint8      `toml:"fast_forward_rate" comment:"Fast-forward rate multiplier."`
-	Fullscreen        ebiten.Key `toml:"fullscreen" comment:"Key to toggle fullscreen."`
-	TurboDutyCycle    uint16     `toml:"turbo_duty_cycle" comment:"Frame duty cycle when turbo key is held (minimum: 2)."`
-	Player1           Keymap     `toml:"player1" comment:"Player 1 keymap."`
-	Player2           Keymap     `toml:"player2" comment:"Player 2 keymap."`
+	Reset             Key      `toml:"reset" comment:"Key to reset the game (must be held)."`
+	ResetHold         Duration `toml:"reset_hold" comment:"Time the reset button must be held."`
+	State1Save        Key      `toml:"state1_save" comment:"Key to save the game state (separate from auto resume state)."`
+	State1Load        Key      `toml:"state1_load" comment:"Key to load the last save state."`
+	StateUndoModifier Key      `toml:"state_undo_modifier" comment:"Hold this key and press the save/load state key, and the action will be undone."`
+	FastForward       Key      `toml:"fast_forward" comment:"Key to fast-forward the game (must be held)."`
+	FastForwardRate   uint8    `toml:"fast_forward_rate" comment:"Fast-forward rate multiplier."`
+	Fullscreen        Key      `toml:"fullscreen" comment:"Key to toggle fullscreen."`
+	TurboDutyCycle    uint16   `toml:"turbo_duty_cycle" comment:"Frame duty cycle when turbo key is held (minimum: 2)."`
+	Player1           Keymap   `toml:"player1" comment:"Player 1 keymap."`
+	Player2           Keymap   `toml:"player2" comment:"Player 2 keymap."`
 }
 
 func (i Input) ResetHoldFrames() int {

@@ -59,7 +59,7 @@ func (c *Console) CheckInput() {
 	}
 
 	if inpututil.IsKeyJustPressed(controller.SaveState1) {
-		if ebiten.IsKeyPressed(c.config.Input.StateUndoModifier) {
+		if ebiten.IsKeyPressed(ebiten.Key(c.config.Input.StateUndoModifier)) {
 			if err := c.UndoSaveState(); err == nil {
 				log.Info("Undo save state")
 			} else {
@@ -73,7 +73,7 @@ func (c *Console) CheckInput() {
 	}
 
 	if inpututil.IsKeyJustPressed(controller.LoadState1) {
-		if ebiten.IsKeyPressed(c.config.Input.StateUndoModifier) {
+		if ebiten.IsKeyPressed(ebiten.Key(c.config.Input.StateUndoModifier)) {
 			if err := c.UndoLoadState(); err == nil {
 				log.Info("Undo load state")
 			} else {
