@@ -8,7 +8,7 @@ export const readyEvent = "gonesReady";
 export const newReadyEvent = () => new CustomEvent(readyEvent);
 
 export const playEvent = "gonesPlay";
-export const newPlayEvent = (cartridge) => new CustomEvent(playEvent, { detail: { cartridge } });
+export const newPlayEvent = (name, data) => new CustomEvent(playEvent, { detail: { name, data } });
 
 export const nameEvent = "gonesName";
 export const newNameEvent = (value) => new CustomEvent(nameEvent, { detail: { value } });

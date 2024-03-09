@@ -34,8 +34,8 @@ const handleFocus = async () => {
 };
 window.addEventListener("focus", handleFocus);
 
-window.addEventListener(playEvent, async ({ detail: { cartridge } }) => {
-  window.cartridge = new Uint8Array(await cartridge);
+window.addEventListener(playEvent, async ({ detail: { name, data } }) => {
+  window.GonesCartridge = { name, data: new Uint8Array(await data) };
   await Promise.all([go.run(inst), handleFocus()]);
   window.parent.dispatchEvent(newExitEvent());
 });

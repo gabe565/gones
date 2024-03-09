@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/database"
@@ -58,6 +60,9 @@ func FromiNesFile(path string) (*Cartridge, error) {
 	}(f)
 
 	cartridge, err := FromiNes(f)
+	if cartridge.name == "" {
+		cartridge.name = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+	}
 
 	return cartridge, err
 }

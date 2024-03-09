@@ -3,6 +3,8 @@ package cartridge
 import (
 	"crypto/md5"
 	"fmt"
+	"path/filepath"
+	"strings"
 
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/database"
@@ -47,4 +49,8 @@ func FromBytes(b []byte) *Cartridge {
 
 func (c *Cartridge) Name() string {
 	return c.name
+}
+
+func (c *Cartridge) SetName(path string) {
+	c.name = strings.TrimSuffix(filepath.Base(path), ".nes")
 }

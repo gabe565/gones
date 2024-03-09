@@ -59,7 +59,7 @@ const cartridgeInserted = async (val) => {
     await iframe.value.contentWindow.location.reload();
     await ready;
   }
-  iframe.value.contentWindow.dispatchEvent(newPlayEvent(val.arrayBuffer()));
+  iframe.value.contentWindow.dispatchEvent(newPlayEvent(val.name, val.arrayBuffer()));
   iframe.value.contentWindow.focus();
   running.value = true;
 };

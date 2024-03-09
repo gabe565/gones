@@ -4,8 +4,6 @@ import (
 	"errors"
 	"os"
 	"os/signal"
-	"path/filepath"
-	"strings"
 
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
@@ -73,11 +71,9 @@ func run(cmd *cobra.Command, args []string) error {
 	ebiten.SetScreenClearedEveryFrame(false)
 	ebiten.SetRunnableOnUnfocused(!conf.UI.PauseUnfocused)
 
-	name := c.Cartridge.Name()
-	if name == "" {
-		name = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+	if name := c.Cartridge.Name(); name != "" {
+		ebiten.SetWindowTitle(name + " | GoNES")
 	}
-	ebiten.SetWindowTitle(name + " | GoNES")
 
 	if err := ebiten.RunGame(c); err != nil && !errors.Is(err, console.ErrExit) {
 		return err

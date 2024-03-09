@@ -13,7 +13,8 @@ import (
 )
 
 func newConsole(conf *config.Config, _ string) (*console.Console, error) {
-	jsData := js.Global().Get("cartridge")
+	jsCartridge := js.Global().Get("GonesCartridge")
+	jsData := jsCartridge.Get("data")
 	goData := make([]byte, jsData.Get("length").Int())
 	js.CopyBytesToGo(goData, jsData)
 
@@ -22,6 +23,9 @@ func newConsole(conf *config.Config, _ string) (*console.Console, error) {
 	cart, err := cartridge.FromiNes(r)
 	if err != nil {
 		return nil, err
+	}
+	if cart.Name() == "" {
+		cart.SetName(jsCartridge.Get("name").String())
 	}
 	log.WithField("title", cart.Name()).Info("Loaded cartridge")
 
