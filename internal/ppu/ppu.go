@@ -255,7 +255,7 @@ func (p *PPU) WriteMem(addr uint16, data byte) {
 		p.WriteData(data)
 	case 0x4014:
 		hi := uint16(data) << 8
-		for i := uint16(0); i < 256; i += 1 {
+		for i := range uint16(256) {
 			p.WriteOam(p.cpu.ReadMem(hi + i))
 		}
 		if p.cpu.GetCycles()%2 == 1 {

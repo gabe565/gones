@@ -25,7 +25,7 @@ func (l PalColor) RGBA() color.RGBA {
 
 func LoadPal(r io.Reader) error {
 	var c PalColor
-	for i := 0; i < len(Default); i++ {
+	for i := range len(Default) {
 		if err := binary.Read(r, binary.LittleEndian, &c); err != nil {
 			return err
 		}

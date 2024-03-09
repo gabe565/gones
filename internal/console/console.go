@@ -150,11 +150,11 @@ func (c *Console) Step(render bool) {
 		mapper.OnCPUStep(cycles)
 	}
 
-	for i := uint(0); i < cycles*3; i += 1 {
+	for range cycles * 3 {
 		c.PPU.Step(render)
 	}
 
-	for i := uint(0); i < cycles; i += 1 {
+	for range cycles {
 		irq = c.APU.Step() || irq
 	}
 
@@ -198,7 +198,7 @@ func (c *Console) Update() error {
 		return nil
 	}
 
-	for i := uint8(0); i < c.rate; i += 1 {
+	for i := range c.rate {
 		if c.rate != 1 {
 			c.PPU.RenderDone = false
 		}

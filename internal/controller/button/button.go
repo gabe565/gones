@@ -24,7 +24,7 @@ var ErrInvalidButton = errors.New("invalid button")
 
 func (i *Button) UnmarshalText(b []byte) error {
 	s := string(b)
-	for j := 0; j < len(_Button_index)-1; j++ {
+	for j := range len(_Button_index) - 1 {
 		if s == _Button_name[_Button_index[j]:_Button_index[j+1]] {
 			*i = Button(j)
 			return nil

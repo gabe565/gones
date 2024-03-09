@@ -39,7 +39,7 @@ func GetBlarggStatus(b *ConsoleTest) Status {
 	status := Status(b.Console.Bus.ReadMem(0x6000))
 	if status == 0 {
 		var marker [3]byte
-		for i := uint16(0); i < 3; i += 1 {
+		for i := range uint16(3) {
 			marker[i] = b.Console.Bus.ReadMem(0x6001 + i)
 		}
 		if marker != BlarggTestMarker {
@@ -51,12 +51,14 @@ func GetBlarggStatus(b *ConsoleTest) Status {
 
 func GetBlarggMessage(b *ConsoleTest) string {
 	var message []byte
-	for i := uint16(0); ; i += 1 {
+	var i uint16
+	for {
 		data := b.Console.Bus.ReadMem(0x6004 + i)
 		if data == 0 {
 			break
 		}
 		message = append(message, data)
+		i++
 	}
 	return string(bytes.TrimSpace(message))
 }
