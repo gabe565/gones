@@ -9,7 +9,6 @@ import (
 
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
-	"github.com/gabe565/gones/internal/controller"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
 	log "github.com/sirupsen/logrus"
@@ -38,7 +37,6 @@ func run(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	controller.LoadKeys(conf)
 
 	var path string
 	if len(args) > 0 {

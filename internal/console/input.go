@@ -12,18 +12,18 @@ import (
 func (c *Console) CheckInput() {
 	c.Bus.UpdateInput()
 
-	if duration := inpututil.KeyPressDuration(controller.Reset); duration != 0 {
+	if duration := inpututil.KeyPressDuration(ebiten.Key(c.config.Input.Reset)); duration != 0 {
 		if duration == c.config.Input.ResetHoldFrames() {
 			c.Reset()
 		}
 	}
 
-	if inpututil.IsKeyJustPressed(controller.FastForward) {
+	if inpututil.IsKeyJustPressed(ebiten.Key(c.config.Input.FastForward)) {
 		if c.player != nil {
 			c.player.SetVolume(c.config.Audio.Volume / 2)
 		}
 		c.SetRate(c.config.Input.FastForwardRate)
-	} else if inpututil.IsKeyJustReleased(controller.FastForward) {
+	} else if inpututil.IsKeyJustReleased(ebiten.Key(c.config.Input.FastForward)) {
 		c.SetRate(1)
 		if c.player != nil {
 			c.player.SetVolume(c.config.Audio.Volume)
@@ -56,11 +56,11 @@ func (c *Console) CheckInput() {
 		}
 	}
 
-	if inpututil.IsKeyJustPressed(controller.ToggleFullscreen) {
+	if inpututil.IsKeyJustPressed(ebiten.Key(c.config.Input.Fullscreen)) {
 		ebiten.SetFullscreen(!ebiten.IsFullscreen())
 	}
 
-	if inpututil.IsKeyJustPressed(controller.SaveState1) {
+	if inpututil.IsKeyJustPressed(ebiten.Key(c.config.Input.State1Save)) {
 		if ebiten.IsKeyPressed(ebiten.Key(c.config.Input.StateUndoModifier)) {
 			if err := c.UndoSaveState(); err == nil {
 				log.Info("Undo save state")
@@ -74,7 +74,7 @@ func (c *Console) CheckInput() {
 		}
 	}
 
-	if inpututil.IsKeyJustPressed(controller.LoadState1) {
+	if inpututil.IsKeyJustPressed(ebiten.Key(c.config.Input.State1Load)) {
 		if ebiten.IsKeyPressed(ebiten.Key(c.config.Input.StateUndoModifier)) {
 			if err := c.UndoLoadState(); err == nil {
 				log.Info("Undo load state")

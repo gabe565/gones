@@ -28,23 +28,7 @@ func NewKeymap(conf *config.Config, player Player) Keymap {
 	}
 }
 
-func LoadKeys(conf *config.Config) {
-	Reset = ebiten.Key(conf.Input.Reset)
-	SaveState1 = ebiten.Key(conf.Input.State1Save)
-	LoadState1 = ebiten.Key(conf.Input.State1Load)
-	FastForward = ebiten.Key(conf.Input.FastForward)
-	ToggleFullscreen = ebiten.Key(conf.Input.Fullscreen)
-}
-
-var (
-	Reset = ebiten.KeyR
-
-	SaveState1 = ebiten.KeyF1
-	LoadState1 = ebiten.KeyF5
-
-	FastForward      = ebiten.KeyF
-	ToggleFullscreen = ebiten.KeyF11
-
+const (
 	ToggleTrace = ebiten.KeyTab
 	ToggleDebug = ebiten.KeyGraveAccent
 	StepFrame   = ebiten.Key1
