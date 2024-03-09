@@ -1,6 +1,8 @@
 package console
 
 import (
+	"runtime"
+
 	"github.com/gabe565/gones/internal/controller"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -84,5 +86,10 @@ func (c *Console) CheckInput() {
 				log.WithError(err).Error("Failed to load state")
 			}
 		}
+	}
+
+	//goland:noinspection GoBoolExpressions
+	if inpututil.IsKeyJustPressed(ebiten.Key(c.config.Input.Screenshot)) && runtime.GOOS != "js" {
+		c.willScreenshot = true
 	}
 }

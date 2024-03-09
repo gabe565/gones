@@ -3,7 +3,10 @@ package console
 import (
 	"errors"
 	"fmt"
+	"image/png"
 	"os"
+	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/gabe565/gones/internal/apu"
@@ -54,6 +57,8 @@ type Console struct {
 
 	autosave *time.Ticker
 	rate     uint8
+
+	willScreenshot bool
 }
 
 func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
@@ -229,6 +234,14 @@ func (c *Console) Update() error {
 }
 
 func (c *Console) Draw(screen *ebiten.Image) {
+	//goland:noinspection GoBoolExpressions
+	if c.willScreenshot && runtime.GOOS != "js" {
+		c.willScreenshot = false
+		if err := c.writeScreenshot(screen); err != nil {
+			log.WithError(err).Error("Screenshot failed")
+		}
+	}
+
 	if c.PPU.RenderDone {
 		img := c.PPU.Image()
 		screen.WritePixels(img.Pix)
@@ -254,4 +267,37 @@ func (c *Console) SetDebug(v bool) {
 	} else {
 		c.debug = DebugDisabled
 	}
+}
+
+func (c *Console) writeScreenshot(screen *ebiten.Image) error {
+	dir, err := config.GetScreenshotDir()
+	if err != nil {
+		return err
+	}
+
+	gameDir := filepath.Join(dir, c.Cartridge.Name())
+	filename := filepath.Join(gameDir, time.Now().Format("2006-01-02_150405")+".png")
+
+	if err := os.MkdirAll(gameDir, 0o777); err != nil {
+		return err
+	}
+
+	f, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer func(f *os.File) {
+		_ = f.Close()
+	}(f)
+
+	if err := png.Encode(f, screen); err != nil {
+		return err
+	}
+
+	if err := f.Close(); err != nil {
+		return err
+	}
+
+	log.WithField("path", filename).Info("Saved screenshot")
+	return nil
 }

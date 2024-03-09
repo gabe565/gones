@@ -13,6 +13,7 @@ const keys = reactive({
   "Load State": ["F5"],
   "Undo Save State": ["Shift+F1"],
   "Undo Load State": ["Shift+F5"],
+  Screenshot: ["\\"],
 });
 </script>
 

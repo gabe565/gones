@@ -29,6 +29,8 @@ func NewDefault() Config {
 			FastForwardRate: 3,
 			Fullscreen:      Key(ebiten.KeyF11),
 
+			Screenshot: Key(ebiten.KeyBackslash),
+
 			TurboDutyCycle: 4,
 
 			Player1: Keymap{

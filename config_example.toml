@@ -33,6 +33,8 @@ fast_forward = 'F'
 fast_forward_rate = 3
 # Key to toggle fullscreen.
 fullscreen = 'F11'
+# Key to take a screenshot.
+screenshot = 'Backslash'
 # Frame duty cycle when turbo key is held (minimum: 2).
 turbo_duty_cycle = 4
 

@@ -37,6 +37,7 @@ type Input struct {
 	FastForward       Key      `toml:"fast_forward" comment:"Key to fast-forward the game (must be held)."`
 	FastForwardRate   uint8    `toml:"fast_forward_rate" comment:"Fast-forward rate multiplier."`
 	Fullscreen        Key      `toml:"fullscreen" comment:"Key to toggle fullscreen."`
+	Screenshot        Key      `toml:"screenshot" comment:"Key to take a screenshot."`
 	TurboDutyCycle    uint16   `toml:"turbo_duty_cycle" comment:"Frame duty cycle when turbo key is held (minimum: 2)."`
 	Player1           Keymap   `toml:"player1" comment:"Player 1 keymap."`
 	Player2           Keymap   `toml:"player2" comment:"Player 2 keymap."`
@@ -114,4 +115,13 @@ func GetPaletteDir() (string, error) {
 	}
 
 	return filepath.Join(configDir, "palettes"), nil
+}
+
+func GetScreenshotDir() (string, error) {
+	configDir, err := GetDir()
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(configDir, "screenshots"), nil
 }

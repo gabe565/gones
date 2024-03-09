@@ -2,11 +2,13 @@ package gones
 
 import (
 	"bytes"
+	"os"
 	"syscall/js"
 
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
+	"github.com/hajimehoshi/ebiten/v2"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -44,6 +46,8 @@ func newConsole(conf *config.Config, _ string) (*console.Console, error) {
 			return nil
 		}),
 	})))
+
+	_ = os.Setenv("EBITENGINE_SCREENSHOT_KEY", ebiten.Key(conf.Input.Screenshot).String())
 
 	return c, nil
 }
