@@ -11,6 +11,7 @@ var flagConfigTable = map[string]string{
 	"fullscreen": "ui.fullscreen",
 	"audio":      "audio.enabled",
 	"resume":     "state.resume",
+	"palette":    "ui.palette",
 }
 
 func Flags(cmd *cobra.Command) {
@@ -25,4 +26,10 @@ func Flags(cmd *cobra.Command) {
 	cmd.Flags().BoolP("fullscreen", "f", false, "Start in fullscreen")
 	cmd.Flags().BoolP("audio", "a", true, "Enabled audio output")
 	cmd.Flags().Bool("resume", true, "Automatically resume where you left off")
+	cmd.Flags().String("palette", "", "Optional palette (.pal) file to use")
+	if err := cmd.RegisterFlagCompletionFunc("palette", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return []string{"pal"}, cobra.ShellCompDirectiveFilterFileExt
+	}); err != nil {
+		panic(err)
+	}
 }
