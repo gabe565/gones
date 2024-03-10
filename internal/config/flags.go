@@ -5,13 +5,14 @@ import (
 )
 
 var flagConfigTable = map[string]string{
-	"debug":      "debug.enabled",
-	"trace":      "debug.trace",
-	"scale":      "ui.scale",
-	"fullscreen": "ui.fullscreen",
-	"audio":      "audio.enabled",
-	"resume":     "state.resume",
-	"palette":    "ui.palette",
+	"debug":           "debug.enabled",
+	"trace":           "debug.trace",
+	"scale":           "ui.scale",
+	"fullscreen":      "ui.fullscreen",
+	"audio":           "audio.enabled",
+	"resume":          "state.resume",
+	"palette":         "ui.palette",
+	"pause-unfocused": "ui.pause_unfocused",
 }
 
 func Flags(cmd *cobra.Command) {
@@ -32,4 +33,5 @@ func Flags(cmd *cobra.Command) {
 	}); err != nil {
 		panic(err)
 	}
+	cmd.Flags().Bool("pause-unfocused", true, "Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background.")
 }
