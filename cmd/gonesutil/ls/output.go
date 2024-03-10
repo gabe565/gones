@@ -37,17 +37,18 @@ func printEntries(out io.Writer, carts []entry, format Format) error {
 
 func printTable(out io.Writer, carts []entry) error {
 	w := tabwriter.NewWriter(out, 0, 0, 3, ' ', 0)
-	if _, err := fmt.Fprintln(w, "FILE\tNAME\tMAPPER\tMIRROR\tBATTERY\t"); err != nil {
+	if _, err := fmt.Fprintln(w, "FILE\tNAME\tMAPPER\tMIRROR\tBATTERY\tHASH\t"); err != nil {
 		return err
 	}
 
 	for _, entry := range carts {
-		_, _ = fmt.Fprintf(w, "%s\t%s\t%d\t%s\t%t\t\n",
+		_, _ = fmt.Fprintf(w, "%s\t%s\t%d\t%s\t%t\t%s\t\n",
 			entry.Path,
 			entry.Name,
 			entry.Mapper,
 			entry.Mirror,
 			entry.Battery,
+			entry.Hash,
 		)
 	}
 

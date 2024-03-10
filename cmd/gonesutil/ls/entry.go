@@ -9,6 +9,7 @@ func newEntry(file string, cart *cartridge.Cartridge) entry {
 		Mapper:  cart.Mapper,
 		Mirror:  cart.Mirror.String(),
 		Battery: cart.Battery,
+		Hash:    cart.Hash(),
 	}
 }
 
@@ -18,4 +19,5 @@ type entry struct {
 	Mapper  byte   `json:"mapper"`
 	Mirror  string `json:"mirror"`
 	Battery bool   `json:"battery"`
+	Hash    string `json:"hash"`
 }

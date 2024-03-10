@@ -197,6 +197,10 @@ func filterFunc(filters map[string]string) func(e entry) bool {
 				if parsed != e.Battery {
 					return true
 				}
+			case "hash":
+				if filter != e.Hash {
+					return true
+				}
 			}
 		}
 		return false
@@ -204,7 +208,7 @@ func filterFunc(filters map[string]string) func(e entry) bool {
 }
 
 func completeFilter(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-	defaults := []string{"name=", "mapper=", "mirror=", "battery="}
+	defaults := []string{"name=", "mapper=", "mirror=", "battery=", "hash="}
 	if !strings.Contains(toComplete, "=") {
 		return defaults, cobra.ShellCompDirectiveNoFileComp | cobra.ShellCompDirectiveNoSpace
 	}
@@ -222,6 +226,8 @@ func completeFilter(cmd *cobra.Command, args []string, toComplete string) ([]str
 			matches = append(matches, param+"="+cart.Mirror)
 		case "battery":
 			matches = append(matches, param+"="+strconv.FormatBool(cart.Battery))
+		case "hash":
+			matches = append(matches, param+"="+cart.Hash+"\t"+cart.Name)
 		}
 	}
 
