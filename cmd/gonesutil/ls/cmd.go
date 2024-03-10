@@ -172,7 +172,7 @@ func filterFunc(filters map[string]string) func(e entry) bool {
 		for field, filter := range filters {
 			switch strings.ToLower(field) {
 			case "name":
-				if !strings.Contains(e.Name, filter) {
+				if !strings.Contains(strings.ToLower(e.Name), strings.ToLower(filter)) {
 					return true
 				}
 			case "mapper":
