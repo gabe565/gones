@@ -61,9 +61,6 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 	}()
 
-	c.SetTrace(conf.Debug.Trace)
-	c.SetDebug(conf.Debug.Enabled)
-
 	scale := conf.UI.Scale
 	ebiten.SetWindowSize(int(scale*ppu.Width), int(scale*ppu.TrimmedHeight))
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)

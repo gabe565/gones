@@ -116,6 +116,9 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 		}
 	}
 
+	console.SetTrace(conf.Debug.Trace)
+	console.SetDebug(conf.Debug.Enabled)
+
 	if duration := conf.State.AutosaveInterval; duration != 0 {
 		console.autosave = time.NewTicker(time.Duration(duration))
 	}
