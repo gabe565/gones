@@ -20,9 +20,11 @@ cp -a assets/{png/icon_128x128,windows/icon128}.png
 cp -a assets/{png/icon_256x256,windows/icon256}.png
 go-winres make --arch=amd64,arm64 --in=assets/windows/winres.json
 
+go generate
+
 # Build binary
 export GOOS=windows CGO_ENABLED=1
 for ARCH in amd64 arm64; do
   echo Build "$BINARY_NAME-$ARCH.exe"
-  GOARCH="$ARCH" go build -ldflags='-w -s -H=windowsgui' -trimpath -o "dist/$BINARY_NAME-$ARCH.exe" .
+  GOARCH="$ARCH" go build -ldflags='-w -s -H=windowsgui' -trimpath -tags gzip -o "dist/$BINARY_NAME-$ARCH.exe" .
 done

@@ -22,11 +22,13 @@ cp -a assets/"$ICONSET"/icon_{256x256,128x128@2x}.png
 cp -a assets/"$ICONSET"/icon_{512x512,256x256@2x}.png
 iconutil --convert icns --output "assets/$ICNS" "assets/$ICONSET"
 
+go generate
+
 # Build binaries
 export GOOS=darwin CGO_ENABLED=1
 for ARCH in amd64 arm64; do
   echo Build "$BINARY_NAME-$ARCH"
-  GOARCH="$ARCH" go build -ldflags='-w -s' -trimpath -o "dist/$BINARY_NAME-$ARCH" .
+  GOARCH="$ARCH" go build -ldflags='-w -s' -trimpath -tags gzip -o "dist/$BINARY_NAME-$ARCH" .
 done
 
 # Merge binaries

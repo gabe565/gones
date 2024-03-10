@@ -110,6 +110,8 @@ jobs:
         if: matrix.pre-build
         shell: bash
         run: ${{ matrix.pre-build }}
+      - name: Generate
+        run: go generate -x
       - name: Build (Matrix)
         if: ${{ matrix.build }}
         shell: bash
@@ -117,7 +119,7 @@ jobs:
       - name: Build (Default)
         if: ${{ !matrix.build }}
         run: |
-          go build -ldflags='-w -s' -trimpath -o dist/gones
+          go build -ldflags='-w -s' -trimpath -tags gzip -o dist/gones
         env:
           CGO_ENABLED: "1"
       - name: Compress
@@ -175,6 +177,8 @@ jobs:
           platforms: ${{ matrix.docker-platform }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Generate
+        run: go generate -x
       - name: Build
         run: |
           docker run --rm -i --platform=${{ matrix.docker-platform }} \
@@ -182,7 +186,7 @@ jobs:
             -v "$(go env GOMODCACHE):/go/pkg/mod" \
             -v "$PWD:/app" \
             builder \
-            go build -ldflags='-w -s' -trimpath -o dist/gones
+            go build -ldflags='-w -s' -trimpath -tags gzip -o dist/gones
       - name: Compress
         run: tar -cvf gones.tar -C dist .
       - name: Upload Artifact
@@ -227,7 +231,7 @@ jobs:
           GOOS: js
           GOARCH: wasm
         run: |
-          go build -ldflags='-w -s' -trimpath -o web/src/assets/gones.wasm
+          go build -ldflags='-w -s' -trimpath -tags gzip -o web/src/assets/gones.wasm
 
       - name: Set up Node
         uses: actions/setup-node@v4

@@ -23,7 +23,8 @@ tasks:
       GOOS: js
       GOARCH: wasm
     cmds:
-      - go build -ldflags='-w -s' -trimpath -o web/src/assets/gones.wasm
+      - go generate
+      - go build -ldflags='-w -s' -trimpath -tags gzip -o web/src/assets/gones.wasm
 
   build:
     deps: [build-wasm, cp-js, npm]
