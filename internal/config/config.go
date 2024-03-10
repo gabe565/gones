@@ -70,7 +70,7 @@ type Debug struct {
 	Trace   bool `toml:"trace"`
 }
 
-var configDir = "gones"
+const configDir = "gones"
 
 func GetDir() (string, error) {
 	switch runtime.GOOS {

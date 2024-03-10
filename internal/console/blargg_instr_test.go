@@ -31,7 +31,7 @@ func Test_blarggCpuTest(t *testing.T) {
 //go:embed nes-test-roms/cpu_timing_test6/cpu_timing_test.nes
 var blarggCpuTimingTest string
 
-var blarggCpuTimingSuccess = `6502 TIMING TEST (16 SECONDS)
+const blarggCpuTimingSuccess = `6502 TIMING TEST (16 SECONDS)
 OFFICIAL INSTRUCTIONS ONLY
 PASSED`
 

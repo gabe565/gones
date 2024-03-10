@@ -46,8 +46,6 @@ func (i iNESFileHeader) Submapper() byte {
 	return i.Control[2] >> 4
 }
 
-var iNesMagic = [4]byte{'N', 'E', 'S', 0x1A}
-
 var ErrInvalidRom = errors.New("invalid ROM")
 
 func FromiNesFile(path string) (*Cartridge, error) {
@@ -73,7 +71,7 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 		return nil, err
 	}
 
-	if header.Magic != iNesMagic {
+	if header.Magic != [4]byte{'N', 'E', 'S', 0x1A} {
 		return nil, ErrInvalidRom
 	}
 

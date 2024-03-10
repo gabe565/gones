@@ -8,7 +8,7 @@ import (
 
 //go:generate cp $GOROOT/misc/wasm/wasm_exec.js web/src/scripts
 
-var (
+const (
 	Version = "next"
 	Commit  = ""
 )

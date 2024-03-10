@@ -31,7 +31,7 @@ func Test_blarggPpuOpenBus(t *testing.T) {
 //go:embed nes-test-roms/ppu_vbl_nmi/ppu_vbl_nmi.nes
 var blarggPpuVblNmi string
 
-var blarggPpuVblNmiSuccess = `08 07 
+const blarggPpuVblNmiSuccess = `08 07 
 Clock is skipped too late, relative to enabling BG
 
 10-even_odd_timing

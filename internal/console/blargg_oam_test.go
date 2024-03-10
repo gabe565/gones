@@ -11,7 +11,7 @@ import (
 //go:embed nes-test-roms/oam_read/oam_read.nes
 var oamRead string
 
-var oamReadSuccess = `----------------
+const oamReadSuccess = `----------------
 ----------------
 ----------------
 ----------------
@@ -52,7 +52,7 @@ func Test_oamRead(t *testing.T) {
 //go:embed nes-test-roms/oam_stress/oam_stress.nes
 var oamStress string
 
-var oamStressSuccess = `----------------
+const oamStressSuccess = `----------------
 ----------------
 ----------------
 ----------------
