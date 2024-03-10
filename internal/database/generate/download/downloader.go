@@ -88,7 +88,7 @@ func (g *Downloader) Run() (err error) {
 	}(f)
 
 	log.WithField("file", "nes.xml").Info("Write to file")
-	out, err := os.Create("../nointro/nes.xml")
+	out, err := os.Create("internal/database/nointro/nes.xml")
 	if err != nil {
 		return err
 	}

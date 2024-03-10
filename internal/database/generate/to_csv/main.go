@@ -16,7 +16,7 @@ func main() {
 		log.Panic(err)
 	}
 
-	f, err := os.Create("../database.csv")
+	f, err := os.Create("internal/database/database.csv")
 	if err != nil {
 		log.Panic(err)
 	}
