@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/gabe565/gones/internal/cartridge"
 	log "github.com/sirupsen/logrus"
@@ -32,7 +33,7 @@ func New() *cobra.Command {
 	cmd.Flags().StringToStringP("filter", "f", map[string]string{}, "Filter by a field")
 	_ = cmd.RegisterFlagCompletionFunc("filter", completeFilter)
 
-	cmd.Flags().StringP("sort", "s", "", "Sort by a field")
+	cmd.Flags().StringP("sort", "s", "path", "Sort by a field")
 	_ = cmd.RegisterFlagCompletionFunc(
 		"sort",
 		cobra.FixedCompletions([]string{"path", "name", "mapper", "battery", "mirror"}, cobra.ShellCompDirectiveNoFileComp),
@@ -96,6 +97,9 @@ func loadPaths(paths []string) ([]entry, bool) {
 	}
 
 	carts := make([]entry, 0, len(paths))
+	wg := sync.WaitGroup{}
+	mu := sync.Mutex{}
+
 	var failed bool
 	for _, path := range paths {
 		stat, err := os.Stat(path)
@@ -114,14 +118,22 @@ func loadPaths(paths []string) ([]entry, bool) {
 					return nil
 				}
 
-				cart, err := cartridge.FromiNesFile(path)
-				if err != nil {
-					log.WithError(err).WithField("path", path).Error("invalid ROM")
-					failed = true
-					return nil
-				}
+				wg.Add(1)
+				go func() {
+					defer wg.Done()
 
-				carts = append(carts, newEntry(path, cart))
+					cart, err := cartridge.FromiNesFile(path)
+					if err != nil {
+						log.WithError(err).WithField("path", path).Error("invalid ROM")
+						failed = true
+						return
+					}
+
+					entry := newEntry(path, cart)
+					mu.Lock()
+					carts = append(carts, entry)
+					mu.Unlock()
+				}()
 				return nil
 			}); err != nil {
 				log.Error(err)
@@ -137,6 +149,7 @@ func loadPaths(paths []string) ([]entry, bool) {
 			carts = append(carts, newEntry(path, cart))
 		}
 	}
+	wg.Wait()
 	return carts, failed
 }
 
