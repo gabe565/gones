@@ -24,8 +24,6 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
           submodules: true
-      - name: Change Cache Key
-        run: echo '// ${{ github.job }}' >> go.sum
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
