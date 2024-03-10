@@ -78,7 +78,7 @@ func run(cmd *cobra.Command, args []string) (err error) {
 	return nil
 }
 
-func loadCarts(cmd *cobra.Command, args []string) ([]entry, bool, error) {
+func loadCarts(cmd *cobra.Command, args []string) ([]*entry, bool, error) {
 	var failed bool
 	carts, failed := loadPaths(args)
 
@@ -91,12 +91,12 @@ func loadCarts(cmd *cobra.Command, args []string) ([]entry, bool, error) {
 	return carts, failed, nil
 }
 
-func loadPaths(paths []string) ([]entry, bool) {
+func loadPaths(paths []string) ([]*entry, bool) {
 	if len(paths) == 0 {
 		paths = append(paths, ".")
 	}
 
-	carts := make([]entry, 0, len(paths))
+	carts := make([]*entry, 0, len(paths))
 	wg := sync.WaitGroup{}
 	mu := sync.Mutex{}
 
@@ -153,9 +153,9 @@ func loadPaths(paths []string) ([]entry, bool) {
 	return carts, failed
 }
 
-func sortFunc(field string) func(a, b entry) int {
+func sortFunc(field string) func(a, b *entry) int {
 	field = strings.ToLower(field)
-	return func(a, b entry) int {
+	return func(a, b *entry) int {
 		switch field {
 		case "path":
 			return strings.Compare(a.Path, b.Path)
@@ -180,8 +180,8 @@ func sortFunc(field string) func(a, b entry) int {
 	}
 }
 
-func filterFunc(filters map[string]string) func(e entry) bool {
-	return func(e entry) bool {
+func filterFunc(filters map[string]string) func(e *entry) bool {
+	return func(e *entry) bool {
 		for field, filter := range filters {
 			switch strings.ToLower(field) {
 			case "name":

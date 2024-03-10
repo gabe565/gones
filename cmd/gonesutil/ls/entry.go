@@ -2,8 +2,8 @@ package ls
 
 import "github.com/gabe565/gones/internal/cartridge"
 
-func newEntry(file string, cart *cartridge.Cartridge) entry {
-	return entry{
+func newEntry(file string, cart *cartridge.Cartridge) *entry {
+	return &entry{
 		Path:    file,
 		Name:    cart.Name(),
 		Mapper:  cart.Mapper,

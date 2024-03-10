@@ -20,7 +20,7 @@ const (
 
 var ErrInvalidFormat = errors.New("invalid format")
 
-func printEntries(out io.Writer, carts []entry, format Format) error {
+func printEntries(out io.Writer, carts []*entry, format Format) error {
 	switch format {
 	case FormatTable:
 		return printTable(out, carts)
@@ -35,7 +35,7 @@ func printEntries(out io.Writer, carts []entry, format Format) error {
 	return fmt.Errorf("%w: %s", ErrInvalidFormat, format)
 }
 
-func printTable(out io.Writer, carts []entry) error {
+func printTable(out io.Writer, carts []*entry) error {
 	w := tabwriter.NewWriter(out, 0, 0, 3, ' ', 0)
 	if _, err := fmt.Fprintln(w, "FILE\tNAME\tMAPPER\tMIRROR\tBATTERY\tHASH\t"); err != nil {
 		return err
