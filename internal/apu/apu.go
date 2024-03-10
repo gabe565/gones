@@ -27,8 +27,8 @@ var lengthTable = [...]byte{
 }
 
 var (
-	squareTable [31]float32
-	tndTable    [203]float32
+	squareTable [31]float64
+	tndTable    [203]float64
 )
 
 const (
@@ -41,10 +41,10 @@ const (
 
 func init() {
 	for i := range squareTable {
-		squareTable[i] = 95.52 / (8128.0/float32(i) + 100)
+		squareTable[i] = 95.52 / (8128.0/float64(i) + 100)
 	}
 	for i := range tndTable {
-		tndTable[i] = 163.67 / (24329.0/float32(i) + 100)
+		tndTable[i] = 163.67 / (24329.0/float64(i) + 100)
 	}
 }
 
@@ -57,7 +57,7 @@ func New(conf *config.Config) *APU {
 		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},
 
-		buf: make(chan float32, BufferCap),
+		buf: make(chan float64, BufferCap),
 	}
 }
 
@@ -78,7 +78,7 @@ type APU struct {
 	IrqEnabled bool
 	IrqPending bool
 
-	buf chan float32
+	buf chan float64
 }
 
 func (a *APU) WriteMem(addr uint16, data byte) {
@@ -231,7 +231,7 @@ func (a *APU) stepLength() {
 	a.Noise.stepLength()
 }
 
-func (a *APU) output() float32 {
+func (a *APU) output() float64 {
 	var p1, p2 byte
 	if a.conf.Channels.Square1 {
 		p1 = a.Square[0].output()
@@ -267,7 +267,7 @@ func (a *APU) Read(p []byte) (int, error) {
 	defer timer.Stop()
 
 	var i int
-	var sample float32
+	var sample float64
 	for i = 0; i < len(p); i += 4 {
 		if len(a.buf) == 0 {
 			select {
