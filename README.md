@@ -21,31 +21,39 @@ Automated builds are uploaded during the release process. See the [latest releas
 
 ### From Source
 
-Make sure you have [Go](https://go.dev/doc/install) and the [requirements](#requirements) installed, then run:
+<details>
+  <summary>Click to expand</summary>
 
-```shell
-go install github.com/gabe565/gones@latest
-```
-
-## Requirements
+#### Requirements
 
 Rendering uses [hajimehoshi/ebiten](https://github.com/hajimehoshi/ebiten) which requires
 OpenGL development libraries to compile.
 See [ebiten install steps](https://ebitengine.org/en/documents/install.html).
 
-## Usage
+#### Installation
+Make sure you have [Go](https://go.dev/doc/install) and the [requirements](#requirements) installed, then run:
 
+```shell
+go install github.com/gabe565/gones@latest
+```
+</details>
+
+## Usage
+### Application
 When started, GoNES will open a file picker. Choose the `.nes` file to start emulation.
 
 ### Terminal
+<details>
+  <summary>Click to expand</summary>
 
-In a terminal, run:
+GoNES also supports being launched from a terminal.
 
 ```shell
 gones ROM_FILE
 ```
 
 See [docs](./docs/gones.md) for the full command line usage documentation.
+</details>
 
 ## Configuration
 
