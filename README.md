@@ -35,6 +35,10 @@ See [ebiten install steps](https://ebitengine.org/en/documents/install.html).
 
 ## Usage
 
+When started, GoNES will open a file picker. Choose the `.nes` file to start emulation.
+
+### Terminal
+
 In a terminal, run:
 
 ```shell
