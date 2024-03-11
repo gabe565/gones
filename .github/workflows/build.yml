@@ -61,7 +61,7 @@ jobs:
 
   build-windows:
     name: Build (windows)
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -72,10 +72,8 @@ jobs:
       - name: Generate
         run: go generate -x
       - name: Build
-        shell: bash
         run: ./hack/build-windows.sh
       - name: Compress
-        shell: bash
         run: cd dist && zip -r ../gones.zip .
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
