@@ -32,9 +32,9 @@ jobs:
           go-version-file: go.mod
           cache: false
       - name: Install apt dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends $LINUX_DEPENDENCIES
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: ${{ env.LINUX_DEPENDENCIES }}
       - name: Lint
         uses: golangci/golangci-lint-action@v4
         with:
@@ -53,9 +53,9 @@ jobs:
         with:
           go-version-file: go.mod
       - name: Install apt dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends $LINUX_DEPENDENCIES
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: ${{ env.LINUX_DEPENDENCIES }}
       - name: Test
         run: xvfb-run go test ./... -coverprofile=coverage.txt -covermode=atomic
 
@@ -116,9 +116,9 @@ jobs:
         with:
           go-version-file: go.mod
       - name: Install apt dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends $LINUX_DEPENDENCIES
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: ${{ env.LINUX_DEPENDENCIES }}
       - name: Generate
         run: go generate -x
       - name: Build
