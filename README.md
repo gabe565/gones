@@ -14,15 +14,9 @@ _An NES emulator written in Go._
 
 ## Install
 
-### Binary
+### Release
 
-Eventually, binaries will be attached to releases.
-For now, binaries can be downloaded from CI build artifacts.
-1. Go to [the build action](https://github.com/gabe565/gones/actions/workflows/build.yml?query=branch%3Amain+is%3Asuccess).
-2. Click the latest build job.
-3. Scroll down to "Artifacts".
-4. Download the artifact for your operating system/architecture.
-5. A zip file will be downloaded containing GoNES!
+Automated builds are uploaded during the release process. See the [latest release](https://github.com/gabe565/gones/releases/latest) for download links.
 
 ### From Source
 
