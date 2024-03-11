@@ -74,12 +74,20 @@ jobs:
       - name: Build
         run: ./hack/build-windows.sh
       - name: Compress
-        run: cd dist && zip -r ../gones.zip .
-      - name: Upload Artifact
+        run: |
+          cd dist
+          zip -r ../gones_windows_amd64.zip GoNES-amd64.exe
+          zip -r ../gones_windows_arm64.zip GoNES-arm64.exe
+      - name: Upload Artifact (amd64)
         uses: actions/upload-artifact@v4
         with:
-          name: windows
-          path: gones.zip
+          name: gones_windows_amd64
+          path: gones_windows_amd64.zip
+      - name: Upload Artifact (arm64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: gones_windows_arm64
+          path: gones_windows_arm64.zip
 
   build-darwin:
     name: Build (darwin)
@@ -96,12 +104,12 @@ jobs:
       - name: Build
         run: ./hack/build-darwin.sh
       - name: Compress
-        run: tar -cvf gones.tar -C dist .
+        run: tar -cvf gones_darwin.tar.gz -C dist .
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: darwin
-          path: gones.tar
+          name: gones_darwin
+          path: gones_darwin.tar.gz
 
   build-linux-amd64:
     name: Build (linux-amd64)
@@ -124,12 +132,12 @@ jobs:
           CGO_ENABLED: "1"
         run: go build -ldflags='-w -s' -trimpath -tags gzip -o dist/gones
       - name: Compress
-        run: tar -cvf gones.tar -C dist .
+        run: tar -cvf gones_linux_amd64.tar.gz -C dist .
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: linux-amd64
-          path: gones.tar
+          name: gones_linux_amd64
+          path: gones_linux_amd64.tar.gz
 
   build-linux-arm64:
     name: Build (linux-arm64)
@@ -167,12 +175,12 @@ jobs:
             builder \
             go build -ldflags='-w -s' -trimpath -tags gzip -o dist/gones
       - name: Compress
-        run: tar -cvf gones.tar -C dist .
+        run: tar -cvf gones_linux_arm64.tar.gz -C dist .
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: linux-arm64
-          path: gones.tar
+          name: gones_linux_arm64
+          path: gones_linux_arm64.tar.gz
 
   build-web:
     name: Build Web
