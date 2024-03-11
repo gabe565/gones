@@ -4,6 +4,7 @@
   GoNES
 </h1>
 
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/gabe565/gones)](https://github.com/gabe565/gones/releases)
 [![Build](https://github.com/gabe565/gones/actions/workflows/build.yml/badge.svg)](https://github.com/gabe565/gones/actions/workflows/build.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gabe565/gones)](https://goreportcard.com/report/github.com/gabe565/gones)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gabe565_gones&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=gabe565_gones)
