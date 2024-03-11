@@ -59,24 +59,9 @@ jobs:
       - name: Test
         run: xvfb-run go test ./... -coverprofile=coverage.txt -covermode=atomic
 
-  build-native:
-    name: Build Natively (${{ matrix.platform }})
-    runs-on: ${{ matrix.runs-on }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: linux-amd64
-            runs-on: ubuntu-latest
-            pre-build: |
-              sudo apt-get update
-              sudo apt-get install --no-install-recommends $LINUX_DEPENDENCIES
-          - platform: darwin
-            runs-on: macos-12
-            build: ./hack/build-darwin.sh
-          - platform: windows
-            runs-on: windows-latest
-            build: ./hack/build-windows.sh
+  build-windows:
+    name: Build (windows)
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -84,61 +69,73 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-          cache: false
-      - name: Get Go cache paths
-        id: go-cache-path
-        shell: bash
-        run: |
-          echo "go-build=$(go env GOCACHE)" >> $GITHUB_OUTPUT
-          echo "go-mod=$(go env GOMODCACHE)" >> $GITHUB_OUTPUT
-      - name: Go cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ steps.go-cache-path.outputs.go-build }}
-            ${{ steps.go-cache-path.outputs.go-mod }}
-          key: ${{ matrix.platform }}-go-build-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ matrix.platform }}-go-build-
-      - name: Set envs
-        if: matrix.envs
-        shell: bash
-        run: echo "$ENVS" >> $GITHUB_ENV
-        env:
-          ENVS: ${{ matrix.envs }}
-      - name: Pre-build
-        if: matrix.pre-build
-        shell: bash
-        run: ${{ matrix.pre-build }}
       - name: Generate
         run: go generate -x
-      - name: Build (Matrix)
-        if: ${{ matrix.build }}
+      - name: Build
         shell: bash
-        run: ${{ matrix.build }}
-      - name: Build (Default)
-        if: ${{ !matrix.build }}
-        run: |
-          go build -ldflags='-w -s' -trimpath -tags gzip -o dist/gones
-        env:
-          CGO_ENABLED: "1"
+        run: ./hack/build-windows.sh
+      - name: Compress
+        shell: bash
+        run: cd dist && zip -r ../gones.zip .
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: gones.zip
+
+  build-darwin:
+    name: Build (darwin)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Generate
+        run: go generate -x
+      - name: Build
+        run: ./hack/build-darwin.sh
       - name: Compress
         run: tar -cvf gones.tar -C dist .
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.platform }}
+          name: darwin
           path: gones.tar
 
-  build-container:
-    name: Build in Container (${{ matrix.platform }})
+  build-linux-amd64:
+    name: Build (linux-amd64)
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: linux-arm64
-            docker-platform: linux/arm64/v8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Install apt dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends $LINUX_DEPENDENCIES
+      - name: Generate
+        run: go generate -x
+      - name: Build
+        env:
+          CGO_ENABLED: "1"
+        run: go build -ldflags='-w -s' -trimpath -tags gzip -o dist/gones
+      - name: Compress
+        run: tar -cvf gones.tar -C dist .
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-amd64
+          path: gones.tar
+
+  build-linux-arm64:
+    name: Build (linux-arm64)
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -147,22 +144,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-          cache: false
-      - name: Get Go cache paths
-        id: go-cache-path
-        shell: bash
-        run: |
-          echo "go-build=$(go env GOCACHE)" >> $GITHUB_OUTPUT
-          echo "go-mod=$(go env GOMODCACHE)" >> $GITHUB_OUTPUT
-      - name: Go cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ steps.go-cache-path.outputs.go-build }}
-            ${{ steps.go-cache-path.outputs.go-mod }}
-          key: ${{ matrix.platform }}-go-build-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ matrix.platform }}-go-build-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -174,14 +155,14 @@ jobs:
           file: hack/builder.Dockerfile
           tags: builder
           load: true
-          platforms: ${{ matrix.docker-platform }}
+          platforms: linux/arm64/v8
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Generate
         run: go generate -x
       - name: Build
         run: |
-          docker run --rm -i --platform=${{ matrix.docker-platform }} \
+          docker run --rm -i --platform=linux/arm64/v8 \
             -v "$(go env GOCACHE):/root/.cache/go-build" \
             -v "$(go env GOMODCACHE):/go/pkg/mod" \
             -v "$PWD:/app" \
@@ -192,7 +173,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.platform }}
+          name: linux-arm64
           path: gones.tar
 
   build-web:
@@ -202,37 +183,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Set up Go
         id: setup-go
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-          cache: false
-      - name: Get Go cache paths
-        id: go-cache-path
-        shell: bash
-        run: |
-          echo "go-build=$(go env GOCACHE)" >> $GITHUB_OUTPUT
-          echo "go-mod=$(go env GOMODCACHE)" >> $GITHUB_OUTPUT
-      - name: Go cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ steps.go-cache-path.outputs.go-build }}
-            ${{ steps.go-cache-path.outputs.go-mod }}
-          key: wasm-go-build-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            wasm-go-build-
       - name: Generate
         run: go generate -x
       - name: Build Go
         env:
           GOOS: js
           GOARCH: wasm
-        run: |
-          go build -ldflags='-w -s' -trimpath -tags gzip -o web/src/assets/gones.wasm
-
+        run: go build -ldflags='-w -s' -trimpath -tags gzip -o web/src/assets/gones.wasm
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -243,7 +205,6 @@ jobs:
         run: npm --prefix web install --prefer-offline --no-audit
       - name: Build Node
         run: npm --prefix web run build
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
