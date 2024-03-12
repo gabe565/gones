@@ -1,0 +1,13 @@
+filters:
+  exclude:
+    - "^docs"
+    - "^test"
+groups:
+  - title: Features
+    order: 0
+    regexp: "^(feat)"
+  - title: Fixes
+    order: 1
+    regexp: "^(fix|perf)"
+  - title: Others
+    order: 999

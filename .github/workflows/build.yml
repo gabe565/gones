@@ -247,8 +247,12 @@ jobs:
           pattern: gones_*
           path: dist
           merge-multiple: true
+      - name: Generate Changelog
+        id: changelog
+        uses: gabe565/changelog-generator@v0
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
+          body: ${{ steps.changelog.outputs.changelog }}
           files: |
             dist/gones_*
