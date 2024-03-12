@@ -74,8 +74,8 @@ jobs:
       - name: Build
         run: ./hack/build-windows.sh
       - name: Compress
+        working-directory: dist
         run: |
-          cd dist
           zip -r ../gones_windows_amd64.zip GoNES-amd64.exe
           zip -r ../gones_windows_arm64.zip GoNES-arm64.exe
       - name: Upload Artifact (amd64)
