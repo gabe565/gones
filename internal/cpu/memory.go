@@ -45,7 +45,7 @@ const StackAddr = 0x100
 
 func (c *CPU) stackPush(data byte) {
 	c.WriteMem(StackAddr+uint16(c.StackPointer), data)
-	c.StackPointer -= 1
+	c.StackPointer--
 }
 
 func (c *CPU) stackPush16(data uint16) {
@@ -56,7 +56,7 @@ func (c *CPU) stackPush16(data uint16) {
 }
 
 func (c *CPU) stackPop() byte {
-	c.StackPointer += 1
+	c.StackPointer++
 	return c.ReadMem(StackAddr + uint16(c.StackPointer))
 }
 

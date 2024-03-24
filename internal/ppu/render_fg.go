@@ -32,7 +32,7 @@ func (p *PPU) evaluateSprites() {
 			p.SpriteData.Indexes[count] = byte(i)
 		}
 
-		count += 1
+		count++
 	}
 
 	if count > 8 {
@@ -53,7 +53,7 @@ func (p *PPU) fetchSpritePattern(tile, attributes byte, row int) uint32 {
 		table := tile & 1
 		tile &= 0xFE
 		if row > 7 {
-			tile += 1
+			tile++
 			row -= 8
 		}
 		addr = 0x1000*uint16(table) + uint16(tile)*16 + uint16(row)

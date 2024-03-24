@@ -15,7 +15,7 @@ func adc(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Cycles += 1
+			c.Cycles++
 		}()
 	}
 	v := c.ReadMem(addr)
@@ -82,7 +82,7 @@ func and(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Cycles += 1
+			c.Cycles++
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -385,7 +385,7 @@ func cpy(c *CPU, mode AddressingMode) {
 func dcp(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
 	data := c.ReadMem(addr)
-	data -= 1
+	data--
 	c.WriteMem(addr, data)
 	c.Status.Carry = data <= c.Accumulator
 	c.updateZeroAndNegFlags(c.Accumulator - data)
@@ -402,7 +402,7 @@ func dcp(c *CPU, mode AddressingMode) {
 func dec(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
 	data := c.ReadMem(addr)
-	data -= 1
+	data--
 	c.WriteMem(addr, data)
 	c.updateZeroAndNegFlags(data)
 }
@@ -416,7 +416,7 @@ func dec(c *CPU, mode AddressingMode) {
 //
 // [DEX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEX
 func dex(c *CPU, _ AddressingMode) {
-	c.RegisterX -= 1
+	c.RegisterX--
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
 
@@ -429,7 +429,7 @@ func dex(c *CPU, _ AddressingMode) {
 //
 // [DEY Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEY
 func dey(c *CPU, _ AddressingMode) {
-	c.RegisterY -= 1
+	c.RegisterY--
 	c.updateZeroAndNegFlags(c.RegisterY)
 }
 
@@ -445,7 +445,7 @@ func eor(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Cycles += 1
+			c.Cycles++
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -463,7 +463,7 @@ func eor(c *CPU, mode AddressingMode) {
 func inc(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
 	data := c.ReadMem(addr)
-	data += 1
+	data++
 	c.WriteMem(addr, data)
 	c.updateZeroAndNegFlags(data)
 }
@@ -476,7 +476,7 @@ func inc(c *CPU, mode AddressingMode) {
 //
 // [INX Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INX
 func inx(c *CPU, _ AddressingMode) {
-	c.RegisterX += 1
+	c.RegisterX++
 	c.updateZeroAndNegFlags(c.RegisterX)
 }
 
@@ -489,7 +489,7 @@ func inx(c *CPU, _ AddressingMode) {
 //
 // [INY Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INY
 func iny(c *CPU, _ AddressingMode) {
-	c.RegisterY += 1
+	c.RegisterY++
 	c.updateZeroAndNegFlags(c.RegisterY)
 }
 
@@ -545,7 +545,7 @@ func las(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Cycles += 1
+			c.Cycles++
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -567,7 +567,7 @@ func lax(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Cycles += 1
+			c.Cycles++
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -587,7 +587,7 @@ func lda(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Cycles += 1
+			c.Cycles++
 		}()
 	}
 	v := c.ReadMem(addr)
@@ -606,7 +606,7 @@ func ldx(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Cycles += 1
+			c.Cycles++
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -626,7 +626,7 @@ func ldy(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Cycles += 1
+			c.Cycles++
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -687,7 +687,7 @@ func nop(c *CPU, mode AddressingMode) {
 		addr, pageCrossed := c.getOperandAddress(mode)
 		if pageCrossed {
 			defer func() {
-				c.Cycles += 1
+				c.Cycles++
 			}()
 		}
 		_ = c.ReadMem(addr)
@@ -706,7 +706,7 @@ func ora(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Cycles += 1
+			c.Cycles++
 		}()
 	}
 	data := c.ReadMem(addr)
@@ -907,7 +907,7 @@ func sbc(c *CPU, mode AddressingMode) {
 	addr, pageCrossed := c.getOperandAddress(mode)
 	if pageCrossed {
 		defer func() {
-			c.Cycles += 1
+			c.Cycles++
 		}()
 	}
 	v := c.ReadMem(addr)

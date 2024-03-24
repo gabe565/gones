@@ -56,7 +56,7 @@ func (r *Address) Increment(inc byte) {
 
 func (r *Address) IncrementX() {
 	if r.CoarseX < 31 {
-		r.CoarseX += 1
+		r.CoarseX++
 	} else {
 		r.CoarseX = 0
 		r.NametableX = !r.NametableX
@@ -65,7 +65,7 @@ func (r *Address) IncrementX() {
 
 func (r *Address) IncrementY() {
 	if r.FineY < 7 {
-		r.FineY += 1
+		r.FineY++
 	} else {
 		r.FineY = 0
 
@@ -76,7 +76,7 @@ func (r *Address) IncrementY() {
 		case 31:
 			r.CoarseY = 0
 		default:
-			r.CoarseY += 1
+			r.CoarseY++
 		}
 	}
 }

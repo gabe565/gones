@@ -149,7 +149,7 @@ func (a *APU) Reset() {
 
 func (a *APU) Step() bool {
 	cycle1 := float64(a.Cycle)
-	a.Cycle += 1
+	a.Cycle++
 	cycle2 := float64(a.Cycle)
 
 	a.stepTimer()
@@ -176,7 +176,7 @@ func (a *APU) SetCpu(c CPU) {
 func (a *APU) stepFrameCounter() {
 	switch a.FramePeriod {
 	case 4, 5:
-		a.FrameValue += 1
+		a.FrameValue++
 		a.FrameValue %= a.FramePeriod
 		switch a.FrameValue {
 		case 0, 2:

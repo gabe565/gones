@@ -28,7 +28,7 @@ func Test_nestest(t *testing.T) {
 	scanner := bufio.NewScanner(strings.NewReader(nestestLog))
 	var checkedLines uint
 	for scanner.Scan() {
-		checkedLines += 1
+		checkedLines++
 		actual := c.Trace()
 		expected := scanner.Text()
 

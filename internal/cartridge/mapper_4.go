@@ -37,7 +37,7 @@ func (m *Mapper4) OnScanline() {
 	if m.Counter == 0 {
 		m.Counter = m.Reload
 	} else {
-		m.Counter -= 1
+		m.Counter--
 		if m.Counter == 0 && m.IrqEnable {
 			m.IrqPending = true
 		}

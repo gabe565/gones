@@ -27,7 +27,7 @@ func NewConsoleTest(r io.ReadSeeker, callback func(console *ConsoleTest) error) 
 func (b *ConsoleTest) Run() error {
 	for {
 		if b.ResetIn != 0 {
-			b.ResetIn -= 1
+			b.ResetIn--
 			if b.ResetIn == 0 {
 				b.Console.Reset()
 			}

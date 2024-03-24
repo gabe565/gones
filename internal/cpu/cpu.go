@@ -88,8 +88,8 @@ var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 // Step steps through the next instruction
 func (c *CPU) Step() uint {
 	if c.Stall > 0 {
-		c.Stall -= 1
-		c.Cycles += 1
+		c.Stall--
+		c.Cycles++
 		return 1
 	}
 
@@ -102,7 +102,7 @@ func (c *CPU) Step() uint {
 	}
 
 	code := c.ReadMem(c.ProgramCounter)
-	c.ProgramCounter += 1
+	c.ProgramCounter++
 	prevPC := c.ProgramCounter
 
 	op := OpCodes[code]

@@ -66,7 +66,7 @@ func (n *Noise) stepTimer() {
 		n.ShiftRegister >>= 1
 		n.ShiftRegister |= feedback << 14
 	} else {
-		n.TimerValue -= 1
+		n.TimerValue--
 	}
 }
 
@@ -76,10 +76,10 @@ func (n *Noise) stepEnvelope() {
 		n.EnvelopeValue = n.EnvelopePeriod
 		n.EnvelopeStart = false
 	} else if n.EnvelopeValue > 0 {
-		n.EnvelopeValue -= 1
+		n.EnvelopeValue--
 	} else {
 		if n.EnvelopeVol > 0 {
-			n.EnvelopeVol -= 1
+			n.EnvelopeVol--
 		} else if n.EnvelopeLoop {
 			n.EnvelopeVol = 15
 		}
@@ -89,7 +89,7 @@ func (n *Noise) stepEnvelope() {
 
 func (n *Noise) stepLength() {
 	if n.LengthEnabled && n.LengthValue > 0 {
-		n.LengthValue -= 1
+		n.LengthValue--
 	}
 }
 

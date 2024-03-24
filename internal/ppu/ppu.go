@@ -115,7 +115,7 @@ func (p *PPU) WriteOamAddr(data byte) {
 
 func (p *PPU) WriteOam(data byte) {
 	p.Oam[p.OamAddr] = data
-	p.OamAddr += 1
+	p.OamAddr++
 }
 
 func (p *PPU) WriteOamDma(data [0x100]byte) {
@@ -286,7 +286,7 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 
 func (p *PPU) tick() {
 	if p.NmiOffset != 0 {
-		p.NmiOffset -= 1
+		p.NmiOffset--
 		if p.NmiOffset == 0 {
 			p.cpu.AddNmi()
 		} else if p.NmiOffset >= 12 {
@@ -307,11 +307,11 @@ func (p *PPU) tick() {
 	}
 
 	if p.Cycles < 340 {
-		p.Cycles += 1
+		p.Cycles++
 	} else {
 		p.Cycles = 0
 		if p.Scanline < 261 {
-			p.Scanline += 1
+			p.Scanline++
 		} else {
 			p.Scanline = 0
 			p.OddFrame = !p.OddFrame

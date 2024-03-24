@@ -89,7 +89,7 @@ func NewBlargPpuMessageCallback() func(*ConsoleTest) error {
 				if b.Console.PPU.Vram[i] == 0 {
 					break
 				}
-				i += 1
+				i++
 			}
 			vram := b.Console.PPU.Vram[:i]
 			vram = re.ReplaceAll(vram, []byte("\n"))

@@ -51,17 +51,17 @@ func (t *Triangle) stepTimer() {
 	if t.TimerValue == 0 {
 		t.TimerValue = t.TimerPeriod
 		if t.LengthValue > 0 && t.CounterValue > 0 && t.TimerPeriod != 0 {
-			t.DutyValue += 1
+			t.DutyValue++
 			t.DutyValue %= 32
 		}
 	} else {
-		t.TimerValue -= 1
+		t.TimerValue--
 	}
 }
 
 func (t *Triangle) stepLength() {
 	if t.LengthEnabled && t.LengthValue > 0 {
-		t.LengthValue -= 1
+		t.LengthValue--
 	}
 }
 
@@ -69,7 +69,7 @@ func (t *Triangle) stepCounter() {
 	if t.CounterReload {
 		t.CounterValue = t.CounterPeriod
 	} else if t.CounterValue > 0 {
-		t.CounterValue -= 1
+		t.CounterValue--
 	}
 	if t.LengthEnabled {
 		t.CounterReload = false

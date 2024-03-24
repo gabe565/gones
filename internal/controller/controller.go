@@ -58,7 +58,7 @@ func (j *Controller) Read() byte {
 	}
 
 	if !j.strobe && j.index < 8 {
-		j.index += 1
+		j.index++
 	}
 	return value
 }

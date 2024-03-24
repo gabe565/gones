@@ -74,10 +74,10 @@ func (p *Square) SetEnabled(v bool) {
 func (p *Square) stepTimer() {
 	if p.TimerValue == 0 {
 		p.TimerValue = p.TimerPeriod
-		p.DutyValue += 1
+		p.DutyValue++
 		p.DutyValue %= 8
 	} else {
-		p.TimerValue -= 1
+		p.TimerValue--
 	}
 }
 
@@ -87,10 +87,10 @@ func (p *Square) stepEnvelope() {
 		p.EnvelopeValue = p.EnvelopePeriod
 		p.EnvelopeStart = false
 	} else if p.EnvelopeValue > 0 {
-		p.EnvelopeValue -= 1
+		p.EnvelopeValue--
 	} else {
 		if p.EnvelopeVol > 0 {
-			p.EnvelopeVol -= 1
+			p.EnvelopeVol--
 		} else if p.EnvelopeLoop {
 			p.EnvelopeVol = 15
 		}
@@ -106,7 +106,7 @@ func (p *Square) stepSweep() {
 		p.SweepValue = p.SweepPeriod
 		p.SweepReload = false
 	} else if p.SweepValue > 0 {
-		p.SweepValue -= 1
+		p.SweepValue--
 	} else {
 		if p.SweepEnabled {
 			p.sweep()
@@ -120,7 +120,7 @@ func (p *Square) sweep() {
 	if p.SweepNegate {
 		delta = -delta
 		if p.Channel1 {
-			delta -= 1
+			delta--
 		}
 	}
 	p.TimerPeriod += delta
@@ -128,7 +128,7 @@ func (p *Square) sweep() {
 
 func (p *Square) stepLength() {
 	if p.LengthEnabled && p.LengthValue > 0 {
-		p.LengthValue -= 1
+		p.LengthValue--
 	}
 }
 

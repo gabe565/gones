@@ -68,7 +68,7 @@ func (d *DMC) stepTimer() {
 		d.TickValue = d.TickPeriod
 		d.stepShifter()
 	} else {
-		d.TickValue -= 1
+		d.TickValue--
 	}
 }
 
@@ -77,11 +77,11 @@ func (d *DMC) stepReader() {
 		d.cpu.AddStall(4)
 		d.ShiftRegister = d.cpu.ReadMem(d.CurrAddr)
 		d.BitCount = 8
-		d.CurrAddr += 1
+		d.CurrAddr++
 		if d.CurrAddr == 0 {
 			d.CurrAddr = 0x8000
 		}
-		d.CurrLen -= 1
+		d.CurrLen--
 		if d.CurrLen == 0 {
 			if d.Loop {
 				d.restart()
@@ -108,7 +108,7 @@ func (d *DMC) stepShifter() {
 		}
 	}
 	d.ShiftRegister >>= 1
-	d.BitCount -= 1
+	d.BitCount--
 }
 
 func (d *DMC) output() byte {
