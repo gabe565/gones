@@ -63,12 +63,10 @@ func GetBlarggMessage(b *ConsoleTest) string {
 	return string(bytes.TrimSpace(message))
 }
 
-type PpuMessage struct {
-	Message string
-}
+type PpuMessageError string
 
-func (p PpuMessage) Error() string {
-	return p.Message
+func (p PpuMessageError) Error() string {
+	return string(p)
 }
 
 func NewBlargPpuMessageCallback() func(*ConsoleTest) error {
@@ -94,7 +92,7 @@ func NewBlargPpuMessageCallback() func(*ConsoleTest) error {
 			vram := b.Console.PPU.Vram[:i]
 			vram = re.ReplaceAll(vram, []byte("\n"))
 			vram = bytes.TrimSpace(vram)
-			return PpuMessage{Message: string(vram)}
+			return PpuMessageError(vram)
 		}
 
 		return nil

@@ -52,8 +52,8 @@ func Test_blarggCpuTiming(t *testing.T) {
 	}
 
 	switch err := err.(type) {
-	case PpuMessage:
-		message = err.Message
+	case PpuMessageError:
+		message = err.Error()
 	default:
 		assert.NoError(t, err)
 		return
@@ -82,8 +82,8 @@ func Test_blarggBranchTimingBasics(t *testing.T) {
 	}
 
 	switch err := err.(type) {
-	case PpuMessage:
-		message = err.Message
+	case PpuMessageError:
+		message = err.Error()
 	default:
 		assert.NoError(t, err)
 		return
@@ -112,8 +112,8 @@ func Test_blarggBranchTimingBackward(t *testing.T) {
 	}
 
 	switch err := err.(type) {
-	case PpuMessage:
-		message = err.Message
+	case PpuMessageError:
+		message = err.Error()
 	default:
 		assert.NoError(t, err)
 		return
@@ -142,8 +142,8 @@ func Test_blarggBranchTimingForward(t *testing.T) {
 	}
 
 	switch err := err.(type) {
-	case PpuMessage:
-		message = err.Message
+	case PpuMessageError:
+		message = err.Error()
 	default:
 		assert.NoError(t, err)
 		return

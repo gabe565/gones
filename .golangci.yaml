@@ -16,7 +16,7 @@ linters:
     - dupl
     - durationcheck
     - errcheck
-    # - errname
+    - errname
     # - errorlint
     - execinquery
     - exportloopref
