@@ -1,15 +1,15 @@
 package memory
 
 type Read8 interface {
-	ReadMem(uint16) byte
+	ReadMem(addr uint16) byte
 }
 
 type ReadSafe interface {
-	ReadMemSafe(uint16) byte
+	ReadMemSafe(addr uint16) byte
 }
 
 type Write8 interface {
-	WriteMem(uint16, byte)
+	WriteMem(addr uint16, data byte)
 }
 
 type ReadWrite8 interface {
@@ -18,11 +18,11 @@ type ReadWrite8 interface {
 }
 
 type Read16 interface {
-	ReadMem16(uint16) uint16
+	ReadMem16(addr uint16) uint16
 }
 
 type Write16 interface {
-	WriteMem16(uint16, uint16)
+	WriteMem16(addr uint16, data uint16)
 }
 
 type ReadWrite16 interface {

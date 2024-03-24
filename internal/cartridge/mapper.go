@@ -12,11 +12,11 @@ import (
 type Mapper interface {
 	memory.ReadWrite8
 	Cartridge() *Cartridge
-	SetCartridge(*Cartridge)
+	SetCartridge(cartridge *Cartridge)
 }
 
 type MapperOnCPUStep interface {
-	OnCPUStep(uint)
+	OnCPUStep(cycle uint)
 }
 
 type MapperOnScanline interface {
@@ -24,7 +24,7 @@ type MapperOnScanline interface {
 }
 
 type MapperOnVRAMAddr interface {
-	OnVRAMAddr(registers.Address)
+	OnVRAMAddr(addr registers.Address)
 }
 
 type MapperIRQ interface {

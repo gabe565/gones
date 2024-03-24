@@ -11,5 +11,5 @@ type NMI interface {
 }
 
 type Stall interface {
-	AddStall(uint16)
+	AddStall(cycles uint16)
 }
