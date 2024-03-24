@@ -85,7 +85,7 @@ func loadCarts(cmd *cobra.Command, args []string) ([]*entry, bool, error) {
 	if filters, err := cmd.Flags().GetStringToString("filter"); err != nil {
 		return carts, failed, err
 	} else if len(filters) != 0 {
-		carts = slices.DeleteFunc(carts, filterFunc(filters))
+		carts = slices.DeleteFunc(carts, deleteFunc(filters))
 	}
 
 	return carts, failed, nil
@@ -180,7 +180,7 @@ func sortFunc(field string) func(a, b *entry) int {
 	}
 }
 
-func filterFunc(filters map[string]string) func(e *entry) bool {
+func deleteFunc(filters map[string]string) func(e *entry) bool {
 	return func(e *entry) bool {
 		for field, filter := range filters {
 			switch strings.ToLower(field) {
