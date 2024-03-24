@@ -63,13 +63,13 @@ func GetBlarggMessage(b *ConsoleTest) string {
 	return string(bytes.TrimSpace(message))
 }
 
-type PpuMessageError string
+type PPUMessageError string
 
-func (p PpuMessageError) Error() string {
+func (p PPUMessageError) Error() string {
 	return string(p)
 }
 
-func NewBlargPpuMessageCallback() func(*ConsoleTest) error {
+func NewBlargPPUMessageCallback() func(*ConsoleTest) error {
 	var started bool
 	re := regexp.MustCompile("  +")
 
@@ -84,15 +84,15 @@ func NewBlargPpuMessageCallback() func(*ConsoleTest) error {
 		if ready := b.Console.Bus.ReadMem(0x7F1); ready == 0 {
 			var i int
 			for {
-				if b.Console.PPU.Vram[i] == 0 {
+				if b.Console.PPU.VRAM[i] == 0 {
 					break
 				}
 				i++
 			}
-			vram := b.Console.PPU.Vram[:i]
+			vram := b.Console.PPU.VRAM[:i]
 			vram = re.ReplaceAll(vram, []byte("\n"))
 			vram = bytes.TrimSpace(vram)
-			return PpuMessageError(vram)
+			return PPUMessageError(vram)
 		}
 
 		return nil

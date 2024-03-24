@@ -99,7 +99,7 @@ func GetStatesDir() (string, error) {
 	return filepath.Join(configDir, "states"), nil
 }
 
-func GetSramDir() (string, error) {
+func GetSRAMDir() (string, error) {
 	configDir, err := GetDir()
 	if err != nil {
 		return "", err

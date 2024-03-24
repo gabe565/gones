@@ -9,12 +9,12 @@ import (
 )
 
 //go:embed nes-test-roms/ppu_open_bus/ppu_open_bus.nes
-var blarggPpuOpenBus string
+var blarggPPUOpenBus string
 
-func Test_blarggPpuOpenBus(t *testing.T) {
+func Test_blarggPPUOpenBus(t *testing.T) {
 	t.Parallel()
 
-	test, err := NewBlarggTest(strings.NewReader(blarggPpuOpenBus))
+	test, err := NewBlarggTest(strings.NewReader(blarggPPUOpenBus))
 	if !assert.NoError(t, err) {
 		return
 	}
@@ -29,9 +29,9 @@ func Test_blarggPpuOpenBus(t *testing.T) {
 }
 
 //go:embed nes-test-roms/ppu_vbl_nmi/ppu_vbl_nmi.nes
-var blarggPpuVblNmi string
+var blarggPPUVblNMI string
 
-const blarggPpuVblNmiSuccess = `08 07 
+const blarggPPUVblNMISuccess = `08 07 
 Clock is skipped too late, relative to enabling BG
 
 10-even_odd_timing
@@ -40,10 +40,10 @@ Failed #3
 
 While running test 10 of 10`
 
-func Test_blarggPpuVblNmi(t *testing.T) {
+func Test_blarggPPUVblNMI(t *testing.T) {
 	t.Parallel()
 
-	test, err := NewBlarggTest(strings.NewReader(blarggPpuVblNmi))
+	test, err := NewBlarggTest(strings.NewReader(blarggPPUVblNMI))
 	if !assert.NoError(t, err) {
 		return
 	}
@@ -53,5 +53,5 @@ func Test_blarggPpuVblNmi(t *testing.T) {
 		return
 	}
 
-	assert.EqualValues(t, blarggPpuVblNmiSuccess, GetBlarggMessage(test))
+	assert.EqualValues(t, blarggPPUVblNMISuccess, GetBlarggMessage(test))
 }

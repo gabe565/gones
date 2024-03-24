@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func (c *Cartridge) SramPath() (string, error) {
+func (c *Cartridge) SRAMPath() (string, error) {
 	return fmt.Sprintf("%s.sav", c.hash), nil
 }
 

@@ -33,7 +33,7 @@ func (c *Control) Set(data byte) {
 	c.EnableNMI = data&CtrlEnableNMI != 0
 }
 
-func (c Control) VramAddr() byte {
+func (c Control) VRAMAddr() byte {
 	if c.IncrementMode {
 		return 32
 	} else {

@@ -17,8 +17,8 @@ import (
 
 type iNESFileHeader struct {
 	Magic    [4]byte
-	PrgCount byte
-	ChrCount byte
+	PRGCount byte
+	CHRCount byte
 	Control  [3]byte
 	_        [7]byte
 }
@@ -84,18 +84,18 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 		cartridge.Submapper = header.Submapper()
 	}
 
-	cartridge.prg = make([]byte, int(header.PrgCount)*consts.PrgChunkSize)
+	cartridge.prg = make([]byte, int(header.PRGCount)*consts.PRGChunkSize)
 	if _, err := io.ReadFull(r, cartridge.prg); err != nil {
 		return nil, err
 	}
 
-	cartridge.Chr = make([]byte, int(header.ChrCount)*consts.ChrChunkSize)
-	if _, err := io.ReadFull(r, cartridge.Chr); err != nil {
+	cartridge.CHR = make([]byte, int(header.CHRCount)*consts.CHRChunkSize)
+	if _, err := io.ReadFull(r, cartridge.CHR); err != nil {
 		return nil, err
 	}
 
-	if header.ChrCount == 0 {
-		cartridge.Chr = make([]byte, consts.ChrChunkSize)
+	if header.CHRCount == 0 {
+		cartridge.CHR = make([]byte, consts.CHRChunkSize)
 	}
 
 	if _, err := r.Seek(0, io.SeekStart); err != nil {
@@ -114,8 +114,8 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 		"battery": cartridge.Battery,
 		"mapper":  cartridge.Mapper,
 		"mirror":  cartridge.Mirror,
-		"prg":     header.PrgCount,
-		"chr":     header.ChrCount,
+		"prg":     header.PRGCount,
+		"chr":     header.CHRCount,
 	}).Debug("Cartridge header info")
 
 	return cartridge, nil

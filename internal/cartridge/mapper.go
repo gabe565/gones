@@ -22,12 +22,12 @@ type MapperOnScanline interface {
 	OnScanline()
 }
 
-type MapperOnVramAddr interface {
-	OnVramAddr(registers.Address)
+type MapperOnVRAMAddr interface {
+	OnVRAMAddr(registers.Address)
 }
 
-type MapperIrq interface {
-	Irq() bool
+type MapperIRQ interface {
+	IRQ() bool
 }
 
 var ErrUnsupportedMapper = errors.New("unsupported mapper")

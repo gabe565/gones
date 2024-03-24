@@ -17,7 +17,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const BaseUrl = "https://datomatic.no-intro.org/index.php"
+const BaseURL = "https://datomatic.no-intro.org/index.php"
 
 func NewDownloader(systemName string) (*Downloader, error) {
 	jar, err := cookiejar.New(nil)
@@ -40,18 +40,18 @@ type Downloader struct {
 	client *http.Client
 
 	SystemName string
-	SystemId   string
+	SystemID   string
 }
 
-func (g *Downloader) Url() string {
-	u, err := url.Parse(BaseUrl)
+func (g *Downloader) URL() string {
+	u, err := url.Parse(BaseURL)
 	if err != nil {
 		log.Panic(err)
 	}
 	q := u.Query()
 	q.Set("page", "download")
-	if g.SystemId != "" {
-		q.Set("s", g.SystemId)
+	if g.SystemID != "" {
+		q.Set("s", g.SystemID)
 	}
 	q.Set("op", "xml")
 	u.RawQuery = q.Encode()
@@ -59,7 +59,7 @@ func (g *Downloader) Url() string {
 }
 
 func (g *Downloader) Run() (err error) {
-	g.SystemId, err = g.getSystemId(g.SystemName)
+	g.SystemID, err = g.getSystemID(g.SystemName)
 	if err != nil {
 		return err
 	}
@@ -124,10 +124,10 @@ var ErrSystemNotFound = errors.New("could not find system ID")
 
 var ErrNoForm = errors.New(`could not find form"`)
 
-func (g *Downloader) getSystemId(systemName string) (string, error) {
-	log.WithFields(log.Fields{"url": g.Url(), "systemName": g.SystemName}).Info("Get system ID")
+func (g *Downloader) getSystemID(systemName string) (string, error) {
+	log.WithFields(log.Fields{"url": g.URL(), "systemName": g.SystemName}).Info("Get system ID")
 
-	res, err := g.client.Get(g.Url())
+	res, err := g.client.Get(g.URL())
 	if err != nil {
 		return "", err
 	}
@@ -178,8 +178,8 @@ func (g *Downloader) getFormParams() (map[string]string, error) {
 	postParams := make(map[string]string)
 
 	// Get session cookie
-	log.WithField("url", g.Url()).Info("Get form params")
-	res, err := g.client.Get(g.Url())
+	log.WithField("url", g.URL()).Info("Get form params")
+	res, err := g.client.Get(g.URL())
 	if err != nil {
 		return postParams, err
 	}
@@ -262,8 +262,8 @@ func (g *Downloader) prepareDownload(postFields map[string]string) (string, stri
 	}
 
 	// Request download
-	log.WithField("url", g.Url()).Info("Request download")
-	res, err := g.client.Post(g.Url(), contentType, body)
+	log.WithField("url", g.URL()).Info("Request download")
+	res, err := g.client.Post(g.URL(), contentType, body)
 	if err != nil {
 		return "", "", "", err
 	}

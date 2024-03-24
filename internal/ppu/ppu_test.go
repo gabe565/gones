@@ -7,29 +7,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func stubPpu() (*PPU, *cartridge.Cartridge) {
+func stubPPU() (*PPU, *cartridge.Cartridge) {
 	var ppu PPU
 	cart := &cartridge.Cartridge{}
-	cart.Chr = make([]byte, 2048)
+	cart.CHR = make([]byte, 2048)
 	ppu.mapper = cartridge.NewMapper2(cart)
 	return &ppu, cart
 }
 
-func TestPPU_VramWrite(t *testing.T) {
+func TestPPU_VRAMWrite(t *testing.T) {
 	t.Parallel()
 
-	ppu, _ := stubPpu()
+	ppu, _ := stubPPU()
 	ppu.WriteAddr(0x23)
 	ppu.WriteAddr(0x05)
 	ppu.WriteData(0x66)
-	assert.EqualValues(t, 0x66, ppu.Vram[0x305])
+	assert.EqualValues(t, 0x66, ppu.VRAM[0x305])
 }
 
-func TestPPU_VramRead(t *testing.T) {
+func TestPPU_VRAMRead(t *testing.T) {
 	t.Parallel()
 
-	ppu, _ := stubPpu()
-	ppu.Vram[0x305] = 0x66
+	ppu, _ := stubPPU()
+	ppu.VRAM[0x305] = 0x66
 	ppu.WriteAddr(0x23)
 	ppu.WriteAddr(0x05)
 	ppu.ReadData() // Buffer
@@ -37,12 +37,12 @@ func TestPPU_VramRead(t *testing.T) {
 	assert.EqualValues(t, 0x66, ppu.ReadData())
 }
 
-func TestPPU_VramRead_CrossPage(t *testing.T) {
+func TestPPU_VRAMRead_CrossPage(t *testing.T) {
 	t.Parallel()
 
-	ppu, _ := stubPpu()
-	ppu.Vram[0x1FF] = 0x66
-	ppu.Vram[0x200] = 0x77
+	ppu, _ := stubPPU()
+	ppu.VRAM[0x1FF] = 0x66
+	ppu.VRAM[0x200] = 0x77
 	ppu.WriteAddr(0x21)
 	ppu.WriteAddr(0xFF)
 	ppu.ReadData() // Buffer
@@ -50,14 +50,14 @@ func TestPPU_VramRead_CrossPage(t *testing.T) {
 	assert.EqualValues(t, 0x77, ppu.ReadData())
 }
 
-func TestPPU_VramRead_Step32(t *testing.T) {
+func TestPPU_VRAMRead_Step32(t *testing.T) {
 	t.Parallel()
 
-	ppu, _ := stubPpu()
+	ppu, _ := stubPPU()
 	ppu.WriteCtrl(0b100)
-	ppu.Vram[0x1FF] = 0x66
-	ppu.Vram[0x1FF+32] = 0x77
-	ppu.Vram[0x1FF+64] = 0x88
+	ppu.VRAM[0x1FF] = 0x66
+	ppu.VRAM[0x1FF+32] = 0x77
+	ppu.VRAM[0x1FF+64] = 0x88
 	ppu.WriteAddr(0x21)
 	ppu.WriteAddr(0xFF)
 	ppu.ReadData() // Buffer
@@ -69,7 +69,7 @@ func TestPPU_VramRead_Step32(t *testing.T) {
 func TestPPU_HorizontalMirror(t *testing.T) {
 	t.Parallel()
 
-	ppu, _ := stubPpu()
+	ppu, _ := stubPPU()
 	ppu.WriteAddr(0x24)
 	ppu.WriteAddr(0x05)
 	ppu.WriteData(0x66) // A
@@ -94,7 +94,7 @@ func TestPPU_HorizontalMirror(t *testing.T) {
 func TestPPU_VerticalMirror(t *testing.T) {
 	t.Parallel()
 
-	ppu, cart := stubPpu()
+	ppu, cart := stubPPU()
 	cart.Mirror = cartridge.Vertical
 	ppu.WriteAddr(0x20)
 	ppu.WriteAddr(0x05)
@@ -120,8 +120,8 @@ func TestPPU_VerticalMirror(t *testing.T) {
 func TestPPU_StatusResetsLatch(t *testing.T) {
 	t.Parallel()
 
-	ppu, _ := stubPpu()
-	ppu.Vram[0x305] = 0x66
+	ppu, _ := stubPPU()
+	ppu.VRAM[0x305] = 0x66
 	ppu.WriteAddr(0x21)
 	ppu.WriteAddr(0x23)
 	ppu.WriteAddr(0x05)
@@ -135,11 +135,11 @@ func TestPPU_StatusResetsLatch(t *testing.T) {
 	assert.EqualValues(t, 0x66, ppu.ReadData())
 }
 
-func TestPPU_VramMirror(t *testing.T) {
+func TestPPU_VRAMMirror(t *testing.T) {
 	t.Parallel()
 
-	ppu, _ := stubPpu()
-	ppu.Vram[0x305] = 0x66
+	ppu, _ := stubPPU()
+	ppu.VRAM[0x305] = 0x66
 
 	ppu.WriteAddr(0x63)
 	ppu.WriteAddr(0x05)
@@ -151,7 +151,7 @@ func TestPPU_VramMirror(t *testing.T) {
 func TestPPU_StatusResetsVblank(t *testing.T) {
 	t.Parallel()
 
-	ppu, _ := stubPpu()
+	ppu, _ := stubPPU()
 	ppu.Status.Vblank = true
 	assert.EqualValues(t, 1, ppu.ReadStatus()>>7)
 	assert.EqualValues(t, 0, ppu.ReadStatus()>>7)
@@ -160,7 +160,7 @@ func TestPPU_StatusResetsVblank(t *testing.T) {
 func TestCPU_OamReadWrite(t *testing.T) {
 	t.Parallel()
 
-	ppu, _ := stubPpu()
+	ppu, _ := stubPPU()
 	ppu.WriteOamAddr(0x10)
 	ppu.WriteOam(0x66)
 	ppu.WriteOam(0x77)
@@ -173,7 +173,7 @@ func TestCPU_OamReadWrite(t *testing.T) {
 func TestCPU_OamDma(t *testing.T) {
 	t.Parallel()
 
-	ppu, _ := stubPpu()
+	ppu, _ := stubPPU()
 
 	var data [256]byte
 	for k := range data {

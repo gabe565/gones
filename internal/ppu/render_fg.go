@@ -15,7 +15,7 @@ func (p *PPU) evaluateSprites() {
 	var count uint8
 
 	for i := range 64 {
-		sprite := p.Oam[i*4 : i*4+4 : i*4+4]
+		sprite := p.OAM[i*4 : i*4+4 : i*4+4]
 		y := sprite[0]
 		a := sprite[2]
 		x := sprite[3]

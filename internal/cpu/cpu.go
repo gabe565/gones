@@ -49,8 +49,8 @@ type CPU struct {
 
 	Cycles uint
 
-	NmiPending bool
-	IrqPending bool
+	NMIPending bool `msgpack:"alias:NmiPending"`
+	IRQPending bool `msgpack:"alias:IrqPending"`
 
 	Stall uint16
 
@@ -69,8 +69,8 @@ func (c *CPU) nmi() {
 	php(c, 0)
 	sei(c, 0)
 	c.Cycles += 7
-	c.ProgramCounter = c.ReadMem16(interrupt.NmiVector)
-	c.NmiPending = false
+	c.ProgramCounter = c.ReadMem16(interrupt.NMIVector)
+	c.NMIPending = false
 }
 
 func (c *CPU) irq() {
@@ -78,8 +78,8 @@ func (c *CPU) irq() {
 	php(c, 0)
 	sei(c, 0)
 	c.Cycles += 7
-	c.ProgramCounter = c.ReadMem16(interrupt.IrqVector)
-	c.IrqPending = false
+	c.ProgramCounter = c.ReadMem16(interrupt.IRQVector)
+	c.IRQPending = false
 }
 
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
@@ -95,9 +95,9 @@ func (c *CPU) Step() uint {
 
 	cycles := c.Cycles
 
-	if c.NmiPending {
+	if c.NMIPending {
 		c.nmi()
-	} else if c.IrqPending && !c.Status.InterruptDisable {
+	} else if c.IRQPending && !c.Status.InterruptDisable {
 		c.irq()
 	}
 
@@ -127,8 +127,8 @@ func (c *CPU) AddStall(stall uint16) {
 	c.Stall += stall
 }
 
-func (c *CPU) AddNmi() {
-	c.NmiPending = true
+func (c *CPU) AddNMI() {
+	c.NMIPending = true
 }
 
 func (c *CPU) GetCycles() uint {

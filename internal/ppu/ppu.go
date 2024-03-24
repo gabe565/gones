@@ -15,8 +15,8 @@ import (
 type CPU interface {
 	memory.Read8
 	memory.HasCycles
-	interrupt.Interruptible
-	interrupt.Stallable
+	interrupt.NMI
+	interrupt.Stall
 }
 
 func New(mapper cartridge.Mapper) *PPU {
@@ -39,10 +39,10 @@ type PPU struct {
 	TmpAddr   registers.Address
 	AddrLatch bool
 	FineX     byte
-	Vram      [0x800]byte
+	VRAM      [0x800]byte `msgpack:"alias:Vram"`
 
-	OamAddr       byte
-	Oam           [0x100]byte
+	OAMAddr       byte        `msgpack:"alias:OamAddr"`
+	OAM           [0x100]byte `msgpack:"alias:Oam"`
 	systemPalette *palette.Palette
 	Palette       [0x20]byte
 
@@ -50,7 +50,7 @@ type PPU struct {
 	Cycles   int
 	VblRace  bool
 
-	NmiOffset uint8
+	NMIOffset uint8 `msgpack:"alias:NmiOffset"`
 
 	ReadBuf    byte
 	OpenBus    byte
@@ -67,8 +67,8 @@ func (p *PPU) WriteAddr(data byte) {
 		p.TmpAddr.WriteLo(data)
 		p.Addr = p.TmpAddr
 
-		if mapper, ok := p.mapper.(cartridge.MapperOnVramAddr); ok {
-			mapper.OnVramAddr(p.Addr)
+		if mapper, ok := p.mapper.(cartridge.MapperOnVRAMAddr); ok {
+			mapper.OnVRAMAddr(p.Addr)
 		}
 	} else {
 		p.TmpAddr.WriteHi(data)
@@ -80,7 +80,7 @@ func (p *PPU) WriteCtrl(data byte) {
 	p.Ctrl.Set(data)
 	p.TmpAddr.NametableX = p.Ctrl.NametableX
 	p.TmpAddr.NametableY = p.Ctrl.NametableY
-	p.updateNmi()
+	p.updateNMI()
 }
 
 func (p *PPU) WriteMask(data byte) {
@@ -110,12 +110,12 @@ func (p *PPU) UpdatePalette(data byte) {
 }
 
 func (p *PPU) WriteOamAddr(data byte) {
-	p.OamAddr = data
+	p.OAMAddr = data
 }
 
 func (p *PPU) WriteOam(data byte) {
-	p.Oam[p.OamAddr] = data
-	p.OamAddr++
+	p.OAM[p.OAMAddr] = data
+	p.OAMAddr++
 }
 
 func (p *PPU) WriteOamDma(data [0x100]byte) {
@@ -125,8 +125,8 @@ func (p *PPU) WriteOamDma(data [0x100]byte) {
 }
 
 func (p *PPU) ReadOam() byte {
-	data := p.Oam[p.OamAddr]
-	if p.OamAddr&3 == 2 {
+	data := p.OAM[p.OAMAddr]
+	if p.OAMAddr&3 == 2 {
 		// Exclude unused bytes
 		data &= 0xE3
 	}
@@ -147,7 +147,7 @@ func (p *PPU) ReadStatus() byte {
 	status := p.Status.Get()
 	p.Status.Vblank = false
 	p.VblRace = false
-	p.updateNmi()
+	p.updateNMI()
 	p.AddrLatch = false
 	if p.Scanline == 241 && p.Cycles == 0 {
 		p.VblRace = true
@@ -161,17 +161,17 @@ func (p *PPU) WriteData(data byte) {
 	case addr < 0x2000:
 		p.mapper.WriteMem(addr, data)
 	case 0x2000 <= addr && addr < 0x3F00:
-		addr := p.MirrorVramAddr(addr)
-		p.Vram[addr] = data
+		addr := p.MirrorVRAMAddr(addr)
+		p.VRAM[addr] = data
 	case 0x3F00 <= addr && addr < 0x4000:
 		p.writePalette(addr%32, data)
 	default:
 		log.WithField("address", fmt.Sprintf("%02X", addr)).
 			Error("unexpected write to mirrored space")
 	}
-	p.Addr.Increment(p.Ctrl.VramAddr())
-	if mapper, ok := p.mapper.(cartridge.MapperOnVramAddr); ok {
-		mapper.OnVramAddr(p.Addr)
+	p.Addr.Increment(p.Ctrl.VRAMAddr())
+	if mapper, ok := p.mapper.(cartridge.MapperOnVRAMAddr); ok {
+		mapper.OnVRAMAddr(p.Addr)
 	}
 }
 
@@ -184,7 +184,7 @@ func (p *PPU) ReadData() byte {
 		p.Addr.IncrementY()
 	} else {
 		// Else increment by 1 or 32
-		p.Addr.Increment(p.Ctrl.VramAddr())
+		p.Addr.Increment(p.Ctrl.VRAMAddr())
 	}
 
 	val := p.ReadDataAddr(addr)
@@ -195,8 +195,8 @@ func (p *PPU) ReadData() byte {
 		val |= p.OpenBus & 0xC0
 	}
 
-	if mapper, ok := p.mapper.(cartridge.MapperOnVramAddr); ok {
-		mapper.OnVramAddr(p.Addr)
+	if mapper, ok := p.mapper.(cartridge.MapperOnVRAMAddr); ok {
+		mapper.OnVRAMAddr(p.Addr)
 	}
 	return val
 }
@@ -207,8 +207,8 @@ func (p *PPU) ReadDataAddr(addr uint16) byte {
 	case addr < 0x2000:
 		return p.mapper.ReadMem(addr)
 	case 0x2000 <= addr && addr < 0x3F00:
-		addr := p.MirrorVramAddr(addr)
-		return p.Vram[addr]
+		addr := p.MirrorVRAMAddr(addr)
+		return p.VRAM[addr]
 	case 0x3F00 <= addr && addr < 0x4000:
 		return p.readPalette(addr % 32)
 	default:
@@ -277,7 +277,7 @@ var MirrorLookup = [...][4]uint16{
 	cartridge.FourScreen:  {0, 1, 2, 3},
 }
 
-func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
+func (p *PPU) MirrorVRAMAddr(addr uint16) uint16 {
 	addr &= 0xFFF
 	nameTable := addr / 0x400
 	offset := addr % 0x400
@@ -285,13 +285,13 @@ func (p *PPU) MirrorVramAddr(addr uint16) uint16 {
 }
 
 func (p *PPU) tick() {
-	if p.NmiOffset != 0 {
-		p.NmiOffset--
-		if p.NmiOffset == 0 {
-			p.cpu.AddNmi()
-		} else if p.NmiOffset >= 12 {
+	if p.NMIOffset != 0 {
+		p.NMIOffset--
+		if p.NMIOffset == 0 {
+			p.cpu.AddNMI()
+		} else if p.NMIOffset >= 12 {
 			if !p.Status.Vblank || !p.Ctrl.EnableNMI {
-				p.NmiOffset = 0
+				p.NMIOffset = 0
 			}
 		}
 	}
@@ -380,11 +380,11 @@ func (p *PPU) Step(render bool) {
 	case 1:
 		if p.Scanline == 241 && !p.VblRace {
 			p.Status.Vblank = true
-			p.updateNmi()
+			p.updateNMI()
 			p.RenderDone = true
 		} else if preLine {
 			p.Status.Vblank = false
-			p.updateNmi()
+			p.updateNMI()
 			p.Status.SpriteOverflow = false
 			p.Status.SpriteZeroHit = false
 			p.VblRace = false
@@ -420,15 +420,15 @@ func (p *PPU) writePalette(addr uint16, data byte) {
 	p.Palette[addr] = data
 }
 
-func (p *PPU) updateNmi() {
+func (p *PPU) updateNMI() {
 	nmi := p.Status.Vblank && p.Ctrl.EnableNMI
 	if nmi && !p.Status.PrevVblank {
-		p.NmiOffset = 14
+		p.NMIOffset = 14
 	}
 	p.Status.PrevVblank = nmi
 }
 
-func (p *PPU) SetCpu(c CPU) {
+func (p *PPU) SetCPU(c CPU) {
 	p.cpu = c
 }
 

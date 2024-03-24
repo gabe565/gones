@@ -33,8 +33,8 @@ func stubConsole(r io.ReadSeeker) (*Console, error) {
 	console.Bus = bus.New(&conf, console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)
 
-	console.PPU.SetCpu(console.CPU)
-	console.APU.SetCpu(console.CPU)
+	console.PPU.SetCPU(console.CPU)
+	console.APU.SetCPU(console.CPU)
 
 	return &console, nil
 }

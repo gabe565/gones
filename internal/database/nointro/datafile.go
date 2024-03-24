@@ -17,7 +17,7 @@ type Header struct {
 	Version     string   `xml:"version"`
 	Date        string   `xml:"date"`
 	Author      string   `xml:"author"`
-	Url         string   `xml:"url"`
+	URL         string   `xml:"url"`
 }
 
 type Game struct {

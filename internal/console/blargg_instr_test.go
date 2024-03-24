@@ -11,7 +11,7 @@ import (
 //go:embed nes-test-roms/instr_test-v5/all_instrs.nes
 var blarggInstrTest string
 
-func Test_blarggCpuTest(t *testing.T) {
+func Test_blarggCPUTest(t *testing.T) {
 	t.Parallel()
 
 	test, err := NewBlarggTest(strings.NewReader(blarggInstrTest))
@@ -29,18 +29,18 @@ func Test_blarggCpuTest(t *testing.T) {
 }
 
 //go:embed nes-test-roms/cpu_timing_test6/cpu_timing_test.nes
-var blarggCpuTimingTest string
+var blarggCPUTimingTest string
 
-const blarggCpuTimingSuccess = `6502 TIMING TEST (16 SECONDS)
+const blarggCPUTimingSuccess = `6502 TIMING TEST (16 SECONDS)
 OFFICIAL INSTRUCTIONS ONLY
 PASSED`
 
-func Test_blarggCpuTiming(t *testing.T) {
+func Test_blarggCPUTiming(t *testing.T) {
 	t.Parallel()
 
-	callback := NewBlargPpuMessageCallback()
+	callback := NewBlargPPUMessageCallback()
 
-	test, err := NewConsoleTest(strings.NewReader(blarggCpuTimingTest), callback)
+	test, err := NewConsoleTest(strings.NewReader(blarggCPUTimingTest), callback)
 	if !assert.NoError(t, err) {
 		return
 	}
@@ -50,7 +50,7 @@ func Test_blarggCpuTiming(t *testing.T) {
 		return
 	}
 
-	assert.EqualValues(t, blarggCpuTimingSuccess, err.Error())
+	assert.EqualValues(t, blarggCPUTimingSuccess, err.Error())
 }
 
 //go:embed nes-test-roms/branch_timing_tests/1.Branch_Basics.nes
@@ -59,7 +59,7 @@ var blarggBranchTimingBasicsTest string
 func Test_blarggBranchTimingBasics(t *testing.T) {
 	t.Parallel()
 
-	callback := NewBlargPpuMessageCallback()
+	callback := NewBlargPPUMessageCallback()
 
 	test, err := NewConsoleTest(strings.NewReader(blarggBranchTimingBasicsTest), callback)
 	if !assert.NoError(t, err) {
@@ -80,7 +80,7 @@ var blarggBranchTimingBackwardTest string
 func Test_blarggBranchTimingBackward(t *testing.T) {
 	t.Parallel()
 
-	callback := NewBlargPpuMessageCallback()
+	callback := NewBlargPPUMessageCallback()
 
 	test, err := NewConsoleTest(strings.NewReader(blarggBranchTimingBackwardTest), callback)
 	if !assert.NoError(t, err) {
@@ -101,7 +101,7 @@ var blarggBranchTimingForwardTest string
 func Test_blarggBranchTimingForward(t *testing.T) {
 	t.Parallel()
 
-	callback := NewBlargPpuMessageCallback()
+	callback := NewBlargPPUMessageCallback()
 
 	test, err := NewConsoleTest(strings.NewReader(blarggBranchTimingForwardTest), callback)
 	if !assert.NoError(t, err) {

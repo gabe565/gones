@@ -10,12 +10,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (c *Console) SaveSram() error {
+func (c *Console) SaveSRAM() error {
 	if !c.Cartridge.Battery {
 		return nil
 	}
 
-	path, err := c.Cartridge.SramPath()
+	path, err := c.Cartridge.SRAMPath()
 	if err != nil {
 		return err
 	}
@@ -30,15 +30,15 @@ func (c *Console) SaveSram() error {
 		return err
 	}
 
-	return os.WriteFile(path, c.Cartridge.Sram, 0o644)
+	return os.WriteFile(path, c.Cartridge.SRAM, 0o644)
 }
 
-func (c *Console) LoadSram() error {
+func (c *Console) LoadSRAM() error {
 	if !c.Cartridge.Battery {
 		return nil
 	}
 
-	path, err := c.Cartridge.SramPath()
+	path, err := c.Cartridge.SRAMPath()
 	if err != nil {
 		return err
 	}
@@ -50,6 +50,6 @@ func (c *Console) LoadSram() error {
 
 	log.WithField("file", filepath.Base(path)).Debug("Loading save from disk")
 
-	c.Cartridge.Sram = sram
+	c.Cartridge.SRAM = sram
 	return nil
 }

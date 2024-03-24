@@ -12,12 +12,12 @@ import (
 
 type CPU interface {
 	memory.Read8
-	interrupt.Stallable
+	interrupt.Stall
 }
 
 const (
-	FrameCounterRate  = consts.CpuFrequency / 240.0
-	DefaultSampleRate = consts.CpuFrequency / consts.AudioSampleRate * consts.FrameRateDifference
+	FrameCounterRate  = consts.CPUFrequency / 240.0
+	DefaultSampleRate = consts.CPUFrequency / consts.AudioSampleRate * consts.FrameRateDifference
 	BufferCap         = consts.AudioSampleRate / 20
 )
 
@@ -76,8 +76,8 @@ type APU struct {
 	FramePeriod uint8
 	FrameValue  byte
 
-	IrqEnabled bool
-	IrqPending bool
+	IRQEnabled bool `msgpack:"alias:IrqEnabled"`
+	IRQPending bool `msgpack:"alias:IrqPending"`
 
 	buf chan float64
 }
@@ -100,10 +100,10 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 		a.Triangle.SetEnabled(data&StatusTriangle != 0)
 		a.Noise.SetEnabled(data&StatusNoise != 0)
 		a.DMC.SetEnabled(data&StatusDMC != 0)
-		a.DMC.IrqPending = false
+		a.DMC.IRQPending = false
 	case addr == 0x4017:
 		a.FramePeriod = 4 + data>>7&1
-		a.IrqEnabled = data>>6&1 == 0
+		a.IRQEnabled = data>>6&1 == 0
 		if a.FramePeriod == 5 {
 			a.stepEnvelope()
 			a.stepSweep()
@@ -133,7 +133,7 @@ func (a *APU) ReadMem(addr uint16) byte {
 		if a.DMC.CurrLen > 0 {
 			data |= StatusDMC
 		}
-		a.IrqPending = false
+		a.IRQPending = false
 		return data
 	default:
 		return 0
@@ -167,10 +167,10 @@ func (a *APU) Step() bool {
 		a.sendSample()
 	}
 
-	return a.IrqPending || a.DMC.IrqPending
+	return a.IRQPending || a.DMC.IRQPending
 }
 
-func (a *APU) SetCpu(c CPU) {
+func (a *APU) SetCPU(c CPU) {
 	a.DMC.cpu = c
 }
 
@@ -190,8 +190,8 @@ func (a *APU) stepFrameCounter() {
 			a.stepEnvelope()
 			a.stepSweep()
 			a.stepLength()
-			if a.FramePeriod == 4 && a.IrqEnabled {
-				a.IrqPending = true
+			if a.FramePeriod == 4 && a.IRQEnabled {
+				a.IRQPending = true
 			}
 		}
 	}

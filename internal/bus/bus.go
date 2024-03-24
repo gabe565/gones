@@ -20,7 +20,7 @@ func New(conf *config.Config, mapper cartridge.Mapper, ppu *ppu.PPU, apu *apu.AP
 }
 
 type Bus struct {
-	CpuVram     [0x800]byte
+	CPUVRAM     [0x800]byte `msgpack:"alias:CpuVram"`
 	mapper      cartridge.Mapper
 	apu         *apu.APU
 	ppu         *ppu.PPU
@@ -34,7 +34,7 @@ func (b *Bus) ReadMem(addr uint16) byte {
 	switch {
 	case addr < 0x2000:
 		addr &= 0x07FF
-		b.OpenBus = b.CpuVram[addr]
+		b.OpenBus = b.CPUVRAM[addr]
 	case 0x2000 <= addr && addr <= 0x2007, addr == 0x4014:
 		return b.ppu.ReadMem(addr)
 	case 0x2008 <= addr && addr < 0x4000:
@@ -76,7 +76,7 @@ func (b *Bus) WriteMem(addr uint16, data byte) {
 	switch {
 	case addr < 0x2000:
 		addr &= 0x07FF
-		b.CpuVram[addr] = data
+		b.CPUVRAM[addr] = data
 	case 0x2000 <= addr && addr <= 0x2007, addr == 0x4014:
 		b.ppu.WriteMem(addr, data)
 		return

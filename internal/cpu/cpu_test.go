@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func stubCpu(program []byte) *CPU {
+func stubCPU(program []byte) *CPU {
 	cart := cartridge.FromBytes(program)
 	mapper := cartridge.NewMapper2(cart)
 	ppu := ppu.New(mapper)
@@ -19,14 +19,14 @@ func stubCpu(program []byte) *CPU {
 	apu := apu.New(&conf)
 	bus := bus.New(&conf, mapper, ppu, apu)
 	cpu := New(bus)
-	apu.SetCpu(cpu)
+	apu.SetCPU(cpu)
 	return cpu
 }
 
 func Test_0xa9_lda_immediate_load_data(t *testing.T) {
 	t.Parallel()
 
-	cpu := stubCpu([]byte{0xA9, 0x05, 0x00})
+	cpu := stubCPU([]byte{0xA9, 0x05, 0x00})
 	for {
 		if cpu.Step(); !assert.NoError(t, cpu.StepErr) {
 			return
@@ -44,7 +44,7 @@ func Test_0xa9_lda_immediate_load_data(t *testing.T) {
 func Test_0xa9_lda_zero_flag(t *testing.T) {
 	t.Parallel()
 
-	cpu := stubCpu([]byte{0xA9, 0x00, 0x00})
+	cpu := stubCPU([]byte{0xA9, 0x00, 0x00})
 	for {
 		if cpu.Step(); !assert.NoError(t, cpu.StepErr) {
 			return
@@ -60,7 +60,7 @@ func Test_0xa9_lda_zero_flag(t *testing.T) {
 func Test_0xaa_tax_move_a_to_x(t *testing.T) {
 	t.Parallel()
 
-	cpu := stubCpu([]byte{0xA9, 0x0A, 0xAA, 0x00})
+	cpu := stubCPU([]byte{0xA9, 0x0A, 0xAA, 0x00})
 	for {
 		if cpu.Step(); !assert.NoError(t, cpu.StepErr) {
 			return
@@ -76,7 +76,7 @@ func Test_0xaa_tax_move_a_to_x(t *testing.T) {
 func Test_5_operations(t *testing.T) {
 	t.Parallel()
 
-	cpu := stubCpu([]byte{0xA9, 0xC0, 0xAA, 0xE8, 0x00})
+	cpu := stubCPU([]byte{0xA9, 0xC0, 0xAA, 0xE8, 0x00})
 	for {
 		if cpu.Step(); !assert.NoError(t, cpu.StepErr) {
 			return
@@ -92,7 +92,7 @@ func Test_5_operations(t *testing.T) {
 func Test_inx_overflow(t *testing.T) {
 	t.Parallel()
 
-	cpu := stubCpu([]byte{0xA9, 0xFF, 0xAA, 0xE8, 0xE8, 0x00})
+	cpu := stubCPU([]byte{0xA9, 0xFF, 0xAA, 0xE8, 0xE8, 0x00})
 	for {
 		if cpu.Step(); !assert.NoError(t, cpu.StepErr) {
 			return
@@ -108,7 +108,7 @@ func Test_inx_overflow(t *testing.T) {
 func Test_lda_from_memory(t *testing.T) {
 	t.Parallel()
 
-	cpu := stubCpu([]byte{0xA5, 0x10, 0x00})
+	cpu := stubCPU([]byte{0xA5, 0x10, 0x00})
 	cpu.WriteMem(0x10, 0x55)
 	for {
 		if cpu.Step(); !assert.NoError(t, cpu.StepErr) {

@@ -9,7 +9,7 @@ import (
 func TestCPU_TraceFormat(t *testing.T) {
 	t.Parallel()
 
-	c := stubCpu([]byte{0xA2, 0x01, 0xca, 0x88, 0x00})
+	c := stubCPU([]byte{0xA2, 0x01, 0xca, 0x88, 0x00})
 	traces := make([]string, 0)
 	c.Accumulator = 1
 	c.RegisterX = 2
@@ -44,7 +44,7 @@ func TestCPU_TraceFormat(t *testing.T) {
 func TestCPU_Trace_MemAccess(t *testing.T) {
 	t.Parallel()
 
-	c := stubCpu([]byte{0x11, 0x33})
+	c := stubCPU([]byte{0x11, 0x33})
 	traces := make([]string, 0)
 	c.WriteMem(0x33, 0)
 	c.WriteMem(0x34, 4)

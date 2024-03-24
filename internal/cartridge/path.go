@@ -9,8 +9,8 @@ import (
 	"github.com/gabe565/gones/internal/config"
 )
 
-func (c *Cartridge) SramPath() (string, error) {
-	sramDir, err := config.GetSramDir()
+func (c *Cartridge) SRAMPath() (string, error) {
+	sramDir, err := config.GetSRAMDir()
 	if err != nil {
 		return "", err
 	}

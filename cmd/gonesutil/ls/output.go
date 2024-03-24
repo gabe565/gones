@@ -14,8 +14,8 @@ type Format string
 
 const (
 	FormatTable Format = "table"
-	FormatJson  Format = "json"
-	FormatYaml  Format = "yaml"
+	FormatJSON  Format = "json"
+	FormatYAML  Format = "yaml"
 )
 
 var ErrInvalidFormat = errors.New("invalid format")
@@ -24,11 +24,11 @@ func printEntries(out io.Writer, carts []*entry, format Format) error {
 	switch format {
 	case FormatTable:
 		return printTable(out, carts)
-	case FormatJson:
+	case FormatJSON:
 		encoder := json.NewEncoder(out)
 		encoder.SetIndent("", "  ")
 		return encoder.Encode(carts)
-	case FormatYaml:
+	case FormatYAML:
 		encoder := yaml.NewEncoder(out)
 		return encoder.Encode(carts)
 	}

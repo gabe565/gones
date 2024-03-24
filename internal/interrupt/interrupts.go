@@ -2,14 +2,14 @@ package interrupt
 
 const (
 	ResetVector = 0xFFFC
-	NmiVector   = 0xFFFA
-	IrqVector   = 0xFFFE
+	NMIVector   = 0xFFFA
+	IRQVector   = 0xFFFE
 )
 
-type Interruptible interface {
-	AddNmi()
+type NMI interface {
+	AddNMI()
 }
 
-type Stallable interface {
+type Stall interface {
 	AddStall(uint16)
 }

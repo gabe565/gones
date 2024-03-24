@@ -77,7 +77,7 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 		return &console, err
 	}
 
-	if err := console.LoadSram(); err != nil && !errors.Is(err, os.ErrNotExist) {
+	if err := console.LoadSRAM(); err != nil && !errors.Is(err, os.ErrNotExist) {
 		return &console, err
 	}
 
@@ -90,8 +90,8 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 	console.Bus = bus.New(conf, console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)
 
-	console.PPU.SetCpu(console.CPU)
-	console.APU.SetCpu(console.CPU)
+	console.PPU.SetCPU(console.CPU)
+	console.APU.SetCPU(console.CPU)
 
 	if conf.Audio.Enabled {
 		console.audioCtx = audio.NewContext(consts.AudioSampleRate)
@@ -135,7 +135,7 @@ func (c *Console) Close() error {
 			return err
 		}
 	}
-	if err := c.SaveSram(); err != nil {
+	if err := c.SaveSRAM(); err != nil {
 		return err
 	}
 	return nil
@@ -162,11 +162,11 @@ func (c *Console) Step(render bool) {
 		irq = c.APU.Step() || irq
 	}
 
-	if mapper, ok := c.Mapper.(cartridge.MapperIrq); ok {
-		irq = mapper.Irq() || irq
+	if mapper, ok := c.Mapper.(cartridge.MapperIRQ); ok {
+		irq = mapper.IRQ() || irq
 	}
 
-	c.CPU.IrqPending = irq
+	c.CPU.IRQPending = irq
 }
 
 func (c *Console) Reset() {
@@ -222,7 +222,7 @@ func (c *Console) Update() error {
 	if c.autosave != nil {
 		select {
 		case <-c.autosave.C:
-			if err := c.SaveSram(); err != nil {
+			if err := c.SaveSRAM(); err != nil {
 				log.WithError(err).Error("Auto-save failed")
 			}
 			if c.config.State.Resume {

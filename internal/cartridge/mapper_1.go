@@ -10,7 +10,7 @@ func NewMapper1(cartridge *Cartridge) Mapper {
 		cartridge:     cartridge,
 		ShiftRegister: 0x10,
 	}
-	mapper.PrgOffsets[1] = mapper.prgBankOffset(-1)
+	mapper.PRGOffsets[1] = mapper.prgBankOffset(-1)
 	return mapper
 }
 
@@ -18,13 +18,13 @@ type Mapper1 struct {
 	cartridge     *Cartridge
 	ShiftRegister byte
 	Control       byte
-	PrgMode       byte
-	ChrMode       bool
-	PrgBank       byte
-	ChrBank0      byte
-	ChrBank1      byte
-	PrgOffsets    [2]int
-	ChrOffsets    [2]int
+	PRGMode       byte   `msgpack:"alias:PrgMode"`
+	CHRMode       bool   `msgpack:"alias:ChrMode"`
+	PRGBank       byte   `msgpack:"alias:PrgBank"`
+	CHRBank0      byte   `msgpack:"alias:ChrBank0"`
+	CHRBank1      byte   `msgpack:"alias:ChrBank1"`
+	PRGOffsets    [2]int `msgpack:"alias:PrgOffsets"`
+	CHROffsets    [2]int `msgpack:"alias:ChrOffsets"`
 }
 
 func (m *Mapper1) Cartridge() *Cartridge { return m.cartridge }
@@ -36,15 +36,15 @@ func (m *Mapper1) ReadMem(addr uint16) byte {
 	case addr < 0x2000:
 		bank := addr / 0x1000
 		offset := int(addr % 0x1000)
-		return m.cartridge.Chr[m.ChrOffsets[bank]+offset]
+		return m.cartridge.CHR[m.CHROffsets[bank]+offset]
 	case 0x6000 <= addr && addr < 0x8000:
 		addr -= 0x6000
-		return m.cartridge.Sram[addr]
+		return m.cartridge.SRAM[addr]
 	case 0x8000 <= addr:
 		addr -= 0x8000
-		bank := addr / consts.PrgChunkSize
-		offset := int(addr % consts.PrgChunkSize)
-		return m.cartridge.prg[m.PrgOffsets[bank]+offset]
+		bank := addr / consts.PRGChunkSize
+		offset := int(addr % consts.PRGChunkSize)
+		return m.cartridge.prg[m.PRGOffsets[bank]+offset]
 	default:
 		log.Warnf("invalid mapper 1 read from $%04X", addr)
 		return 0
@@ -56,10 +56,10 @@ func (m *Mapper1) WriteMem(addr uint16, data byte) {
 	case addr < 0x2000:
 		bank := addr / 0x1000
 		offset := int(addr % 0x1000)
-		m.cartridge.Chr[m.ChrOffsets[bank]+offset] = data
+		m.cartridge.CHR[m.CHROffsets[bank]+offset] = data
 	case 0x6000 <= addr && addr < 0x8000:
 		addr -= 0x6000
-		m.cartridge.Sram[addr] = data
+		m.cartridge.SRAM[addr] = data
 	case 0x8000 <= addr:
 		if data>>7&1 == 1 {
 			m.ShiftRegister = 0x10
@@ -74,13 +74,13 @@ func (m *Mapper1) WriteMem(addr uint16, data byte) {
 				case addr < 0xA000:
 					m.writeControl(data)
 				case 0xA000 <= addr && addr < 0xC000:
-					m.ChrBank0 = data
+					m.CHRBank0 = data
 					m.updateOffsets()
 				case 0xC000 <= addr && addr < 0xE000:
-					m.ChrBank1 = data
+					m.CHRBank1 = data
 					m.updateOffsets()
 				case 0xE000 <= addr:
-					m.PrgBank = data & 0xF
+					m.PRGBank = data & 0xF
 					m.updateOffsets()
 				}
 				m.ShiftRegister = 0x10
@@ -93,8 +93,8 @@ func (m *Mapper1) WriteMem(addr uint16, data byte) {
 
 func (m *Mapper1) writeControl(data byte) {
 	m.Control = data
-	m.ChrMode = data>>4&1 == 1
-	m.PrgMode = data >> 2 & 3
+	m.CHRMode = data>>4&1 == 1
+	m.PRGMode = data >> 2 & 3
 	switch data & 3 {
 	case 0:
 		m.cartridge.Mirror = SingleLower
@@ -112,8 +112,8 @@ func (m *Mapper1) prgBankOffset(i int) int {
 	if i >= 0x80 {
 		i -= 0x100
 	}
-	i %= len(m.cartridge.prg) / consts.PrgChunkSize
-	offset := i * consts.PrgChunkSize
+	i %= len(m.cartridge.prg) / consts.PRGChunkSize
+	offset := i * consts.PRGChunkSize
 	if offset < 0 {
 		offset += len(m.cartridge.prg)
 	}
@@ -124,32 +124,32 @@ func (m *Mapper1) chrBankOffset(i int) int {
 	if i >= 0x80 {
 		i -= 0x100
 	}
-	i %= len(m.cartridge.Chr) / 0x1000
+	i %= len(m.cartridge.CHR) / 0x1000
 	offset := i * 0x1000
 	if offset < 0 {
-		offset += len(m.cartridge.Chr)
+		offset += len(m.cartridge.CHR)
 	}
 	return offset
 }
 
 func (m *Mapper1) updateOffsets() {
-	switch m.PrgMode {
+	switch m.PRGMode {
 	case 0, 1:
-		m.PrgOffsets[0] = m.prgBankOffset(int(m.PrgBank & 0xFE))
-		m.PrgOffsets[1] = m.prgBankOffset(int(m.PrgBank | 0x01))
+		m.PRGOffsets[0] = m.prgBankOffset(int(m.PRGBank & 0xFE))
+		m.PRGOffsets[1] = m.prgBankOffset(int(m.PRGBank | 0x01))
 	case 2:
-		m.PrgOffsets[0] = 0
-		m.PrgOffsets[1] = m.prgBankOffset(int(m.PrgBank))
+		m.PRGOffsets[0] = 0
+		m.PRGOffsets[1] = m.prgBankOffset(int(m.PRGBank))
 	case 3:
-		m.PrgOffsets[0] = m.prgBankOffset(int(m.PrgBank))
-		m.PrgOffsets[1] = m.prgBankOffset(-1)
+		m.PRGOffsets[0] = m.prgBankOffset(int(m.PRGBank))
+		m.PRGOffsets[1] = m.prgBankOffset(-1)
 	}
 
-	if m.ChrMode {
-		m.ChrOffsets[0] = m.chrBankOffset(int(m.ChrBank0))
-		m.ChrOffsets[1] = m.chrBankOffset(int(m.ChrBank1))
+	if m.CHRMode {
+		m.CHROffsets[0] = m.chrBankOffset(int(m.CHRBank0))
+		m.CHROffsets[1] = m.chrBankOffset(int(m.CHRBank1))
 	} else {
-		m.ChrOffsets[0] = m.chrBankOffset(int(m.ChrBank0 & 0xFE))
-		m.ChrOffsets[1] = m.chrBankOffset(int(m.ChrBank0 | 0x01))
+		m.CHROffsets[0] = m.chrBankOffset(int(m.CHRBank0 & 0xFE))
+		m.CHROffsets[1] = m.chrBankOffset(int(m.CHRBank0 | 0x01))
 	}
 }
