@@ -77,7 +77,7 @@ linters:
     - testableexamples
     # - testifylint
     - typecheck
-    # - unconvert
+    - unconvert
     - unparam
     - unused
     - usestdlibvars
