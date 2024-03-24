@@ -135,7 +135,7 @@ func asl(c *CPU, mode AddressingMode) {
 		data = c.ReadMem(addr)
 	}
 	c.Status.Carry = data>>7 == 1
-	data = data << 1
+	data <<= 1
 	if mode == Accumulator {
 		c.setAccumulator(data)
 	} else {

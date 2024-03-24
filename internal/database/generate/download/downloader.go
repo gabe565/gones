@@ -220,8 +220,7 @@ func (g *Downloader) getFormParams() (map[string]string, error) {
 	// Iterate over inputs
 	node.Find("input").Each(func(i int, s *goquery.Selection) {
 		if inputType, exists := s.Attr("type"); exists {
-			switch inputType {
-			case "radio":
+			if inputType == "radio" {
 				// Skip unchecked radio buttons
 				if _, exists := s.Attr("checked"); !exists {
 					return

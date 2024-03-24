@@ -28,7 +28,7 @@ linters:
     - gochecknoinits
     - gochecksumtype
     - goconst
-    # - gocritic
+    - gocritic
     - gocyclo
     - godox
     # - goerr113

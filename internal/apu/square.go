@@ -82,13 +82,14 @@ func (p *Square) stepTimer() {
 }
 
 func (p *Square) stepEnvelope() {
-	if p.EnvelopeStart {
+	switch {
+	case p.EnvelopeStart:
 		p.EnvelopeVol = 15
 		p.EnvelopeValue = p.EnvelopePeriod
 		p.EnvelopeStart = false
-	} else if p.EnvelopeValue > 0 {
+	case p.EnvelopeValue > 0:
 		p.EnvelopeValue--
-	} else {
+	default:
 		if p.EnvelopeVol > 0 {
 			p.EnvelopeVol--
 		} else if p.EnvelopeLoop {
@@ -99,15 +100,16 @@ func (p *Square) stepEnvelope() {
 }
 
 func (p *Square) stepSweep() {
-	if p.SweepReload {
+	switch {
+	case p.SweepReload:
 		if p.SweepEnabled && p.SweepValue == 0 {
 			p.sweep()
 		}
 		p.SweepValue = p.SweepPeriod
 		p.SweepReload = false
-	} else if p.SweepValue > 0 {
+	case p.SweepValue > 0:
 		p.SweepValue--
-	} else {
+	default:
 		if p.SweepEnabled {
 			p.sweep()
 		}

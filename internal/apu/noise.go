@@ -71,13 +71,14 @@ func (n *Noise) stepTimer() {
 }
 
 func (n *Noise) stepEnvelope() {
-	if n.EnvelopeStart {
+	switch {
+	case n.EnvelopeStart:
 		n.EnvelopeVol = 15
 		n.EnvelopeValue = n.EnvelopePeriod
 		n.EnvelopeStart = false
-	} else if n.EnvelopeValue > 0 {
+	case n.EnvelopeValue > 0:
 		n.EnvelopeValue--
-	} else {
+	default:
 		if n.EnvelopeVol > 0 {
 			n.EnvelopeVol--
 		} else if n.EnvelopeLoop {
