@@ -15,6 +15,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	PathField    = "path"
+	NameField    = "name"
+	MapperField  = "mapper"
+	BatteryField = "battery"
+	MirrorField  = "mirror"
+	HashField    = "hash"
+)
+
 func New() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "ls [path...]",
@@ -33,10 +42,10 @@ func New() *cobra.Command {
 	cmd.Flags().StringToStringP("filter", "f", map[string]string{}, "Filter by a field")
 	_ = cmd.RegisterFlagCompletionFunc("filter", completeFilter)
 
-	cmd.Flags().StringP("sort", "s", "path", "Sort by a field")
+	cmd.Flags().StringP("sort", "s", PathField, "Sort by a field")
 	_ = cmd.RegisterFlagCompletionFunc(
 		"sort",
-		cobra.FixedCompletions([]string{"path", "name", "mapper", "battery", "mirror"}, cobra.ShellCompDirectiveNoFileComp),
+		cobra.FixedCompletions([]string{PathField, NameField, MapperField, BatteryField, MirrorField}, cobra.ShellCompDirectiveNoFileComp),
 	)
 
 	cmd.Flags().BoolP("reverse", "r", false, "Reverse the output")
@@ -157,13 +166,13 @@ func sortFunc(field string) func(a, b *entry) int {
 	field = strings.ToLower(field)
 	return func(a, b *entry) int {
 		switch field {
-		case "path":
+		case PathField:
 			return strings.Compare(a.Path, b.Path)
-		case "name":
+		case NameField:
 			return strings.Compare(a.Name, b.Name)
-		case "mapper":
+		case MapperField:
 			return int(a.Mapper) - int(b.Mapper)
-		case "battery":
+		case BatteryField:
 			if a.Battery && b.Battery {
 				return 0
 			}
@@ -171,7 +180,7 @@ func sortFunc(field string) func(a, b *entry) int {
 				return 1
 			}
 			return -1
-		case "mirror":
+		case MirrorField:
 			return strings.Compare(a.Mirror, b.Mirror)
 		default:
 			log.WithField("field", field).Fatal("invalid sort field")
@@ -184,25 +193,25 @@ func deleteFunc(filters map[string]string) func(e *entry) bool {
 	return func(e *entry) bool {
 		for field, filter := range filters {
 			switch strings.ToLower(field) {
-			case "name":
+			case NameField:
 				return !strings.Contains(strings.ToLower(e.Name), strings.ToLower(filter))
-			case "mapper":
+			case MapperField:
 				parsed, err := strconv.ParseUint(filter, 10, 8)
 				if err != nil {
 					log.WithError(err).Fatal("invalid mapper filter value")
 				}
 
 				return byte(parsed) != e.Mapper
-			case "mirror":
+			case MirrorField:
 				return !strings.Contains(strings.ToLower(e.Mirror), strings.ToLower(filter))
-			case "battery":
+			case BatteryField:
 				parsed, err := strconv.ParseBool(filter)
 				if err != nil {
 					log.WithError(err).Fatal("invalid battery filter value")
 				}
 
 				return parsed != e.Battery
-			case "hash":
+			case HashField:
 				return filter != e.Hash
 			}
 		}
@@ -221,15 +230,15 @@ func completeFilter(cmd *cobra.Command, args []string, toComplete string) ([]str
 	param, _, _ := strings.Cut(toComplete, "=")
 	for _, cart := range carts {
 		switch param {
-		case "name":
+		case NameField:
 			matches = append(matches, param+"="+cart.Name)
-		case "mapper":
+		case MapperField:
 			matches = append(matches, param+"="+strconv.Itoa(int(cart.Mapper)))
-		case "mirror":
+		case MirrorField:
 			matches = append(matches, param+"="+cart.Mirror)
-		case "battery":
+		case BatteryField:
 			matches = append(matches, param+"="+strconv.FormatBool(cart.Battery))
-		case "hash":
+		case HashField:
 			matches = append(matches, param+"="+cart.Hash+"\t"+cart.Name)
 		}
 	}
