@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 //go:embed nes-test-roms/ppu_open_bus/ppu_open_bus.nes
@@ -15,14 +16,8 @@ func Test_blarggPPUOpenBus(t *testing.T) {
 	t.Parallel()
 
 	test, err := NewBlarggTest(strings.NewReader(blarggPPUOpenBus))
-	if !assert.NoError(t, err) {
-		return
-	}
-
-	err = test.Run()
-	if !assert.NoError(t, err) {
-		return
-	}
+	require.NoError(t, err)
+	require.NoError(t, test.Run())
 
 	assert.EqualValues(t, 0, GetBlarggStatus(test))
 	assert.EqualValues(t, "ppu_open_bus\n\nPassed", GetBlarggMessage(test))
@@ -44,14 +39,8 @@ func Test_blarggPPUVblNMI(t *testing.T) {
 	t.Parallel()
 
 	test, err := NewBlarggTest(strings.NewReader(blarggPPUVblNMI))
-	if !assert.NoError(t, err) {
-		return
-	}
-
-	err = test.Run()
-	if !assert.NoError(t, err) {
-		return
-	}
+	require.NoError(t, err)
+	require.NoError(t, test.Run())
 
 	assert.EqualValues(t, blarggPPUVblNMISuccess, GetBlarggMessage(test))
 }

@@ -80,7 +80,7 @@ linters:
     - stylecheck
     - tenv
     - testableexamples
-    # - testifylint
+    - testifylint
     - typecheck
     - unconvert
     - unparam

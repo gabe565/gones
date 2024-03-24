@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCPU_TraceFormat(t *testing.T) {
@@ -16,9 +17,8 @@ func TestCPU_TraceFormat(t *testing.T) {
 	c.RegisterY = 3
 	for {
 		traces = append(traces, c.Trace())
-		if c.Step(); !assert.NoError(t, c.StepErr) {
-			return
-		}
+		c.Step()
+		require.NoError(t, c.StepErr)
 		if c.Status.Break {
 			break
 		}
@@ -51,9 +51,8 @@ func TestCPU_Trace_MemAccess(t *testing.T) {
 	c.WriteMem(0x400, 0xAA)
 	for {
 		traces = append(traces, c.Trace())
-		if c.Step(); !assert.NoError(t, c.StepErr) {
-			return
-		}
+		c.Step()
+		require.NoError(t, c.StepErr)
 		if c.Status.Break {
 			break
 		}

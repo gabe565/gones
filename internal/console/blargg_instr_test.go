@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 //go:embed nes-test-roms/instr_test-v5/all_instrs.nes
@@ -15,14 +16,8 @@ func Test_blarggCPUTest(t *testing.T) {
 	t.Parallel()
 
 	test, err := NewBlarggTest(strings.NewReader(blarggInstrTest))
-	if !assert.NoError(t, err) {
-		return
-	}
-
-	err = test.Run()
-	if !assert.NoError(t, err) {
-		return
-	}
+	require.NoError(t, err)
+	require.NoError(t, test.Run())
 
 	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
 	assert.EqualValues(t, "All 16 tests passed", GetBlarggMessage(test))
@@ -41,14 +36,9 @@ func Test_blarggCPUTiming(t *testing.T) {
 	callback := NewBlargPPUMessageCallback()
 
 	test, err := NewConsoleTest(strings.NewReader(blarggCPUTimingTest), callback)
-	if !assert.NoError(t, err) {
-		return
-	}
-
+	require.NoError(t, err)
 	err = test.Run()
-	if !assert.Error(t, err) {
-		return
-	}
+	require.Error(t, err)
 
 	assert.EqualValues(t, blarggCPUTimingSuccess, err.Error())
 }
@@ -62,14 +52,9 @@ func Test_blarggBranchTimingBasics(t *testing.T) {
 	callback := NewBlargPPUMessageCallback()
 
 	test, err := NewConsoleTest(strings.NewReader(blarggBranchTimingBasicsTest), callback)
-	if !assert.NoError(t, err) {
-		return
-	}
-
+	require.NoError(t, err)
 	err = test.Run()
-	if !assert.Error(t, err) {
-		return
-	}
+	require.Error(t, err)
 
 	assert.EqualValues(t, "BRANCH TIMING BASICS\nPASSED", err.Error())
 }
@@ -83,14 +68,9 @@ func Test_blarggBranchTimingBackward(t *testing.T) {
 	callback := NewBlargPPUMessageCallback()
 
 	test, err := NewConsoleTest(strings.NewReader(blarggBranchTimingBackwardTest), callback)
-	if !assert.NoError(t, err) {
-		return
-	}
-
+	require.NoError(t, err)
 	err = test.Run()
-	if !assert.Error(t, err) {
-		return
-	}
+	require.Error(t, err)
 
 	assert.EqualValues(t, "BACKWARD BRANCH TIMING\nPASSED", err.Error())
 }
@@ -104,14 +84,9 @@ func Test_blarggBranchTimingForward(t *testing.T) {
 	callback := NewBlargPPUMessageCallback()
 
 	test, err := NewConsoleTest(strings.NewReader(blarggBranchTimingForwardTest), callback)
-	if !assert.NoError(t, err) {
-		return
-	}
-
+	require.NoError(t, err)
 	err = test.Run()
-	if !assert.Error(t, err) {
-		return
-	}
+	require.Error(t, err)
 
 	assert.EqualValues(t, "FORWARD BRANCH TIMING\nPASSED", err.Error())
 }

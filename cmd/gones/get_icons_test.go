@@ -19,6 +19,6 @@ func Test_getWindowIcons(t *testing.T) {
 	log.SetOutput(&buf)
 
 	icons := getWindowIcons()
-	assert.Equal(t, 3, len(icons))
+	assert.Len(t, icons, 3)
 	assert.Empty(t, buf.String())
 }

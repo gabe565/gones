@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 //go:embed nes-test-roms/apu_reset/4015_cleared.nes
@@ -15,14 +16,8 @@ func Test_blarggAPURst4015Clr(t *testing.T) {
 	t.Parallel()
 
 	test, err := NewBlarggTest(strings.NewReader(blarggAPURst4015Clr))
-	if !assert.NoError(t, err) {
-		return
-	}
-
-	err = test.Run()
-	if !assert.NoError(t, err) {
-		return
-	}
+	require.NoError(t, err)
+	require.NoError(t, test.Run())
 
 	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
 	assert.EqualValues(t, "4015_cleared\n\nPassed", GetBlarggMessage(test))
@@ -35,14 +30,8 @@ func Test_blarggIRQClr(t *testing.T) {
 	t.Parallel()
 
 	test, err := NewBlarggTest(strings.NewReader(blarggIRQClr))
-	if !assert.NoError(t, err) {
-		return
-	}
-
-	err = test.Run()
-	if !assert.NoError(t, err) {
-		return
-	}
+	require.NoError(t, err)
+	require.NoError(t, test.Run())
 
 	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
 	assert.EqualValues(t, "irq_flag_cleared\n\nPassed", GetBlarggMessage(test))

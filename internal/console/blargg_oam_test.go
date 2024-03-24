@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 //go:embed nes-test-roms/oam_read/oam_read.nes
@@ -36,14 +37,8 @@ func Test_oamRead(t *testing.T) {
 	t.Parallel()
 
 	test, err := NewBlarggTest(strings.NewReader(oamRead))
-	if !assert.NoError(t, err) {
-		return
-	}
-
-	err = test.Run()
-	if !assert.NoError(t, err) {
-		return
-	}
+	require.NoError(t, err)
+	require.NoError(t, test.Run())
 
 	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
 	assert.EqualValues(t, oamReadSuccess, GetBlarggMessage(test))
@@ -77,14 +72,8 @@ func Test_oamStress(t *testing.T) {
 	t.Parallel()
 
 	test, err := NewBlarggTest(strings.NewReader(oamStress))
-	if !assert.NoError(t, err) {
-		return
-	}
-
-	err = test.Run()
-	if !assert.NoError(t, err) {
-		return
-	}
+	require.NoError(t, err)
+	require.NoError(t, test.Run())
 
 	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
 	assert.EqualValues(t, oamStressSuccess, GetBlarggMessage(test))

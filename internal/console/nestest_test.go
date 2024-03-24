@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 //go:embed nes-test-roms/other/nestest.nes
@@ -19,9 +20,7 @@ func Test_nestest(t *testing.T) {
 	t.Parallel()
 
 	c, err := stubConsole(strings.NewReader(nestest))
-	if !assert.NoError(t, err) {
-		return
-	}
+	require.NoError(t, err)
 
 	c.CPU.ProgramCounter = 0xC000
 
@@ -32,20 +31,15 @@ func Test_nestest(t *testing.T) {
 		actual := c.Trace()
 		expected := scanner.Text()
 
-		if !assert.EqualValues(t, expected, actual) {
-			return
-		}
+		require.EqualValues(t, expected, actual)
 
-		if c.Step(true); !assert.NoError(t, c.CPU.StepErr) {
-			return
-		}
+		c.Step(true)
+		require.NoError(t, c.CPU.StepErr)
 		if c.CPU.Status.Break {
 			break
 		}
 	}
-	if !assert.NoError(t, scanner.Err()) {
-		return
-	}
+	require.NoError(t, scanner.Err())
 
 	assert.EqualValues(t, strings.Count(nestestLog, "\n"), checkedLines)
 	assert.EqualValues(t, 0, c.Bus.ReadMem(2), "See https://github.com/christopherpow/nes-test-roms/blob/master/other/nestest.txt#L87 for failure code meaning")
