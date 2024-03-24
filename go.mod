@@ -4,7 +4,7 @@ go 1.22.1
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
-	github.com/hajimehoshi/ebiten/v2 v2.6.6
+	github.com/hajimehoshi/ebiten/v2 v2.6.7
 	github.com/knadh/koanf/providers/posflag v0.1.0
 	github.com/knadh/koanf/providers/rawbytes v0.1.0
 	github.com/knadh/koanf/providers/structs v0.1.0
