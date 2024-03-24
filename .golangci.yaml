@@ -56,7 +56,7 @@ linters:
     - loggercheck
     - makezero
     - mirror
-    # - musttag
+    - musttag
     - nakedret
     - nilerr
     - nilnil
