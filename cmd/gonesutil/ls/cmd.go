@@ -52,6 +52,8 @@ func New() *cobra.Command {
 	return cmd
 }
 
+var ErrInvalidROMs = errors.New("some ROMs were invalid")
+
 func run(cmd *cobra.Command, args []string) (err error) {
 	cmd.SilenceUsage = true
 
@@ -82,7 +84,7 @@ func run(cmd *cobra.Command, args []string) (err error) {
 	}
 
 	if failed {
-		return errors.New("some ROMs were invalid")
+		return ErrInvalidROMs
 	}
 	return nil
 }
