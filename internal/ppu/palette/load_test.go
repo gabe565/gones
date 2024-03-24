@@ -12,6 +12,7 @@ import (
 var palFile []byte
 
 func TestLoadPal(t *testing.T) {
+	t.Parallel()
 	UpdateEmphasized()
 
 	var defaultPalette Palette

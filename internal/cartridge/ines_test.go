@@ -20,6 +20,7 @@ func Test_iNESFileHeader_Battery(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			i := iNESFileHeader{
 				Control: tt.fields.Control,
 			}
@@ -47,6 +48,7 @@ func Test_iNESFileHeader_Mirror(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			i := iNESFileHeader{
 				Control: tt.fields.Control,
 			}
@@ -75,6 +77,7 @@ func Test_iNESFileHeader_Mapper(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			i := iNESFileHeader{
 				Control: tt.fields.Control,
 			}

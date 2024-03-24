@@ -11,6 +11,7 @@ import (
 )
 
 func Test_getWindowIcons(t *testing.T) {
+	t.Parallel()
 	var buf bytes.Buffer
 	defer func(w io.Writer) {
 		log.SetOutput(w)

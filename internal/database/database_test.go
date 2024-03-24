@@ -7,6 +7,7 @@ import (
 )
 
 func TestFindNameByHash(t *testing.T) {
+	t.Parallel()
 	type args struct {
 		md5 string
 	}
@@ -22,6 +23,7 @@ func TestFindNameByHash(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := FindNameByHash(tt.args.md5)
 			if !tt.wantErr(t, err) {
 				return
