@@ -2,6 +2,7 @@ package gones
 
 import (
 	"image"
+	"image/png"
 	"io/fs"
 
 	"github.com/gabe565/gones/assets"
@@ -25,7 +26,7 @@ func getWindowIcons() []image.Image {
 			_ = f.Close()
 		}(f)
 
-		icon, _, err := image.Decode(f)
+		icon, err := png.Decode(f)
 		if err != nil {
 			log.WithError(err).Error("Failed to decode icon")
 			return nil

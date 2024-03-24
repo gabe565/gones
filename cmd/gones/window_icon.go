@@ -2,11 +2,7 @@
 
 package gones
 
-import (
-	_ "image/png"
-
-	"github.com/hajimehoshi/ebiten/v2"
-)
+import "github.com/hajimehoshi/ebiten/v2"
 
 //nolint:gochecknoinits
 func init() {
