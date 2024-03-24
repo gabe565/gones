@@ -40,6 +40,8 @@ func (o OpCode) String() string {
 // See [6502 Instruction Reference].
 //
 // [6502 Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html
+//
+//nolint:gochecknoglobals
 var OpCodes = [...]*OpCode{
 	0x00: {"BRK", 0x00, 1, 7, Implicit, brk, false},
 	0x01: {"ORA", 0x01, 2, 6, IndirectX, ora, false},

@@ -15,8 +15,6 @@ const (
 	StatusReset   Status = 0x81
 )
 
-var BlarggTestMarker = [...]byte{222, 176, 97}
-
 func NewBlarggTest(r io.ReadSeeker) (*ConsoleTest, error) {
 	return NewConsoleTest(r, BlarggCallback)
 }
@@ -42,7 +40,7 @@ func GetBlarggStatus(b *ConsoleTest) Status {
 		for i := range uint16(3) {
 			marker[i] = b.Console.Bus.ReadMem(0x6001 + i)
 		}
-		if marker != BlarggTestMarker {
+		if marker != [3]byte{222, 176, 97} {
 			return StatusPrerun
 		}
 	}

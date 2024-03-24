@@ -12,7 +12,7 @@ import (
 func New(b memory.ReadSafeWrite) *CPU {
 	cpu := CPU{
 		StackPointer: byte(StackAddr - 3),
-		Status:       DefaultStatus,
+		Status:       Status{InterruptDisable: true},
 		bus:          b,
 		Cycles:       7,
 	}

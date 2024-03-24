@@ -1,5 +1,6 @@
 package apu
 
+//nolint:gochecknoglobals
 var squareDutyTable = [...][8]byte{
 	{0, 1, 0, 0, 0, 0, 0, 0},
 	{0, 1, 1, 0, 0, 0, 0, 0},

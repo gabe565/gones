@@ -4,6 +4,7 @@ import (
 	"math"
 )
 
+//nolint:gochecknoglobals
 var (
 	EmphasizeR   Palette
 	EmphasizeG   Palette

@@ -4,17 +4,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var flagConfigTable = map[string]string{
-	"debug":           "debug.enabled",
-	"trace":           "debug.trace",
-	"scale":           "ui.scale",
-	"fullscreen":      "ui.fullscreen",
-	"audio":           "audio.enabled",
-	"resume":          "state.resume",
-	"palette":         "ui.palette",
-	"pause-unfocused": "ui.pause_unfocused",
-}
-
 func Flags(cmd *cobra.Command) {
 	cmd.Flags().StringP("config", "c", "", "Config file (default is $HOME/.config/gones/config.yaml)")
 	if err := cmd.RegisterFlagCompletionFunc("config", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
@@ -36,4 +25,17 @@ func Flags(cmd *cobra.Command) {
 		panic(err)
 	}
 	cmd.Flags().Bool("pause-unfocused", true, "Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background.")
+}
+
+func flagTable() map[string]string {
+	return map[string]string{
+		"debug":           "debug.enabled",
+		"trace":           "debug.trace",
+		"scale":           "ui.scale",
+		"fullscreen":      "ui.fullscreen",
+		"audio":           "audio.enabled",
+		"resume":          "state.resume",
+		"palette":         "ui.palette",
+		"pause-unfocused": "ui.pause_unfocused",
+	}
 }

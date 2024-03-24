@@ -88,8 +88,9 @@ func Load(cmd *cobra.Command) (*Config, error) {
 	}
 
 	// Load flags
+	flagTable := flagTable()
 	err = k.Load(posflag.ProviderWithValue(cmd.Flags(), ".", k, func(key string, value string) (string, any) {
-		if k, ok := flagConfigTable[key]; ok {
+		if k, ok := flagTable[key]; ok {
 			key = k
 		} else {
 			key = ""

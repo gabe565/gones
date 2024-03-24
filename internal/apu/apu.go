@@ -21,12 +21,12 @@ const (
 	BufferCap         = consts.AudioSampleRate / 20
 )
 
-var lengthTable = [...]byte{
-	10, 254, 20, 2, 40, 4, 80, 6, 160, 8, 60, 10, 14, 12, 26, 14,
-	12, 16, 24, 18, 48, 20, 96, 22, 192, 24, 72, 26, 16, 28, 32, 30,
-}
-
+//nolint:gochecknoglobals
 var (
+	lengthTable = [...]byte{
+		10, 254, 20, 2, 40, 4, 80, 6, 160, 8, 60, 10, 14, 12, 26, 14,
+		12, 16, 24, 18, 48, 20, 96, 22, 192, 24, 72, 26, 16, 28, 32, 30,
+	}
 	squareTable [31]float64
 	tndTable    [203]float64
 )

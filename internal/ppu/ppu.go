@@ -269,6 +269,7 @@ func (p *PPU) WriteMem(addr uint16, data byte) {
 	p.OpenBus = data
 }
 
+//nolint:gochecknoglobals
 var MirrorLookup = [...][4]uint16{
 	cartridge.Horizontal:  {0, 0, 1, 1},
 	cartridge.Vertical:    {0, 1, 0, 1},

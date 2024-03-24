@@ -22,8 +22,6 @@ const (
 	Negative
 )
 
-var DefaultStatus = Status{InterruptDisable: true}
-
 type Status struct {
 	Carry            bool
 	Zero             bool
