@@ -6,7 +6,7 @@ import (
 
 type Duration time.Duration
 
-func (d Duration) MarshalText() (text []byte, err error) {
+func (d Duration) MarshalText() ([]byte, error) {
 	s := time.Duration(d).String()
 	return []byte(s), nil
 }

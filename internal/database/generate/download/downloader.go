@@ -59,7 +59,8 @@ func (g *Downloader) URL() string {
 	return u.String()
 }
 
-func (g *Downloader) Run() (err error) {
+func (g *Downloader) Run() error {
+	var err error
 	g.SystemID, err = g.getSystemID(g.SystemName)
 	if err != nil {
 		return err
