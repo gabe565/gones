@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func NewMapper3(cartridge *Cartridge) Mapper {
+func NewMapper3(cartridge *Cartridge) *Mapper3 {
 	prgBanks := uint(len(cartridge.prg) / consts.PRGChunkSize)
 	mapper := &Mapper3{
 		cartridge: cartridge,

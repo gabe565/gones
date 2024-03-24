@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func NewMapper1(cartridge *Cartridge) Mapper {
+func NewMapper1(cartridge *Cartridge) *Mapper1 {
 	mapper := &Mapper1{
 		cartridge:     cartridge,
 		ShiftRegister: 0x10,

@@ -52,7 +52,7 @@ linters:
     - ineffassign
     - interfacebloat
     - intrange
-    # - ireturn
+    - ireturn
     - loggercheck
     - makezero
     - mirror

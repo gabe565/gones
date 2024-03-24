@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func NewMapper4(cartridge *Cartridge) Mapper {
+func NewMapper4(cartridge *Cartridge) *Mapper4 {
 	mapper := &Mapper4{cartridge: cartridge}
 	mapper.PRGOffsets[0] = mapper.prgBankOffset(0)
 	mapper.PRGOffsets[1] = mapper.prgBankOffset(1)

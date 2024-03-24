@@ -4,7 +4,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func NewMapper69(cartridge *Cartridge) Mapper {
+func NewMapper69(cartridge *Cartridge) *Mapper69 {
 	prgCount := len(cartridge.prg) / 0x2000
 	mapper := &Mapper69{
 		cartridge: cartridge,

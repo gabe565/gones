@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func NewMapper7(cartridge *Cartridge) Mapper {
+func NewMapper7(cartridge *Cartridge) *Mapper7 {
 	mapper := &Mapper7{cartridge: cartridge}
 	return mapper
 }
