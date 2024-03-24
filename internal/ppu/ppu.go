@@ -294,7 +294,6 @@ func (p *PPU) tick() {
 				p.NmiOffset = 0
 			}
 		}
-
 	}
 
 	if p.Mask.RenderingEnabled() {
