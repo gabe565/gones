@@ -78,6 +78,9 @@ func (g *Downloader) Run() (err error) {
 	if err != nil {
 		return err
 	}
+	defer func() {
+		_ = res.Body.Close()
+	}()
 
 	f, err := g.unzip(res.Body)
 	if err != nil {
