@@ -38,7 +38,6 @@ PASSED`
 func Test_blarggCpuTiming(t *testing.T) {
 	t.Parallel()
 
-	var message string
 	callback := NewBlargPpuMessageCallback()
 
 	test, err := NewConsoleTest(strings.NewReader(blarggCpuTimingTest), callback)
@@ -51,15 +50,7 @@ func Test_blarggCpuTiming(t *testing.T) {
 		return
 	}
 
-	switch err := err.(type) {
-	case PpuMessageError:
-		message = err.Error()
-	default:
-		assert.NoError(t, err)
-		return
-	}
-
-	assert.EqualValues(t, blarggCpuTimingSuccess, message)
+	assert.EqualValues(t, blarggCpuTimingSuccess, err.Error())
 }
 
 //go:embed nes-test-roms/branch_timing_tests/1.Branch_Basics.nes
@@ -68,7 +59,6 @@ var blarggBranchTimingBasicsTest string
 func Test_blarggBranchTimingBasics(t *testing.T) {
 	t.Parallel()
 
-	var message string
 	callback := NewBlargPpuMessageCallback()
 
 	test, err := NewConsoleTest(strings.NewReader(blarggBranchTimingBasicsTest), callback)
@@ -81,15 +71,7 @@ func Test_blarggBranchTimingBasics(t *testing.T) {
 		return
 	}
 
-	switch err := err.(type) {
-	case PpuMessageError:
-		message = err.Error()
-	default:
-		assert.NoError(t, err)
-		return
-	}
-
-	assert.EqualValues(t, "BRANCH TIMING BASICS\nPASSED", message)
+	assert.EqualValues(t, "BRANCH TIMING BASICS\nPASSED", err.Error())
 }
 
 //go:embed nes-test-roms/branch_timing_tests/2.Backward_Branch.nes
@@ -98,7 +80,6 @@ var blarggBranchTimingBackwardTest string
 func Test_blarggBranchTimingBackward(t *testing.T) {
 	t.Parallel()
 
-	var message string
 	callback := NewBlargPpuMessageCallback()
 
 	test, err := NewConsoleTest(strings.NewReader(blarggBranchTimingBackwardTest), callback)
@@ -111,15 +92,7 @@ func Test_blarggBranchTimingBackward(t *testing.T) {
 		return
 	}
 
-	switch err := err.(type) {
-	case PpuMessageError:
-		message = err.Error()
-	default:
-		assert.NoError(t, err)
-		return
-	}
-
-	assert.EqualValues(t, "BACKWARD BRANCH TIMING\nPASSED", message)
+	assert.EqualValues(t, "BACKWARD BRANCH TIMING\nPASSED", err.Error())
 }
 
 //go:embed nes-test-roms/branch_timing_tests/3.Forward_Branch.nes
@@ -128,7 +101,6 @@ var blarggBranchTimingForwardTest string
 func Test_blarggBranchTimingForward(t *testing.T) {
 	t.Parallel()
 
-	var message string
 	callback := NewBlargPpuMessageCallback()
 
 	test, err := NewConsoleTest(strings.NewReader(blarggBranchTimingForwardTest), callback)
@@ -141,13 +113,5 @@ func Test_blarggBranchTimingForward(t *testing.T) {
 		return
 	}
 
-	switch err := err.(type) {
-	case PpuMessageError:
-		message = err.Error()
-	default:
-		assert.NoError(t, err)
-		return
-	}
-
-	assert.EqualValues(t, "FORWARD BRANCH TIMING\nPASSED", message)
+	assert.EqualValues(t, "FORWARD BRANCH TIMING\nPASSED", err.Error())
 }

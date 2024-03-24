@@ -30,5 +30,5 @@ func (i *Button) UnmarshalText(b []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("%v: %s", ErrInvalidButton, s)
+	return fmt.Errorf("%w: %s", ErrInvalidButton, s)
 }

@@ -20,7 +20,7 @@ func FindNameByHash(hash string) (string, error) {
 	for {
 		record, err := c.Read()
 		if err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break
 			} else {
 				return "", err

@@ -17,7 +17,7 @@ linters:
     - durationcheck
     - errcheck
     - errname
-    # - errorlint
+    - errorlint
     - execinquery
     - exportloopref
     # - forbidigo
