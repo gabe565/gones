@@ -37,8 +37,6 @@ jobs:
           packages: ${{ env.LINUX_DEPENDENCIES }}
       - name: Lint
         uses: golangci/golangci-lint-action@v4
-        with:
-          args: --timeout=5m
 
   test:
     name: Test
