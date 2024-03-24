@@ -39,24 +39,24 @@ func LoadPalFile(path string) error {
 	if path == "" {
 		UpdateEmphasized()
 		return nil
-	} else {
-		if !filepath.IsAbs(path) {
-			palDir, err := config.GetPaletteDir()
-			if err != nil {
-				return err
-			}
+	}
 
-			path = filepath.Join(palDir, path)
-		}
-
-		f, err := os.Open(path)
+	if !filepath.IsAbs(path) {
+		palDir, err := config.GetPaletteDir()
 		if err != nil {
 			return err
 		}
-		defer func(f *os.File) {
-			_ = f.Close()
-		}(f)
 
-		return LoadPal(f)
+		path = filepath.Join(palDir, path)
 	}
+
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer func(f *os.File) {
+		_ = f.Close()
+	}(f)
+
+	return LoadPal(f)
 }

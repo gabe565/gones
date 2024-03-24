@@ -37,9 +37,8 @@ func (b *ConsoleTest) Run() error {
 			if err := b.Callback(b); err != nil {
 				if errors.Is(err, ErrExit) {
 					return nil
-				} else {
-					return err
 				}
+				return err
 			}
 		}
 

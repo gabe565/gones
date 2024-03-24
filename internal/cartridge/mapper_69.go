@@ -60,10 +60,9 @@ func (m *Mapper69) ReadMem(addr uint16) byte {
 		if m.RAMSelect {
 			if m.RAMEnabled {
 				return m.cartridge.SRAM[addr-0x6000]
-			} else {
-				// open bus
-				return 0
 			}
+			// open bus
+			return 0
 		}
 		fallthrough
 	case 0x8000 <= addr:

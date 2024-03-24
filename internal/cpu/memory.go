@@ -30,9 +30,8 @@ func (c *CPU) ReadMem16Bug(addr uint16) uint16 {
 		lo := uint16(c.bus.ReadMem(addr))
 		hi := uint16(c.bus.ReadMem(addr & 0xFF00))
 		return hi<<8 | lo
-	} else {
-		return c.bus.ReadMem16(addr)
 	}
+	return c.bus.ReadMem16(addr)
 }
 
 // WriteMem16 writes two bytes to memory.

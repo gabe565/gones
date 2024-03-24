@@ -36,31 +36,27 @@ func (c *Control) Set(data byte) {
 func (c Control) VRAMAddr() byte {
 	if c.IncrementMode {
 		return 32
-	} else {
-		return 1
 	}
+	return 1
 }
 
 func (c Control) SpriteTileAddr() uint16 {
 	if c.SpriteTileSelect {
 		return 0x1000
-	} else {
-		return 0
 	}
+	return 0
 }
 
 func (c Control) BgTileAddr() uint16 {
 	if c.BgTileSelect {
 		return 0x1000
-	} else {
-		return 0
 	}
+	return 0
 }
 
 func (c Control) SpriteSize() byte {
 	if c.SpriteHeight {
 		return 16
-	} else {
-		return 8
 	}
+	return 8
 }

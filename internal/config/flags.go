@@ -17,9 +17,11 @@ var flagConfigTable = map[string]string{
 
 func Flags(cmd *cobra.Command) {
 	cmd.Flags().StringP("config", "c", "", "Config file (default is $HOME/.config/gones/config.yaml)")
-	_ = cmd.RegisterFlagCompletionFunc("config", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if err := cmd.RegisterFlagCompletionFunc("config", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 		return []string{"toml"}, cobra.ShellCompDirectiveFilterFileExt
-	})
+	}); err != nil {
+		panic(err)
+	}
 
 	cmd.Flags().Bool("debug", false, "Start with step debugging enabled")
 	cmd.Flags().Bool("trace", false, "Enable trace logging")
@@ -28,7 +30,7 @@ func Flags(cmd *cobra.Command) {
 	cmd.Flags().BoolP("audio", "a", true, "Enabled audio output")
 	cmd.Flags().Bool("resume", true, "Automatically resume where you left off")
 	cmd.Flags().String("palette", "", "Optional palette (.pal) file to use")
-	if err := cmd.RegisterFlagCompletionFunc("palette", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if err := cmd.RegisterFlagCompletionFunc("palette", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 		return []string{"pal"}, cobra.ShellCompDirectiveFilterFileExt
 	}); err != nil {
 		panic(err)

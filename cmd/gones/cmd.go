@@ -18,7 +18,7 @@ func New() *cobra.Command {
 		Use:   "gones ROM",
 		Short: "NES emulator written in Go",
 		RunE:  run,
-		ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		ValidArgsFunction: func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 			return []string{"nes"}, cobra.ShellCompDirectiveFilterFileExt
 		},
 

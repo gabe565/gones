@@ -156,9 +156,9 @@ func (g *Downloader) getSystemID(systemName string) (string, error) {
 
 	// Iterate over selects
 	var system string
-	node.Find("select").Each(func(i int, s *goquery.Selection) {
+	node.Find("select").Each(func(_ int, s *goquery.Selection) {
 		if name, exists := s.Attr("name"); exists && name == "system_selection" {
-			s.Find("option").Each(func(i int, s *goquery.Selection) {
+			s.Find("option").Each(func(_ int, s *goquery.Selection) {
 				if strings.TrimSpace(s.Text()) == systemName {
 					if value, exists := s.Attr("value"); exists {
 						system = value
@@ -207,9 +207,9 @@ func (g *Downloader) getFormParams() (map[string]string, error) {
 	node := sel.Eq(0)
 
 	// Iterate over selects
-	node.Find("select").Each(func(i int, s *goquery.Selection) {
+	node.Find("select").Each(func(_ int, s *goquery.Selection) {
 		if name, exists := s.Attr("name"); exists {
-			s.Find("option").Each(func(i int, s *goquery.Selection) {
+			s.Find("option").Each(func(_ int, s *goquery.Selection) {
 				if _, exists := s.Attr("selected"); exists {
 					if value, exists := s.Attr("value"); exists {
 						postParams[name] = value
@@ -220,7 +220,7 @@ func (g *Downloader) getFormParams() (map[string]string, error) {
 	})
 
 	// Iterate over inputs
-	node.Find("input").Each(func(i int, s *goquery.Selection) {
+	node.Find("input").Each(func(_ int, s *goquery.Selection) {
 		if inputType, exists := s.Attr("type"); exists {
 			if inputType == "radio" {
 				// Skip unchecked radio buttons
@@ -258,7 +258,7 @@ func (g *Downloader) prepareDownload(postFields map[string]string) (string, stri
 		g.client.CheckRedirect = checkRedirect
 	}(g.client.CheckRedirect)
 
-	g.client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+	g.client.CheckRedirect = func(_ *http.Request, _ []*http.Request) error {
 		return http.ErrUseLastResponse
 	}
 
