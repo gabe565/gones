@@ -185,35 +185,25 @@ func deleteFunc(filters map[string]string) func(e *entry) bool {
 		for field, filter := range filters {
 			switch strings.ToLower(field) {
 			case "name":
-				if !strings.Contains(strings.ToLower(e.Name), strings.ToLower(filter)) {
-					return true
-				}
+				return !strings.Contains(strings.ToLower(e.Name), strings.ToLower(filter))
 			case "mapper":
 				parsed, err := strconv.ParseUint(filter, 10, 8)
 				if err != nil {
 					log.WithError(err).Fatal("invalid mapper filter value")
 				}
 
-				if byte(parsed) != e.Mapper {
-					return true
-				}
+				return byte(parsed) != e.Mapper
 			case "mirror":
-				if !strings.Contains(strings.ToLower(e.Mirror), strings.ToLower(filter)) {
-					return true
-				}
+				return !strings.Contains(strings.ToLower(e.Mirror), strings.ToLower(filter))
 			case "battery":
 				parsed, err := strconv.ParseBool(filter)
 				if err != nil {
 					log.WithError(err).Fatal("invalid battery filter value")
 				}
 
-				if parsed != e.Battery {
-					return true
-				}
+				return parsed != e.Battery
 			case "hash":
-				if filter != e.Hash {
-					return true
-				}
+				return filter != e.Hash
 			}
 		}
 		return false
