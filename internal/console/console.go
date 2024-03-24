@@ -143,6 +143,7 @@ func (c *Console) Close() error {
 
 func (c *Console) Step(render bool) {
 	if c.enableTrace {
+		//nolint:forbidigo
 		fmt.Println(c.Trace())
 	}
 

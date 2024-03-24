@@ -20,7 +20,7 @@ linters:
     - errorlint
     - execinquery
     - exportloopref
-    # - forbidigo
+    - forbidigo
     - gci
     - ginkgolinter
     - gocheckcompilerdirectives
