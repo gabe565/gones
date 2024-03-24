@@ -30,7 +30,7 @@ func (c *Console) SaveSRAM() error {
 		return err
 	}
 
-	return os.WriteFile(path, c.Cartridge.SRAM, 0o644)
+	return os.WriteFile(path, c.Cartridge.SRAM, 0o666)
 }
 
 func (c *Console) LoadSRAM() error {

@@ -4,6 +4,11 @@ run:
 linters-settings:
   gocyclo:
     min-complexity: 32
+  gosec:
+    excludes:
+      - G306
+      - G401
+      - G501
 
 linters:
   enable:
@@ -38,7 +43,7 @@ linters:
     - gomoddirectives
     - gomodguard
     - goprintffuncname
-    # - gosec
+    - gosec
     - gosimple
     - gosmopolitan
     - govet

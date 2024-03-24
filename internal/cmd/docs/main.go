@@ -22,7 +22,7 @@ func main() {
 		log.Fatal(fmt.Errorf("failed to remove existing dir: %w", err))
 	}
 
-	if err := os.MkdirAll(output, 0o755); err != nil {
+	if err := os.MkdirAll(output, 0o777); err != nil {
 		log.Fatal(fmt.Errorf("failed to mkdir: %w", err))
 	}
 
