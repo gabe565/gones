@@ -3,8 +3,8 @@ package cartridge
 import (
 	"crypto/md5"
 	"encoding/binary"
+	"encoding/hex"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -105,7 +105,7 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 	if _, err := io.Copy(md5, r); err != nil {
 		return cartridge, err
 	}
-	cartridge.hash = fmt.Sprintf("%x", md5.Sum(nil))
+	cartridge.hash = hex.EncodeToString(md5.Sum(nil))
 	if cartridge.hash != "" {
 		cartridge.name, _ = database.FindNameByHash(cartridge.hash)
 	}

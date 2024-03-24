@@ -15,7 +15,7 @@ func (c *Cartridge) SramPath() (string, error) {
 		return "", err
 	}
 
-	sramName := fmt.Sprintf("%s.sav", c.hash)
+	sramName := c.hash + ".sav"
 	return filepath.Join(sramDir, sramName), nil
 }
 

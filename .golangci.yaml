@@ -60,7 +60,7 @@ linters:
     # - nonamedreturns
     - nosprintfhostport
     # - paralleltest
-    # - perfsprint
+    - perfsprint
     - prealloc
     - predeclared
     - promlinter
