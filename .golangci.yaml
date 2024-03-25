@@ -1,6 +1,9 @@
 run:
   timeout: 5m
 
+issues:
+  max-same-issues: 50
+
 linters-settings:
   gocyclo:
     min-complexity: 32
