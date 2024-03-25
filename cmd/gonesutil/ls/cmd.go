@@ -31,22 +31,32 @@ func New() *cobra.Command {
 		Aliases: []string{"list"},
 		RunE:    run,
 
-		ValidArgsFunction: cobra.FixedCompletions([]string{"nes"}, cobra.ShellCompDirectiveFilterFileExt),
+		ValidArgsFunction: func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
+			return []string{"nes"}, cobra.ShellCompDirectiveFilterFileExt
+		},
 	}
 	cmd.Flags().StringP("output", "o", "table", "Output format. One of: (table, json, yaml)")
-	_ = cmd.RegisterFlagCompletionFunc(
-		"output",
-		cobra.FixedCompletions([]string{"table", "json", "yaml"}, cobra.ShellCompDirectiveNoFileComp),
-	)
+	if err := cmd.RegisterFlagCompletionFunc("output",
+		func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
+			return []string{"table", "json", "yaml"}, cobra.ShellCompDirectiveNoFileComp
+		},
+	); err != nil {
+		panic(err)
+	}
 
 	cmd.Flags().StringToStringP("filter", "f", map[string]string{}, "Filter by a field")
-	_ = cmd.RegisterFlagCompletionFunc("filter", completeFilter)
+	if err := cmd.RegisterFlagCompletionFunc("filter", completeFilter); err != nil {
+		panic(err)
+	}
 
 	cmd.Flags().StringP("sort", "s", PathField, "Sort by a field")
-	_ = cmd.RegisterFlagCompletionFunc(
-		"sort",
-		cobra.FixedCompletions([]string{PathField, NameField, MapperField, BatteryField, MirrorField}, cobra.ShellCompDirectiveNoFileComp),
-	)
+	if err := cmd.RegisterFlagCompletionFunc("sort",
+		func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
+			return []string{PathField, NameField, MapperField, BatteryField, MirrorField}, cobra.ShellCompDirectiveNoFileComp
+		},
+	); err != nil {
+		panic(err)
+	}
 
 	cmd.Flags().BoolP("reverse", "r", false, "Reverse the output")
 	return cmd
