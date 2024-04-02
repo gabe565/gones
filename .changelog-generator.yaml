@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://gabe565.github.io/changelog-generator/config.schema.json
 filters:
   exclude:
     - "^docs"
