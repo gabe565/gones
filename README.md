@@ -15,7 +15,13 @@ _An NES emulator written in Go._
 
 ## Install
 
-### Release
+### Homebrew (macOS)
+
+```shell
+brew install gabe565/tap/gones --no-quarantine
+```
+
+### Binary
 
 Automated builds are uploaded during the release process. See the [latest release](https://github.com/gabe565/gones/releases/latest) for download links.
 
