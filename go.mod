@@ -36,7 +36,7 @@ require (
 	github.com/huandu/xstrings v1.3.3 // indirect
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/jezek/xgb v1.1.0 // indirect
+	github.com/jezek/xgb v1.1.1 // indirect
 	github.com/josephspurrier/goversioninfo v1.4.0 // indirect
 	github.com/knadh/koanf/maps v0.1.1 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
