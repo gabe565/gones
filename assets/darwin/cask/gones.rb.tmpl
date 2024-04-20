@@ -1,0 +1,14 @@
+cask "gones" do
+  desc "An NES emulator written in Go."
+  homepage "https://github.com/gabe565/gones"
+  {{- if eq .Version "latest" }}
+  version :latest
+  {{- else }}
+  version "{{ trimPrefix "v" .Version }}"
+  {{- end }}
+
+  url "https://github.com/gabe565/gones/releases/download/{{ .Version }}/gones_darwin.tar.gz"
+  sha256 "{{ .SHA256 }}"
+
+  app "GoNES.app"
+end

@@ -100,14 +100,19 @@ jobs:
       - name: Generate
         run: go generate -x
       - name: Build
+        env:
+          VERSION: ${{ github.ref_name }}
         run: ./hack/build-darwin.sh
-      - name: Compress
-        run: tar -cvf gones_darwin.tar.gz -C dist .
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: gones_darwin
-          path: gones_darwin.tar.gz
+          path: dist/gones_darwin.tar.gz
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gones_cask
+          path: dist/gones.rb
 
   build-linux-amd64:
     name: Build (linux-amd64)
@@ -254,3 +259,34 @@ jobs:
           body: ${{ steps.changelog.outputs.changelog }}
           files: |
             dist/gones_*
+
+  update-homebrew-tap:
+    name: Update Homebrew Tap
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [release]
+    env:
+      commit_name: gabe565-goreleaser[bot]
+      commit_email: 159411820+gabe565-goreleaser[bot]@users.noreply.github.com
+    steps:
+      - name: Generate Token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          repositories: homebrew-tap
+      - uses: actions/checkout@v4
+        with:
+          repository: gabe565/homebrew-tap
+          token: ${{ steps.app-token.outputs.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: gones_cask
+          path: Casks
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Brew formula update for gones version ${{ github.ref_name }}
+          commit_user_name: ${{ env.commit_name }}
+          commit_user_email: ${{ env.commit_email }}
+          commit_author: ${{ env.commit_name }} <${{ env.commit_email }}>

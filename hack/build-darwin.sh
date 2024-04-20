@@ -4,6 +4,7 @@ BINARY_NAME='gones'
 APP_NAME='GoNES'
 ICONSET=darwin/GoNES.iconset
 ICNS=darwin/GoNES.icns
+VERSION="${VERSION:-latest}"
 
 set -euo pipefail
 
@@ -46,3 +47,8 @@ cp "assets/$ICNS" "$APP_CONTENTS/Resources"
 mkdir "$APP_CONTENTS/MacOS"
 mv "dist/$BINARY_NAME" "$APP_CONTENTS/MacOS"
 echo ...done
+
+echo Compress "$APP_NAME.app"
+tar_name="dist/${BINARY_NAME}_darwin.tar.gz"
+tar -czvf "$tar_name" -C dist "$APP_NAME.app"
+go run ./assets/darwin/cask --path="$tar_name" --version="$VERSION" > "dist/$BINARY_NAME.rb"
