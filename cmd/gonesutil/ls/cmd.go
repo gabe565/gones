@@ -39,7 +39,7 @@ func New() *cobra.Command {
 	cmd.Flags().StringP("output", "o", "table", "Output format. One of: (table, json, yaml)")
 	if err := cmd.RegisterFlagCompletionFunc("output",
 		func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
-			return []string{"table", "json", "yaml"}, cobra.ShellCompDirectiveNoFileComp
+			return OutputFormatStrings(), cobra.ShellCompDirectiveNoFileComp
 		},
 	); err != nil {
 		panic(err)
@@ -87,12 +87,17 @@ func run(cmd *cobra.Command, args []string) error {
 		slices.Reverse(carts)
 	}
 
-	format, err := cmd.Flags().GetString("output")
+	formatSrc, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return err
 	}
 
-	if err := printEntries(cmd.OutOrStdout(), carts, Format(format)); err != nil {
+	format, err := OutputFormatString(formatSrc)
+	if err != nil {
+		return err
+	}
+
+	if err := printEntries(cmd.OutOrStdout(), carts, format); err != nil {
 		return err
 	}
 
