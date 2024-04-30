@@ -7,11 +7,11 @@ import (
 	"strings"
 )
 
-const _OutputFormatName = "tablejsonyaml"
+const _OutputFormatName = "tablejsonyamlpath"
 
-var _OutputFormatIndex = [...]uint8{0, 5, 9, 13}
+var _OutputFormatIndex = [...]uint8{0, 5, 9, 13, 17}
 
-const _OutputFormatLowerName = "tablejsonyaml"
+const _OutputFormatLowerName = "tablejsonyamlpath"
 
 func (i OutputFormat) String() string {
 	if i >= OutputFormat(len(_OutputFormatIndex)-1) {
@@ -31,23 +31,27 @@ func _OutputFormatNoOp() {
 	_ = x[OutputFormatTable-(0)]
 	_ = x[OutputFormatJSON-(1)]
 	_ = x[OutputFormatYAML-(2)]
+	_ = x[OutputFormatPath-(3)]
 }
 
-var _OutputFormatValues = []OutputFormat{OutputFormatTable, OutputFormatJSON, OutputFormatYAML}
+var _OutputFormatValues = []OutputFormat{OutputFormatTable, OutputFormatJSON, OutputFormatYAML, OutputFormatPath}
 
 var _OutputFormatNameToValueMap = map[string]OutputFormat{
-	_OutputFormatName[0:5]:       OutputFormatTable,
-	_OutputFormatLowerName[0:5]:  OutputFormatTable,
-	_OutputFormatName[5:9]:       OutputFormatJSON,
-	_OutputFormatLowerName[5:9]:  OutputFormatJSON,
-	_OutputFormatName[9:13]:      OutputFormatYAML,
-	_OutputFormatLowerName[9:13]: OutputFormatYAML,
+	_OutputFormatName[0:5]:        OutputFormatTable,
+	_OutputFormatLowerName[0:5]:   OutputFormatTable,
+	_OutputFormatName[5:9]:        OutputFormatJSON,
+	_OutputFormatLowerName[5:9]:   OutputFormatJSON,
+	_OutputFormatName[9:13]:       OutputFormatYAML,
+	_OutputFormatLowerName[9:13]:  OutputFormatYAML,
+	_OutputFormatName[13:17]:      OutputFormatPath,
+	_OutputFormatLowerName[13:17]: OutputFormatPath,
 }
 
 var _OutputFormatNames = []string{
 	_OutputFormatName[0:5],
 	_OutputFormatName[5:9],
 	_OutputFormatName[9:13],
+	_OutputFormatName[13:17],
 }
 
 // OutputFormatString retrieves an enum value from the enum constants string name.
