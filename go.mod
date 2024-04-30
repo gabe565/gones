@@ -5,6 +5,7 @@ go 1.22.1
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/PuerkitoBio/goquery v1.8.1
+	github.com/fatih/color v1.16.0
 	github.com/hajimehoshi/ebiten/v2 v2.6.6
 	github.com/knadh/koanf/providers/posflag v0.1.0
 	github.com/knadh/koanf/providers/rawbytes v0.1.0
@@ -12,7 +13,7 @@ require (
 	github.com/knadh/koanf/v2 v2.1.0
 	github.com/ncruces/zenity v0.10.11
 	github.com/pelletier/go-toml/v2 v2.1.1
-	github.com/sirupsen/logrus v1.9.3
+	github.com/rs/zerolog v1.32.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.4
@@ -40,6 +41,8 @@ require (
 	github.com/josephspurrier/goversioninfo v1.4.0 // indirect
 	github.com/knadh/koanf/maps v0.1.1 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

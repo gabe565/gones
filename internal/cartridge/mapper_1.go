@@ -2,7 +2,8 @@ package cartridge
 
 import (
 	"github.com/gabe565/gones/internal/consts"
-	log "github.com/sirupsen/logrus"
+	"github.com/gabe565/gones/internal/util"
+	"github.com/rs/zerolog/log"
 )
 
 func NewMapper1(cartridge *Cartridge) *Mapper1 {
@@ -46,7 +47,7 @@ func (m *Mapper1) ReadMem(addr uint16) byte {
 		offset := int(addr % consts.PRGChunkSize)
 		return m.cartridge.prg[m.PRGOffsets[bank]+offset]
 	default:
-		log.Warnf("invalid mapper 1 read from $%04X", addr)
+		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid mapper 1 read")
 		return 0
 	}
 }
@@ -87,7 +88,7 @@ func (m *Mapper1) WriteMem(addr uint16, data byte) {
 			}
 		}
 	default:
-		log.Warnf("invalid mapper 1 write to $%04X", addr)
+		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid mapper 1 write")
 	}
 }
 

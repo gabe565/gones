@@ -9,7 +9,7 @@ import (
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
 	"github.com/hajimehoshi/ebiten/v2"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func newConsole(conf *config.Config, _ string) (*console.Console, error) {
@@ -27,7 +27,7 @@ func newConsole(conf *config.Config, _ string) (*console.Console, error) {
 	if cart.Name() == "" {
 		cart.SetName(jsCartridge.Get("name").String())
 	}
-	log.WithField("title", cart.Name()).Info("Loaded cartridge")
+	log.Info().Str("title", cart.Name()).Msg("Loaded cartridge")
 
 	js.Global().Get("GonesClient").Call("setRomName", cart.Name())
 

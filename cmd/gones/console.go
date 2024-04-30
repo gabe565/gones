@@ -7,7 +7,7 @@ import (
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
 	"github.com/ncruces/zenity"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func newConsole(conf *config.Config, path string) (*console.Console, error) {
@@ -30,7 +30,7 @@ func newConsole(conf *config.Config, path string) (*console.Console, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.WithField("title", cart.Name()).Info("Loaded cartridge")
+	log.Info().Str("title", cart.Name()).Msg("Loaded cartridge")
 
 	return console.New(conf, cart)
 }

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"syscall/js"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func (c *Console) SaveStateNum(num uint8, createUndo bool) error {
@@ -15,7 +15,7 @@ func (c *Console) SaveStateNum(num uint8, createUndo bool) error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Saving state to db")
+	log.Info().Str("file", filepath.Base(path)).Msg("Saving state to db")
 
 	if createUndo && num != AutoSaveNum {
 		vals, err := await(js.Global().Get("GonesClient").Call("dbGet", "states", path))
@@ -58,7 +58,7 @@ func (c *Console) LoadStateNum(num uint8) error {
 		return nil
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Loading state from db")
+	log.Info().Str("file", filepath.Base(path)).Msg("Loading state from db")
 
 	if err := c.CreateUndoLoadState(); err != nil {
 		return err

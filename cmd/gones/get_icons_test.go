@@ -3,20 +3,20 @@ package gones
 import (
 	"bytes"
 	_ "image/png"
-	"io"
+	"os"
 	"testing"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
 
+//nolint:paralleltest
 func Test_getWindowIcons(t *testing.T) {
-	t.Parallel()
 	var buf bytes.Buffer
-	defer func(w io.Writer) {
-		log.SetOutput(w)
-	}(log.StandardLogger().Out)
-	log.SetOutput(&buf)
+	log.Logger = log.Output(&buf)
+	t.Cleanup(func() {
+		log.Logger = log.Output(os.Stderr)
+	})
 
 	icons := getWindowIcons()
 	assert.Len(t, icons, 3)

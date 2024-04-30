@@ -7,7 +7,8 @@ import (
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/interrupt"
 	"github.com/gabe565/gones/internal/memory"
-	log "github.com/sirupsen/logrus"
+	"github.com/gabe565/gones/internal/util"
+	"github.com/rs/zerolog/log"
 )
 
 type CPU interface {
@@ -110,7 +111,7 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 			a.stepLength()
 		}
 	default:
-		log.Warnf("invalid APU write to $%04X", addr)
+		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid APU write")
 	}
 }
 

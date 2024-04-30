@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gabe565/gones/cmd/gones"
 	_ "github.com/gabe565/gones/internal/pprof"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 //go:generate cp $GOROOT/misc/wasm/wasm_exec.js web/src/scripts
@@ -18,7 +18,7 @@ func main() {
 	rootCmd := gones.New()
 	rootCmd.Version = buildVersion()
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("Exiting due to an error")
 	}
 }
 

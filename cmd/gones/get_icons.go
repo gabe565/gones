@@ -6,7 +6,7 @@ import (
 	"io/fs"
 
 	"github.com/gabe565/gones/assets"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func getWindowIcons() []image.Image {
@@ -19,7 +19,7 @@ func getWindowIcons() []image.Image {
 
 		f, err := assets.Icons.Open(path)
 		if err != nil {
-			log.WithError(err).Error("Failed to open icon")
+			log.Err(err).Msg("Failed to open icon")
 			return nil
 		}
 		defer func(f fs.File) {
@@ -28,7 +28,7 @@ func getWindowIcons() []image.Image {
 
 		icon, err := png.Decode(f)
 		if err != nil {
-			log.WithError(err).Error("Failed to decode icon")
+			log.Err(err).Msg("Failed to decode icon")
 			return nil
 		}
 
@@ -36,7 +36,7 @@ func getWindowIcons() []image.Image {
 		return nil
 	})
 	if err != nil {
-		log.WithError(err).Error("Failed to load icons")
+		log.Err(err).Msg("Failed to load icons")
 	}
 
 	return icons

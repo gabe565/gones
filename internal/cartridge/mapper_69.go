@@ -1,7 +1,8 @@
 package cartridge
 
 import (
-	log "github.com/sirupsen/logrus"
+	"github.com/gabe565/gones/internal/util"
+	"github.com/rs/zerolog/log"
 )
 
 func NewMapper69(cartridge *Cartridge) *Mapper69 {
@@ -72,7 +73,7 @@ func (m *Mapper69) ReadMem(addr uint16) byte {
 		addr := m.PRGBanks[bank]*0x2000 + offset
 		return m.cartridge.prg[addr%len(m.cartridge.prg)]
 	default:
-		log.Warnf("invalid mapper 69 read from $%04X", addr)
+		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid mapper 69 read")
 		return 0
 	}
 }
@@ -91,7 +92,7 @@ func (m *Mapper69) WriteMem(addr uint16, data byte) {
 		// Parameter register
 		m.runCommand(data)
 	default:
-		log.Warnf("invalid mapper 69 write to $%04X", addr)
+		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid mapper 69 write")
 	}
 }
 

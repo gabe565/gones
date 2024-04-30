@@ -9,7 +9,7 @@ import (
 	"github.com/gabe565/gones/internal/console"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +48,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 	defer func() {
 		if err := c.Close(); err != nil {
-			log.Error(err)
+			log.Err(err).Msg("Failed to close console")
 		}
 	}()
 
@@ -56,7 +56,7 @@ func run(cmd *cobra.Command, args []string) error {
 		ch := make(chan os.Signal, 1)
 		signal.Notify(ch, os.Interrupt)
 		for range ch {
-			log.Info("Exiting...")
+			log.Info().Msg("Exiting...")
 			c.SetUpdateAction(console.ActionExit)
 		}
 	}()

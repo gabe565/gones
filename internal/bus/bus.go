@@ -6,7 +6,8 @@ import (
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/controller"
 	"github.com/gabe565/gones/internal/ppu"
-	log "github.com/sirupsen/logrus"
+	"github.com/gabe565/gones/internal/util"
+	"github.com/rs/zerolog/log"
 )
 
 func New(conf *config.Config, mapper cartridge.Mapper, ppu *ppu.PPU, apu *apu.APU) *Bus {
@@ -53,7 +54,7 @@ func (b *Bus) ReadMem(addr uint16) byte {
 	case 0x4020 <= addr:
 		b.OpenBus = b.mapper.ReadMem(addr)
 	default:
-		log.Errorf("invalid Bus read from $%02X", addr)
+		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid Bus read")
 		return 0
 	}
 	return b.OpenBus
@@ -94,7 +95,7 @@ func (b *Bus) WriteMem(addr uint16, data byte) {
 	case 0x4020 <= addr:
 		b.mapper.WriteMem(addr, data)
 	default:
-		log.Errorf("invalid Bus write to $%02X", addr)
+		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid Bus write")
 	}
 	b.OpenBus = data
 }
