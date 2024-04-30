@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func (c *Console) SaveSRAM() error {
@@ -20,7 +20,7 @@ func (c *Console) SaveSRAM() error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Debug("Writing save to disk")
+	log.Debug().Str("file", filepath.Base(path)).Msg("Writing save to disk")
 
 	if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
 		return err
@@ -48,7 +48,7 @@ func (c *Console) LoadSRAM() error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Debug("Loading save from disk")
+	log.Debug().Str("file", filepath.Base(path)).Msg("Loading save from disk")
 
 	c.Cartridge.SRAM = sram
 	return nil

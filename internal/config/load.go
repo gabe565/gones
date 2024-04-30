@@ -5,20 +5,25 @@ package config
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/providers/rawbytes"
 	"github.com/knadh/koanf/providers/structs"
 	"github.com/knadh/koanf/v2"
 	"github.com/pelletier/go-toml/v2"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
 func Load(cmd *cobra.Command) (*Config, error) {
+	InitLog()
+
 	k := koanf.New(".")
 	conf := NewDefault()
 
@@ -73,13 +78,13 @@ func Load(cmd *cobra.Command) (*Config, error) {
 
 	if !bytes.Equal(cfgContents, newCfg) {
 		if cfgNotExists {
-			log.WithField("file", cfgFile).Info("Creating config")
+			log.Info().Str("file", cfgFile).Msg("Creating config")
 
 			if err := os.MkdirAll(filepath.Dir(cfgFile), 0o777); err != nil {
 				return nil, err
 			}
 		} else {
-			log.WithField("file", cfgFile).Info("Updating config")
+			log.Info().Str("file", cfgFile).Msg("Updating config")
 		}
 
 		if err := os.WriteFile(cfgFile, newCfg, 0o666); err != nil {
@@ -114,7 +119,7 @@ func Load(cmd *cobra.Command) (*Config, error) {
 		return nil, err
 	}
 
-	log.WithField("file", cfgFile).Info("Loaded config")
+	log.Info().Str("file", cfgFile).Msg("Loaded config")
 	return &conf, err
 }
 
@@ -130,7 +135,7 @@ func fixConfig(k *koanf.Koanf) error {
 
 	// Turbo duty cycle min
 	if val := k.Int("input.turbo_duty_cycle"); val < 2 {
-		log.Warn("Turbo duty cycle must be 2 or greater. Setting value to 2.")
+		log.Warn().Msg("Turbo duty cycle must be 2 or greater. Setting value to 2.")
 		if err := k.Set("input.turbo_duty_cycle", 2); err != nil {
 			return err
 		}
@@ -138,7 +143,7 @@ func fixConfig(k *koanf.Koanf) error {
 
 	// Autosave interval min
 	if val := k.Duration("state.autosave_interval"); val < 10*time.Second {
-		log.Warn("Autosave interval must be 10s or greater. Setting value to 10s.")
+		log.Warn().Msg("Autosave interval must be 10s or greater. Setting value to 10s.")
 		if err := k.Set("state.interval", 10*time.Second); err != nil {
 			return err
 		}
@@ -146,16 +151,31 @@ func fixConfig(k *koanf.Koanf) error {
 
 	// Volume min/max
 	if val := k.Float64("audio.volume"); val < 0 {
-		log.Warn("Minimum volume is 0. Setting to 0.")
+		log.Warn().Msg("Minimum volume is 0. Setting to 0.")
 		if err := k.Set("audio.volume", 0); err != nil {
 			return err
 		}
 	} else if val > 1 {
-		log.Warn("Maximum volume is 1. Setting to 1.")
+		log.Warn().Msg("Maximum volume is 1. Setting to 1.")
 		if err := k.Set("audio.volume", 1); err != nil {
 			return err
 		}
 	}
 
 	return nil
+}
+
+func InitLog() {
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	sprintf := fmt.Sprintf
+	if !color.NoColor {
+		sprintf = color.New(color.Bold).Sprintf
+	}
+	log.Logger = log.Output(zerolog.ConsoleWriter{
+		Out:     os.Stderr,
+		NoColor: color.NoColor,
+		FormatMessage: func(i interface{}) string {
+			return sprintf("%-25s", i)
+		},
+	})
 }

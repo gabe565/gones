@@ -1,6 +1,6 @@
 package cpu
 
-import log "github.com/sirupsen/logrus"
+import "github.com/rs/zerolog/log"
 
 //go:generate stringer -type AddressingMode
 
@@ -71,7 +71,7 @@ func (c *CPU) getAbsoluteAddress(mode AddressingMode, addr uint16) (uint16, bool
 		addr := derefBase + uint16(c.RegisterY)
 		return addr, crossedPage(derefBase, addr)
 	default:
-		log.WithField("mode", mode).Panic("unsupported mode")
+		log.Fatal().Stringer("mode", mode).Msg("unsupported mode")
 		return 0, false
 	}
 }

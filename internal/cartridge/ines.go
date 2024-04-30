@@ -12,7 +12,7 @@ import (
 
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/database"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 type iNESFileHeader struct {
@@ -84,6 +84,14 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 		cartridge.Submapper = header.Submapper()
 	}
 
+	log.Debug().
+		Bool("battery", cartridge.Battery).
+		Uint8("mapper", cartridge.Mapper).
+		Stringer("mirror", cartridge.Mirror).
+		Uint8("prg", header.PRGCount).
+		Uint8("chr", header.CHRCount).
+		Msg("Loaded iNES header")
+
 	cartridge.prg = make([]byte, int(header.PRGCount)*consts.PRGChunkSize)
 	if _, err := io.ReadFull(r, cartridge.prg); err != nil {
 		return nil, err
@@ -109,14 +117,6 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 	if cartridge.hash != "" {
 		cartridge.name, _ = database.FindNameByHash(cartridge.hash)
 	}
-
-	log.WithFields(log.Fields{
-		"battery": cartridge.Battery,
-		"mapper":  cartridge.Mapper,
-		"mirror":  cartridge.Mirror,
-		"prg":     header.PRGCount,
-		"chr":     header.CHRCount,
-	}).Debug("Cartridge header info")
 
 	return cartridge, nil
 }

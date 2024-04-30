@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func (c *Console) SaveStateNum(num uint8, createUndo bool) error {
@@ -17,9 +17,9 @@ func (c *Console) SaveStateNum(num uint8, createUndo bool) error {
 	}
 
 	if num == AutoSaveNum {
-		log.WithField("file", filepath.Base(path)).Info("Auto-saving state")
+		log.Info().Str("file", filepath.Base(path)).Msg("Auto-saving state")
 	} else {
-		log.WithField("file", filepath.Base(path)).Info("Saving state")
+		log.Info().Str("file", filepath.Base(path)).Msg("Saving state")
 	}
 
 	if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
@@ -67,7 +67,7 @@ func (c *Console) LoadStateNum(num uint8) error {
 		_ = f.Close()
 	}(f)
 
-	log.WithField("file", filepath.Base(path)).Info("Loading state")
+	log.Info().Str("file", filepath.Base(path)).Msg("Loading state")
 
 	if err := c.CreateUndoLoadState(); err != nil {
 		return err
@@ -75,7 +75,7 @@ func (c *Console) LoadStateNum(num uint8) error {
 
 	if err := c.LoadState(f); err != nil {
 		if num == AutoSaveNum {
-			log.WithError(err).Error("Load state failed. Moving state file and continuing.")
+			log.Err(err).Msg("Load state failed. Moving state file and continuing.")
 			if err := os.Rename(path, path+".failed"); err != nil {
 				return err
 			}

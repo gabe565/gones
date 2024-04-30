@@ -15,7 +15,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 const BaseURL = "https://datomatic.no-intro.org/index.php"
@@ -47,7 +47,7 @@ type Downloader struct {
 func (g *Downloader) URL() string {
 	u, err := url.Parse(BaseURL)
 	if err != nil {
-		log.Panic(err)
+		log.Fatal().Err(err).Str("url", BaseURL).Msg("Failed to parse base url")
 	}
 	q := u.Query()
 	q.Set("page", "download")
@@ -92,7 +92,7 @@ func (g *Downloader) Run() error {
 		_ = f.Close()
 	}(f)
 
-	log.WithField("file", "nes.xml").Info("Write to file")
+	log.Info().Str("file", "nes.xml").Msg("Write to file")
 	out, err := os.Create("internal/database/nointro/nes.xml")
 	if err != nil {
 		return err
@@ -127,7 +127,10 @@ var ErrSystemNotFound = errors.New("could not find system ID")
 var ErrNoForm = errors.New(`could not find form"`)
 
 func (g *Downloader) getSystemID(systemName string) (string, error) {
-	log.WithFields(log.Fields{"url": g.URL(), "systemName": g.SystemName}).Info("Get system ID")
+	log.Info().
+		Str("url", g.URL()).
+		Str("systemName", g.SystemName).
+		Msg("Get system ID")
 
 	res, err := g.client.Get(g.URL())
 	if err != nil {
@@ -172,7 +175,7 @@ func (g *Downloader) getSystemID(systemName string) (string, error) {
 		return "", fmt.Errorf("%w: %s", ErrSystemNotFound, systemName)
 	}
 
-	log.WithField("id", system).Info("Got system ID")
+	log.Info().Str("id", system).Msg("Got system ID")
 	return system, nil
 }
 
@@ -180,7 +183,7 @@ func (g *Downloader) getFormParams() (map[string]string, error) {
 	postParams := make(map[string]string)
 
 	// Get session cookie
-	log.WithField("url", g.URL()).Info("Get form params")
+	log.Info().Str("url", g.URL()).Msg("Get form params")
 	res, err := g.client.Get(g.URL())
 	if err != nil {
 		return postParams, err
@@ -237,7 +240,7 @@ func (g *Downloader) getFormParams() (map[string]string, error) {
 		}
 	})
 
-	log.WithField("params", postParams).Info("Got form params")
+	log.Info().Interface("params", postParams).Msg("Got form params")
 	return postParams, nil
 }
 
@@ -263,7 +266,7 @@ func (g *Downloader) prepareDownload(postFields map[string]string) (string, stri
 	}
 
 	// Request download
-	log.WithField("url", g.URL()).Info("Request download")
+	log.Info().Str("url", g.URL()).Msg("Request download")
 	res, err := g.client.Post(g.URL(), contentType, body)
 	if err != nil {
 		return "", "", "", err
@@ -332,7 +335,7 @@ func (g *Downloader) download(url, name, value string) (*http.Response, error) {
 		return nil, err
 	}
 
-	log.WithField("url", url).Info("Begin download")
+	log.Info().Str("url", url).Msg("Begin download")
 	res, err := g.client.Post(url, contentType, body)
 	if err != nil {
 		return res, err
@@ -342,7 +345,7 @@ func (g *Downloader) download(url, name, value string) (*http.Response, error) {
 		return res, err
 	}
 
-	log.WithField("contentLength", res.Header.Get("Content-Length")).Info("Began download")
+	log.Info().Str("contentLength", res.Header.Get("Content-Length")).Msg("Began download")
 	return res, nil
 }
 
@@ -364,7 +367,7 @@ func (g *Downloader) unzip(src io.ReadCloser) (io.ReadCloser, error) {
 		return nil, ErrNoFiles
 	}
 
-	log.WithField("file", zipr.File[0].Name).Info("Begin unzip")
+	log.Info().Str("file", zipr.File[0].Name).Msg("Begin unzip")
 	f, err := zipr.File[0].Open()
 	if err != nil {
 		return nil, err

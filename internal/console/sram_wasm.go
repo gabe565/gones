@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"syscall/js"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func (c *Console) SaveSRAM() error {
@@ -14,7 +14,7 @@ func (c *Console) SaveSRAM() error {
 		return err
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Writing save to db")
+	log.Info().Str("file", filepath.Base(path)).Msg("Writing save to db")
 
 	data := base64.StdEncoding.EncodeToString(c.Cartridge.SRAM)
 
@@ -38,7 +38,7 @@ func (c *Console) LoadSRAM() error {
 		return nil
 	}
 
-	log.WithField("file", filepath.Base(path)).Info("Loading save from db")
+	log.Info().Str("file", filepath.Base(path)).Msg("Loading save from db")
 
 	if _, err := base64.StdEncoding.Decode(c.Cartridge.SRAM, []byte(data.String())); err != nil {
 		return err

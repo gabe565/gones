@@ -11,7 +11,8 @@ import (
 	"sync"
 
 	"github.com/gabe565/gones/internal/cartridge"
-	log "github.com/sirupsen/logrus"
+	"github.com/gabe565/gones/internal/config"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -59,6 +60,8 @@ func New() *cobra.Command {
 	}
 
 	cmd.Flags().BoolP("reverse", "r", false, "Reverse the output")
+
+	config.InitLog()
 	return cmd
 }
 
@@ -125,7 +128,7 @@ func loadPaths(paths []string) ([]*entry, bool) {
 	for _, path := range paths {
 		stat, err := os.Stat(path)
 		if err != nil {
-			log.Error(err)
+			log.Err(err).Msg("Failed to stat file")
 			continue
 		}
 
@@ -145,7 +148,7 @@ func loadPaths(paths []string) ([]*entry, bool) {
 
 					cart, err := cartridge.FromiNesFile(path)
 					if err != nil {
-						log.WithError(err).WithField("path", path).Error("invalid ROM")
+						log.Err(err).Str("path", path).Msg("invalid ROM")
 						failed = true
 						return
 					}
@@ -157,13 +160,13 @@ func loadPaths(paths []string) ([]*entry, bool) {
 				}()
 				return nil
 			}); err != nil {
-				log.Error(err)
+				log.Err(err).Msg("Failed to load ROMs")
 				continue
 			}
 		} else {
 			cart, err := cartridge.FromiNesFile(path)
 			if err != nil {
-				log.Error(err)
+				log.Err(err).Msg("Invalid ROM")
 				continue
 			}
 
@@ -195,7 +198,7 @@ func sortFunc(field string) func(a, b *entry) int {
 		case MirrorField:
 			return strings.Compare(a.Mirror, b.Mirror)
 		default:
-			log.WithField("field", field).Fatal("invalid sort field")
+			log.Fatal().Str("field", field).Msg("Unknown sort field")
 		}
 		return 0
 	}
@@ -210,7 +213,7 @@ func deleteFunc(filters map[string]string) func(e *entry) bool {
 			case MapperField:
 				parsed, err := strconv.ParseUint(filter, 10, 8)
 				if err != nil {
-					log.WithError(err).Fatal("invalid mapper filter value")
+					log.Fatal().Err(err).Msg("Invalid mapper filter value")
 				}
 
 				return byte(parsed) != e.Mapper
@@ -219,7 +222,7 @@ func deleteFunc(filters map[string]string) func(e *entry) bool {
 			case BatteryField:
 				parsed, err := strconv.ParseBool(filter)
 				if err != nil {
-					log.WithError(err).Fatal("invalid battery filter value")
+					log.Fatal().Err(err).Msg("Invalid battery filter value")
 				}
 
 				return parsed != e.Battery
