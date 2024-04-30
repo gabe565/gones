@@ -18,6 +18,7 @@ const (
 	OutputFormatTable OutputFormat = iota
 	OutputFormatJSON
 	OutputFormatYAML
+	OutputFormatPath
 )
 
 var ErrInvalidFormat = errors.New("invalid format")
@@ -33,6 +34,13 @@ func printEntries(out io.Writer, carts []*entry, format OutputFormat) error {
 	case OutputFormatYAML:
 		encoder := yaml.NewEncoder(out)
 		return encoder.Encode(carts)
+	case OutputFormatPath:
+		for _, cart := range carts {
+			if _, err := io.WriteString(out, cart.Path+"\n"); err != nil {
+				return err
+			}
+		}
+		return nil
 	}
 	return fmt.Errorf("%w: %s", ErrInvalidFormat, format)
 }
