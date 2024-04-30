@@ -10,25 +10,27 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type Format string
+//go:generate enumer -type OutputFormat -trimprefix OutputFormat -transform lower -values
+
+type OutputFormat uint8
 
 const (
-	FormatTable Format = "table"
-	FormatJSON  Format = "json"
-	FormatYAML  Format = "yaml"
+	OutputFormatTable OutputFormat = iota
+	OutputFormatJSON
+	OutputFormatYAML
 )
 
 var ErrInvalidFormat = errors.New("invalid format")
 
-func printEntries(out io.Writer, carts []*entry, format Format) error {
+func printEntries(out io.Writer, carts []*entry, format OutputFormat) error {
 	switch format {
-	case FormatTable:
+	case OutputFormatTable:
 		return printTable(out, carts)
-	case FormatJSON:
+	case OutputFormatJSON:
 		encoder := json.NewEncoder(out)
 		encoder.SetIndent("", "  ")
 		return encoder.Encode(carts)
-	case FormatYAML:
+	case OutputFormatYAML:
 		encoder := yaml.NewEncoder(out)
 		return encoder.Encode(carts)
 	}
