@@ -65,7 +65,7 @@ See [docs](./docs/gones.md) for the full command line usage documentation.
 
 A configuration file will be generated the first time GoNES is run. Depending on your operating system, the file will be available at:
 - **Windows:** `%AppData%\gones\config.toml`
-- **macOS:** `~/Library/Application Support/pwgen-go/config.toml`
+- **macOS:** `~/Library/Application Support/gones/config.toml`
 - **Linux:** `~/.config/gones/config.toml`
 
 An example configuration is also available at [`config_example.toml`](config_example.toml).
