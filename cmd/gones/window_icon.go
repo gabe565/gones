@@ -4,8 +4,7 @@ package gones
 
 import "github.com/hajimehoshi/ebiten/v2"
 
-//nolint:gochecknoinits
-func init() {
+func init() { //nolint:all
 	go func() {
 		ebiten.SetWindowIcon(getWindowIcons())
 	}()

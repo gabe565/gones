@@ -1,4 +1,3 @@
-//nolint:ireturn
 package cartridge
 
 import (
@@ -33,7 +32,7 @@ type MapperIRQ interface {
 
 var ErrUnsupportedMapper = errors.New("unsupported mapper")
 
-func NewMapper(cartridge *Cartridge) (Mapper, error) {
+func NewMapper(cartridge *Cartridge) (Mapper, error) { //nolint:ireturn,nolintlint
 	switch cartridge.Mapper {
 	case 0, 2:
 		return NewMapper2(cartridge), nil
