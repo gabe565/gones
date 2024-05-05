@@ -252,7 +252,7 @@ jobs:
           merge-multiple: true
       - name: Generate Changelog
         id: changelog
-        uses: gabe565/changelog-generator@v0
+        uses: gabe565/changelog-generator@v1
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
