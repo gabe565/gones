@@ -99,7 +99,7 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 		if err != nil {
 			return &console, err
 		}
-		console.player.SetBufferSize(time.Second / 10)
+		console.player.SetBufferSize(time.Second / 20)
 		console.player.SetVolume(conf.Audio.Volume)
 		go func() {
 			console.player.Play()

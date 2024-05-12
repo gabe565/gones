@@ -1,8 +1,6 @@
 package apu
 
 import (
-	"time"
-
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/interrupt"
@@ -19,7 +17,7 @@ type CPU interface {
 const (
 	FrameCounterRate  = consts.CPUFrequency / 240.0
 	DefaultSampleRate = consts.CPUFrequency / consts.AudioSampleRate * consts.FrameRateDifference
-	BufferCap         = consts.AudioSampleRate / 20
+	BufferCap         = consts.AudioSampleRate / 5
 )
 
 //nolint:gochecknoglobals
@@ -264,22 +262,16 @@ func (a *APU) Clear() {
 }
 
 func (a *APU) Read(p []byte) (int, error) {
-	timer := time.NewTimer(time.Second / 60 * 2)
-	defer timer.Stop()
-
 	var i int
 	var sample float64
 	for i = 0; i < len(p); i += 4 {
-		if len(a.buf) == 0 {
-			select {
-			case sample = <-a.buf:
-			case <-timer.C:
-				return i, nil
-			}
-		} else {
-			sample = <-a.buf
-		}
 		p := p[i : i+4 : i+4]
+		select {
+		case sample = <-a.buf:
+		default:
+			p[0], p[1], p[2], p[3] = 0, 0, 0, 0
+			continue
+		}
 		out := int16(sample * 32767)
 		lo := byte(out)
 		p[0], p[2] = lo, lo
