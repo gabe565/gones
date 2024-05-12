@@ -159,10 +159,12 @@ func (a *APU) Step() bool {
 		a.stepFrameCounter()
 	}
 
-	s1 := uint32(cycle1 / a.SampleRate)
-	s2 := uint32(cycle2 / a.SampleRate)
-	if s1 != s2 && a.Enabled {
-		a.sendSample()
+	if a.Enabled {
+		s1 := uint32(cycle1 / a.SampleRate)
+		s2 := uint32(cycle2 / a.SampleRate)
+		if s1 != s2 {
+			a.sendSample()
+		}
 	}
 
 	return a.IRQPending || a.DMC.IRQPending
@@ -263,20 +265,18 @@ func (a *APU) Clear() {
 
 func (a *APU) Read(p []byte) (int, error) {
 	var i int
-	var sample float64
 	for i = 0; i < len(p); i += 4 {
 		p := p[i : i+4 : i+4]
 		select {
-		case sample = <-a.buf:
+		case sample := <-a.buf:
+			out := int16(sample * 32767)
+			lo := byte(out)
+			p[0], p[2] = lo, lo
+			hi := byte(out >> 8)
+			p[1], p[3] = hi, hi
 		default:
 			p[0], p[1], p[2], p[3] = 0, 0, 0, 0
-			continue
 		}
-		out := int16(sample * 32767)
-		lo := byte(out)
-		p[0], p[2] = lo, lo
-		hi := byte(out >> 8)
-		p[1], p[3] = hi, hi
 	}
 	return i, nil
 }
