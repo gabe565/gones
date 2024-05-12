@@ -77,8 +77,8 @@ github.com/mitchellh/copystructure v1.2.0/go.mod h1:qLl+cE2AmVv+CoeAwDPye/v+N2HK
 github.com/mitchellh/reflectwalk v1.0.0/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx0jmZXqmk4esnw=
 github.com/mitchellh/reflectwalk v1.0.2 h1:G2LzWKi524PWgd3mLHV8Y5k7s6XUvT0Gef6zxSIeXaQ=
 github.com/mitchellh/reflectwalk v1.0.2/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx0jmZXqmk4esnw=
-github.com/ncruces/zenity v0.10.11 h1:5LDM2me4gY7QqnjvR/+O4ZFM+AhM1v1/gFPg6vBCzfQ=
-github.com/ncruces/zenity v0.10.11/go.mod h1:IX17BvaqNALQ8ACkLdJxfzB48pqWFRt7dVeqqugKH84=
+github.com/ncruces/zenity v0.10.12 h1:o4SErDa0kQijlqG6W4OYYzO6kA0fGu34uegvJGcMLBI=
+github.com/ncruces/zenity v0.10.12/go.mod h1:5OZIERViRR2fN0FcJCcisqxI+lYMDGzEDCEwB/+8iao=
 github.com/pelletier/go-toml/v2 v2.2.2 h1:aYUidT7k73Pcl9nb2gScu7NSrKCSHIDE89b3+6Wq+LM=
 github.com/pelletier/go-toml/v2 v2.2.2/go.mod h1:1t835xjRzz80PqgE6HHgN2JOsmgYu/h4qDAS4n929Rs=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
