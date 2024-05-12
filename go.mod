@@ -10,7 +10,7 @@ require (
 	github.com/knadh/koanf/providers/posflag v0.1.0
 	github.com/knadh/koanf/providers/rawbytes v0.1.0
 	github.com/knadh/koanf/providers/structs v0.1.0
-	github.com/knadh/koanf/v2 v2.1.0
+	github.com/knadh/koanf/v2 v2.1.1
 	github.com/ncruces/zenity v0.10.11
 	github.com/pelletier/go-toml/v2 v2.2.2
 	github.com/rs/zerolog v1.32.0
