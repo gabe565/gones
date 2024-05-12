@@ -6,58 +6,54 @@ import (
 
 //nolint:gochecknoglobals
 var (
-	EmphasizeR   Palette
-	EmphasizeG   Palette
-	EmphasizeB   Palette
-	EmphasizeRG  Palette
-	EmphasizeRB  Palette
-	EmphasizeGB  Palette
-	EmphasizeRGB Palette
+	EmphasizeR   = Palette{Emphasis: Red}
+	EmphasizeG   = Palette{Emphasis: Green}
+	EmphasizeB   = Palette{Emphasis: Blue}
+	EmphasizeRG  = Palette{Emphasis: Red | Green}
+	EmphasizeRB  = Palette{Emphasis: Red | Blue}
+	EmphasizeGB  = Palette{Emphasis: Green | Blue}
+	EmphasizeRGB = Palette{Emphasis: Red | Green | Blue}
 )
+
+type Emphasis uint8
 
 const (
-	Red   = 'R'
-	Green = 'G'
-	Blue  = 'B'
-
-	Attenuate = 0.746
+	Red Emphasis = 1 << iota
+	Green
+	Blue
 )
 
-func UpdateEmphasized() {
-	type EmphasizedPalette struct {
-		Palette *Palette
-		Colors  []byte
-	}
+const Attenuate = 0.746
 
-	palettes := []EmphasizedPalette{
-		{&EmphasizeR, []byte{Red}},
-		{&EmphasizeG, []byte{Green}},
-		{&EmphasizeB, []byte{Blue}},
-		{&EmphasizeRG, []byte{Red, Green}},
-		{&EmphasizeRB, []byte{Red, Blue}},
-		{&EmphasizeGB, []byte{Green, Blue}},
-		{&EmphasizeRGB, []byte{Red, Green, Blue}},
+func UpdateEmphasized() {
+	palettes := []*Palette{
+		&EmphasizeR,
+		&EmphasizeG,
+		&EmphasizeB,
+		&EmphasizeRG,
+		&EmphasizeRB,
+		&EmphasizeGB,
+		&EmphasizeRGB,
 	}
 
 	for _, palette := range palettes {
-		for i, c := range Default {
+		for i, c := range Default.RGBA {
 			// Don't attenuate $xE or $xF (black)
 			if i&0xE != 0xE {
-				for _, emphasis := range palette.Colors {
-					switch emphasis {
-					case Red:
-						c.G = uint8(math.Round(float64(c.G) * Attenuate))
-						c.B = uint8(math.Round(float64(c.B) * Attenuate))
-					case Green:
-						c.R = uint8(math.Round(float64(c.R) * Attenuate))
-						c.B = uint8(math.Round(float64(c.B) * Attenuate))
-					case Blue:
-						c.R = uint8(math.Round(float64(c.R) * Attenuate))
-						c.G = uint8(math.Round(float64(c.G) * Attenuate))
-					}
+				if palette.Emphasis&Red != 0 {
+					c.G = uint8(math.Round(float64(c.G) * Attenuate))
+					c.B = uint8(math.Round(float64(c.B) * Attenuate))
+				}
+				if palette.Emphasis&Green != 0 {
+					c.R = uint8(math.Round(float64(c.R) * Attenuate))
+					c.B = uint8(math.Round(float64(c.B) * Attenuate))
+				}
+				if palette.Emphasis&Blue != 0 {
+					c.R = uint8(math.Round(float64(c.R) * Attenuate))
+					c.G = uint8(math.Round(float64(c.G) * Attenuate))
 				}
 			}
-			palette.Palette[i] = c
+			palette.RGBA[i] = c
 		}
 	}
 }

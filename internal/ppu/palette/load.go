@@ -25,11 +25,11 @@ func (l PalColor) RGBA() color.RGBA {
 
 func LoadPal(r io.Reader) error {
 	var c PalColor
-	for i := range len(Default) {
+	for i := range len(Default.RGBA) {
 		if err := binary.Read(r, binary.LittleEndian, &c); err != nil {
 			return err
 		}
-		Default[i] = c.RGBA()
+		Default.RGBA[i] = c.RGBA()
 	}
 	UpdateEmphasized()
 	return nil

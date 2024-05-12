@@ -15,31 +15,31 @@ func TestLoadPal(t *testing.T) {
 	t.Parallel()
 	UpdateEmphasized()
 
-	var defaultPalette Palette
-	copy(defaultPalette[:], Default[:])
-	var emphasizeR Palette
-	copy(emphasizeR[:], EmphasizeR[:])
-	var emphasizeG Palette
-	copy(emphasizeG[:], EmphasizeG[:])
-	var emphasizeB Palette
-	copy(emphasizeB[:], EmphasizeB[:])
-	var emphasizeRG Palette
-	copy(emphasizeRG[:], EmphasizeRG[:])
-	var emphasizeRB Palette
-	copy(emphasizeRB[:], EmphasizeRB[:])
-	var emphasizeGB Palette
-	copy(emphasizeGB[:], EmphasizeGB[:])
-	var emphasizeRGB Palette
-	copy(emphasizeRGB[:], EmphasizeRGB[:])
+	defaultPalette := Palette{Emphasis: Default.Emphasis}
+	copy(defaultPalette.RGBA[:], Default.RGBA[:])
+	emphasizeR := Palette{Emphasis: EmphasizeR.Emphasis}
+	copy(emphasizeR.RGBA[:], EmphasizeR.RGBA[:])
+	emphasizeG := Palette{Emphasis: EmphasizeG.Emphasis}
+	copy(emphasizeG.RGBA[:], EmphasizeG.RGBA[:])
+	emphasizeB := Palette{Emphasis: EmphasizeB.Emphasis}
+	copy(emphasizeB.RGBA[:], EmphasizeB.RGBA[:])
+	emphasizeRG := Palette{Emphasis: EmphasizeRG.Emphasis}
+	copy(emphasizeRG.RGBA[:], EmphasizeRG.RGBA[:])
+	emphasizeRB := Palette{Emphasis: EmphasizeRB.Emphasis}
+	copy(emphasizeRB.RGBA[:], EmphasizeRB.RGBA[:])
+	emphasizeGB := Palette{Emphasis: EmphasizeGB.Emphasis}
+	copy(emphasizeGB.RGBA[:], EmphasizeGB.RGBA[:])
+	emphasizeRGB := Palette{Emphasis: EmphasizeRGB.Emphasis}
+	copy(emphasizeRGB.RGBA[:], EmphasizeRGB.RGBA[:])
 
 	Default = Palette{}
-	EmphasizeR = Palette{}
-	EmphasizeG = Palette{}
-	EmphasizeB = Palette{}
-	EmphasizeRG = Palette{}
-	EmphasizeRB = Palette{}
-	EmphasizeGB = Palette{}
-	EmphasizeRGB = Palette{}
+	EmphasizeR = Palette{Emphasis: EmphasizeR.Emphasis}
+	EmphasizeG = Palette{Emphasis: EmphasizeG.Emphasis}
+	EmphasizeB = Palette{Emphasis: EmphasizeB.Emphasis}
+	EmphasizeRG = Palette{Emphasis: EmphasizeRG.Emphasis}
+	EmphasizeRB = Palette{Emphasis: EmphasizeRB.Emphasis}
+	EmphasizeGB = Palette{Emphasis: EmphasizeGB.Emphasis}
+	EmphasizeRGB = Palette{Emphasis: EmphasizeRGB.Emphasis}
 
 	if err := LoadPal(bytes.NewReader(palFile)); !assert.NoError(t, err) {
 		return
