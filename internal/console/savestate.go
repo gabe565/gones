@@ -69,8 +69,10 @@ func (c *Console) LoadStateNum(num uint8) error {
 
 	log.Info().Str("file", filepath.Base(path)).Msg("Loading state")
 
-	if err := c.CreateUndoLoadState(); err != nil {
-		return err
+	if num != AutoSaveNum {
+		if err := c.CreateUndoLoadState(); err != nil {
+			return err
+		}
 	}
 
 	if err := c.LoadState(f); err != nil {
