@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 BINARY_NAME='GoNES'
+VERSION="${VERSION:-}"
 
 set -euo pipefail
 
@@ -18,7 +19,10 @@ cp -a assets/{png/icon_48x48,windows/icon48}.png
 cp -a assets/{png/icon_64x64,windows/icon64}.png
 cp -a assets/{png/icon_128x128,windows/icon128}.png
 cp -a assets/{png/icon_256x256,windows/icon256}.png
-go-winres make --arch=amd64,arm64 --in=assets/windows/winres.json
+if [[ -n "${VERSION:-}" && "$VERSION" == v* ]]; then
+  WINRES_FLAGS=( --product-version="${VERSION#v}.0" --file-version="${VERSION#v}.0" )
+fi
+go-winres make --arch=amd64,arm64 --in=assets/windows/winres.json "${WINRES_FLAGS[@]}"
 
 go generate
 

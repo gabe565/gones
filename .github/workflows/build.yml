@@ -71,6 +71,8 @@ jobs:
       - name: Generate
         run: go generate -x
       - name: Build
+        env:
+          VERSION: ${{ github.ref_name }}
         run: ./hack/build-windows.sh
       - name: Compress
         working-directory: dist

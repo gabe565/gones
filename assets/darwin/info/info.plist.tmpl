@@ -12,12 +12,14 @@
 		<string>MacOS/gones</string>
 		<key>CFBundleIdentifier</key>
 		<string>com.gabe565.gones</string>
-		<key>CFBundleVersion</key>
-		<string>1.0</string>
 		<key>CFBundleGetInfoString</key>
 		<string>GoNES by gabe565</string>
+		{{- with .Version }}
+		<key>CFBundleVersion</key>
+		<string>{{ trimPrefix "v" . }}</string>
 		<key>CFBundleShortVersionString</key>
-		<string>1.0</string>
+		<string>{{ trimPrefix "v" . }}</string>
+		{{- end }}
 		<key>CFBundleIconFile</key>
 		<string>GoNES.icns</string>
 		<key>LSUIElement</key>
