@@ -25,6 +25,11 @@ brew install gabe565/tap/gones --no-quarantine
 
 Automated builds are uploaded during the release process. See the [latest release](https://github.com/gabe565/gones/releases/latest) for download links.
 
+### Web
+
+GoNES supports emulation in a web browser by compiling to WASM.  
+A hosted instance is available at [gones.gabe565.com](https://gones.gabe565.com).
+
 ### From Source
 
 <details>
