@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"os/signal"
+	"runtime"
 
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
@@ -67,12 +68,17 @@ func run(cmd *cobra.Command, args []string) error {
 	ebiten.SetFullscreen(conf.UI.Fullscreen)
 	ebiten.SetScreenClearedEveryFrame(false)
 	ebiten.SetRunnableOnUnfocused(!conf.UI.PauseUnfocused)
+	if runtime.GOOS != "darwin" {
+		ebiten.SetWindowIcon(getWindowIcons())
+	}
 
 	if name := c.Cartridge.Name(); name != "" {
 		ebiten.SetWindowTitle(name + " | GoNES")
 	}
 
-	if err := ebiten.RunGame(c); err != nil && !errors.Is(err, console.ErrExit) {
+	if err := ebiten.RunGameWithOptions(c, &ebiten.RunGameOptions{
+		SingleThread: true,
+	}); err != nil && !errors.Is(err, console.ErrExit) {
 		return err
 	}
 

@@ -29,7 +29,7 @@ go generate
 export GOOS=darwin CGO_ENABLED=1
 for ARCH in amd64 arm64; do
   echo Build "$BINARY_NAME-$ARCH"
-  GOARCH="$ARCH" go build -ldflags='-w -s' -trimpath -tags gzip -o "dist/$BINARY_NAME-$ARCH" .
+  GOARCH="$ARCH" go build -ldflags='-w -s' -trimpath -tags gzip,ebitenginesinglethread -o "dist/$BINARY_NAME-$ARCH" .
 done
 
 # Merge binaries

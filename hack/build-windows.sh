@@ -26,5 +26,5 @@ go generate
 export GOOS=windows CGO_ENABLED=1
 for ARCH in amd64 arm64; do
   echo Build "$BINARY_NAME-$ARCH.exe"
-  GOARCH="$ARCH" go build -ldflags='-w -s -H=windowsgui' -trimpath -tags gzip -o "dist/$BINARY_NAME-$ARCH.exe" .
+  GOARCH="$ARCH" go build -ldflags='-w -s -H=windowsgui' -trimpath -tags gzip,ebitenginesinglethread -o "dist/$BINARY_NAME-$ARCH.exe" .
 done

@@ -16,6 +16,7 @@ env:
     libxinerama-dev
     libxrandr-dev
     libxxf86vm-dev
+  BUILD_TAGS: gzip,ebitenginesinglethread
 
 jobs:
   lint:
@@ -133,7 +134,7 @@ jobs:
       - name: Build
         env:
           CGO_ENABLED: "1"
-        run: go build -ldflags='-w -s' -trimpath -tags gzip -o dist/gones
+        run: go build -ldflags='-w -s' -trimpath -tags "${{ env.BUILD_TAGS }}" -o dist/gones
       - name: Compress
         run: tar -cvf gones_linux_amd64.tar.gz -C dist .
       - name: Upload Artifact
@@ -176,7 +177,7 @@ jobs:
             -v "$(go env GOMODCACHE):/go/pkg/mod" \
             -v "$PWD:/app" \
             builder \
-            go build -ldflags='-w -s' -trimpath -tags gzip -o dist/gones
+            go build -ldflags='-w -s' -trimpath -tags "${{ env.BUILD_TAGS }}" -o dist/gones
       - name: Compress
         run: tar -cvf gones_linux_arm64.tar.gz -C dist .
       - name: Upload Artifact
@@ -202,7 +203,7 @@ jobs:
         env:
           GOOS: js
           GOARCH: wasm
-        run: go build -ldflags='-w -s' -trimpath -tags gzip -o web/src/assets/gones.wasm
+        run: go build -ldflags='-w -s' -trimpath -tags "${{ env.BUILD_TAGS }}" -o web/src/assets/gones.wasm
       - name: Set up Node
         uses: actions/setup-node@v4
         with:

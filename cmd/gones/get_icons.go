@@ -12,7 +12,7 @@ import (
 func getWindowIcons() []image.Image {
 	icons := make([]image.Image, 0, 3)
 
-	err := fs.WalkDir(assets.Icons, ".", func(path string, d fs.DirEntry, err error) error {
+	if err := fs.WalkDir(assets.Icons, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() {
 			return err
 		}
@@ -34,8 +34,7 @@ func getWindowIcons() []image.Image {
 
 		icons = append(icons, icon)
 		return nil
-	})
-	if err != nil {
+	}); err != nil {
 		log.Err(err).Msg("Failed to load icons")
 	}
 
