@@ -108,5 +108,5 @@ const loadState = () => {
     src="game_frame/index.html"
     class="w-full h-full overflow-hidden"
     title="Game"
-  ></iframe>
+  />
 </template>

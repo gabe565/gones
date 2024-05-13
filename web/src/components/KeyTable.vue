@@ -39,10 +39,13 @@ const keys = reactive({
             v-for="key in keyList"
             :key="key"
             class="px-1.5 py-0.5 m-0.5 text-xs font-semibold bg-gray-700 text-gray-100 border-gray-500 border border-b-2 rounded-lg"
-            >{{ key }}</kbd
           >
+            {{ key }}
+          </kbd>
         </td>
-        <td class="text-sm">{{ action }}</td>
+        <td class="text-sm">
+          {{ action }}
+        </td>
       </tr>
     </tbody>
   </table>

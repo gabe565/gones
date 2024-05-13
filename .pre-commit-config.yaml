@@ -15,6 +15,7 @@ repos:
         types: []
         types_or: [javascript, vue]
         args:
+          - --config=web/eslint.config.js
           - --fix
 
   - repo: local
