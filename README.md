@@ -119,6 +119,7 @@ Keys are configurable, but the default values are listed below.
 | Fast Forward      | F (Hold) |
 | Reset             | R (Hold) |
 | Toggle Fullscreen | F11      |
+| Screenshot        | \        |
 
 #### Debugging
 
