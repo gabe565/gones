@@ -8,7 +8,7 @@ on:
 jobs:
   update-nointro-database:
     name: Update NoIntro Database
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       COMMIT_MESSAGE: "chore(database): Update NoIntro database"
       AUTHOR: "gones-bot <159408161+gones-bot[bot]@users.noreply.github.com>"
