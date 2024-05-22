@@ -127,18 +127,15 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 }
 
 func (c *Console) Close() error {
+	var errs []error
 	if c.autosave != nil {
 		c.autosave.Stop()
 	}
 	if c.config.State.Resume {
-		if err := c.SaveStateNum(AutoSaveNum, false); err != nil {
-			return err
-		}
+		errs = append(errs, c.SaveStateNum(AutoSaveNum, false))
 	}
-	if err := c.SaveSRAM(); err != nil {
-		return err
-	}
-	return nil
+	errs = append(errs, c.SaveSRAM())
+	return errors.Join(errs...)
 }
 
 func (c *Console) Step(render bool) {
