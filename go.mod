@@ -5,7 +5,7 @@ go 1.22.3
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/PuerkitoBio/goquery v1.9.2
-	github.com/fatih/color v1.16.0
+	github.com/fatih/color v1.17.0
 	github.com/hajimehoshi/ebiten/v2 v2.7.3
 	github.com/knadh/koanf/providers/posflag v0.1.0
 	github.com/knadh/koanf/providers/rawbytes v0.1.0
