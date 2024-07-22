@@ -3,7 +3,9 @@
 package main
 
 import (
+	"compress/gzip"
 	"encoding/csv"
+	"io"
 	"os"
 
 	"github.com/gabe565/gones/internal/database/nointro"
@@ -24,20 +26,33 @@ func main() {
 		log.Fatal().Err(err).Msg("Failed to create CSV file")
 	}
 
-	c := csv.NewWriter(f)
+	gzf, err := os.Create("internal/database/database.csv.gz")
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to create gzipped CSV file")
+	}
+	gz := gzip.NewWriter(gzf)
+
+	c := csv.NewWriter(io.MultiWriter(f, gz))
 	for _, game := range datafile.Games {
 		for _, rom := range game.Roms {
 			if err := c.Write([]string{rom.MD5, game.Name}); err != nil {
-				log.Fatal().Err(err).Msg("Failed to write to CSV file")
+				log.Fatal().Err(err).Msg("Failed to write CSV")
 			}
 		}
 	}
 	c.Flush()
 	if err := c.Error(); err != nil {
-		log.Fatal().Err(err).Msg("Failed to write to CSV file")
+		log.Fatal().Err(err).Msg("Failed to write CSV")
 	}
 
 	if err := f.Close(); err != nil {
 		log.Fatal().Err(err).Msg("Failed to close CSV file")
+	}
+
+	if err := gz.Close(); err != nil {
+		log.Fatal().Err(err).Msg("Failed to close gzipped CSV writer")
+	}
+	if err := gzf.Close(); err != nil {
+		log.Fatal().Err(err).Msg("Failed to close gzipped CSV file")
 	}
 }
