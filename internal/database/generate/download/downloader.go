@@ -272,6 +272,10 @@ func (g *Downloader) prepareDownload(ctx context.Context, postFields map[string]
 	if err != nil {
 		return "", "", "", err
 	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, res.Body)
+		_ = res.Body.Close()
+	}()
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
@@ -297,10 +301,6 @@ func (g *Downloader) prepareDownload(ctx context.Context, postFields map[string]
 	if !ok {
 		return "", "", "", ErrNoButton
 	}
-
-	// Drain response body
-	_, _ = io.Copy(io.Discard, res.Body)
-	_ = res.Body.Close()
 
 	return url.String(), name, value, nil
 }
