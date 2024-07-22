@@ -1,9 +1,9 @@
-//nolint:noctx
 package main
 
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -59,32 +59,24 @@ func (g *Downloader) URL() string {
 	return u.String()
 }
 
-func (g *Downloader) Run() error {
+func (g *Downloader) Run(ctx context.Context) error {
 	var err error
-	g.SystemID, err = g.getSystemID(g.SystemName)
+	g.SystemID, err = g.getSystemID(ctx, g.SystemName)
 	if err != nil {
 		return err
 	}
 
-	postParams, err := g.getFormParams()
+	postParams, err := g.getFormParams(ctx)
 	if err != nil {
 		return err
 	}
 
-	url, name, value, err := g.prepareDownload(postParams)
+	url, name, value, err := g.prepareDownload(ctx, postParams)
 	if err != nil {
 		return err
 	}
 
-	res, err := g.download(url, name, value)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		_ = res.Body.Close()
-	}()
-
-	f, err := g.unzip(res.Body)
+	f, err := g.download(ctx, url, name, value)
 	if err != nil {
 		return err
 	}
@@ -126,13 +118,13 @@ var ErrSystemNotFound = errors.New("could not find system ID")
 
 var ErrNoForm = errors.New(`could not find form"`)
 
-func (g *Downloader) getSystemID(systemName string) (string, error) {
+func (g *Downloader) getSystemID(ctx context.Context, systemName string) (string, error) {
 	log.Info().
 		Str("url", g.URL()).
 		Str("systemName", g.SystemName).
 		Msg("Get system ID")
 
-	res, err := g.client.Get(g.URL())
+	res, err := g.request(ctx, http.MethodGet, g.URL(), "", nil, http.StatusOK)
 	if err != nil {
 		return "", err
 	}
@@ -140,10 +132,6 @@ func (g *Downloader) getSystemID(systemName string) (string, error) {
 		_, _ = io.Copy(io.Discard, res.Body)
 		_ = res.Body.Close()
 	}()
-
-	if err := checkStatusCode(res, http.StatusOK); err != nil {
-		return "", err
-	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
@@ -179,12 +167,12 @@ func (g *Downloader) getSystemID(systemName string) (string, error) {
 	return system, nil
 }
 
-func (g *Downloader) getFormParams() (map[string]string, error) {
+func (g *Downloader) getFormParams(ctx context.Context) (map[string]string, error) {
 	postParams := make(map[string]string)
 
 	// Get session cookie
 	log.Info().Str("url", g.URL()).Msg("Get form params")
-	res, err := g.client.Get(g.URL())
+	res, err := g.request(ctx, http.MethodGet, g.URL(), "", nil, http.StatusOK)
 	if err != nil {
 		return postParams, err
 	}
@@ -192,10 +180,6 @@ func (g *Downloader) getFormParams() (map[string]string, error) {
 		_, _ = io.Copy(io.Discard, res.Body)
 		_ = res.Body.Close()
 	}()
-
-	if err := checkStatusCode(res, http.StatusOK); err != nil {
-		return postParams, err
-	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
@@ -249,7 +233,7 @@ var (
 	ErrNoButton        = errors.New(`could not find download button`)
 )
 
-func (g *Downloader) prepareDownload(postFields map[string]string) (string, string, string, error) {
+func (g *Downloader) prepareDownload(ctx context.Context, postFields map[string]string) (string, string, string, error) {
 	// Get form params to request a download
 	body, contentType, err := g.buildPostForm(postFields)
 	if err != nil {
@@ -267,18 +251,12 @@ func (g *Downloader) prepareDownload(postFields map[string]string) (string, stri
 
 	// Request download
 	log.Info().Str("url", g.URL()).Msg("Request download")
-	res, err := g.client.Post(g.URL(), contentType, body)
+	res, err := g.request(ctx, http.MethodPost, g.URL(), contentType, body, http.StatusFound)
 	if err != nil {
 		return "", "", "", err
 	}
-
-	// Drain response body
 	_, _ = io.Copy(io.Discard, res.Body)
 	_ = res.Body.Close()
-
-	if err := checkStatusCode(res, http.StatusFound); err != nil {
-		return "", "", "", err
-	}
 
 	location := res.Header.Get("Location")
 	if location == "" {
@@ -290,7 +268,7 @@ func (g *Downloader) prepareDownload(postFields map[string]string) (string, stri
 		return "", "", "", err
 	}
 
-	res, err = g.client.Get(url.String())
+	res, err = g.request(ctx, http.MethodGet, url.String(), "", nil, http.StatusOK)
 	if err != nil {
 		return "", "", "", err
 	}
@@ -327,7 +305,9 @@ func (g *Downloader) prepareDownload(postFields map[string]string) (string, stri
 	return url.String(), name, value, nil
 }
 
-func (g *Downloader) download(url, name, value string) (*http.Response, error) {
+var ErrNoFiles = errors.New("no files")
+
+func (g *Downloader) download(ctx context.Context, url, name, value string) (io.ReadCloser, error) {
 	body, contentType, err := g.buildPostForm(map[string]string{
 		name: value,
 	})
@@ -336,27 +316,22 @@ func (g *Downloader) download(url, name, value string) (*http.Response, error) {
 	}
 
 	log.Info().Str("url", url).Msg("Begin download")
-	res, err := g.client.Post(url, contentType, body)
-	if err != nil {
-		return res, err
-	}
-
-	if err := checkStatusCode(res, http.StatusOK); err != nil {
-		return res, err
-	}
-
-	log.Info().Str("contentLength", res.Header.Get("Content-Length")).Msg("Began download")
-	return res, nil
-}
-
-var ErrNoFiles = errors.New("no files")
-
-func (g *Downloader) unzip(src io.ReadCloser) (io.ReadCloser, error) {
-	b, err := io.ReadAll(src)
+	res, err := g.request(ctx, http.MethodPost, url, contentType, body, http.StatusOK)
 	if err != nil {
 		return nil, err
 	}
-	_ = src.Close()
+	defer func() {
+		_, _ = io.Copy(io.Discard, res.Body)
+		_ = res.Body.Close()
+	}()
+
+	log.Info().Str("contentLength", res.Header.Get("Content-Length")).Msg("Began download")
+
+	b, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	_ = res.Body.Close()
 
 	zipr, err := zip.NewReader(bytes.NewReader(b), int64(len(b)))
 	if err != nil {
@@ -372,20 +347,32 @@ func (g *Downloader) unzip(src io.ReadCloser) (io.ReadCloser, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return f, nil
 }
 
 var ErrInvalidResponse = errors.New("invalid response")
 
-func checkStatusCode(response *http.Response, expected int) error {
-	if response.StatusCode != expected {
-		return fmt.Errorf(
+func (g *Downloader) request(ctx context.Context, method, url, contentType string, body io.Reader, expectStatus int) (*http.Response, error) {
+	req, err := http.NewRequestWithContext(ctx, method, url, body)
+	if err != nil {
+		return nil, err
+	}
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
+	}
+
+	res, err := g.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != expectStatus {
+		return nil, fmt.Errorf(
 			`%w: got %q, expected %q`,
 			ErrInvalidResponse,
-			response.Status,
-			fmt.Sprintf("%d %s", expected, http.StatusText(expected)),
+			res.Status,
+			fmt.Sprintf("%d %s", expectStatus, http.StatusText(expectStatus)),
 		)
 	}
-	return nil
+	return res, nil
 }
