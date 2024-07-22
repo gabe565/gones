@@ -33,9 +33,8 @@ func FindNameByHash(hash string) (string, error) {
 		if err != nil {
 			if err == io.EOF {
 				break
-			} else {
-				return "", err
 			}
+			return "", err
 		}
 
 		if record[0] == hash {
