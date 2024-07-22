@@ -16,23 +16,28 @@ import (
 func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
+	const path = "internal/database/database.csv"
+
 	datafile, err := nointro.Load(nointro.Nes)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to load NoInto database")
 	}
 
-	f, err := os.Create("internal/database/database.csv")
+	log.Info().Str("path", path).Msg("Creating CSV file")
+	f, err := os.Create(path)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to create CSV file")
 	}
 
-	gzf, err := os.Create("internal/database/database.csv.gz")
+	log.Info().Str("path", path+".gz").Msg("Creating gzipped CSV file")
+	gzf, err := os.Create(path + ".gz")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to create gzipped CSV file")
 	}
 	gz := gzip.NewWriter(gzf)
 
 	c := csv.NewWriter(io.MultiWriter(f, gz))
+	log.Info().Int("count", len(datafile.Games)).Msg("Writing games to CSV")
 	for _, game := range datafile.Games {
 		for _, rom := range game.Roms {
 			if err := c.Write([]string{rom.MD5, game.Name}); err != nil {
@@ -41,6 +46,8 @@ func main() {
 		}
 	}
 	c.Flush()
+
+	log.Info().Msg("Closing files")
 	if err := c.Error(); err != nil {
 		log.Fatal().Err(err).Msg("Failed to write CSV")
 	}
