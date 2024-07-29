@@ -3,7 +3,6 @@ package ls
 import (
 	"errors"
 	"io/fs"
-	"os"
 	"path/filepath"
 	"slices"
 	"strconv"
@@ -131,51 +130,31 @@ func loadPaths(paths []string) ([]*entry, bool) {
 
 	var failed bool
 	for _, path := range paths {
-		stat, err := os.Stat(path)
-		if err != nil {
-			log.Err(err).Msg("Failed to stat file")
-			continue
-		}
+		if err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+			if err != nil || d.IsDir() || filepath.Ext(path) != ".nes" {
+				return err
+			}
 
-		if stat.IsDir() {
-			if err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+
+				cart, err := cartridge.FromiNesFile(path)
 				if err != nil {
-					return err
+					log.Err(err).Str("path", path).Msg("Invalid ROM")
+					failed = true
+					return
 				}
 
-				if d.IsDir() || filepath.Ext(path) != ".nes" {
-					return nil
-				}
-
-				wg.Add(1)
-				go func() {
-					defer wg.Done()
-
-					cart, err := cartridge.FromiNesFile(path)
-					if err != nil {
-						log.Err(err).Str("path", path).Msg("invalid ROM")
-						failed = true
-						return
-					}
-
-					entry := newEntry(path, cart)
-					mu.Lock()
-					carts = append(carts, entry)
-					mu.Unlock()
-				}()
-				return nil
-			}); err != nil {
-				log.Err(err).Msg("Failed to load ROMs")
-				continue
-			}
-		} else {
-			cart, err := cartridge.FromiNesFile(path)
-			if err != nil {
-				log.Err(err).Msg("Invalid ROM")
-				continue
-			}
-
-			carts = append(carts, newEntry(path, cart))
+				entry := newEntry(path, cart)
+				mu.Lock()
+				carts = append(carts, entry)
+				mu.Unlock()
+			}()
+			return nil
+		}); err != nil {
+			log.Err(err).Msg("Failed to load ROMs")
+			continue
 		}
 	}
 	wg.Wait()
