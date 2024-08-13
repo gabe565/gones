@@ -11,7 +11,7 @@ require (
 	github.com/knadh/koanf/providers/rawbytes v0.1.0
 	github.com/knadh/koanf/providers/structs v0.1.0
 	github.com/knadh/koanf/v2 v2.1.1
-	github.com/ncruces/zenity v0.10.12
+	github.com/ncruces/zenity v0.10.13
 	github.com/pelletier/go-toml/v2 v2.2.2
 	github.com/rs/zerolog v1.32.0
 	github.com/spf13/cobra v1.8.0
@@ -57,6 +57,6 @@ require (
 	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/sys v0.22.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 )
