@@ -4,7 +4,7 @@ BINARY_NAME='gones'
 APP_NAME='GoNES'
 ICONSET=darwin/GoNES.iconset
 ICNS=darwin/GoNES.icns
-VERSION="${VERSION:-}"
+VERSION="${VERSION:-beta}"
 
 set -euo pipefail
 
@@ -29,7 +29,7 @@ go generate
 export GOOS=darwin CGO_ENABLED=1
 for ARCH in amd64 arm64; do
   echo Build "$BINARY_NAME-$ARCH"
-  GOARCH="$ARCH" go build -ldflags='-w -s' -trimpath -tags gzip,ebitenginesinglethread -o "dist/$BINARY_NAME-$ARCH" .
+  GOARCH="$ARCH" go build -ldflags="-w -s -X main.version=$VERSION" -trimpath -tags gzip,ebitenginesinglethread -o "dist/$BINARY_NAME-$ARCH" .
 done
 
 # Merge binaries

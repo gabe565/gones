@@ -1,7 +1,7 @@
 cask "gones" do
   desc "An NES emulator written in Go."
   homepage "https://github.com/gabe565/gones"
-  {{- if eq .Version "latest" }}
+  {{- if eq .Version "beta" }}
   version :latest
   {{- else }}
   version "{{ trimPrefix "v" .Version }}"

@@ -15,10 +15,12 @@
 		<key>CFBundleGetInfoString</key>
 		<string>GoNES by gabe565</string>
 		{{- with .Version }}
+		{{- if ne . "beta" }}
 		<key>CFBundleVersion</key>
 		<string>{{ trimPrefix "v" . }}</string>
 		<key>CFBundleShortVersionString</key>
 		<string>{{ trimPrefix "v" . }}</string>
+		{{- end }}
 		{{- end }}
 		<key>CFBundleIconFile</key>
 		<string>GoNES.icns</string>

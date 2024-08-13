@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"runtime"
 
+	"github.com/gabe565/gones/cmd/options"
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
 	"github.com/gabe565/gones/internal/ppu"
@@ -14,7 +15,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func New() *cobra.Command {
+func New(opts ...options.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "gones ROM",
 		Short: "NES emulator written in Go",
@@ -27,6 +28,10 @@ func New() *cobra.Command {
 		DisableAutoGenTag: true,
 	}
 	config.Flags(cmd)
+
+	for _, opt := range opts {
+		opt(cmd)
+	}
 
 	return cmd
 }
