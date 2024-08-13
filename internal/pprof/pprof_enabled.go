@@ -11,7 +11,7 @@ import (
 
 const (
 	Enabled = true
-	address = "localhost:3000"
+	address = "localhost:6060"
 )
 
 func ListenAndServe() error {
