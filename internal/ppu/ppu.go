@@ -324,16 +324,18 @@ func (p *PPU) Step(render bool) {
 	visibleLine := p.Scanline < 240
 	renderLine := preLine || visibleLine
 	visibleCycle := 1 <= p.Cycles && p.Cycles <= 256
-	preFetchCycle := 321 <= p.Cycles && p.Cycles <= 336
-	fetchCycle := preFetchCycle || visibleCycle
 
 	if visibleLine && visibleCycle {
 		p.renderPixel(render)
 	}
 
-	if p.Mask.RenderingEnabled() {
+	renderingEnabled := p.Mask.RenderingEnabled()
+	if renderingEnabled {
 		// Background
 		if renderLine {
+			preFetchCycle := 321 <= p.Cycles && p.Cycles <= 336
+			fetchCycle := preFetchCycle || visibleCycle
+
 			if fetchCycle {
 				p.BgTile.Data <<= 4
 
@@ -348,13 +350,12 @@ func (p *PPU) Step(render bool) {
 					p.BgTile.HiByte = p.fetchHiTileByte()
 				case 0:
 					p.storeTileData()
+					p.Addr.IncrementX()
 				}
 			}
 
 			if preLine && 280 <= p.Cycles && p.Cycles <= 304 {
 				p.Addr.LoadY(p.TmpAddr)
-			} else if fetchCycle && p.Cycles%8 == 0 {
-				p.Addr.IncrementX()
 			}
 
 			switch p.Cycles {
@@ -390,7 +391,7 @@ func (p *PPU) Step(render bool) {
 			p.OpenBus = 0
 		}
 	case 280:
-		if renderLine && p.Mask.RenderingEnabled() {
+		if renderLine && renderingEnabled {
 			if mapper, ok := p.mapper.(cartridge.MapperOnScanline); ok {
 				mapper.OnScanline()
 			}
