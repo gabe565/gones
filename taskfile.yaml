@@ -5,7 +5,6 @@ includes:
   icons: .taskfiles/icons.yaml
   linux: .taskfiles/linux.yaml
   nointro: .taskfiles/nointro.yaml
-  palette: .taskfiles/palette.yaml
   web: .taskfiles/web.yaml
 
 tasks:
