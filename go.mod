@@ -14,7 +14,7 @@ require (
 	github.com/ncruces/zenity v0.10.12
 	github.com/pelletier/go-toml/v2 v2.2.2
 	github.com/rs/zerolog v1.32.0
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.9.0
 	github.com/vmihailenco/msgpack/v5 v5.4.1
@@ -26,7 +26,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.0 // indirect
 	github.com/akavel/rsrc v0.10.2 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
-	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
+	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dchest/jsmin v0.0.0-20220218165748-59f39799265f // indirect
 	github.com/ebitengine/gomobile v0.0.0-20240329170434-1771503ff0a8 // indirect
