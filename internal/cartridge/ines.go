@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"os"
@@ -46,7 +47,7 @@ func (i iNESFileHeader) Submapper() byte {
 	return i.Control[2] >> 4
 }
 
-var ErrInvalidRom = errors.New("invalid ROM")
+var ErrInvalidROM = errors.New("invalid ROM file")
 
 func FromiNesFile(path string) (*Cartridge, error) {
 	f, err := os.Open(path)
@@ -75,7 +76,7 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 	}
 
 	if header.Magic != [4]byte{'N', 'E', 'S', 0x1A} {
-		return nil, ErrInvalidRom
+		return nil, fmt.Errorf("%w: %s", ErrInvalidROM, "missing NES header")
 	}
 
 	cartridge := New()
