@@ -166,7 +166,7 @@ func (p *PPU) WriteData(data byte) {
 	case 0x3F00 <= addr && addr < 0x4000:
 		p.writePalette(addr%32, data)
 	default:
-		slog.Error("Invalid write to mirrored space", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid write to mirrored space", "addr", util.HexAddr(addr))
 	}
 	p.Addr.Increment(p.Ctrl.VRAMAddr())
 	if mapper, ok := p.mapper.(cartridge.MapperOnVRAMAddr); ok {
@@ -211,7 +211,7 @@ func (p *PPU) ReadDataAddr(addr uint16) byte {
 	case 0x3F00 <= addr && addr < 0x4000:
 		return p.readPalette(addr % 32)
 	default:
-		slog.Error("Invalid access from mirrored space", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid access from mirrored space", "addr", util.HexAddr(addr))
 		return 0
 	}
 }
@@ -228,7 +228,7 @@ func (p *PPU) ReadMem(addr uint16) byte {
 	case 0x2007:
 		p.OpenBus = p.ReadData()
 	default:
-		slog.Error("Invalid PPU read", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid PPU read", "addr", util.HexAddr(addr))
 	}
 	return p.OpenBus
 }
@@ -262,7 +262,7 @@ func (p *PPU) WriteMem(addr uint16, data byte) {
 			p.cpu.AddStall(513)
 		}
 	default:
-		slog.Error("Invalid PPU write", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid PPU write", "addr", util.HexAddr(addr))
 	}
 	p.OpenBus = data
 }

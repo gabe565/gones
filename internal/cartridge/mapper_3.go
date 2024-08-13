@@ -47,7 +47,7 @@ func (m *Mapper3) ReadMem(addr uint16) byte {
 		addr += m.PRGBank2 * consts.PRGChunkSize
 		return m.cartridge.prg[addr]
 	default:
-		slog.Error("Invalid mapper 3 read", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid mapper 3 read", "addr", util.HexAddr(addr))
 		return 0
 	}
 }
@@ -64,6 +64,6 @@ func (m *Mapper3) WriteMem(addr uint16, data byte) {
 	case 0x8000 <= addr:
 		m.CHRBank = uint(data & 3)
 	default:
-		slog.Error("Invalid mapper 3 write", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid mapper 3 write", "addr", util.HexAddr(addr))
 	}
 }

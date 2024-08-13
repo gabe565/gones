@@ -74,7 +74,7 @@ func (m *Mapper69) ReadMem(addr uint16) byte {
 		addr := m.PRGBanks[bank]*0x2000 + offset
 		return m.cartridge.prg[addr%len(m.cartridge.prg)]
 	default:
-		slog.Error("Invalid mapper 69 read", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid mapper 69 read", "addr", util.HexAddr(addr))
 		return 0
 	}
 }
@@ -93,7 +93,7 @@ func (m *Mapper69) WriteMem(addr uint16, data byte) {
 		// Parameter register
 		m.runCommand(data)
 	default:
-		slog.Error("Invalid mapper 69 write", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid mapper 69 write", "addr", util.HexAddr(addr))
 	}
 }
 

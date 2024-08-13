@@ -78,7 +78,7 @@ func (m *Mapper4) ReadMem(addr uint16) byte {
 		offset := int(addr % 0x2000)
 		return m.cartridge.prg[m.PRGOffsets[bank]+offset]
 	default:
-		slog.Error("Invalid mapper 4 read", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid mapper 4 read", "addr", util.HexAddr(addr))
 		return 0
 	}
 }
@@ -128,7 +128,7 @@ func (m *Mapper4) WriteMem(addr uint16, data byte) {
 			m.IRQPending = false
 		}
 	default:
-		slog.Error("Invalid mapper 4 write", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid mapper 4 write", "addr", util.HexAddr(addr))
 	}
 }
 

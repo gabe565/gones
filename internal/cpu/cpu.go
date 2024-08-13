@@ -109,7 +109,7 @@ func (c *CPU) Step() uint {
 	op := OpCodes[code]
 	if op == nil {
 		c.StepErr = fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
-		slog.Error("Failed to step CPU", "error", ErrUnsupportedOpcode, "code", util.EncodeHexVal(code))
+		slog.Error("Failed to step CPU", "error", ErrUnsupportedOpcode, "code", util.HexVal(code))
 		return 1
 	}
 

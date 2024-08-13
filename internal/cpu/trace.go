@@ -59,7 +59,7 @@ func (c *CPU) Trace() string {
 		default:
 			slog.Error("Invalid addressing mode has len 2",
 				"mode", op.Mode,
-				"code", util.EncodeHexVal(code),
+				"code", util.HexVal(code),
 			)
 		}
 	case 3:
@@ -84,7 +84,7 @@ func (c *CPU) Trace() string {
 		default:
 			slog.Error("Invalid addressing mode has len 3",
 				"mode", op.Mode,
-				"code", util.EncodeHexVal(code),
+				"code", util.HexVal(code),
 			)
 		}
 	}

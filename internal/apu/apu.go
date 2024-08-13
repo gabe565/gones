@@ -109,7 +109,7 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 			a.stepLength()
 		}
 	default:
-		slog.Error("Invalid APU write", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid APU write", "addr", util.HexAddr(addr))
 	}
 }
 

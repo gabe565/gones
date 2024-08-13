@@ -43,7 +43,7 @@ func (m *Mapper71) ReadMem(addr uint16) byte {
 		addr += m.PRGLast * consts.PRGChunkSize
 		return m.cartridge.prg[addr]
 	default:
-		slog.Error("Invalid mapper 71 read", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid mapper 71 read", "addr", util.HexAddr(addr))
 		return 0
 	}
 }
@@ -62,6 +62,6 @@ func (m *Mapper71) WriteMem(addr uint16, data byte) {
 		data %= m.PRGCount
 		m.PRGActive = data
 	default:
-		slog.Error("Invalid mapper 71 write", "addr", util.EncodeHexAddr(addr))
+		slog.Error("Invalid mapper 71 write", "addr", util.HexAddr(addr))
 	}
 }
