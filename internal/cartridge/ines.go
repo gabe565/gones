@@ -58,11 +58,14 @@ func FromiNesFile(path string) (*Cartridge, error) {
 	}(f)
 
 	cartridge, err := FromiNes(f)
+	if err != nil {
+		return nil, err
+	}
+
 	if cartridge.name == "" {
 		cartridge.name = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 	}
-
-	return cartridge, err
+	return cartridge, nil
 }
 
 func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
