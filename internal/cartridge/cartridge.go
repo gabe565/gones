@@ -3,6 +3,7 @@ package cartridge
 import (
 	"crypto/md5"
 	"fmt"
+	"log/slog"
 	"path/filepath"
 	"strings"
 
@@ -57,4 +58,10 @@ func (c *Cartridge) SetName(path string) {
 
 func (c *Cartridge) Hash() string {
 	return c.hash
+}
+
+func (c *Cartridge) LogValue() slog.Value {
+	return slog.GroupValue(
+		slog.String("title", c.name),
+	)
 }

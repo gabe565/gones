@@ -6,13 +6,13 @@ import (
 	"encoding/hex"
 	"errors"
 	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/database"
-	"github.com/rs/zerolog/log"
 )
 
 type iNESFileHeader struct {
@@ -84,13 +84,13 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 		cartridge.Submapper = header.Submapper()
 	}
 
-	log.Debug().
-		Bool("battery", cartridge.Battery).
-		Uint8("mapper", cartridge.Mapper).
-		Stringer("mirror", cartridge.Mirror).
-		Uint8("prg", header.PRGCount).
-		Uint8("chr", header.CHRCount).
-		Msg("Loaded iNES header")
+	slog.Debug("Loaded iNES header",
+		"battery", cartridge.Battery,
+		"mapper", cartridge.Mapper,
+		"mirror", cartridge.Mirror,
+		"prg", header.PRGCount,
+		"chr", header.CHRCount,
+	)
 
 	cartridge.prg = make([]byte, int(header.PRGCount)*consts.PRGChunkSize)
 	if _, err := io.ReadFull(r, cartridge.prg); err != nil {

@@ -2,6 +2,7 @@ package ppu
 
 import (
 	"image"
+	"log/slog"
 
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/interrupt"
@@ -9,7 +10,6 @@ import (
 	"github.com/gabe565/gones/internal/ppu/palette"
 	"github.com/gabe565/gones/internal/ppu/registers"
 	"github.com/gabe565/gones/internal/util"
-	"github.com/rs/zerolog/log"
 )
 
 type CPU interface {
@@ -166,7 +166,7 @@ func (p *PPU) WriteData(data byte) {
 	case 0x3F00 <= addr && addr < 0x4000:
 		p.writePalette(addr%32, data)
 	default:
-		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid write to mirrored space")
+		slog.Error("Invalid write to mirrored space", "addr", util.EncodeHexAddr(addr))
 	}
 	p.Addr.Increment(p.Ctrl.VRAMAddr())
 	if mapper, ok := p.mapper.(cartridge.MapperOnVRAMAddr); ok {
@@ -211,7 +211,7 @@ func (p *PPU) ReadDataAddr(addr uint16) byte {
 	case 0x3F00 <= addr && addr < 0x4000:
 		return p.readPalette(addr % 32)
 	default:
-		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid access from mirrored space")
+		slog.Error("Invalid access from mirrored space", "addr", util.EncodeHexAddr(addr))
 		return 0
 	}
 }
@@ -228,7 +228,7 @@ func (p *PPU) ReadMem(addr uint16) byte {
 	case 0x2007:
 		p.OpenBus = p.ReadData()
 	default:
-		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid PPU read")
+		slog.Error("Invalid PPU read", "addr", util.EncodeHexAddr(addr))
 	}
 	return p.OpenBus
 }
@@ -262,7 +262,7 @@ func (p *PPU) WriteMem(addr uint16, data byte) {
 			p.cpu.AddStall(513)
 		}
 	default:
-		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid PPU write")
+		slog.Error("Invalid PPU write", "addr", util.EncodeHexAddr(addr))
 	}
 	p.OpenBus = data
 }

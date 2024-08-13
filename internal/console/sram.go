@@ -4,10 +4,9 @@ package console
 
 import (
 	"errors"
+	"log/slog"
 	"os"
 	"path/filepath"
-
-	"github.com/rs/zerolog/log"
 )
 
 func (c *Console) SaveSRAM() error {
@@ -20,7 +19,7 @@ func (c *Console) SaveSRAM() error {
 		return err
 	}
 
-	log.Debug().Str("file", filepath.Base(path)).Msg("Writing save to disk")
+	slog.Debug("Writing save to disk", "file", filepath.Base(path))
 
 	if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
 		return err
@@ -48,7 +47,7 @@ func (c *Console) LoadSRAM() error {
 		return err
 	}
 
-	log.Debug().Str("file", filepath.Base(path)).Msg("Loading save from disk")
+	slog.Debug("Loading save from disk", "file", filepath.Base(path))
 
 	c.Cartridge.SRAM = sram
 	return nil

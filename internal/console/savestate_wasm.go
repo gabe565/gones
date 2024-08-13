@@ -2,11 +2,10 @@ package console
 
 import (
 	"encoding/base64"
+	"log/slog"
 	"path/filepath"
 	"strings"
 	"syscall/js"
-
-	"github.com/rs/zerolog/log"
 )
 
 func (c *Console) SaveStateNum(num uint8, createUndo bool) error {
@@ -15,7 +14,7 @@ func (c *Console) SaveStateNum(num uint8, createUndo bool) error {
 		return err
 	}
 
-	log.Info().Str("file", filepath.Base(path)).Msg("Saving state to db")
+	slog.Info("Saving state to db", "file", filepath.Base(path))
 
 	if createUndo && num != AutoSaveNum {
 		vals, err := await(js.Global().Get("GonesClient").Call("dbGet", "states", path))
@@ -58,7 +57,7 @@ func (c *Console) LoadStateNum(num uint8) error {
 		return nil
 	}
 
-	log.Info().Str("file", filepath.Base(path)).Msg("Loading state from db")
+	slog.Info("Loading state from db", "file", filepath.Base(path))
 
 	if err := c.CreateUndoLoadState(); err != nil {
 		return err

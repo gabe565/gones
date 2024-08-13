@@ -1,13 +1,14 @@
 package bus
 
 import (
+	"log/slog"
+
 	"github.com/gabe565/gones/internal/apu"
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/controller"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/gabe565/gones/internal/util"
-	"github.com/rs/zerolog/log"
 )
 
 func New(conf *config.Config, mapper cartridge.Mapper, ppu *ppu.PPU, apu *apu.APU) *Bus {
@@ -54,7 +55,7 @@ func (b *Bus) ReadMem(addr uint16) byte {
 	case 0x4020 <= addr:
 		b.OpenBus = b.mapper.ReadMem(addr)
 	default:
-		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid Bus read")
+		slog.Error("Invalid Bus read", "addr", util.EncodeHexAddr(addr))
 		return 0
 	}
 	return b.OpenBus
@@ -95,7 +96,7 @@ func (b *Bus) WriteMem(addr uint16, data byte) {
 	case 0x4020 <= addr:
 		b.mapper.WriteMem(addr, data)
 	default:
-		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid Bus write")
+		slog.Error("Invalid Bus write", "addr", util.EncodeHexAddr(addr))
 	}
 	b.OpenBus = data
 }

@@ -3,6 +3,8 @@ package ls
 import (
 	"errors"
 	"io/fs"
+	"log/slog"
+	"os"
 	"path/filepath"
 	"slices"
 	"strconv"
@@ -11,7 +13,6 @@ import (
 
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/config"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -60,7 +61,7 @@ func New() *cobra.Command {
 
 	cmd.Flags().BoolP("reverse", "r", false, "Reverse the output")
 
-	config.InitLog()
+	config.InitLog(os.Stderr)
 	return cmd
 }
 
@@ -141,7 +142,7 @@ func loadPaths(paths []string) ([]*entry, bool) {
 
 				cart, err := cartridge.FromiNesFile(path)
 				if err != nil {
-					log.Err(err).Str("path", path).Msg("Invalid ROM")
+					slog.Error("Invalid ROM", "path", path, "error", err)
 					failed = true
 					return
 				}
@@ -153,7 +154,7 @@ func loadPaths(paths []string) ([]*entry, bool) {
 			}()
 			return nil
 		}); err != nil {
-			log.Err(err).Msg("Failed to load ROMs")
+			slog.Error("Failed to load ROMs", "error", err)
 			continue
 		}
 	}
@@ -182,7 +183,8 @@ func sortFunc(field string) func(a, b *entry) int {
 		case MirrorField:
 			return strings.Compare(a.Mirror, b.Mirror)
 		default:
-			log.Fatal().Str("field", field).Msg("Unknown sort field")
+			slog.Error("Unknown sort field", "field", field)
+			os.Exit(1)
 		}
 		return 0
 	}
@@ -197,7 +199,8 @@ func deleteFunc(filters map[string]string) func(e *entry) bool {
 			case MapperField:
 				parsed, err := strconv.ParseUint(filter, 10, 8)
 				if err != nil {
-					log.Fatal().Err(err).Msg("Invalid mapper filter value")
+					slog.Error("Invalid mapper filter value", "error", err)
+					os.Exit(1)
 				}
 
 				return byte(parsed) != e.Mapper
@@ -206,7 +209,8 @@ func deleteFunc(filters map[string]string) func(e *entry) bool {
 			case BatteryField:
 				parsed, err := strconv.ParseBool(filter)
 				if err != nil {
-					log.Fatal().Err(err).Msg("Invalid battery filter value")
+					slog.Error("Invalid battery filter value", "error", err)
+					os.Exit(1)
 				}
 
 				return parsed != e.Battery

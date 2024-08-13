@@ -2,11 +2,11 @@ package cpu
 
 import (
 	"fmt"
+	"log/slog"
 	"strings"
 
 	"github.com/gabe565/gones/internal/memory"
 	"github.com/gabe565/gones/internal/util"
-	"github.com/rs/zerolog/log"
 )
 
 func (c *CPU) Trace() string {
@@ -57,10 +57,10 @@ func (c *CPU) Trace() string {
 			addr := uint16(int8(addr)) + begin + 2
 			trace += fmt.Sprintf("$%04X", addr)
 		default:
-			log.Fatal().
-				Stringer("mode", op.Mode).
-				Str("code", util.EncodeHexVal(code)).
-				Msg("Invalid addressing mode has len 2")
+			slog.Error("Invalid addressing mode has len 2",
+				"mode", op.Mode,
+				"code", util.EncodeHexVal(code),
+			)
 		}
 	case 3:
 		addr := c.ReadMem16(begin + 1)
@@ -82,10 +82,10 @@ func (c *CPU) Trace() string {
 		case AbsoluteY:
 			trace += fmt.Sprintf("$%04X,Y @ %04X = %02X", addr, valAddr, val)
 		default:
-			log.Fatal().
-				Stringer("mode", op.Mode).
-				Str("code", util.EncodeHexVal(code)).
-				Msg("Invalid addressing mode has len 3")
+			slog.Error("Invalid addressing mode has len 3",
+				"mode", op.Mode,
+				"code", util.EncodeHexVal(code),
+			)
 		}
 	}
 

@@ -3,11 +3,12 @@
 package gones
 
 import (
+	"log/slog"
+
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
 	"github.com/ncruces/zenity"
-	"github.com/rs/zerolog/log"
 )
 
 func newConsole(conf *config.Config, path string) (*console.Console, error) {
@@ -30,7 +31,7 @@ func newConsole(conf *config.Config, path string) (*console.Console, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Info().Str("title", cart.Name()).Msg("Loaded cartridge")
+	slog.Info("Loaded cartridge", "", cart)
 
 	return console.New(conf, cart)
 }

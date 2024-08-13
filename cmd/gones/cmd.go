@@ -2,6 +2,7 @@ package gones
 
 import (
 	"errors"
+	"log/slog"
 	"os"
 	"os/signal"
 	"runtime"
@@ -11,7 +12,6 @@ import (
 	"github.com/gabe565/gones/internal/console"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -54,7 +54,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 	defer func() {
 		if err := c.Close(); err != nil {
-			log.Err(err).Msg("Failed to close console")
+			slog.Error("Failed to close console", "error", err)
 		}
 	}()
 
@@ -62,7 +62,7 @@ func run(cmd *cobra.Command, args []string) error {
 		ch := make(chan os.Signal, 1)
 		signal.Notify(ch, os.Interrupt)
 		for range ch {
-			log.Info().Msg("Exiting...")
+			slog.Info("Exiting...")
 			c.SetUpdateAction(console.ActionExit)
 		}
 	}()

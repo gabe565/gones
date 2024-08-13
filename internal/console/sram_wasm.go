@@ -2,10 +2,9 @@ package console
 
 import (
 	"encoding/base64"
+	"log/slog"
 	"path/filepath"
 	"syscall/js"
-
-	"github.com/rs/zerolog/log"
 )
 
 func (c *Console) SaveSRAM() error {
@@ -14,7 +13,7 @@ func (c *Console) SaveSRAM() error {
 		return err
 	}
 
-	log.Info().Str("file", filepath.Base(path)).Msg("Writing save to db")
+	slog.Info("Writing save to db", "file", filepath.Base(path))
 
 	data := base64.StdEncoding.EncodeToString(c.Cartridge.SRAM)
 
@@ -38,7 +37,7 @@ func (c *Console) LoadSRAM() error {
 		return nil
 	}
 
-	log.Info().Str("file", filepath.Base(path)).Msg("Loading save from db")
+	slog.Info("Loading save from db", "file", filepath.Base(path))
 
 	if _, err := base64.StdEncoding.Decode(c.Cartridge.SRAM, []byte(data.String())); err != nil {
 		return err

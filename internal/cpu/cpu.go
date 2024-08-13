@@ -3,11 +3,11 @@ package cpu
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 
 	"github.com/gabe565/gones/internal/interrupt"
 	"github.com/gabe565/gones/internal/memory"
 	"github.com/gabe565/gones/internal/util"
-	"github.com/rs/zerolog/log"
 )
 
 func New(b memory.ReadSafeWrite) *CPU {
@@ -109,7 +109,7 @@ func (c *CPU) Step() uint {
 	op := OpCodes[code]
 	if op == nil {
 		c.StepErr = fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
-		log.Err(ErrUnsupportedOpcode).Str("code", util.EncodeHexVal(code)).Msg("Failed to step CPU")
+		slog.Error("Failed to step CPU", "error", ErrUnsupportedOpcode, "code", util.EncodeHexVal(code))
 		return 1
 	}
 

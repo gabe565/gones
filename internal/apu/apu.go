@@ -1,12 +1,13 @@
 package apu
 
 import (
+	"log/slog"
+
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/interrupt"
 	"github.com/gabe565/gones/internal/memory"
 	"github.com/gabe565/gones/internal/util"
-	"github.com/rs/zerolog/log"
 )
 
 type CPU interface {
@@ -108,7 +109,7 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 			a.stepLength()
 		}
 	default:
-		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid APU write")
+		slog.Error("Invalid APU write", "addr", util.EncodeHexAddr(addr))
 	}
 }
 

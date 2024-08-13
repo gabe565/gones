@@ -2,6 +2,7 @@ package gones
 
 import (
 	"bytes"
+	"log/slog"
 	"os"
 	"syscall/js"
 
@@ -9,7 +10,6 @@ import (
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/rs/zerolog/log"
 )
 
 func newConsole(conf *config.Config, _ string) (*console.Console, error) {
@@ -27,7 +27,7 @@ func newConsole(conf *config.Config, _ string) (*console.Console, error) {
 	if cart.Name() == "" {
 		cart.SetName(jsCartridge.Get("name").String())
 	}
-	log.Info().Str("title", cart.Name()).Msg("Loaded cartridge")
+	slog.Info("Loaded cartridge", "", cart)
 
 	js.Global().Get("GonesClient").Call("setRomName", cart.Name())
 

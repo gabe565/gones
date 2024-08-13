@@ -4,9 +4,9 @@ import (
 	"image"
 	"image/png"
 	"io/fs"
+	"log/slog"
 
 	"github.com/gabe565/gones/assets"
-	"github.com/rs/zerolog/log"
 )
 
 func getWindowIcons() []image.Image {
@@ -19,7 +19,7 @@ func getWindowIcons() []image.Image {
 
 		f, err := assets.Icons.Open(path)
 		if err != nil {
-			log.Err(err).Msg("Failed to open icon")
+			slog.Error("Failed to open icon", "error", err)
 			return nil
 		}
 		defer func(f fs.File) {
@@ -28,14 +28,14 @@ func getWindowIcons() []image.Image {
 
 		icon, err := png.Decode(f)
 		if err != nil {
-			log.Err(err).Msg("Failed to decode icon")
+			slog.Error("Failed to decode icon", "error", err)
 			return nil
 		}
 
 		icons = append(icons, icon)
 		return nil
 	}); err != nil {
-		log.Err(err).Msg("Failed to load icons")
+		slog.Error("Failed to load icons", "error", err)
 	}
 
 	return icons

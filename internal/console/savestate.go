@@ -4,10 +4,9 @@ package console
 
 import (
 	"errors"
+	"log/slog"
 	"os"
 	"path/filepath"
-
-	"github.com/rs/zerolog/log"
 )
 
 func (c *Console) SaveStateNum(num uint8, createUndo bool) error {
@@ -16,10 +15,11 @@ func (c *Console) SaveStateNum(num uint8, createUndo bool) error {
 		return err
 	}
 
+	logger := slog.With("file", filepath.Base(path))
 	if num == AutoSaveNum {
-		log.Info().Str("file", filepath.Base(path)).Msg("Auto-saving state")
+		logger.Info("Auto-saving state")
 	} else {
-		log.Info().Str("file", filepath.Base(path)).Msg("Saving state")
+		logger.Info("Saving state")
 	}
 
 	if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
@@ -67,7 +67,7 @@ func (c *Console) LoadStateNum(num uint8) error {
 		_ = f.Close()
 	}(f)
 
-	log.Info().Str("file", filepath.Base(path)).Msg("Loading state")
+	slog.Info("Loading state", "file", filepath.Base(path))
 
 	if num != AutoSaveNum {
 		if err := c.CreateUndoLoadState(); err != nil {
@@ -77,7 +77,7 @@ func (c *Console) LoadStateNum(num uint8) error {
 
 	if err := c.LoadState(f); err != nil {
 		if num == AutoSaveNum {
-			log.Err(err).Msg("Load state failed. Moving state file and continuing.")
+			slog.Error("Load state failed. Moving state file and continuing.", "error", err)
 			if err := os.Rename(path, path+".failed"); err != nil {
 				return err
 			}

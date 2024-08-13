@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"image/png"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -19,7 +20,6 @@ import (
 	"github.com/gabe565/gones/internal/ppu/palette"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
-	"github.com/rs/zerolog/log"
 )
 
 const AutoSaveNum = 0
@@ -183,12 +183,12 @@ func (c *Console) Update() error {
 		return ErrExit
 	case ActionSaveState:
 		if err := c.SaveStateNum(1, true); err != nil {
-			log.Err(err).Msg("Failed to save state")
+			slog.Error("Failed to save state", "error", err)
 		}
 		c.actionOnUpdate = ActionNone
 	case ActionLoadState:
 		if err := c.LoadStateNum(1); err != nil {
-			log.Err(err).Msg("Failed to load state")
+			slog.Error("Failed to load state", "error", err)
 		}
 		c.actionOnUpdate = ActionNone
 	}
@@ -220,11 +220,11 @@ func (c *Console) Update() error {
 		select {
 		case <-c.autosave.C:
 			if err := c.SaveSRAM(); err != nil {
-				log.Err(err).Msg("Auto-save failed")
+				slog.Error("Auto-save failed", "error", err)
 			}
 			if c.config.State.Resume {
 				if err := c.SaveStateNum(AutoSaveNum, false); err != nil {
-					log.Err(err).Msg("State auto-save failed")
+					slog.Error("State auto-save failed", "error", err)
 				}
 			}
 		default:
@@ -239,7 +239,7 @@ func (c *Console) Draw(screen *ebiten.Image) {
 	if c.willScreenshot && runtime.GOOS != "js" {
 		c.willScreenshot = false
 		if err := c.writeScreenshot(screen); err != nil {
-			log.Err(err).Msg("Screenshot failed")
+			slog.Error("Screenshot failed", "error", err)
 		}
 	}
 
@@ -263,7 +263,7 @@ func (c *Console) SetTrace(v bool) {
 
 func (c *Console) SetDebug(v bool) {
 	if v {
-		log.Info().Msg("Enable step debug")
+		slog.Info("Enable step debug")
 		c.debug = DebugWait
 	} else {
 		c.debug = DebugDisabled
@@ -299,6 +299,6 @@ func (c *Console) writeScreenshot(screen *ebiten.Image) error {
 		return err
 	}
 
-	log.Info().Str("path", filename).Msg("Saved screenshot")
+	slog.Info("Saved screenshot", "path", filename)
 	return nil
 }

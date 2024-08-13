@@ -1,9 +1,10 @@
 package cartridge
 
 import (
+	"log/slog"
+
 	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/util"
-	"github.com/rs/zerolog/log"
 )
 
 func NewMapper3(cartridge *Cartridge) *Mapper3 {
@@ -46,7 +47,7 @@ func (m *Mapper3) ReadMem(addr uint16) byte {
 		addr += m.PRGBank2 * consts.PRGChunkSize
 		return m.cartridge.prg[addr]
 	default:
-		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid mapper 3 read")
+		slog.Error("Invalid mapper 3 read", "addr", util.EncodeHexAddr(addr))
 		return 0
 	}
 }
@@ -63,6 +64,6 @@ func (m *Mapper3) WriteMem(addr uint16, data byte) {
 	case 0x8000 <= addr:
 		m.CHRBank = uint(data & 3)
 	default:
-		log.Error().Str("addr", util.EncodeHexAddr(addr)).Msg("Invalid mapper 3 write")
+		slog.Error("Invalid mapper 3 write", "addr", util.EncodeHexAddr(addr))
 	}
 }

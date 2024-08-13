@@ -6,60 +6,68 @@ import (
 	"compress/gzip"
 	"encoding/csv"
 	"io"
+	"log/slog"
 	"os"
 
+	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/database/nointro"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 )
 
 func main() {
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	config.InitLog(os.Stderr)
 
 	const path = "internal/database/database.csv"
 
 	datafile, err := nointro.Load(nointro.Nes)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to load NoInto database")
+		slog.Error("Failed to load NoInto database", "error", err)
+		os.Exit(1)
 	}
 
-	log.Info().Str("path", path).Msg("Creating CSV file")
+	slog.Info("Creating CSV file", "path", path)
 	f, err := os.Create(path)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to create CSV file")
+		slog.Error("Failed to create CSV file", "error", err)
+		os.Exit(1)
 	}
 
-	log.Info().Str("path", path+".gz").Msg("Creating gzipped CSV file")
+	slog.Info("Creating gzipped CSV file", "path", path+".gz")
 	gzf, err := os.Create(path + ".gz")
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to create gzipped CSV file")
+		slog.Error("Failed to create gzipped CSV file", "error", err)
+		os.Exit(1)
 	}
 	gz := gzip.NewWriter(gzf)
 
 	c := csv.NewWriter(io.MultiWriter(f, gz))
-	log.Info().Int("count", len(datafile.Games)).Msg("Writing games to CSV")
+	slog.Info("Writing games to CSV", "count", len(datafile.Games))
 	for _, game := range datafile.Games {
 		for _, rom := range game.Roms {
 			if err := c.Write([]string{rom.MD5, game.Name}); err != nil {
-				log.Fatal().Err(err).Msg("Failed to write CSV")
+				slog.Error("Failed to write CSV", "error", err)
+				os.Exit(1)
 			}
 		}
 	}
 	c.Flush()
 
-	log.Info().Msg("Closing files")
+	slog.Info("Closing files")
 	if err := c.Error(); err != nil {
-		log.Fatal().Err(err).Msg("Failed to write CSV")
+		slog.Error("Failed to write CSV", "error", err)
+		os.Exit(1)
 	}
 
 	if err := f.Close(); err != nil {
-		log.Fatal().Err(err).Msg("Failed to close CSV file")
+		slog.Error("Failed to close CSV file", "error", err)
+		os.Exit(1)
 	}
 
 	if err := gz.Close(); err != nil {
-		log.Fatal().Err(err).Msg("Failed to close gzipped CSV writer")
+		slog.Error("Failed to close gzipped CSV writer", "error", err)
+		os.Exit(1)
 	}
 	if err := gzf.Close(); err != nil {
-		log.Fatal().Err(err).Msg("Failed to close gzipped CSV file")
+		slog.Error("Failed to close gzipped CSV file", "error", err)
+		os.Exit(1)
 	}
 }

@@ -1,12 +1,12 @@
 package console
 
 import (
+	"log/slog"
 	"runtime"
 
 	"github.com/gabe565/gones/internal/controller"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/rs/zerolog/log"
 )
 
 func (c *Console) CheckInput() {
@@ -32,11 +32,11 @@ func (c *Console) CheckInput() {
 
 	if inpututil.IsKeyJustPressed(controller.ToggleDebug) {
 		if c.debug == DebugDisabled {
-			log.Info().Msg("Enable step debug")
+			slog.Info("Enable step debug")
 			c.debug = DebugWait
 			c.APU.Enabled = false
 		} else {
-			log.Info().Msg("Disable step debug")
+			slog.Info("Disable step debug")
 			c.enableTrace = false
 			c.debug = DebugDisabled
 			c.APU.Enabled = true
@@ -45,7 +45,7 @@ func (c *Console) CheckInput() {
 
 	if c.debug != DebugDisabled {
 		if inpututil.IsKeyJustPressed(controller.ToggleTrace) {
-			log.Info().Msg("Toggle trace logs")
+			slog.Info("Toggle trace logs")
 			c.enableTrace = !c.enableTrace
 		}
 		if inpututil.IsKeyJustPressed(controller.StepFrame) || inpututil.KeyPressDuration(controller.StepFrame) > 30 {
@@ -63,13 +63,13 @@ func (c *Console) CheckInput() {
 	if inpututil.IsKeyJustPressed(ebiten.Key(c.config.Input.State1Save)) {
 		if ebiten.IsKeyPressed(ebiten.Key(c.config.Input.StateUndoModifier)) {
 			if err := c.UndoSaveState(); err == nil {
-				log.Info().Msg("Undo save state")
+				slog.Info("Undo save state")
 			} else {
-				log.Err(err).Msg("Failed to undo save state")
+				slog.Error("Failed to undo save state", "error", err)
 			}
 		} else {
 			if err := c.SaveStateNum(1, true); err != nil {
-				log.Err(err).Msg("Failed to save state")
+				slog.Error("Failed to save state", "error", err)
 			}
 		}
 	}
@@ -77,13 +77,13 @@ func (c *Console) CheckInput() {
 	if inpututil.IsKeyJustPressed(ebiten.Key(c.config.Input.State1Load)) {
 		if ebiten.IsKeyPressed(ebiten.Key(c.config.Input.StateUndoModifier)) {
 			if err := c.UndoLoadState(); err == nil {
-				log.Info().Msg("Undo load state")
+				slog.Info("Undo load state")
 			} else {
-				log.Err(err).Msg("Failed to undo load state")
+				slog.Error("Failed to undo load state", "error", err)
 			}
 		} else {
 			if err := c.LoadStateNum(1); err != nil {
-				log.Err(err).Msg("Failed to load state")
+				slog.Error("Failed to load state", "error", err)
 			}
 		}
 	}

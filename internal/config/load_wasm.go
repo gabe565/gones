@@ -1,12 +1,13 @@
 package config
 
 import (
-	"github.com/rs/zerolog/log"
+	"log/slog"
+
 	"github.com/spf13/cobra"
 )
 
 func Load(_ *cobra.Command) (*Config, error) {
-	log.Info().Msg("Loaded config")
+	slog.Info("Loaded config")
 	conf := NewDefault()
 	return &conf, nil
 }
