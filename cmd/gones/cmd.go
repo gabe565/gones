@@ -10,6 +10,7 @@ import (
 	"github.com/gabe565/gones/cmd/options"
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
+	"github.com/gabe565/gones/internal/pprof"
 	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/spf13/cobra"
@@ -47,6 +48,14 @@ func run(cmd *cobra.Command, args []string) error {
 		path = args[0]
 	}
 	cmd.SilenceUsage = true
+
+	if pprof.Enabled {
+		go func() {
+			if err := pprof.ListenAndServe(); err != nil {
+				slog.Error("Failed to start pprof", "error", err)
+			}
+		}()
+	}
 
 	c, err := newConsole(conf, path)
 	if err != nil {

@@ -6,15 +6,19 @@ import (
 	"log/slog"
 	"net/http"
 	_ "net/http/pprof"
+	"time"
 )
 
-var address = "localhost:3000"
+const (
+	Enabled = true
+	address = "localhost:3000"
+)
 
-func init() { //nolint:all
-	go func() {
-		slog.Info("Starting pprof", "address", address)
-		if err := http.ListenAndServe(address, nil); err != nil {
-			slog.Error("Failed to start pprof", "error", err)
-		}
-	}()
+func ListenAndServe() error {
+	slog.Info("Starting pprof", "address", address)
+	server := &http.Server{
+		Addr:              address,
+		ReadHeaderTimeout: 3 * time.Second,
+	}
+	return server.ListenAndServe()
 }
