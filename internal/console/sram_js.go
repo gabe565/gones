@@ -8,6 +8,10 @@ import (
 )
 
 func (c *Console) SaveSRAM() error {
+	if !c.Cartridge.Battery {
+		return nil
+	}
+
 	path, err := c.Cartridge.SRAMPath()
 	if err != nil {
 		return err
@@ -22,6 +26,10 @@ func (c *Console) SaveSRAM() error {
 }
 
 func (c *Console) LoadSRAM() error {
+	if !c.Cartridge.Battery {
+		return nil
+	}
+
 	path, err := c.Cartridge.SRAMPath()
 	if err != nil {
 		return err
