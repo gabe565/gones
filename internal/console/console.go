@@ -235,7 +235,6 @@ func (c *Console) Update() error {
 }
 
 func (c *Console) Draw(screen *ebiten.Image) {
-	//goland:noinspection GoBoolExpressions
 	if c.willScreenshot && runtime.GOOS != "js" {
 		c.willScreenshot = false
 		if err := c.writeScreenshot(screen); err != nil {

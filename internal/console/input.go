@@ -88,7 +88,6 @@ func (c *Console) CheckInput() {
 		}
 	}
 
-	//goland:noinspection GoBoolExpressions
 	if inpututil.IsKeyJustPressed(ebiten.Key(c.config.Input.Screenshot)) && runtime.GOOS != "js" {
 		c.willScreenshot = true
 	}
