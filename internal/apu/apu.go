@@ -1,7 +1,9 @@
 package apu
 
 import (
+	"bytes"
 	"log/slog"
+	"sync"
 
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/consts"
@@ -18,7 +20,7 @@ type CPU interface {
 const (
 	FrameCounterRate  = consts.CPUFrequency / 240.0
 	DefaultSampleRate = consts.CPUFrequency / consts.AudioSampleRate * consts.FrameRateDifference
-	BufferCap         = consts.AudioSampleRate / 5
+	BufferCap         = consts.AudioSampleRate / 5 * 4
 )
 
 //nolint:gochecknoglobals
@@ -27,8 +29,8 @@ var (
 		10, 254, 20, 2, 40, 4, 80, 6, 160, 8, 60, 10, 14, 12, 26, 14,
 		12, 16, 24, 18, 48, 20, 96, 22, 192, 24, 72, 26, 16, 28, 32, 30,
 	}
-	squareTable [31]float64
-	tndTable    [203]float64
+	squareTable [31]uint16
+	tndTable    [203]uint16
 )
 
 const (
@@ -41,24 +43,24 @@ const (
 
 func init() { //nolint:all
 	for i := range squareTable {
-		squareTable[i] = 95.52 / (8128.0/float64(i) + 100)
+		squareTable[i] = uint16(95.52 / (8128.0/float64(i) + 100) * 32767)
 	}
 	for i := range tndTable {
-		tndTable[i] = 163.67 / (24329.0/float64(i) + 100)
+		tndTable[i] = uint16(163.67 / (24329.0/float64(i) + 100) * 32767)
 	}
 }
 
 func New(conf *config.Config) *APU {
-	return &APU{
+	a := &APU{
 		Enabled:    true,
 		SampleRate: DefaultSampleRate,
 		conf:       &conf.Audio,
 
 		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},
-
-		buf: make(chan float64, BufferCap),
 	}
+	a.buf.Grow(BufferCap)
+	return a
 }
 
 type APU struct {
@@ -78,7 +80,8 @@ type APU struct {
 	IRQEnabled bool `msgpack:"alias:IrqEnabled"`
 	IRQPending bool `msgpack:"alias:IrqPending"`
 
-	buf chan float64
+	buf bytes.Buffer
+	mu  sync.Mutex
 }
 
 func (a *APU) WriteMem(addr uint16, data byte) {
@@ -198,12 +201,6 @@ func (a *APU) stepFrameCounter() {
 	}
 }
 
-func (a *APU) sendSample() {
-	if len(a.buf) < BufferCap {
-		a.buf <- a.output()
-	}
-}
-
 func (a *APU) stepTimer() {
 	if a.Cycle%2 == 0 {
 		a.Square[0].stepTimer()
@@ -233,51 +230,55 @@ func (a *APU) stepLength() {
 	a.Noise.stepLength()
 }
 
-func (a *APU) output() float64 {
-	var p1, p2 byte
+func (a *APU) output() uint16 {
+	var square byte
 	if a.conf.Channels.Square1 {
-		p1 = a.Square[0].output()
+		square += a.Square[0].output()
 	}
 	if a.conf.Channels.Square2 {
-		p2 = a.Square[1].output()
+		square += a.Square[1].output()
 	}
-	pulseOut := squareTable[p1+p2]
 
-	var t, n, d byte
+	var tnd byte
 	if a.conf.Channels.Triangle {
-		t = a.Triangle.output()
+		tnd += 3 * a.Triangle.output()
 	}
 	if a.conf.Channels.Noise {
-		n = a.Noise.output()
+		tnd += 2 * a.Noise.output()
 	}
 	if a.conf.Channels.PCM {
-		d = a.DMC.output()
+		tnd += a.DMC.output()
 	}
-	tndOut := tndTable[3*t+2*n+d]
 
-	return pulseOut + tndOut
+	return squareTable[square] + tndTable[tnd]
+}
+
+func (a *APU) sendSample() {
+	result := a.output()
+	lo := byte(result)
+	hi := byte(result >> 8)
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if a.buf.Len() < BufferCap {
+		a.buf.Write([]byte{lo, hi, lo, hi})
+	}
 }
 
 func (a *APU) Clear() {
-	for len(a.buf) != 0 {
-		<-a.buf
-	}
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	a.buf.Reset()
 }
 
 func (a *APU) Read(p []byte) (int, error) {
-	var i int
-	for i = 0; i < len(p); i += 4 {
-		p := p[i : i+4 : i+4]
-		select {
-		case sample := <-a.buf:
-			out := int16(sample * 32767)
-			lo := byte(out)
-			p[0], p[2] = lo, lo
-			hi := byte(out >> 8)
-			p[1], p[3] = hi, hi
-		default:
-			p[0], p[1], p[2], p[3] = 0, 0, 0, 0
+	a.mu.Lock()
+	n, err := a.buf.Read(p)
+	a.mu.Unlock()
+	if err != nil {
+		if n == 0 {
+			clear(p)
 		}
+		return len(p), nil
 	}
-	return i, nil
+	return n, err
 }
