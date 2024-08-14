@@ -100,12 +100,11 @@ func (p *PPU) spritePixel(x int) (byte, byte) {
 			continue
 		}
 
-		offset = 7 - offset
-		color := byte((p.SpriteData.Patterns[i] >> byte(offset*4)) & 0xF)
+		color := p.SpriteData.Patterns[i] >> ((7 - offset) * 4) & 0xF
 		if color%4 == 0 {
 			continue
 		}
-		return i, color
+		return i, byte(color)
 	}
 
 	return 0, 0
