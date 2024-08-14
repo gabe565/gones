@@ -11,6 +11,7 @@ func New(opts ...options.Option) *cobra.Command {
 		Use:   "gonesutil",
 		Short: "GoNES command-line utilities",
 
+		SilenceErrors:     true,
 		DisableAutoGenTag: true,
 	}
 	cmd.AddCommand(ls.New())

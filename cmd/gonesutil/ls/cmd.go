@@ -2,6 +2,7 @@ package ls
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"log/slog"
 	"os"
@@ -78,7 +79,11 @@ func run(cmd *cobra.Command, args []string) error {
 	if field, err := cmd.Flags().GetString("sort"); err != nil {
 		return err
 	} else if field != "" {
-		slices.SortFunc(carts, sortFunc(field))
+		errCh := make(chan error, 1)
+		slices.SortFunc(carts, sortFunc(field, errCh))
+		if len(errCh) != 0 {
+			return <-errCh
+		}
 	}
 
 	if reverse, err := cmd.Flags().GetBool("reverse"); err != nil {
@@ -114,7 +119,11 @@ func loadCarts(cmd *cobra.Command, args []string) ([]*entry, bool, error) {
 	if filters, err := cmd.Flags().GetStringToString("filter"); err != nil {
 		return carts, failed, err
 	} else if len(filters) != 0 {
-		carts = slices.DeleteFunc(carts, deleteFunc(filters))
+		errCh := make(chan error, 1)
+		carts = slices.DeleteFunc(carts, deleteFunc(filters, errCh))
+		if len(errCh) != 0 {
+			return nil, true, <-errCh
+		}
 	}
 
 	return carts, failed, nil
@@ -162,9 +171,15 @@ func loadPaths(paths []string) ([]*entry, bool) {
 	return carts, failed
 }
 
-func sortFunc(field string) func(a, b *entry) int {
+var ErrUnknownSortField = errors.New("unknown sort field")
+
+func sortFunc(field string, errCh chan error) func(a, b *entry) int {
 	field = strings.ToLower(field)
 	return func(a, b *entry) int {
+		if len(errCh) != 0 {
+			return 0
+		}
+
 		switch field {
 		case PathField:
 			return strings.Compare(a.Path, b.Path)
@@ -183,15 +198,18 @@ func sortFunc(field string) func(a, b *entry) int {
 		case MirrorField:
 			return strings.Compare(a.Mirror, b.Mirror)
 		default:
-			slog.Error("Unknown sort field", "field", field)
-			os.Exit(1)
+			errCh <- fmt.Errorf("%w: %s", ErrUnknownSortField, field)
+			return 0
 		}
-		return 0
 	}
 }
 
-func deleteFunc(filters map[string]string) func(e *entry) bool {
+func deleteFunc(filters map[string]string, errCh chan error) func(e *entry) bool {
 	return func(e *entry) bool {
+		if len(errCh) != 0 {
+			return false
+		}
+
 		for field, filter := range filters {
 			switch strings.ToLower(field) {
 			case NameField:
@@ -199,8 +217,8 @@ func deleteFunc(filters map[string]string) func(e *entry) bool {
 			case MapperField:
 				parsed, err := strconv.ParseUint(filter, 10, 8)
 				if err != nil {
-					slog.Error("Invalid mapper filter value", "error", err)
-					os.Exit(1)
+					errCh <- fmt.Errorf("invalid mapper filter value: %w", err)
+					return false
 				}
 
 				return byte(parsed) != e.Mapper
@@ -209,8 +227,8 @@ func deleteFunc(filters map[string]string) func(e *entry) bool {
 			case BatteryField:
 				parsed, err := strconv.ParseBool(filter)
 				if err != nil {
-					slog.Error("Invalid battery filter value", "error", err)
-					os.Exit(1)
+					errCh <- fmt.Errorf("invalid battery filter value: %w", err)
+					return false
 				}
 
 				return parsed != e.Battery
