@@ -30,29 +30,35 @@ func (c *Console) CheckInput() {
 		}
 	}
 
-	if inpututil.IsKeyJustPressed(controller.ToggleDebug) {
-		if c.debug == DebugDisabled {
-			slog.Info("Enable step debug")
-			c.debug = DebugWait
-			c.APU.Enabled = false
-		} else {
-			slog.Info("Disable step debug")
-			c.enableTrace = false
-			c.debug = DebugDisabled
-			c.APU.Enabled = true
+	if runtime.GOOS != "js" {
+		if inpututil.IsKeyJustPressed(controller.ToggleDebug) {
+			if c.debug == DebugDisabled {
+				slog.Info("Enable step debug")
+				c.debug = DebugWait
+				c.APU.Enabled = false
+			} else {
+				slog.Info("Disable step debug")
+				c.enableTrace = false
+				c.debug = DebugDisabled
+				c.APU.Enabled = true
+			}
 		}
-	}
 
-	if c.debug != DebugDisabled {
-		if inpututil.IsKeyJustPressed(controller.ToggleTrace) {
-			slog.Info("Toggle trace logs")
-			c.enableTrace = !c.enableTrace
+		if c.debug != DebugDisabled {
+			if inpututil.IsKeyJustPressed(controller.ToggleTrace) {
+				slog.Info("Toggle trace logs")
+				c.enableTrace = !c.enableTrace
+			}
+			if inpututil.IsKeyJustPressed(controller.StepFrame) || inpututil.KeyPressDuration(controller.StepFrame) > 30 {
+				c.debug = DebugStepFrame
+			}
+			if inpututil.IsKeyJustPressed(controller.RunToRender) || inpututil.KeyPressDuration(controller.RunToRender) > 30 {
+				c.debug = DebugRunRender
+			}
 		}
-		if inpututil.IsKeyJustPressed(controller.StepFrame) || inpututil.KeyPressDuration(controller.StepFrame) > 30 {
-			c.debug = DebugStepFrame
-		}
-		if inpututil.IsKeyJustPressed(controller.RunToRender) || inpututil.KeyPressDuration(controller.RunToRender) > 30 {
-			c.debug = DebugRunRender
+
+		if inpututil.IsKeyJustPressed(ebiten.Key(c.config.Input.Screenshot)) {
+			c.willScreenshot = true
 		}
 	}
 
@@ -86,9 +92,5 @@ func (c *Console) CheckInput() {
 				slog.Error("Failed to load state", "error", err)
 			}
 		}
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.Key(c.config.Input.Screenshot)) && runtime.GOOS != "js" {
-		c.willScreenshot = true
 	}
 }

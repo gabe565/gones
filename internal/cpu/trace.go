@@ -3,6 +3,7 @@ package cpu
 import (
 	"fmt"
 	"log/slog"
+	"runtime"
 	"strings"
 
 	"github.com/gabe565/gones/internal/memory"
@@ -10,6 +11,10 @@ import (
 )
 
 func (c *CPU) Trace() string {
+	if runtime.GOOS == "js" {
+		return "DISABLED"
+	}
+
 	code := c.ReadMem(c.ProgramCounter)
 	op := OpCodes[code]
 	if op == nil {

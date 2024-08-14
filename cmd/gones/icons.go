@@ -1,3 +1,5 @@
+//go:build !js
+
 package gones
 
 import (
@@ -5,9 +7,17 @@ import (
 	"image/png"
 	"io/fs"
 	"log/slog"
+	"runtime"
 
 	"github.com/gabe565/gones/assets"
+	"github.com/hajimehoshi/ebiten/v2"
 )
+
+func setWindowIcons() {
+	if runtime.GOOS != "darwin" {
+		ebiten.SetWindowIcon(getWindowIcons())
+	}
+}
 
 func getWindowIcons() []image.Image {
 	icons := make([]image.Image, 0, 3)

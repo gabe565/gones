@@ -1,0 +1,3 @@
+package gones
+
+func setWindowIcons() {}

@@ -3,10 +3,8 @@ package console
 import (
 	"errors"
 	"fmt"
-	"image/png"
 	"log/slog"
 	"os"
-	"path/filepath"
 	"runtime"
 	"time"
 
@@ -139,7 +137,7 @@ func (c *Console) Close() error {
 }
 
 func (c *Console) Step(render bool) {
-	if c.enableTrace {
+	if runtime.GOOS != "js" && c.enableTrace {
 		//nolint:forbidigo
 		fmt.Println(c.Trace())
 	}
@@ -195,7 +193,7 @@ func (c *Console) Update() error {
 
 	c.CheckInput()
 
-	if c.debug == DebugWait {
+	if runtime.GOOS != "js" && c.debug == DebugWait {
 		return nil
 	}
 
@@ -206,13 +204,13 @@ func (c *Console) Update() error {
 		for {
 			c.Step(i == c.rate-1)
 
-			if c.PPU.RenderDone || c.debug == DebugStepFrame {
+			if c.PPU.RenderDone || (runtime.GOOS != "js" && c.debug == DebugStepFrame) {
 				break
 			}
 		}
 	}
 
-	if c.debug != DebugDisabled {
+	if runtime.GOOS != "js" && c.debug != DebugDisabled {
 		c.debug = DebugWait
 	}
 
@@ -235,7 +233,7 @@ func (c *Console) Update() error {
 }
 
 func (c *Console) Draw(screen *ebiten.Image) {
-	if c.willScreenshot && runtime.GOOS != "js" {
+	if runtime.GOOS != "js" && c.willScreenshot {
 		c.willScreenshot = false
 		if err := c.writeScreenshot(screen); err != nil {
 			slog.Error("Screenshot failed", "error", err)
@@ -257,47 +255,22 @@ func (c *Console) SetUpdateAction(action UpdateAction) {
 }
 
 func (c *Console) SetTrace(v bool) {
+	if runtime.GOOS == "js" {
+		return
+	}
+
 	c.enableTrace = v
 }
 
 func (c *Console) SetDebug(v bool) {
+	if runtime.GOOS == "js" {
+		return
+	}
+
 	if v {
 		slog.Info("Enable step debug")
 		c.debug = DebugWait
 	} else {
 		c.debug = DebugDisabled
 	}
-}
-
-func (c *Console) writeScreenshot(screen *ebiten.Image) error {
-	dir, err := config.GetScreenshotDir()
-	if err != nil {
-		return err
-	}
-
-	gameDir := filepath.Join(dir, c.Cartridge.Name())
-	filename := filepath.Join(gameDir, time.Now().Format("2006-01-02_150405")+".png")
-
-	if err := os.MkdirAll(gameDir, 0o777); err != nil {
-		return err
-	}
-
-	f, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer func(f *os.File) {
-		_ = f.Close()
-	}(f)
-
-	if err := png.Encode(f, screen); err != nil {
-		return err
-	}
-
-	if err := f.Close(); err != nil {
-		return err
-	}
-
-	slog.Info("Saved screenshot", "path", filename)
-	return nil
 }
