@@ -16,10 +16,18 @@ tasks:
       - go generate -x
       - go build -ldflags='-w -s' -trimpath -tags gzip -o web/src/assets/gones.wasm
 
+  optimize:
+    dir: web/src/assets
+    cmds:
+      - wasm-opt -Oz --enable-bulk-memory -o temp.wasm gones.wasm
+      - mv temp.wasm gones.wasm
+
   build:
     deps: [build-wasm, npm]
     dir: web
-    cmd: npm run build
+    cmds:
+      - task: optimize
+      - npm run build
 
   serve:
     deps: [build-wasm, npm]

@@ -200,6 +200,10 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+      - name: Install apt dependencies
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: binaryen
       - name: Generate
         run: go generate -x
       - name: Build Go
@@ -207,6 +211,11 @@ jobs:
           GOOS: js
           GOARCH: wasm
         run: go build -ldflags='-w -s' -trimpath -tags "${{ env.BUILD_TAGS }}" -o web/src/assets/gones.wasm
+      - name: Optimize
+        working-directory: web/src/assets
+        run: |
+          wasm-opt -Oz --enable-bulk-memory -o temp.wasm gones.wasm
+          mv temp.wasm gones.wasm
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
