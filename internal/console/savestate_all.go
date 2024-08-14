@@ -46,6 +46,7 @@ func (c *Console) LoadState(r io.Reader) error {
 	}
 
 	c.PPU.UpdatePalette(c.PPU.Mask.Get())
+	c.APU.Clear()
 	return nil
 }
 
