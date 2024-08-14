@@ -2,6 +2,7 @@ package main
 
 import (
 	"log/slog"
+	"os"
 
 	"github.com/gabe565/gones/cmd/gones"
 	"github.com/gabe565/gones/cmd/options"
@@ -18,6 +19,7 @@ func main() {
 	cobra.MousetrapHelpText = ""
 	rootCmd := gones.New(options.WithVersion(version))
 	if err := rootCmd.Execute(); err != nil {
-		slog.Error("Exiting due to an error", "error", err)
+		slog.Error(err.Error())
+		os.Exit(1)
 	}
 }
