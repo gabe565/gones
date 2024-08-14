@@ -14,7 +14,7 @@ for SIZE in 16 32 48 64 128 256 512; do (
       --export-width="$SIZE" \
       --export-type=png \
       --export-filename=- \
-    | convert - \
+    | magick - \
       -strip \
       -background transparent \
       -gravity center \
