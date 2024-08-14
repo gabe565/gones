@@ -3,4 +3,6 @@ version: '3'
 
 tasks:
   update:
-    cmd: go generate ./internal/database/...
+    cmds:
+      - go run ./internal/database/generate/download
+      - go run -tags embed_nes_xml ./internal/database/generate/to_csv
