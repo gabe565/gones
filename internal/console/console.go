@@ -171,7 +171,7 @@ func (c *Console) Reset() {
 }
 
 func (c *Console) Layout(_, _ int) (int, int) {
-	return ppu.Width, ppu.TrimmedHeight
+	return ppu.Width, ppu.Height
 }
 
 func (c *Console) Update() error {

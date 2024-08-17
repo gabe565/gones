@@ -41,7 +41,7 @@ func run(ctx context.Context, conf *config.Config, path string) error {
 	}
 
 	scale := conf.UI.Scale
-	ebiten.SetWindowSize(int(scale*ppu.Width), int(scale*ppu.TrimmedHeight))
+	ebiten.SetWindowSize(int(scale*ppu.Width), int(scale*ppu.Height))
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetFullscreen(conf.UI.Fullscreen)
 	ebiten.SetScreenClearedEveryFrame(false)

@@ -5,10 +5,8 @@ import (
 )
 
 const (
-	Width         = 256
-	Height        = 240
-	TrimHeight    = 8
-	TrimmedHeight = Height - 2*TrimHeight
+	Width  = 256
+	Height = 240
 )
 
 func (p *PPU) Image() *image.RGBA {
@@ -17,7 +15,7 @@ func (p *PPU) Image() *image.RGBA {
 
 func (p *PPU) renderPixel(render bool) {
 	x := p.Cycles - 1
-	y := p.Scanline - 8
+	y := p.Scanline
 
 	bgPixel := p.bgPixel(x)
 	bgEnabled := bgPixel%4 != 0

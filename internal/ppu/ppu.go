@@ -22,7 +22,7 @@ type CPU interface {
 func New(mapper cartridge.Mapper) *PPU {
 	return &PPU{
 		mapper:        mapper,
-		image:         image.NewRGBA(image.Rect(0, 0, Width, TrimmedHeight)),
+		image:         image.NewRGBA(image.Rect(0, 0, Width, Height)),
 		Cycles:        21,
 		systemPalette: &palette.Default,
 	}
