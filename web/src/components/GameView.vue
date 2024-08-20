@@ -103,10 +103,5 @@ const loadState = () => {
   />
   <menu-button v-model="showSettings" />
 
-  <iframe
-    ref="iframe"
-    src="game_frame/index.html"
-    class="w-full h-full overflow-hidden"
-    title="Game"
-  />
+  <iframe ref="iframe" src="game.html" class="w-full h-full overflow-hidden" title="Game" />
 </template>
