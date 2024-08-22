@@ -12,6 +12,7 @@ linters-settings:
       - G306
       - G401
       - G501
+      - G115
 
 linters:
   enable:
