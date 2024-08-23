@@ -101,13 +101,13 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 		return nil, err
 	}
 
-	cartridge.CHR = make([]byte, int(header.CHRCount)*consts.CHRChunkSize)
-	if _, err := io.ReadFull(r, cartridge.CHR); err != nil {
-		return nil, err
-	}
-
 	if header.CHRCount == 0 {
 		cartridge.CHR = make([]byte, consts.CHRChunkSize)
+	} else {
+		cartridge.CHR = make([]byte, int(header.CHRCount)*consts.CHRChunkSize)
+		if _, err := io.ReadFull(r, cartridge.CHR); err != nil {
+			return nil, err
+		}
 	}
 
 	if _, err := r.Seek(0, io.SeekStart); err != nil {
