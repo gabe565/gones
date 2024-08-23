@@ -225,6 +225,8 @@ jobs:
       - name: Install Node dependencies
         run: npm --prefix web install --prefer-offline --no-audit
       - name: Build Node
+        env:
+          VITE_PLAUSIBLE_HOST: https://analytics.gabe565.com
         run: npm --prefix web run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

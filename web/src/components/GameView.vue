@@ -12,6 +12,7 @@ import {
   newSaveStateEvent,
   readyEvent,
 } from "../util/events";
+import { plausible } from "../plugins/plausible.js";
 
 const showSettings = ref(true);
 const name = ref("");
@@ -26,6 +27,7 @@ let { promise: exit, resolve: exitResolve } = newEventPromise();
 const handleExit = () => exitResolve();
 
 const handleName = ({ detail: { value } }) => {
+  plausible.trackEvent("Event: Game Loaded", { props: { "Game Name": value } });
   name.value = value;
   if (value) {
     document.title = value + " - " + defaultTitle;
