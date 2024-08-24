@@ -19,8 +19,8 @@ type Cartridge struct {
 	prg       []byte
 	CHR       []byte `msgpack:"alias:Chr"`
 	SRAM      []byte `msgpack:"alias:Sram"`
-	Mapper    byte   `msgpack:"-"`
-	Submapper byte   `msgpack:"-"`
+	Mapper    uint8  `msgpack:"-"`
+	Submapper uint8  `msgpack:"-"`
 	Mirror    Mirror
 	Battery   bool `msgpack:"-"`
 }

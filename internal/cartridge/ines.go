@@ -24,7 +24,7 @@ type iNESFileHeader struct {
 	_        [7]byte
 }
 
-func (i iNESFileHeader) Mapper() byte {
+func (i iNESFileHeader) Mapper() uint8 {
 	return i.Control[1]&0xF0 | i.Control[0]>>4
 }
 
@@ -43,7 +43,7 @@ func (i iNESFileHeader) NESv2() bool {
 	return i.Control[1]&0xC == 0x8
 }
 
-func (i iNESFileHeader) Submapper() byte {
+func (i iNESFileHeader) Submapper() uint8 {
 	return i.Control[2] >> 4
 }
 

@@ -16,7 +16,7 @@ func newEntry(file string, cart *cartridge.Cartridge) *entry {
 type entry struct {
 	Path    string `json:"path" yaml:"path"`
 	Name    string `json:"name" yaml:"name"`
-	Mapper  byte   `json:"mapper" yaml:"mapper"`
+	Mapper  uint8  `json:"mapper" yaml:"mapper"`
 	Mirror  string `json:"mirror" yaml:"mirror"`
 	Battery bool   `json:"battery" yaml:"battery"`
 	Hash    string `json:"hash" yaml:"hash"`
