@@ -20,8 +20,8 @@ type CPU interface {
 	interrupt.Stall
 }
 
-func New(t config.Overscan, mapper cartridge.Mapper) *PPU {
-	rect := t.Rect()
+func New(conf *config.Config, mapper cartridge.Mapper) *PPU {
+	rect := conf.UI.Overscan.Rect()
 	return &PPU{
 		offsets:       rect.Min,
 		mapper:        mapper,

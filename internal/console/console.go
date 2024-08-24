@@ -83,7 +83,7 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 		return &console, err
 	}
 
-	console.PPU = ppu.New(conf.UI.Overscan, console.Mapper)
+	console.PPU = ppu.New(conf, console.Mapper)
 	console.APU = apu.New(conf)
 	console.Bus = bus.New(conf, console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)

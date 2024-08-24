@@ -15,10 +15,10 @@ import (
 func stubCPU(program []byte) *CPU {
 	cart := cartridge.FromBytes(program)
 	mapper := cartridge.NewMapper2(cart)
-	ppu := ppu.New(config.Overscan{}, mapper)
+	ppu := ppu.New(config.NewDefault(), mapper)
 	conf := config.NewDefault()
-	apu := apu.New(&conf)
-	bus := bus.New(&conf, mapper, ppu, apu)
+	apu := apu.New(conf)
+	bus := bus.New(conf, mapper, ppu, apu)
 	cpu := New(bus)
 	apu.SetCPU(cpu)
 	return cpu

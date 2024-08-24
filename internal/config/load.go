@@ -69,7 +69,7 @@ func Load(cmd *cobra.Command) (*Config, error) {
 		return nil, err
 	}
 
-	if err := k.UnmarshalWithConf("", &conf, koanf.UnmarshalConf{Tag: "toml"}); err != nil {
+	if err := k.UnmarshalWithConf("", conf, koanf.UnmarshalConf{Tag: "toml"}); err != nil {
 		return nil, err
 	}
 
@@ -108,7 +108,7 @@ func Load(cmd *cobra.Command) (*Config, error) {
 		return nil, err
 	}
 
-	if err := k.UnmarshalWithConf("", &conf, koanf.UnmarshalConf{Tag: "toml"}); err != nil {
+	if err := k.UnmarshalWithConf("", conf, koanf.UnmarshalConf{Tag: "toml"}); err != nil {
 		return nil, err
 	}
 
@@ -122,7 +122,7 @@ func Load(cmd *cobra.Command) (*Config, error) {
 	}
 
 	logger.Info("Loaded config")
-	return &conf, err
+	return conf, err
 }
 
 func fixConfig(k *koanf.Koanf) error {

@@ -6,8 +6,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-func NewDefault() Config {
-	return Config{
+func NewDefault() *Config {
+	return &Config{
 		UI: UI{
 			Fullscreen:     false,
 			Scale:          3,

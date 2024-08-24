@@ -23,14 +23,14 @@ func stubConsole(r io.ReadSeeker) (*Console, error) {
 
 	conf := config.NewDefault()
 	console := Console{
-		config:    &conf,
+		config:    conf,
 		Cartridge: cart,
 		Mapper:    mapper,
 	}
 
-	console.PPU = ppu.New(config.Overscan{}, console.Mapper)
-	console.APU = apu.New(&conf)
-	console.Bus = bus.New(&conf, console.Mapper, console.PPU, console.APU)
+	console.PPU = ppu.New(config.NewDefault(), console.Mapper)
+	console.APU = apu.New(conf)
+	console.Bus = bus.New(conf, console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)
 
 	console.PPU.SetCPU(console.CPU)
