@@ -69,9 +69,12 @@ func FromiNesFile(path string) (*Cartridge, error) {
 	return cartridge, nil
 }
 
-func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
+func FromiNes(r io.Reader) (*Cartridge, error) {
+	hasher := md5.New()
+	tr := io.TeeReader(r, hasher)
+
 	var header iNESFileHeader
-	if err := binary.Read(r, binary.LittleEndian, &header); err != nil {
+	if err := binary.Read(tr, binary.LittleEndian, &header); err != nil {
 		return nil, err
 	}
 
@@ -97,7 +100,7 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 	)
 
 	cartridge.prg = make([]byte, int(header.PRGCount)*consts.PRGChunkSize)
-	if _, err := io.ReadFull(r, cartridge.prg); err != nil {
+	if _, err := io.ReadFull(tr, cartridge.prg); err != nil {
 		return nil, err
 	}
 
@@ -105,22 +108,17 @@ func FromiNes(r io.ReadSeeker) (*Cartridge, error) {
 		cartridge.CHR = make([]byte, consts.CHRChunkSize)
 	} else {
 		cartridge.CHR = make([]byte, int(header.CHRCount)*consts.CHRChunkSize)
-		if _, err := io.ReadFull(r, cartridge.CHR); err != nil {
+		if _, err := io.ReadFull(tr, cartridge.CHR); err != nil {
 			return nil, err
 		}
 	}
 
-	if _, err := r.Seek(0, io.SeekStart); err != nil {
-		return cartridge, err
-	}
-	md5 := md5.New()
-	if _, err := io.Copy(md5, r); err != nil {
-		return cartridge, err
-	}
-	cartridge.hash = hex.EncodeToString(md5.Sum(nil))
-	if cartridge.hash != "" {
-		cartridge.name, _ = database.FindNameByHash(cartridge.hash)
+	// Ensure all bytes are written to hasher
+	if _, err := io.Copy(hasher, r); err != nil {
+		return nil, err
 	}
 
+	cartridge.hash = hex.EncodeToString(hasher.Sum(nil))
+	cartridge.name, _ = database.FindNameByHash(cartridge.hash)
 	return cartridge, nil
 }
