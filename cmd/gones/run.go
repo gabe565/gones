@@ -9,7 +9,6 @@ import (
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/console"
 	"github.com/gabe565/gones/internal/pprof"
-	"github.com/gabe565/gones/internal/ppu"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -41,7 +40,7 @@ func run(ctx context.Context, conf *config.Config, path string) error {
 	}
 
 	scale := conf.UI.Scale
-	ebiten.SetWindowSize(int(scale*ppu.Width), int(scale*ppu.Height))
+	ebiten.SetWindowSize(int(float64(c.Width())*scale), int(float64(c.Height())*scale))
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetFullscreen(conf.UI.Fullscreen)
 	ebiten.SetScreenClearedEveryFrame(false)

@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/gabe565/gones/internal/consts"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/providers/rawbytes"
 	"github.com/knadh/koanf/providers/structs"
@@ -159,6 +160,32 @@ func fixConfig(k *koanf.Koanf) error {
 	} else if val > 1 {
 		slog.Warn("Maximum volume is 1. Setting to 1.")
 		if err := k.Set("audio.volume", 1); err != nil {
+			return err
+		}
+	}
+
+	// Overscan min/max
+	if val := k.Int("ui.trim.top"); val < 0 || val >= consts.Height/2 {
+		slog.Warn("Invalid top trim. Setting to default.")
+		if err := k.Set("ui.trim.top", NewDefault().UI.Overscan.Top); err != nil {
+			return err
+		}
+	}
+	if val := k.Int("ui.trim.right"); val < 0 || val >= consts.Width/2 {
+		slog.Warn("Invalid right trim. Setting to default.")
+		if err := k.Set("ui.trim.right", NewDefault().UI.Overscan.Right); err != nil {
+			return err
+		}
+	}
+	if val := k.Int("ui.trim.bottom"); val < 0 || val >= consts.Height/2 {
+		slog.Warn("Invalid bottom trim. Setting to default.")
+		if err := k.Set("ui.trim.bottom", NewDefault().UI.Overscan.Bottom); err != nil {
+			return err
+		}
+	}
+	if val := k.Int("ui.trim.left"); val < 0 || val >= consts.Width/2 {
+		slog.Warn("Invalid left trim. Setting to default.")
+		if err := k.Set("ui.trim.left", NewDefault().UI.Overscan.Left); err != nil {
 			return err
 		}
 	}

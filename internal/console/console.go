@@ -83,7 +83,7 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 		return &console, err
 	}
 
-	console.PPU = ppu.New(console.Mapper)
+	console.PPU = ppu.New(conf.UI.Overscan, console.Mapper)
 	console.APU = apu.New(conf)
 	console.Bus = bus.New(conf, console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)
@@ -171,7 +171,7 @@ func (c *Console) Reset() {
 }
 
 func (c *Console) Layout(_, _ int) (int, int) {
-	return ppu.Width, ppu.Height
+	return c.Width(), c.Height()
 }
 
 func (c *Console) Update() error {
@@ -273,4 +273,12 @@ func (c *Console) SetDebug(v bool) {
 	} else {
 		c.debug = DebugDisabled
 	}
+}
+
+func (c *Console) Width() int {
+	return c.PPU.Width()
+}
+
+func (c *Console) Height() int {
+	return c.PPU.Height()
 }

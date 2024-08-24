@@ -19,4 +19,7 @@ const (
 	RealFrameRate = 60.0988118623484
 
 	FrameRateDifference = FrameRate / RealFrameRate
+
+	Width  = 256
+	Height = 240
 )

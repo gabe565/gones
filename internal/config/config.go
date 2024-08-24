@@ -1,10 +1,13 @@
 package config
 
 import (
+	"image"
 	"os"
 	"path/filepath"
 	"runtime"
 	"time"
+
+	"github.com/gabe565/gones/internal/consts"
 )
 
 type Config struct {
@@ -16,10 +19,22 @@ type Config struct {
 }
 
 type UI struct {
-	Fullscreen     bool    `toml:"fullscreen" comment:"Default fullscreen state. Fullscreen can also be toggled with a key (F11 by default)."`
-	Scale          float64 `toml:"scale" comment:"Multiplier used to scale the UI."`
-	PauseUnfocused bool    `toml:"pause_unfocused" comment:"Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background."`
-	Palette        string  `toml:"palette" comment:"Palette (.pal) file to use. An embedded palette will be used when blank."`
+	Fullscreen     bool     `toml:"fullscreen" comment:"Default fullscreen state. Fullscreen can also be toggled with a key (F11 by default)."`
+	Scale          float64  `toml:"scale" comment:"Multiplier used to scale the UI."`
+	PauseUnfocused bool     `toml:"pause_unfocused" comment:"Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background."`
+	Palette        string   `toml:"palette" comment:"Palette (.pal) file to use. An embedded palette will be used when blank."`
+	Overscan       Overscan `toml:"overscan,inline" comment:"Change the number of rows/cols of overscan."`
+}
+
+type Overscan struct {
+	Top    int `toml:"top"`
+	Right  int `toml:"right"`
+	Bottom int `toml:"bottom"`
+	Left   int `toml:"left"`
+}
+
+func (t Overscan) Rect() image.Rectangle {
+	return image.Rect(t.Left, t.Top, consts.Width-t.Right, consts.Height-t.Bottom)
 }
 
 type State struct {

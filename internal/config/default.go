@@ -12,6 +12,7 @@ func NewDefault() Config {
 			Fullscreen:     false,
 			Scale:          3,
 			PauseUnfocused: true,
+			Overscan:       Overscan{Top: 8, Bottom: 8},
 		},
 		State: State{
 			Resume:           true,

@@ -15,7 +15,7 @@ import (
 func stubCPU(program []byte) *CPU {
 	cart := cartridge.FromBytes(program)
 	mapper := cartridge.NewMapper2(cart)
-	ppu := ppu.New(mapper)
+	ppu := ppu.New(config.Overscan{}, mapper)
 	conf := config.NewDefault()
 	apu := apu.New(&conf)
 	bus := bus.New(&conf, mapper, ppu, apu)

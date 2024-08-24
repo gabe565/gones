@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/gabe565/gones/internal/cartridge"
+	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/interrupt"
 	"github.com/gabe565/gones/internal/memory"
 	"github.com/gabe565/gones/internal/ppu/palette"
@@ -19,18 +20,21 @@ type CPU interface {
 	interrupt.Stall
 }
 
-func New(mapper cartridge.Mapper) *PPU {
+func New(t config.Overscan, mapper cartridge.Mapper) *PPU {
+	rect := t.Rect()
 	return &PPU{
+		offsets:       rect.Min,
 		mapper:        mapper,
-		image:         image.NewRGBA(image.Rect(0, 0, Width, Height)),
+		image:         image.NewRGBA(image.Rect(0, 0, rect.Dx(), rect.Dy())),
 		Cycles:        21,
 		systemPalette: &palette.Default,
 	}
 }
 
 type PPU struct {
-	mapper cartridge.Mapper
-	cpu    CPU
+	mapper  cartridge.Mapper
+	cpu     CPU
+	offsets image.Point
 
 	Ctrl      registers.Control
 	Mask      registers.Mask
@@ -434,4 +438,12 @@ func (p *PPU) SetCPU(c CPU) {
 
 func (p *PPU) SetMapper(m cartridge.Mapper) {
 	p.mapper = m
+}
+
+func (p *PPU) Width() int {
+	return p.image.Bounds().Dx()
+}
+
+func (p *PPU) Height() int {
+	return p.image.Bounds().Dy()
 }

@@ -28,7 +28,7 @@ func stubConsole(r io.ReadSeeker) (*Console, error) {
 		Mapper:    mapper,
 	}
 
-	console.PPU = ppu.New(console.Mapper)
+	console.PPU = ppu.New(config.Overscan{}, console.Mapper)
 	console.APU = apu.New(&conf)
 	console.Bus = bus.New(&conf, console.Mapper, console.PPU, console.APU)
 	console.CPU = cpu.New(console.Bus)

@@ -4,11 +4,6 @@ import (
 	"image"
 )
 
-const (
-	Width  = 256
-	Height = 240
-)
-
 func (p *PPU) Image() *image.RGBA {
 	return p.image
 }
@@ -48,6 +43,6 @@ func (p *PPU) renderPixel(render bool) {
 		}
 
 		c := p.systemPalette.RGBA[colorIdx]
-		p.image.SetRGBA(x, y, c)
+		p.image.SetRGBA(x-p.offsets.X, y-p.offsets.Y, c)
 	}
 }
