@@ -1,10 +1,13 @@
 package registers
 
+// PPU Address bits
+//
 // yyy NN YYYYY XXXXX
-// ||| || ||||| +++++-- coarse X scroll
-// ||| || +++++-------- coarse Y scroll
-// ||| ++-------------- nametable select
-// +++----------------- fine Y scroll
+// ╷╷╷ ╷╷ ╷╷╷╷╷ ╷╷╷╷╷
+// │││ ││ │││││ └┴┴┴┴╴Coarse X scroll
+// │││ ││ └┴┴┴┴──────╴Coarse Y scroll
+// │││ └┴────────────╴Nametable select
+// └┴┴───────────────╴Fine Y scroll
 
 type Address struct {
 	CoarseX    byte
