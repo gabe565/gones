@@ -1,4 +1,4 @@
-package console
+package test
 
 import (
 	_ "embed"
@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-//go:embed nes-test-roms/apu_reset/4015_cleared.nes
+//go:embed roms/apu_reset/4015_cleared.nes
 var blarggAPURst4015Clr string
 
 func Test_blarggAPURst4015Clr(t *testing.T) {
@@ -23,7 +23,7 @@ func Test_blarggAPURst4015Clr(t *testing.T) {
 	assert.EqualValues(t, "4015_cleared\n\nPassed", GetBlarggMessage(test))
 }
 
-//go:embed nes-test-roms/apu_reset/irq_flag_cleared.nes
+//go:embed roms/apu_reset/irq_flag_cleared.nes
 var blarggIRQClr string
 
 func Test_blarggIRQClr(t *testing.T) {

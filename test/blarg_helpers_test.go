@@ -1,9 +1,11 @@
-package console
+package test
 
 import (
 	"bytes"
 	"io"
 	"regexp"
+
+	"github.com/gabe565/gones/internal/console"
 )
 
 type Status int16
@@ -28,7 +30,7 @@ func BlarggCallback(b *ConsoleTest) error {
 		b.ResetIn = 6
 		b.Console.Bus.WriteMem(0x6000, byte(StatusRunning))
 	default:
-		return ErrExit
+		return console.ErrExit
 	}
 	return nil
 }

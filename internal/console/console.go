@@ -34,7 +34,7 @@ const (
 )
 
 type Console struct {
-	config *config.Config
+	Config *config.Config `msgpack:"-"`
 
 	CPU *cpu.CPU
 	Bus *bus.Bus
@@ -61,7 +61,7 @@ type Console struct {
 
 func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 	console := Console{
-		config:    conf,
+		Config:    conf,
 		Cartridge: cart,
 		rate:      1,
 
@@ -129,7 +129,7 @@ func (c *Console) Close() error {
 	if c.autosave != nil {
 		c.autosave.Stop()
 	}
-	if c.config.State.Resume {
+	if c.Config.State.Resume {
 		errs = append(errs, c.SaveStateNum(AutoSaveNum, false))
 	}
 	errs = append(errs, c.SaveSRAM())
@@ -220,7 +220,7 @@ func (c *Console) Update() error {
 			if err := c.SaveSRAM(); err != nil {
 				slog.Error("Auto-save failed", "error", err)
 			}
-			if c.config.State.Resume {
+			if c.Config.State.Resume {
 				if err := c.SaveStateNum(AutoSaveNum, false); err != nil {
 					slog.Error("State auto-save failed", "error", err)
 				}

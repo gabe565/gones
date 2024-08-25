@@ -53,7 +53,7 @@ func (c *Console) LoadState(r io.Reader) error {
 var ErrNoPreviousState = errors.New("no previous state available")
 
 func (c *Console) CreateUndoSaveState(oldState []byte) error {
-	if len(c.undoSaveStates) >= c.config.State.UndoStateCount {
+	if len(c.undoSaveStates) >= c.Config.State.UndoStateCount {
 		c.undoSaveStates = slices.Delete(c.undoSaveStates, 0, 1)
 	}
 	c.undoSaveStates = append(c.undoSaveStates, oldState)
@@ -94,7 +94,7 @@ func (c *Console) CreateUndoLoadState() error {
 		return err
 	}
 
-	if len(c.undoLoadStates) >= c.config.State.UndoStateCount {
+	if len(c.undoLoadStates) >= c.Config.State.UndoStateCount {
 		c.undoLoadStates = slices.Delete(c.undoLoadStates, 0, 1)
 	}
 	c.undoLoadStates = append(c.undoLoadStates, buf.Bytes())

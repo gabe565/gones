@@ -1,4 +1,4 @@
-package console
+package test
 
 import (
 	_ "embed"
@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-//go:embed nes-test-roms/oam_read/oam_read.nes
+//go:embed roms/oam_read/oam_read.nes
 var oamRead string
 
 const oamReadSuccess = `----------------
@@ -44,7 +44,7 @@ func Test_oamRead(t *testing.T) {
 	assert.EqualValues(t, oamReadSuccess, GetBlarggMessage(test))
 }
 
-//go:embed nes-test-roms/oam_stress/oam_stress.nes
+//go:embed roms/oam_stress/oam_stress.nes
 var oamStress string
 
 const oamStressSuccess = `----------------

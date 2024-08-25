@@ -1,4 +1,4 @@
-package console
+package test
 
 import (
 	"bufio"
@@ -10,10 +10,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-//go:embed nes-test-roms/other/nestest.nes
+//go:embed roms/other/nestest.nes
 var nestest string
 
-//go:embed nes-test-roms/other/nestest.log
+//go:embed roms/other/nestest.log
 var nestestLog string
 
 func Test_nestest(t *testing.T) {
@@ -42,6 +42,6 @@ func Test_nestest(t *testing.T) {
 	require.NoError(t, scanner.Err())
 
 	assert.EqualValues(t, strings.Count(nestestLog, "\n"), checkedLines)
-	assert.EqualValues(t, 0, c.Bus.ReadMem(2), "See https://github.com/christopherpow/nes-test-roms/blob/master/other/nestest.txt#L87 for failure code meaning")
-	assert.EqualValues(t, 0, c.Bus.ReadMem(3), "See https://github.com/christopherpow/nes-test-roms/blob/master/other/nestest.txt#L366 for failure code meaning")
+	assert.EqualValues(t, 0, c.Bus.ReadMem(2), "See https://github.com/christopherpow/roms/blob/master/other/nestest.txt#L87 for failure code meaning")
+	assert.EqualValues(t, 0, c.Bus.ReadMem(3), "See https://github.com/christopherpow/roms/blob/master/other/nestest.txt#L366 for failure code meaning")
 }

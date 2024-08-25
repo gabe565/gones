@@ -1,4 +1,4 @@
-package console
+package test
 
 import (
 	_ "embed"
@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-//go:embed nes-test-roms/ppu_open_bus/ppu_open_bus.nes
+//go:embed roms/ppu_open_bus/ppu_open_bus.nes
 var blarggPPUOpenBus string
 
 func Test_blarggPPUOpenBus(t *testing.T) {
@@ -23,7 +23,7 @@ func Test_blarggPPUOpenBus(t *testing.T) {
 	assert.EqualValues(t, "ppu_open_bus\n\nPassed", GetBlarggMessage(test))
 }
 
-//go:embed nes-test-roms/ppu_vbl_nmi/ppu_vbl_nmi.nes
+//go:embed roms/ppu_vbl_nmi/ppu_vbl_nmi.nes
 var blarggPPUVblNMI string
 
 const blarggPPUVblNMISuccess = `08 07 

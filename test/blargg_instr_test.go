@@ -1,4 +1,4 @@
-package console
+package test
 
 import (
 	_ "embed"
@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-//go:embed nes-test-roms/instr_test-v5/all_instrs.nes
+//go:embed roms/instr_test-v5/all_instrs.nes
 var blarggInstrTest string
 
 func Test_blarggCPUTest(t *testing.T) {
@@ -23,7 +23,7 @@ func Test_blarggCPUTest(t *testing.T) {
 	assert.EqualValues(t, "All 16 tests passed", GetBlarggMessage(test))
 }
 
-//go:embed nes-test-roms/cpu_timing_test6/cpu_timing_test.nes
+//go:embed roms/cpu_timing_test6/cpu_timing_test.nes
 var blarggCPUTimingTest string
 
 const blarggCPUTimingSuccess = `6502 TIMING TEST (16 SECONDS)
@@ -43,7 +43,7 @@ func Test_blarggCPUTiming(t *testing.T) {
 	assert.EqualValues(t, blarggCPUTimingSuccess, err.Error())
 }
 
-//go:embed nes-test-roms/branch_timing_tests/1.Branch_Basics.nes
+//go:embed roms/branch_timing_tests/1.Branch_Basics.nes
 var blarggBranchTimingBasicsTest string
 
 func Test_blarggBranchTimingBasics(t *testing.T) {
@@ -59,7 +59,7 @@ func Test_blarggBranchTimingBasics(t *testing.T) {
 	assert.EqualValues(t, "BRANCH TIMING BASICS\nPASSED", err.Error())
 }
 
-//go:embed nes-test-roms/branch_timing_tests/2.Backward_Branch.nes
+//go:embed roms/branch_timing_tests/2.Backward_Branch.nes
 var blarggBranchTimingBackwardTest string
 
 func Test_blarggBranchTimingBackward(t *testing.T) {
@@ -75,7 +75,7 @@ func Test_blarggBranchTimingBackward(t *testing.T) {
 	assert.EqualValues(t, "BACKWARD BRANCH TIMING\nPASSED", err.Error())
 }
 
-//go:embed nes-test-roms/branch_timing_tests/3.Forward_Branch.nes
+//go:embed roms/branch_timing_tests/3.Forward_Branch.nes
 var blarggBranchTimingForwardTest string
 
 func Test_blarggBranchTimingForward(t *testing.T) {
