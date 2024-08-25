@@ -69,7 +69,11 @@ func (p ppuMessageError) Error() string {
 	return string(p)
 }
 
-func newBlarggPPUMessageCallback() func(*consoleTest) error {
+func newBlarggPPUMsgTest(r io.ReadSeeker) (*consoleTest, error) {
+	return newConsoleTest(r, newBlarggPPUMsgCb())
+}
+
+func newBlarggPPUMsgCb() func(*consoleTest) error {
 	var started bool
 	re := regexp.MustCompile("  +")
 
