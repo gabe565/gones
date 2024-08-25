@@ -77,7 +77,7 @@ func (c *CPU) Trace() string {
 		case Implicit, Relative:
 			trace += fmt.Sprintf("$%04X", addr)
 		case Absolute:
-			if op.Code == 0x4C { // JMP
+			if op.Code() == 0x4C { // JMP
 				trace += fmt.Sprintf("$%04X", valAddr)
 			} else {
 				trace += fmt.Sprintf("$%04X = %02X", valAddr, val)
@@ -109,7 +109,7 @@ func (c *CPU) Trace() string {
 		begin,
 		hexStr,
 		undocumented,
-		op.Mnemonic,
+		op.Name,
 		trace,
 		c.Accumulator,
 		c.RegisterX,
