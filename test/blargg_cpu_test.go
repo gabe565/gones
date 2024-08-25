@@ -20,7 +20,7 @@ func Test_blarggCPUTest(t *testing.T) {
 	require.NoError(t, test.run())
 
 	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
-	assert.EqualValues(t, "All 16 tests passed", getBlarggMessage(test))
+	assert.EqualValues(t, "All 16 tests passed", getBlarggMessage(test, msgTypeSRAM))
 }
 
 //go:embed roms/cpu_timing_test6/cpu_timing_test.nes
@@ -35,10 +35,9 @@ func Test_blarggCPUTiming(t *testing.T) {
 
 	test, err := newBlarggPPUMsgTest(strings.NewReader(blarggCPUTimingTest))
 	require.NoError(t, err)
-	err = test.run()
-	require.Error(t, err)
+	require.NoError(t, test.run())
 
-	assert.EqualValues(t, blarggCPUTimingSuccess, err.Error())
+	assert.EqualValues(t, blarggCPUTimingSuccess, getBlarggMessage(test, msgTypePPUVRAM))
 }
 
 //go:embed roms/branch_timing_tests/1.Branch_Basics.nes
@@ -49,10 +48,9 @@ func Test_blarggBranchTimingBasics(t *testing.T) {
 
 	test, err := newBlarggPPUMsgTest(strings.NewReader(blarggBranchTimingBasicsTest))
 	require.NoError(t, err)
-	err = test.run()
-	require.Error(t, err)
+	require.NoError(t, test.run())
 
-	assert.EqualValues(t, "BRANCH TIMING BASICS\nPASSED", err.Error())
+	assert.EqualValues(t, "BRANCH TIMING BASICS\nPASSED", getBlarggMessage(test, msgTypePPUVRAM))
 }
 
 //go:embed roms/branch_timing_tests/2.Backward_Branch.nes
@@ -63,10 +61,9 @@ func Test_blarggBranchTimingBackward(t *testing.T) {
 
 	test, err := newBlarggPPUMsgTest(strings.NewReader(blarggBranchTimingBackwardTest))
 	require.NoError(t, err)
-	err = test.run()
-	require.Error(t, err)
+	require.NoError(t, test.run())
 
-	assert.EqualValues(t, "BACKWARD BRANCH TIMING\nPASSED", err.Error())
+	assert.EqualValues(t, "BACKWARD BRANCH TIMING\nPASSED", getBlarggMessage(test, msgTypePPUVRAM))
 }
 
 //go:embed roms/branch_timing_tests/3.Forward_Branch.nes
@@ -77,8 +74,7 @@ func Test_blarggBranchTimingForward(t *testing.T) {
 
 	test, err := newBlarggPPUMsgTest(strings.NewReader(blarggBranchTimingForwardTest))
 	require.NoError(t, err)
-	err = test.run()
-	require.Error(t, err)
+	require.NoError(t, test.run())
 
-	assert.EqualValues(t, "FORWARD BRANCH TIMING\nPASSED", err.Error())
+	assert.EqualValues(t, "FORWARD BRANCH TIMING\nPASSED", getBlarggMessage(test, msgTypePPUVRAM))
 }

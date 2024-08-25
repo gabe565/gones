@@ -20,7 +20,7 @@ func Test_blarggAPURst4015Clr(t *testing.T) {
 	require.NoError(t, test.run())
 
 	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
-	assert.EqualValues(t, "4015_cleared\n\nPassed", getBlarggMessage(test))
+	assert.EqualValues(t, "4015_cleared\n\nPassed", getBlarggMessage(test, msgTypeSRAM))
 }
 
 //go:embed roms/apu_reset/irq_flag_cleared.nes
@@ -34,5 +34,5 @@ func Test_blarggIRQClr(t *testing.T) {
 	require.NoError(t, test.run())
 
 	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
-	assert.EqualValues(t, "irq_flag_cleared\n\nPassed", getBlarggMessage(test))
+	assert.EqualValues(t, "irq_flag_cleared\n\nPassed", getBlarggMessage(test, msgTypeSRAM))
 }

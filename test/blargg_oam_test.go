@@ -41,7 +41,7 @@ func Test_oamRead(t *testing.T) {
 	require.NoError(t, test.run())
 
 	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
-	assert.EqualValues(t, oamReadSuccess, getBlarggMessage(test))
+	assert.EqualValues(t, oamReadSuccess, getBlarggMessage(test, msgTypeSRAM))
 }
 
 //go:embed roms/oam_stress/oam_stress.nes
@@ -76,5 +76,5 @@ func Test_oamStress(t *testing.T) {
 	require.NoError(t, test.run())
 
 	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
-	assert.EqualValues(t, oamStressSuccess, getBlarggMessage(test))
+	assert.EqualValues(t, oamStressSuccess, getBlarggMessage(test, msgTypeSRAM))
 }

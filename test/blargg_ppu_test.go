@@ -20,7 +20,7 @@ func Test_blarggPPUOpenBus(t *testing.T) {
 	require.NoError(t, test.run())
 
 	assert.EqualValues(t, 0, getBlarggStatus(test))
-	assert.EqualValues(t, "ppu_open_bus\n\nPassed", getBlarggMessage(test))
+	assert.EqualValues(t, "ppu_open_bus\n\nPassed", getBlarggMessage(test, msgTypeSRAM))
 }
 
 //go:embed roms/ppu_vbl_nmi/ppu_vbl_nmi.nes
@@ -42,5 +42,5 @@ func Test_blarggPPUVblNMI(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, test.run())
 
-	assert.EqualValues(t, blarggPPUVblNMISuccess, getBlarggMessage(test))
+	assert.EqualValues(t, blarggPPUVblNMISuccess, getBlarggMessage(test, msgTypeSRAM))
 }

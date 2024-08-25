@@ -38,35 +38,38 @@ func blarggCallback(c *consoleTest) error {
 func getBlarggStatus(c *consoleTest) status {
 	status := status(c.console.Bus.ReadMem(0x6000))
 	if status == 0 {
-		var marker [3]byte
-		for i := range uint16(3) {
-			marker[i] = c.console.Bus.ReadMem(0x6001 + i)
-		}
-		if marker != [3]byte{222, 176, 97} {
-			return statusPreRun
+		for i, b := range [3]byte{222, 176, 97} {
+			if got := c.console.Bus.ReadMem(0x6001 + uint16(i)); got != b {
+				return statusPreRun
+			}
 		}
 	}
 	return status
 }
 
-func getBlarggMessage(c *consoleTest) string {
-	var message []byte
-	var i uint16
-	for {
-		data := c.console.Bus.ReadMem(0x6004 + i)
-		if data == 0 {
-			break
-		}
-		message = append(message, data)
-		i++
+type msgType uint8
+
+const (
+	msgTypeSRAM msgType = iota
+	msgTypePPUVRAM
+)
+
+func getBlarggMessage(c *consoleTest, t msgType) string {
+	var msg []byte
+	switch t {
+	case msgTypeSRAM:
+		msg = c.console.Cartridge.SRAM[4:]
+	case msgTypePPUVRAM:
+		msg = c.console.PPU.VRAM[:]
 	}
-	return string(bytes.TrimSpace(message))
-}
-
-type ppuMessageError string
-
-func (p ppuMessageError) Error() string {
-	return string(p)
+	msg, _, found := bytes.Cut(msg, []byte{0})
+	if !found {
+		return ""
+	}
+	if t == msgTypePPUVRAM {
+		msg = regexp.MustCompile("  +").ReplaceAll(msg, []byte("\n"))
+	}
+	return string(bytes.TrimSpace(msg))
 }
 
 func newBlarggPPUMsgTest(r io.ReadSeeker) (*consoleTest, error) {
@@ -75,7 +78,6 @@ func newBlarggPPUMsgTest(r io.ReadSeeker) (*consoleTest, error) {
 
 func newBlarggPPUMsgCb() func(*consoleTest) error {
 	var started bool
-	re := regexp.MustCompile("  +")
 
 	return func(c *consoleTest) error {
 		if !started {
@@ -86,19 +88,8 @@ func newBlarggPPUMsgCb() func(*consoleTest) error {
 		}
 
 		if ready := c.console.Bus.ReadMem(0x7F1); ready == 0 {
-			var i int
-			for {
-				if c.console.PPU.VRAM[i] == 0 {
-					break
-				}
-				i++
-			}
-			vram := c.console.PPU.VRAM[:i]
-			vram = re.ReplaceAll(vram, []byte("\n"))
-			vram = bytes.TrimSpace(vram)
-			return ppuMessageError(vram)
+			return console.ErrExit
 		}
-
 		return nil
 	}
 }

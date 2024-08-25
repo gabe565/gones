@@ -64,6 +64,10 @@ func newConsoleTest(r io.ReadSeeker, cb func(c *consoleTest) error) (*consoleTes
 
 func (c *consoleTest) run() error {
 	for {
+		if c.console.Step(true); c.console.CPU.StepErr != nil {
+			return c.console.CPU.StepErr
+		}
+
 		if c.resetIn != 0 {
 			c.resetIn--
 			if c.resetIn == 0 {
@@ -78,10 +82,6 @@ func (c *consoleTest) run() error {
 				}
 				return err
 			}
-		}
-
-		if c.console.Step(true); c.console.CPU.StepErr != nil {
-			return c.console.CPU.StepErr
 		}
 	}
 }
