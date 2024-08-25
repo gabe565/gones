@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/gabe565/gones/internal/console"
+	"github.com/gabe565/gones/internal/consts"
 )
 
 type status int16
@@ -27,8 +28,9 @@ func blarggCallback(c *consoleTest) error {
 	case statusPreRun, statusRunning:
 		return nil
 	case statusReset:
-		c.resetIn = 6
-		c.console.Bus.WriteMem(0x6000, byte(statusRunning))
+		if c.resetIn == 0 {
+			c.resetIn = consts.CPUFrequency / 10
+		}
 	default:
 		return console.ErrExit
 	}

@@ -10,11 +10,11 @@ const (
 	// CHRChunkSize is the size of the smallest CHR
 	CHRChunkSize = 0x2000
 
-	CPUFrequency = 1789773.0
+	CPUFrequency = 1789773
 
-	AudioSampleRate = 44100.0
+	AudioSampleRate = 44100
 
-	FrameRate = 60.0
+	FrameRate = 60
 
 	RealFrameRate = 60.0988118623484
 

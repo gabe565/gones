@@ -44,7 +44,7 @@ func stubConsole(r io.ReadSeeker) (*console.Console, error) {
 
 type consoleTest struct {
 	console *console.Console
-	resetIn uint16
+	resetIn int
 
 	cb func(ct *consoleTest) error
 }
@@ -68,19 +68,19 @@ func (c *consoleTest) run() error {
 			return c.console.CPU.StepErr
 		}
 
-		if c.resetIn != 0 {
-			c.resetIn--
-			if c.resetIn == 0 {
-				c.console.Reset()
-			}
-		}
-
 		if c.cb != nil {
 			if err := c.cb(c); err != nil {
 				if errors.Is(err, console.ErrExit) {
 					return nil
 				}
 				return err
+			}
+		}
+
+		if c.resetIn != 0 {
+			c.resetIn--
+			if c.resetIn == 0 {
+				c.console.Reset()
 			}
 		}
 	}

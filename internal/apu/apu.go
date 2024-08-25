@@ -18,8 +18,8 @@ type CPU interface {
 }
 
 const (
-	FrameCounterRate  = consts.CPUFrequency / 240.0
-	DefaultSampleRate = consts.CPUFrequency / consts.AudioSampleRate * consts.FrameRateDifference
+	FrameCounterRate  = float64(consts.CPUFrequency) / 240.0
+	DefaultSampleRate = float64(consts.CPUFrequency) / float64(consts.AudioSampleRate) * consts.FrameRateDifference
 	BufferCap         = consts.AudioSampleRate / 5 * 4
 )
 
