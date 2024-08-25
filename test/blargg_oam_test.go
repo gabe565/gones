@@ -36,12 +36,12 @@ Passed`
 func Test_oamRead(t *testing.T) {
 	t.Parallel()
 
-	test, err := NewBlarggTest(strings.NewReader(oamRead))
+	test, err := newBlarggTest(strings.NewReader(oamRead))
 	require.NoError(t, err)
-	require.NoError(t, test.Run())
+	require.NoError(t, test.run())
 
-	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
-	assert.EqualValues(t, oamReadSuccess, GetBlarggMessage(test))
+	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
+	assert.EqualValues(t, oamReadSuccess, getBlarggMessage(test))
 }
 
 //go:embed roms/oam_stress/oam_stress.nes
@@ -71,10 +71,10 @@ Passed`
 func Test_oamStress(t *testing.T) {
 	t.Parallel()
 
-	test, err := NewBlarggTest(strings.NewReader(oamStress))
+	test, err := newBlarggTest(strings.NewReader(oamStress))
 	require.NoError(t, err)
-	require.NoError(t, test.Run())
+	require.NoError(t, test.run())
 
-	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
-	assert.EqualValues(t, oamStressSuccess, GetBlarggMessage(test))
+	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
+	assert.EqualValues(t, oamStressSuccess, getBlarggMessage(test))
 }

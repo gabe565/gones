@@ -42,37 +42,37 @@ func stubConsole(r io.ReadSeeker) (*console.Console, error) {
 	return c, nil
 }
 
-type ConsoleTest struct {
-	Console *console.Console
-	ResetIn uint16
+type consoleTest struct {
+	console *console.Console
+	resetIn uint16
 
-	Callback func(b *ConsoleTest) error
+	cb func(ct *consoleTest) error
 }
 
-func NewConsoleTest(r io.ReadSeeker, callback func(console *ConsoleTest) error) (*ConsoleTest, error) {
+func newConsoleTest(r io.ReadSeeker, cb func(c *consoleTest) error) (*consoleTest, error) {
 	c, err := stubConsole(r)
 	if err != nil {
 		return nil, err
 	}
 
-	ct := &ConsoleTest{
-		Console:  c,
-		Callback: callback,
+	ct := &consoleTest{
+		console: c,
+		cb:      cb,
 	}
 	return ct, nil
 }
 
-func (b *ConsoleTest) Run() error {
+func (c *consoleTest) run() error {
 	for {
-		if b.ResetIn != 0 {
-			b.ResetIn--
-			if b.ResetIn == 0 {
-				b.Console.Reset()
+		if c.resetIn != 0 {
+			c.resetIn--
+			if c.resetIn == 0 {
+				c.console.Reset()
 			}
 		}
 
-		if b.Callback != nil {
-			if err := b.Callback(b); err != nil {
+		if c.cb != nil {
+			if err := c.cb(c); err != nil {
 				if errors.Is(err, console.ErrExit) {
 					return nil
 				}
@@ -80,8 +80,8 @@ func (b *ConsoleTest) Run() error {
 			}
 		}
 
-		if b.Console.Step(true); b.Console.CPU.StepErr != nil {
-			return b.Console.CPU.StepErr
+		if c.console.Step(true); c.console.CPU.StepErr != nil {
+			return c.console.CPU.StepErr
 		}
 	}
 }

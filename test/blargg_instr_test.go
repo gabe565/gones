@@ -15,12 +15,12 @@ var blarggInstrTest string
 func Test_blarggCPUTest(t *testing.T) {
 	t.Parallel()
 
-	test, err := NewBlarggTest(strings.NewReader(blarggInstrTest))
+	test, err := newBlarggTest(strings.NewReader(blarggInstrTest))
 	require.NoError(t, err)
-	require.NoError(t, test.Run())
+	require.NoError(t, test.run())
 
-	assert.EqualValues(t, StatusSuccess, GetBlarggStatus(test))
-	assert.EqualValues(t, "All 16 tests passed", GetBlarggMessage(test))
+	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
+	assert.EqualValues(t, "All 16 tests passed", getBlarggMessage(test))
 }
 
 //go:embed roms/cpu_timing_test6/cpu_timing_test.nes
@@ -33,11 +33,11 @@ PASSED`
 func Test_blarggCPUTiming(t *testing.T) {
 	t.Parallel()
 
-	callback := NewBlargPPUMessageCallback()
+	callback := newBlarggPPUMessageCallback()
 
-	test, err := NewConsoleTest(strings.NewReader(blarggCPUTimingTest), callback)
+	test, err := newConsoleTest(strings.NewReader(blarggCPUTimingTest), callback)
 	require.NoError(t, err)
-	err = test.Run()
+	err = test.run()
 	require.Error(t, err)
 
 	assert.EqualValues(t, blarggCPUTimingSuccess, err.Error())
@@ -49,11 +49,11 @@ var blarggBranchTimingBasicsTest string
 func Test_blarggBranchTimingBasics(t *testing.T) {
 	t.Parallel()
 
-	callback := NewBlargPPUMessageCallback()
+	callback := newBlarggPPUMessageCallback()
 
-	test, err := NewConsoleTest(strings.NewReader(blarggBranchTimingBasicsTest), callback)
+	test, err := newConsoleTest(strings.NewReader(blarggBranchTimingBasicsTest), callback)
 	require.NoError(t, err)
-	err = test.Run()
+	err = test.run()
 	require.Error(t, err)
 
 	assert.EqualValues(t, "BRANCH TIMING BASICS\nPASSED", err.Error())
@@ -65,11 +65,11 @@ var blarggBranchTimingBackwardTest string
 func Test_blarggBranchTimingBackward(t *testing.T) {
 	t.Parallel()
 
-	callback := NewBlargPPUMessageCallback()
+	callback := newBlarggPPUMessageCallback()
 
-	test, err := NewConsoleTest(strings.NewReader(blarggBranchTimingBackwardTest), callback)
+	test, err := newConsoleTest(strings.NewReader(blarggBranchTimingBackwardTest), callback)
 	require.NoError(t, err)
-	err = test.Run()
+	err = test.run()
 	require.Error(t, err)
 
 	assert.EqualValues(t, "BACKWARD BRANCH TIMING\nPASSED", err.Error())
@@ -81,11 +81,11 @@ var blarggBranchTimingForwardTest string
 func Test_blarggBranchTimingForward(t *testing.T) {
 	t.Parallel()
 
-	callback := NewBlargPPUMessageCallback()
+	callback := newBlarggPPUMessageCallback()
 
-	test, err := NewConsoleTest(strings.NewReader(blarggBranchTimingForwardTest), callback)
+	test, err := newConsoleTest(strings.NewReader(blarggBranchTimingForwardTest), callback)
 	require.NoError(t, err)
-	err = test.Run()
+	err = test.run()
 	require.Error(t, err)
 
 	assert.EqualValues(t, "FORWARD BRANCH TIMING\nPASSED", err.Error())

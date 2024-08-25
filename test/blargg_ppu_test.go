@@ -15,12 +15,12 @@ var blarggPPUOpenBus string
 func Test_blarggPPUOpenBus(t *testing.T) {
 	t.Parallel()
 
-	test, err := NewBlarggTest(strings.NewReader(blarggPPUOpenBus))
+	test, err := newBlarggTest(strings.NewReader(blarggPPUOpenBus))
 	require.NoError(t, err)
-	require.NoError(t, test.Run())
+	require.NoError(t, test.run())
 
-	assert.EqualValues(t, 0, GetBlarggStatus(test))
-	assert.EqualValues(t, "ppu_open_bus\n\nPassed", GetBlarggMessage(test))
+	assert.EqualValues(t, 0, getBlarggStatus(test))
+	assert.EqualValues(t, "ppu_open_bus\n\nPassed", getBlarggMessage(test))
 }
 
 //go:embed roms/ppu_vbl_nmi/ppu_vbl_nmi.nes
@@ -38,9 +38,9 @@ While running test 10 of 10`
 func Test_blarggPPUVblNMI(t *testing.T) {
 	t.Parallel()
 
-	test, err := NewBlarggTest(strings.NewReader(blarggPPUVblNMI))
+	test, err := newBlarggTest(strings.NewReader(blarggPPUVblNMI))
 	require.NoError(t, err)
-	require.NoError(t, test.Run())
+	require.NoError(t, test.run())
 
-	assert.EqualValues(t, blarggPPUVblNMISuccess, GetBlarggMessage(test))
+	assert.EqualValues(t, blarggPPUVblNMISuccess, getBlarggMessage(test))
 }
