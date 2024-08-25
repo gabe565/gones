@@ -78,3 +78,31 @@ func Test_blarggBranchTimingForward(t *testing.T) {
 
 	assert.EqualValues(t, "FORWARD BRANCH TIMING\nPASSED", getBlarggMessage(test, msgTypePPUVRAM))
 }
+
+//go:embed roms/cpu_reset/ram_after_reset.nes
+var blarggCPUResetRAM string
+
+func Test_blarggCPUResetRAM(t *testing.T) {
+	t.Parallel()
+
+	test, err := newBlarggTest(strings.NewReader(blarggCPUResetRAM))
+	require.NoError(t, err)
+	require.NoError(t, test.run())
+
+	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
+	assert.EqualValues(t, "ram_after_reset\n\nPassed", getBlarggMessage(test, msgTypeSRAM))
+}
+
+//go:embed roms/cpu_reset/registers.nes
+var blarggCPUResetRegisters string
+
+func Test_blarggCPUResetRegisters(t *testing.T) {
+	t.Parallel()
+
+	test, err := newBlarggTest(strings.NewReader(blarggCPUResetRegisters))
+	require.NoError(t, err)
+	require.NoError(t, test.run())
+
+	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
+	assert.EqualValues(t, "A  X  Y  P  S\n34 56 78 FF 0F \n\nregisters\n\nPassed", getBlarggMessage(test, msgTypeSRAM))
+}
