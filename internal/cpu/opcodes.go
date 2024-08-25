@@ -36,17 +36,17 @@ func (o *OpCode) String() string {
 }
 
 func (o *OpCode) Code() int {
-	return slices.Index(OpCodes, o)
+	return slices.Index(opcodes, o)
 }
 
-// OpCodes is a list of supported opcodes.
+// opcodes is a list of supported opcodes.
 //
 // See [6502 Instruction Reference].
 //
 // [6502 Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html
 //
 //nolint:gochecknoglobals
-var OpCodes = []*OpCode{
+var opcodes = []*OpCode{
 	0x00: {BRK, 1, 7, Implicit, brk, false},
 	0x01: {ORA, 2, 6, IndirectX, ora, false},
 	0x03: {SLO, 2, 8, IndirectX, slo, true},
