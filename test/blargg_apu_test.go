@@ -10,29 +10,33 @@ import (
 )
 
 //go:embed roms/apu_reset/4015_cleared.nes
-var blarggAPURst4015Clr string
-
-func Test_blarggAPURst4015Clr(t *testing.T) {
-	t.Parallel()
-
-	test, err := newBlarggTest(strings.NewReader(blarggAPURst4015Clr))
-	require.NoError(t, err)
-	require.NoError(t, test.run())
-
-	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
-	assert.EqualValues(t, "4015_cleared\n\nPassed", getBlarggMessage(test, msgTypeSRAM))
-}
+var blarggAPUReset4015Cleared string
 
 //go:embed roms/apu_reset/irq_flag_cleared.nes
-var blarggIRQClr string
+var blarggAPUResetIRQCleared string
 
-func Test_blarggIRQClr(t *testing.T) {
+func Test_blarggAPU(t *testing.T) {
 	t.Parallel()
 
-	test, err := newBlarggTest(strings.NewReader(blarggIRQClr))
-	require.NoError(t, err)
-	require.NoError(t, test.run())
+	tests := []struct {
+		name       string
+		rom        string
+		wantStatus status
+		want       string
+	}{
+		{"reset clears $4015", blarggAPUReset4015Cleared, 0, "4015_cleared\n\nPassed"},
+		{"reset clears IRQ", blarggAPUResetIRQCleared, 0, "irq_flag_cleared\n\nPassed"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
-	assert.EqualValues(t, "irq_flag_cleared\n\nPassed", getBlarggMessage(test, msgTypeSRAM))
+			test, err := newBlarggTest(strings.NewReader(tt.rom), msgTypeSRAM)
+			require.NoError(t, err)
+
+			require.NoError(t, test.run())
+			assert.EqualValues(t, tt.wantStatus, getBlarggStatus(test))
+			assert.EqualValues(t, tt.want, getBlarggMessage(test, msgTypeSRAM))
+		})
+	}
 }

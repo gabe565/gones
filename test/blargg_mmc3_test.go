@@ -39,7 +39,7 @@ func Test_blarggMMC3(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			test, err := newBlarggTest(strings.NewReader(tt.rom))
+			test, err := newBlarggTest(strings.NewReader(tt.rom), msgTypePPUVRAM)
 			require.NoError(t, err)
 
 			require.NoError(t, test.run())

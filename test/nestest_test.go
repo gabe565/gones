@@ -29,9 +29,9 @@ func Test_nestest(t *testing.T) {
 	for scanner.Scan() {
 		checkedLines++
 		actual := c.Trace()
-		expected := scanner.Text()
+		want := scanner.Text()
 
-		require.EqualValues(t, expected, actual)
+		require.EqualValues(t, want, actual)
 
 		c.Step(true)
 		require.NoError(t, c.CPU.StepErr)

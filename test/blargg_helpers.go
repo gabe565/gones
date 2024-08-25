@@ -2,6 +2,8 @@ package test
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"io"
 	"regexp"
 
@@ -18,11 +20,26 @@ const (
 	statusReset   status = 0x81
 )
 
-func newBlarggTest(r io.ReadSeeker) (*consoleTest, error) {
-	return newConsoleTest(r, blarggCallback)
+type msgType uint8
+
+const (
+	msgTypeSRAM msgType = iota
+	msgTypePPUVRAM
+)
+
+var errInvalidMessageType = errors.New("invalid message type")
+
+func newBlarggTest(r io.ReadSeeker, t msgType) (*consoleTest, error) {
+	switch t {
+	case msgTypeSRAM:
+		return newConsoleTest(r, blarggSRAMMsgCallback)
+	case msgTypePPUVRAM:
+		return newConsoleTest(r, blarggPPUMsgCallback())
+	}
+	return nil, fmt.Errorf("%w: %d", errInvalidMessageType, t)
 }
 
-func blarggCallback(c *consoleTest) error {
+func blarggSRAMMsgCallback(c *consoleTest) error {
 	status := getBlarggStatus(c)
 	switch status {
 	case statusPreRun, statusRunning:
@@ -49,13 +66,6 @@ func getBlarggStatus(c *consoleTest) status {
 	return status
 }
 
-type msgType uint8
-
-const (
-	msgTypeSRAM msgType = iota
-	msgTypePPUVRAM
-)
-
 func getBlarggMessage(c *consoleTest, t msgType) string {
 	var msg []byte
 	switch t {
@@ -74,11 +84,7 @@ func getBlarggMessage(c *consoleTest, t msgType) string {
 	return string(bytes.TrimSpace(msg))
 }
 
-func newBlarggPPUMsgTest(r io.ReadSeeker) (*consoleTest, error) {
-	return newConsoleTest(r, newBlarggPPUMsgCb())
-}
-
-func newBlarggPPUMsgCb() func(*consoleTest) error {
+func blarggPPUMsgCallback() func(*consoleTest) error {
 	var started bool
 
 	return func(c *consoleTest) error {

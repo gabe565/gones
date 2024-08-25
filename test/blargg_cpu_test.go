@@ -12,97 +12,56 @@ import (
 //go:embed roms/instr_test-v5/all_instrs.nes
 var blarggInstrTest string
 
-func Test_blarggCPUTest(t *testing.T) {
-	t.Parallel()
-
-	test, err := newBlarggTest(strings.NewReader(blarggInstrTest))
-	require.NoError(t, err)
-	require.NoError(t, test.run())
-
-	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
-	assert.EqualValues(t, "All 16 tests passed", getBlarggMessage(test, msgTypeSRAM))
-}
-
 //go:embed roms/cpu_timing_test6/cpu_timing_test.nes
 var blarggCPUTimingTest string
 
-const blarggCPUTimingSuccess = `6502 TIMING TEST (16 SECONDS)
+const blarggCPUTimingWant = `6502 TIMING TEST (16 SECONDS)
 OFFICIAL INSTRUCTIONS ONLY
 PASSED`
-
-func Test_blarggCPUTiming(t *testing.T) {
-	t.Parallel()
-
-	test, err := newBlarggPPUMsgTest(strings.NewReader(blarggCPUTimingTest))
-	require.NoError(t, err)
-	require.NoError(t, test.run())
-
-	assert.EqualValues(t, blarggCPUTimingSuccess, getBlarggMessage(test, msgTypePPUVRAM))
-}
 
 //go:embed roms/branch_timing_tests/1.Branch_Basics.nes
 var blarggBranchTimingBasicsTest string
 
-func Test_blarggBranchTimingBasics(t *testing.T) {
-	t.Parallel()
-
-	test, err := newBlarggPPUMsgTest(strings.NewReader(blarggBranchTimingBasicsTest))
-	require.NoError(t, err)
-	require.NoError(t, test.run())
-
-	assert.EqualValues(t, "BRANCH TIMING BASICS\nPASSED", getBlarggMessage(test, msgTypePPUVRAM))
-}
-
 //go:embed roms/branch_timing_tests/2.Backward_Branch.nes
 var blarggBranchTimingBackwardTest string
-
-func Test_blarggBranchTimingBackward(t *testing.T) {
-	t.Parallel()
-
-	test, err := newBlarggPPUMsgTest(strings.NewReader(blarggBranchTimingBackwardTest))
-	require.NoError(t, err)
-	require.NoError(t, test.run())
-
-	assert.EqualValues(t, "BACKWARD BRANCH TIMING\nPASSED", getBlarggMessage(test, msgTypePPUVRAM))
-}
 
 //go:embed roms/branch_timing_tests/3.Forward_Branch.nes
 var blarggBranchTimingForwardTest string
 
-func Test_blarggBranchTimingForward(t *testing.T) {
-	t.Parallel()
-
-	test, err := newBlarggPPUMsgTest(strings.NewReader(blarggBranchTimingForwardTest))
-	require.NoError(t, err)
-	require.NoError(t, test.run())
-
-	assert.EqualValues(t, "FORWARD BRANCH TIMING\nPASSED", getBlarggMessage(test, msgTypePPUVRAM))
-}
-
 //go:embed roms/cpu_reset/ram_after_reset.nes
 var blarggCPUResetRAM string
-
-func Test_blarggCPUResetRAM(t *testing.T) {
-	t.Parallel()
-
-	test, err := newBlarggTest(strings.NewReader(blarggCPUResetRAM))
-	require.NoError(t, err)
-	require.NoError(t, test.run())
-
-	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
-	assert.EqualValues(t, "ram_after_reset\n\nPassed", getBlarggMessage(test, msgTypeSRAM))
-}
 
 //go:embed roms/cpu_reset/registers.nes
 var blarggCPUResetRegisters string
 
-func Test_blarggCPUResetRegisters(t *testing.T) {
+func Test_blarggCPU(t *testing.T) {
 	t.Parallel()
 
-	test, err := newBlarggTest(strings.NewReader(blarggCPUResetRegisters))
-	require.NoError(t, err)
-	require.NoError(t, test.run())
+	tests := []struct {
+		name       string
+		rom        string
+		msgType    msgType
+		wantStatus status
+		want       string
+	}{
+		{"instructions", blarggInstrTest, msgTypeSRAM, 0, "All 16 tests passed"},
+		{"instruction timing", blarggCPUTimingTest, msgTypePPUVRAM, -1, blarggCPUTimingWant},
+		{"branch timing basics", blarggBranchTimingBasicsTest, msgTypePPUVRAM, -1, "BRANCH TIMING BASICS\nPASSED"},
+		{"branch timing backward", blarggBranchTimingBackwardTest, msgTypePPUVRAM, -1, "BACKWARD BRANCH TIMING\nPASSED"},
+		{"branch timing forward", blarggBranchTimingForwardTest, msgTypePPUVRAM, -1, "FORWARD BRANCH TIMING\nPASSED"},
+		{"ram after reset", blarggCPUResetRAM, msgTypeSRAM, 0, "ram_after_reset\n\nPassed"},
+		{"registers after reset", blarggCPUResetRegisters, msgTypeSRAM, 0, "A  X  Y  P  S\n34 56 78 FF 0F \n\nregisters\n\nPassed"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
-	assert.EqualValues(t, "A  X  Y  P  S\n34 56 78 FF 0F \n\nregisters\n\nPassed", getBlarggMessage(test, msgTypeSRAM))
+			test, err := newBlarggTest(strings.NewReader(tt.rom), tt.msgType)
+			require.NoError(t, err)
+
+			require.NoError(t, test.run())
+			assert.EqualValues(t, tt.wantStatus, getBlarggStatus(test))
+			assert.EqualValues(t, tt.want, getBlarggMessage(test, tt.msgType))
+		})
+	}
 }

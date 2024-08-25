@@ -10,9 +10,9 @@ import (
 )
 
 //go:embed roms/oam_read/oam_read.nes
-var oamRead string
+var blarggOAMRead string
 
-const oamReadSuccess = `----------------
+const blarggOAMReadWant = `----------------
 ----------------
 ----------------
 ----------------
@@ -33,21 +33,10 @@ oam_read
 
 Passed`
 
-func Test_oamRead(t *testing.T) {
-	t.Parallel()
-
-	test, err := newBlarggTest(strings.NewReader(oamRead))
-	require.NoError(t, err)
-	require.NoError(t, test.run())
-
-	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
-	assert.EqualValues(t, oamReadSuccess, getBlarggMessage(test, msgTypeSRAM))
-}
-
 //go:embed roms/oam_stress/oam_stress.nes
-var oamStress string
+var blarggOAMStress string
 
-const oamStressSuccess = `----------------
+const blarggOAMStressWant = `----------------
 ----------------
 ----------------
 ----------------
@@ -68,13 +57,28 @@ oam_stress
 
 Passed`
 
-func Test_oamStress(t *testing.T) {
+func Test_blarggOAM(t *testing.T) {
 	t.Parallel()
 
-	test, err := newBlarggTest(strings.NewReader(oamStress))
-	require.NoError(t, err)
-	require.NoError(t, test.run())
+	tests := []struct {
+		name       string
+		rom        string
+		wantStatus status
+		want       string
+	}{
+		{"read", blarggOAMRead, 0, blarggOAMReadWant},
+		{"stress", blarggOAMStress, 0, blarggOAMStressWant},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-	assert.EqualValues(t, statusSuccess, getBlarggStatus(test))
-	assert.EqualValues(t, oamStressSuccess, getBlarggMessage(test, msgTypeSRAM))
+			test, err := newBlarggTest(strings.NewReader(tt.rom), msgTypeSRAM)
+			require.NoError(t, err)
+
+			require.NoError(t, test.run())
+			assert.EqualValues(t, tt.wantStatus, getBlarggStatus(test))
+			assert.EqualValues(t, tt.want, getBlarggMessage(test, msgTypeSRAM))
+		})
+	}
 }
