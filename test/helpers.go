@@ -85,3 +85,17 @@ func (c *consoleTest) run() error {
 		}
 	}
 }
+
+func exitAfterFrameNum(n int) func(c *consoleTest) error {
+	var frameCount int
+	return func(c *consoleTest) error {
+		if c.console.PPU.RenderDone {
+			c.console.PPU.RenderDone = false
+			frameCount++
+			if frameCount > n {
+				return console.ErrExit
+			}
+		}
+		return nil
+	}
+}

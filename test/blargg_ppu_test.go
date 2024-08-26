@@ -24,10 +24,19 @@ Failed #3
 
 While running test 10 of 10`
 
+//go:embed roms/blargg_ppu_tests_2005.09.15b/palette_ram.nes
+var blarggPPUPaletteRAM string
+
+//go:embed roms/blargg_ppu_tests_2005.09.15b/sprite_ram.nes
+var blarggPPUSpriteRAM string
+
+//go:embed roms/blargg_ppu_tests_2005.09.15b/vram_access.nes
+var blarggPPUVRAMAccess string
+
 func Test_blarggPPU(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
+	sramTests := []struct {
 		name       string
 		rom        string
 		wantStatus status
@@ -36,7 +45,7 @@ func Test_blarggPPU(t *testing.T) {
 		{"open bus", blarggPPUOpenBus, 0, "ppu_open_bus\n\nPassed"},
 		{"vbl nmi", blarggPPUVblNMI, 1, blarggPPUVblNMIWant},
 	}
-	for _, tt := range tests {
+	for _, tt := range sramTests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
@@ -46,6 +55,28 @@ func Test_blarggPPU(t *testing.T) {
 			require.NoError(t, test.run())
 			assert.EqualValues(t, tt.wantStatus, getBlarggStatus(test))
 			assert.EqualValues(t, tt.want, getBlarggMessage(test, msgTypeSRAM))
+		})
+	}
+
+	frameCountTests := []struct {
+		name        string
+		rom         string
+		renderCount int
+		want        string
+	}{
+		{"palette RAM", blarggPPUPaletteRAM, 17, "$01"},
+		{"sprite RAM", blarggPPUSpriteRAM, 17, "$01"},
+		{"vram access", blarggPPUVRAMAccess, 17, "$01"},
+	}
+	for _, tt := range frameCountTests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			test, err := newConsoleTest(strings.NewReader(tt.rom), exitAfterFrameNum(tt.renderCount))
+			require.NoError(t, err)
+
+			require.NoError(t, test.run())
+			assert.EqualValues(t, tt.want, getBlarggMessage(test, msgTypePPUVRAM))
 		})
 	}
 }
