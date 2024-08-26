@@ -109,6 +109,9 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 	case addr == 0x4017:
 		a.FramePeriod = 4 + data>>7&1
 		a.IRQEnabled = data>>6&1 == 0
+		if !a.IRQEnabled {
+			a.IRQPending = false
+		}
 		if a.FramePeriod == 5 {
 			a.stepEnvelope()
 			a.stepSweep()
