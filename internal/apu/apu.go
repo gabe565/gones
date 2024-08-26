@@ -143,11 +143,8 @@ func (a *APU) ReadMem(addr uint16) byte {
 }
 
 func (a *APU) Reset() {
-	a.Square[0].SetEnabled(false)
-	a.Square[1].SetEnabled(false)
-	a.Triangle.SetEnabled(false)
-	a.Noise.SetEnabled(false)
-	a.DMC.SetEnabled(false)
+	a.IRQPending = false
+	a.WriteMem(0x4015, 0)
 }
 
 func (a *APU) Step() bool {
