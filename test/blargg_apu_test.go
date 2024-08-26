@@ -9,6 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+//go:embed roms/apu_test/rom_singles/1-len_ctr.nes
+var blarggAPULenCtr string
+
 //go:embed roms/apu_reset/4015_cleared.nes
 var blarggAPUReset4015Cleared string
 
@@ -24,6 +27,7 @@ func Test_blarggAPU(t *testing.T) {
 		wantStatus status
 		want       string
 	}{
+		{"len ctr", blarggAPULenCtr, 0, "1-len_ctr\n\nPassed"},
 		{"reset clears $4015", blarggAPUReset4015Cleared, 0, "4015_cleared\n\nPassed"},
 		{"reset clears IRQ", blarggAPUResetIRQCleared, 0, "irq_flag_cleared\n\nPassed"},
 	}
