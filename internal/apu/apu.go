@@ -39,6 +39,9 @@ const (
 	StatusTriangle
 	StatusNoise
 	StatusDMC
+	_
+	StatusFrameInterrupt
+	StatusDMCInterrupt
 )
 
 func init() { //nolint:all
@@ -134,6 +137,12 @@ func (a *APU) ReadMem(addr uint16) byte {
 		}
 		if a.DMC.CurrLen > 0 {
 			data |= StatusDMC
+		}
+		if a.IRQPending {
+			data |= StatusFrameInterrupt
+		}
+		if a.DMC.IRQPending {
+			data |= StatusDMCInterrupt
 		}
 		a.IRQPending = false
 		return data
