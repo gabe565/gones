@@ -86,9 +86,7 @@ func (d *DMC) stepReader() {
 		if d.CurrLen == 0 {
 			if d.Loop {
 				d.restart()
-			}
-
-			if d.IRQEnabled {
+			} else if d.IRQEnabled {
 				d.IRQPending = true
 			}
 		}
