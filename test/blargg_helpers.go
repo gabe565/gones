@@ -57,7 +57,7 @@ func blarggSRAMMsgCallback(c *consoleTest) error {
 func getBlarggStatus(c *consoleTest) status {
 	status := status(c.console.Bus.ReadMem(0x6000))
 	if status == 0 {
-		for i, b := range [3]byte{222, 176, 97} {
+		for i, b := range [3]byte{0xDE, 0xB0, 0x61} {
 			if got := c.console.Bus.ReadMem(0x6001 + uint16(i)); got != b {
 				return statusPreRun
 			}
