@@ -326,6 +326,7 @@ func cld(c *CPU, _ AddressingMode) {
 // [CLI Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#CLI
 func cli(c *CPU, _ AddressingMode) {
 	c.Status.InterruptDisable = false
+	c.irqDelay = 1
 }
 
 // clv - Clear Overflow Flag

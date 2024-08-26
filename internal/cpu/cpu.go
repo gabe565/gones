@@ -52,6 +52,7 @@ type CPU struct {
 
 	NMIPending bool `msgpack:"alias:NmiPending"`
 	IRQPending bool `msgpack:"alias:IrqPending"`
+	irqDelay   uint8
 
 	Stall uint16
 
@@ -99,7 +100,11 @@ func (c *CPU) Step() uint {
 	if c.NMIPending {
 		c.nmi()
 	} else if c.IRQPending && !c.Status.InterruptDisable {
-		c.irq()
+		if c.irqDelay == 0 {
+			c.irq()
+		} else {
+			c.irqDelay--
+		}
 	}
 
 	code := c.ReadMem(c.ProgramCounter)
