@@ -29,7 +29,7 @@ const (
 
 var errInvalidMessageType = errors.New("invalid message type")
 
-func newBlarggTest(r io.ReadSeeker, t msgType) (*consoleTest, error) {
+func newBlarggTest(r io.Reader, t msgType) (*consoleTest, error) {
 	switch t {
 	case msgTypeSRAM:
 		return newConsoleTest(r, blarggSRAMMsgCallback)

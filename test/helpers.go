@@ -1,6 +1,7 @@
 package test
 
 import (
+	"embed"
 	"errors"
 	"io"
 
@@ -13,7 +14,10 @@ import (
 	"github.com/gabe565/gones/internal/ppu"
 )
 
-func stubConsole(r io.ReadSeeker) (*console.Console, error) {
+//go:embed roms
+var roms embed.FS
+
+func stubConsole(r io.Reader) (*console.Console, error) {
 	cart, err := cartridge.FromiNes(r)
 	if err != nil {
 		return nil, err
@@ -49,7 +53,7 @@ type consoleTest struct {
 	cb func(ct *consoleTest) error
 }
 
-func newConsoleTest(r io.ReadSeeker, cb func(c *consoleTest) error) (*consoleTest, error) {
+func newConsoleTest(r io.Reader, cb func(c *consoleTest) error) (*consoleTest, error) {
 	c, err := stubConsole(r)
 	if err != nil {
 		return nil, err
