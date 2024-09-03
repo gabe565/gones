@@ -35,7 +35,7 @@ jobs:
         run: go run -tags embed_nes_xml ./internal/database/generate/to_csv
       - name: Create Pull Request
         id: pr
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ steps.app-token.outputs.token }}
           committer: ${{ env.AUTHOR }}
