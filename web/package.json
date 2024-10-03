@@ -23,7 +23,7 @@
     "unplugin-icons": "0.19.3",
     "vite": "5.4.8",
     "vite-plugin-pwa": "0.20.5",
-    "vue": "3.5.10"
+    "vue": "3.5.11"
   },
   "devDependencies": {
     "@eslint/js": "9.11.1",
