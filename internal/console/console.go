@@ -93,7 +93,7 @@ func New(conf *config.Config, cart *cartridge.Cartridge) (*Console, error) {
 
 	if conf.Audio.Enabled {
 		console.audioCtx = audio.NewContext(consts.AudioSampleRate)
-		console.player, err = console.audioCtx.NewPlayer(console.APU)
+		console.player, err = console.audioCtx.NewPlayerF32(console.APU)
 		if err != nil {
 			return &console, err
 		}

@@ -3,6 +3,7 @@ package apu
 import (
 	"bytes"
 	"log/slog"
+	"math"
 	"sync"
 
 	"github.com/gabe565/gones/internal/config"
@@ -20,7 +21,7 @@ type CPU interface {
 const (
 	FrameCounterRate  = float64(consts.CPUFrequency) / 240.0
 	DefaultSampleRate = float64(consts.CPUFrequency) / float64(consts.AudioSampleRate) * consts.FrameRateDifference
-	BufferCap         = consts.AudioSampleRate / 5 * 4
+	BufferCap         = consts.AudioSampleRate / 5 * 8
 )
 
 //nolint:gochecknoglobals
@@ -29,8 +30,8 @@ var (
 		10, 254, 20, 2, 40, 4, 80, 6, 160, 8, 60, 10, 14, 12, 26, 14,
 		12, 16, 24, 18, 48, 20, 96, 22, 192, 24, 72, 26, 16, 28, 32, 30,
 	}
-	squareTable [31]uint16
-	tndTable    [203]uint16
+	squareTable [31]float32
+	tndTable    [203]float32
 )
 
 const (
@@ -46,10 +47,10 @@ const (
 
 func init() { //nolint:all
 	for i := range squareTable {
-		squareTable[i] = uint16(95.52 / (8128.0/float64(i) + 100) * 32767)
+		squareTable[i] = float32(95.52 / (8128.0/float64(i) + 100))
 	}
 	for i := range tndTable {
-		tndTable[i] = uint16(163.67 / (24329.0/float64(i) + 100) * 32767)
+		tndTable[i] = float32(163.67 / (24329.0/float64(i) + 100))
 	}
 }
 
@@ -239,7 +240,7 @@ func (a *APU) stepLength() {
 	a.Noise.stepLength()
 }
 
-func (a *APU) output() uint16 {
+func (a *APU) output() float32 {
 	var square byte
 	if a.conf.Channels.Square1 {
 		square += a.Square[0].output()
@@ -264,12 +265,14 @@ func (a *APU) output() uint16 {
 
 func (a *APU) sendSample() {
 	result := a.output()
-	lo := byte(result)
-	hi := byte(result >> 8)
+	b := math.Float32bits(result)
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	if a.buf.Len() < BufferCap {
-		a.buf.Write([]byte{lo, hi, lo, hi})
+		a.buf.Write([]byte{
+			byte(b), byte(b >> 8), byte(b >> 16), byte(b >> 24),
+			byte(b), byte(b >> 8), byte(b >> 16), byte(b >> 24),
+		})
 	}
 }
 
