@@ -18,7 +18,7 @@
     "autoprefixer": "10.4.20",
     "plausible-tracker": "0.3.9",
     "postcss": "8.4.47",
-    "sass": "1.77.8",
+    "sass": "1.79.4",
     "tailwindcss": "3.4.13",
     "unplugin-icons": "0.19.3",
     "vite": "5.4.6",
