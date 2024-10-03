@@ -18,9 +18,13 @@ tasks:
 
   optimize:
     dir: web/src/assets
+    vars:
+      TEMP:
+        sh: mktemp
     cmds:
-      - wasm-opt -Oz --enable-bulk-memory -o temp.wasm gones.wasm
-      - mv temp.wasm gones.wasm
+      - defer: rm -f "{{ .TEMP }}"
+      - wasm-opt -Oz --enable-bulk-memory -o "{{ .TEMP }}"  gones.wasm
+      - mv "{{ .TEMP }}" gones.wasm
 
   build:
     deps: [build-wasm, npm]

@@ -214,8 +214,9 @@ jobs:
       - name: Optimize
         working-directory: web/src/assets
         run: |
-          wasm-opt -Oz --enable-bulk-memory -o temp.wasm gones.wasm
-          mv temp.wasm gones.wasm
+          temp="$(mktemp)"
+          wasm-opt -Oz --enable-bulk-memory -o "$temp" gones.wasm
+          mv "$temp" gones.wasm
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
