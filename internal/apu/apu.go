@@ -62,6 +62,8 @@ func New(conf *config.Config) *APU {
 
 		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},
+
+		FramePeriod: 4,
 	}
 	a.buf.Grow(BufferCap)
 	return a
