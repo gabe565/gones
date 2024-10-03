@@ -4,7 +4,7 @@ import (
 	"log/slog"
 
 	"github.com/gabe565/gones/internal/consts"
-	"github.com/gabe565/gones/internal/util"
+	"github.com/gabe565/gones/internal/log"
 )
 
 func NewMapper2(cartridge *Cartridge) *Mapper2 {
@@ -46,7 +46,7 @@ func (m *Mapper2) ReadMem(addr uint16) byte {
 		addr += m.PRGBank2 * consts.PRGChunkSize
 		return m.cartridge.prg[addr]
 	default:
-		slog.Error("Invalid mapper 2 read", "addr", util.HexAddr(addr))
+		slog.Error("Invalid mapper 2 read", "addr", log.HexAddr(addr))
 		return 0
 	}
 }
@@ -63,6 +63,6 @@ func (m *Mapper2) WriteMem(addr uint16, data byte) {
 		data %= m.PRGBanks
 		m.PRGBank1 = data
 	default:
-		slog.Error("Invalid mapper 2 write", "addr", util.HexAddr(addr))
+		slog.Error("Invalid mapper 2 write", "addr", log.HexAddr(addr))
 	}
 }

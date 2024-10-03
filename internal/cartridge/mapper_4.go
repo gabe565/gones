@@ -3,8 +3,8 @@ package cartridge
 import (
 	"log/slog"
 
+	"github.com/gabe565/gones/internal/log"
 	"github.com/gabe565/gones/internal/ppu/registers"
-	"github.com/gabe565/gones/internal/util"
 )
 
 func NewMapper4(cartridge *Cartridge) *Mapper4 {
@@ -78,7 +78,7 @@ func (m *Mapper4) ReadMem(addr uint16) byte {
 		offset := int(addr % 0x2000)
 		return m.cartridge.prg[m.PRGOffsets[bank]+offset]
 	default:
-		slog.Error("Invalid mapper 4 read", "addr", util.HexAddr(addr))
+		slog.Error("Invalid mapper 4 read", "addr", log.HexAddr(addr))
 		return 0
 	}
 }
@@ -128,7 +128,7 @@ func (m *Mapper4) WriteMem(addr uint16, data byte) {
 			m.IRQPending = false
 		}
 	default:
-		slog.Error("Invalid mapper 4 write", "addr", util.HexAddr(addr))
+		slog.Error("Invalid mapper 4 write", "addr", log.HexAddr(addr))
 	}
 }
 

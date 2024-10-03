@@ -7,8 +7,8 @@ import (
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/controller"
+	"github.com/gabe565/gones/internal/log"
 	"github.com/gabe565/gones/internal/ppu"
-	"github.com/gabe565/gones/internal/util"
 )
 
 func New(conf *config.Config, mapper cartridge.Mapper, ppu *ppu.PPU, apu *apu.APU) *Bus {
@@ -55,7 +55,7 @@ func (b *Bus) ReadMem(addr uint16) byte {
 	case 0x4020 <= addr:
 		b.OpenBus = b.mapper.ReadMem(addr)
 	default:
-		slog.Error("Invalid Bus read", "addr", util.HexAddr(addr))
+		slog.Error("Invalid Bus read", "addr", log.HexAddr(addr))
 		return 0
 	}
 	return b.OpenBus
@@ -96,7 +96,7 @@ func (b *Bus) WriteMem(addr uint16, data byte) {
 	case 0x4020 <= addr:
 		b.mapper.WriteMem(addr, data)
 	default:
-		slog.Error("Invalid Bus write", "addr", util.HexAddr(addr))
+		slog.Error("Invalid Bus write", "addr", log.HexAddr(addr))
 	}
 	b.OpenBus = data
 }

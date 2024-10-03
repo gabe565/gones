@@ -9,12 +9,12 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/gabe565/gones/internal/config"
 	"github.com/gabe565/gones/internal/database/nointro"
+	"github.com/gabe565/gones/internal/log"
 )
 
 func main() {
-	config.InitLog(os.Stderr)
+	log.Init(os.Stderr)
 
 	const path = "internal/database/database.csv"
 

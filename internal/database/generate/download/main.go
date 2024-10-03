@@ -6,11 +6,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/gabe565/gones/internal/config"
+	"github.com/gabe565/gones/internal/log"
 )
 
 func main() {
-	config.InitLog(os.Stderr)
+	log.Init(os.Stderr)
 
 	action, err := NewDownloader("Nintendo - Nintendo Entertainment System")
 	if err != nil {

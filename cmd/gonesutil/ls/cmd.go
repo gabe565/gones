@@ -13,7 +13,7 @@ import (
 	"sync"
 
 	"github.com/gabe565/gones/internal/cartridge"
-	"github.com/gabe565/gones/internal/config"
+	"github.com/gabe565/gones/internal/log"
 	"github.com/spf13/cobra"
 )
 
@@ -62,7 +62,7 @@ func New() *cobra.Command {
 
 	cmd.Flags().BoolP("reverse", "r", false, "Reverse the output")
 
-	config.InitLog(os.Stderr)
+	log.Init(os.Stderr)
 	return cmd
 }
 

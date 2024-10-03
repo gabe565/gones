@@ -6,13 +6,13 @@ import (
 
 	"github.com/gabe565/gones/cmd/gones"
 	gonesutil "github.com/gabe565/gones/cmd/gonesutil/root"
-	"github.com/gabe565/gones/internal/config"
+	"github.com/gabe565/gones/internal/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 )
 
 func main() {
-	config.InitLog(os.Stderr)
+	log.Init(os.Stderr)
 
 	output := "./docs"
 	commands := []*cobra.Command{

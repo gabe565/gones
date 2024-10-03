@@ -6,8 +6,8 @@ import (
 	"log/slog"
 
 	"github.com/gabe565/gones/internal/interrupt"
+	"github.com/gabe565/gones/internal/log"
 	"github.com/gabe565/gones/internal/memory"
-	"github.com/gabe565/gones/internal/util"
 )
 
 func New(b memory.ReadSafeWrite) *CPU {
@@ -114,7 +114,7 @@ func (c *CPU) Step() uint {
 	op := opcodes[code]
 	if op == nil {
 		c.StepErr = fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
-		slog.Error("Failed to step CPU", "error", ErrUnsupportedOpcode, "code", util.HexVal(code))
+		slog.Error("Failed to step CPU", "error", ErrUnsupportedOpcode, "code", log.HexVal(code))
 		return 1
 	}
 

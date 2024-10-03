@@ -5,11 +5,12 @@ import (
 	"os"
 
 	"github.com/gabe565/gones/internal/config"
+	"github.com/gabe565/gones/internal/log"
 	"github.com/pelletier/go-toml/v2"
 )
 
 func main() {
-	config.InitLog(os.Stderr)
+	log.Init(os.Stderr)
 
 	f, err := os.Create("config_example.toml")
 	if err != nil {

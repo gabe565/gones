@@ -6,16 +6,16 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gabe565/gones/internal/config"
+	"github.com/gabe565/gones/internal/log"
 	"github.com/stretchr/testify/assert"
 )
 
 //nolint:paralleltest
 func Test_getWindowIcons(t *testing.T) {
 	var buf bytes.Buffer
-	config.InitLog(&buf)
+	log.Init(&buf)
 	t.Cleanup(func() {
-		config.InitLog(os.Stderr)
+		log.Init(os.Stderr)
 	})
 
 	icons := getWindowIcons()

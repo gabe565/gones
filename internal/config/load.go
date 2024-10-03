@@ -5,25 +5,23 @@ package config
 import (
 	"bytes"
 	"errors"
-	"io"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"time"
 
 	"github.com/gabe565/gones/internal/consts"
+	"github.com/gabe565/gones/internal/log"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/providers/rawbytes"
 	"github.com/knadh/koanf/providers/structs"
 	"github.com/knadh/koanf/v2"
-	"github.com/lmittmann/tint"
-	"github.com/mattn/go-isatty"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/spf13/cobra"
 )
 
 func Load(cmd *cobra.Command) (*Config, error) {
-	InitLog(cmd.ErrOrStderr())
+	log.Init(cmd.ErrOrStderr())
 
 	k := koanf.New(".")
 	conf := NewDefault()
@@ -191,19 +189,4 @@ func fixConfig(k *koanf.Koanf) error {
 	}
 
 	return nil
-}
-
-func InitLog(out io.Writer) {
-	var color bool
-	if f, ok := out.(*os.File); ok {
-		color = isatty.IsTerminal(f.Fd()) || isatty.IsCygwinTerminal(f.Fd())
-	}
-
-	slog.SetDefault(slog.New(
-		tint.NewHandler(out, &tint.Options{
-			Level:      slog.LevelInfo,
-			TimeFormat: time.Kitchen,
-			NoColor:    !color,
-		}),
-	))
 }
