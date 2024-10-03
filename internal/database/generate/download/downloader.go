@@ -148,17 +148,18 @@ func (g *Downloader) getSystemID(ctx context.Context, systemName string) (string
 
 	// Iterate over selects
 	var system string
-	node.Find("select").Each(func(_ int, s *goquery.Selection) {
+	for _, s := range node.Find("select").EachIter() {
 		if name, exists := s.Attr("name"); exists && name == "system_selection" {
-			s.Find("option").Each(func(_ int, s *goquery.Selection) {
+			for _, s := range s.Find("option").EachIter() {
 				if strings.TrimSpace(s.Text()) == systemName {
 					if value, exists := s.Attr("value"); exists {
 						system = value
+						break
 					}
 				}
-			})
+			}
 		}
-	})
+	}
 
 	if system == "" {
 		return "", fmt.Errorf("%w: %s", ErrSystemNotFound, systemName)
@@ -195,25 +196,26 @@ func (g *Downloader) getFormParams(ctx context.Context) (map[string]string, erro
 	node := sel.Eq(0)
 
 	// Iterate over selects
-	node.Find("select").Each(func(_ int, s *goquery.Selection) {
+	for _, s := range node.Find("select").EachIter() {
 		if name, exists := s.Attr("name"); exists {
-			s.Find("option").Each(func(_ int, s *goquery.Selection) {
+			for _, s := range s.Find("option").EachIter() {
 				if _, exists := s.Attr("selected"); exists {
 					if value, exists := s.Attr("value"); exists {
 						postParams[name] = value
+						break
 					}
 				}
-			})
+			}
 		}
-	})
+	}
 
 	// Iterate over inputs
-	node.Find("input").Each(func(_ int, s *goquery.Selection) {
+	for _, s := range node.Find("input").EachIter() {
 		if inputType, exists := s.Attr("type"); exists {
 			if inputType == "radio" {
 				// Skip unchecked radio buttons
 				if _, exists := s.Attr("checked"); !exists {
-					return
+					continue
 				}
 			}
 		}
@@ -223,7 +225,7 @@ func (g *Downloader) getFormParams(ctx context.Context) (map[string]string, erro
 				postParams[name] = value
 			}
 		}
-	})
+	}
 
 	slog.Info("Got form params", "params", postParams)
 	return postParams, nil
@@ -289,7 +291,6 @@ func (g *Downloader) prepareDownload(ctx context.Context, postFields map[string]
 	}
 	node := sel.Eq(0)
 
-	// Iterate over selects
 	sel = node.Find(`input[type="submit"]`)
 	node = sel.Eq(0)
 
