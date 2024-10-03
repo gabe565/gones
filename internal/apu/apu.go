@@ -191,24 +191,21 @@ func (a *APU) SetCPU(c CPU) {
 }
 
 func (a *APU) stepFrameCounter() {
-	switch a.FramePeriod {
-	case 4, 5:
-		a.FrameValue++
-		a.FrameValue %= a.FramePeriod
-		switch a.FrameValue {
-		case 0, 2:
-			a.stepEnvelope()
-		case 1:
-			a.stepEnvelope()
-			a.stepSweep()
-			a.stepLength()
-		case 3:
-			a.stepEnvelope()
-			a.stepSweep()
-			a.stepLength()
-			if a.FramePeriod == 4 && a.IRQEnabled {
-				a.IRQPending = true
-			}
+	a.FrameValue++
+	a.FrameValue %= a.FramePeriod
+	switch a.FrameValue {
+	case 0, 2:
+		a.stepEnvelope()
+	case 1:
+		a.stepEnvelope()
+		a.stepSweep()
+		a.stepLength()
+	case 3:
+		a.stepEnvelope()
+		a.stepSweep()
+		a.stepLength()
+		if a.FramePeriod == 4 && a.IRQEnabled {
+			a.IRQPending = true
 		}
 	}
 }
