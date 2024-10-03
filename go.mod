@@ -3,7 +3,7 @@ module github.com/gabe565/gones
 go 1.23.0
 
 require (
-	github.com/Masterminds/sprig/v3 v3.2.3
+	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/PuerkitoBio/goquery v1.9.2
 	github.com/hajimehoshi/ebiten/v2 v2.8.0
 	github.com/knadh/koanf/providers/posflag v0.1.0
@@ -22,8 +22,9 @@ require (
 )
 
 require (
+	dario.cat/mergo v1.0.1 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
-	github.com/Masterminds/semver/v3 v3.2.0 // indirect
+	github.com/Masterminds/semver/v3 v3.3.0 // indirect
 	github.com/akavel/rsrc v0.10.2 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
@@ -35,23 +36,21 @@ require (
 	github.com/ebitengine/purego v0.8.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.0.0-alpha.1 // indirect
-	github.com/google/uuid v1.1.1 // indirect
-	github.com/huandu/xstrings v1.3.3 // indirect
-	github.com/imdario/mergo v0.3.11 // indirect
+	github.com/google/uuid v1.6.0 // indirect
+	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
 	github.com/josephspurrier/goversioninfo v1.4.0 // indirect
 	github.com/knadh/koanf/maps v0.1.1 // indirect
-	github.com/kr/pretty v0.3.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/randall77/makefat v0.0.0-20210315173500-7ddd0e42c844 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/shopspring/decimal v1.2.0 // indirect
-	github.com/spf13/cast v1.3.1 // indirect
+	github.com/shopspring/decimal v1.4.0 // indirect
+	github.com/spf13/cast v1.7.0 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
-	golang.org/x/crypto v0.22.0 // indirect
+	golang.org/x/crypto v0.26.0 // indirect
 	golang.org/x/image v0.20.0 // indirect
 	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
