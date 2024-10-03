@@ -9,7 +9,7 @@ import (
 )
 
 func (c *Console) SaveStateNum(num uint8, createUndo bool) error {
-	path, err := c.Cartridge.StatePath(num)
+	path, err := c.StatePath(num)
 	if err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ func (c *Console) SaveStateNum(num uint8, createUndo bool) error {
 }
 
 func (c *Console) LoadStateNum(num uint8) error {
-	path, err := c.Cartridge.StatePath(num)
+	path, err := c.StatePath(num)
 	if err != nil {
 		return err
 	}

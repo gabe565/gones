@@ -12,7 +12,7 @@ func (c *Console) SaveSRAM() error {
 		return nil
 	}
 
-	path, err := c.Cartridge.SRAMPath()
+	path, err := c.SRAMPath()
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func (c *Console) LoadSRAM() error {
 		return nil
 	}
 
-	path, err := c.Cartridge.SRAMPath()
+	path, err := c.SRAMPath()
 	if err != nil {
 		return err
 	}

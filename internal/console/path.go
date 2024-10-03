@@ -1,6 +1,6 @@
 //go:build !js
 
-package cartridge
+package console
 
 import (
 	"fmt"
@@ -9,22 +9,22 @@ import (
 	"github.com/gabe565/gones/internal/config"
 )
 
-func (c *Cartridge) SRAMPath() (string, error) {
+func (c *Console) SRAMPath() (string, error) {
 	sramDir, err := config.GetSRAMDir()
 	if err != nil {
 		return "", err
 	}
 
-	sramName := c.hash + ".sav"
+	sramName := c.Cartridge.Hash() + ".sav"
 	return filepath.Join(sramDir, sramName), nil
 }
 
-func (c *Cartridge) StatePath(num uint8) (string, error) {
+func (c *Console) StatePath(num uint8) (string, error) {
 	statesDir, err := config.GetStatesDir()
 	if err != nil {
 		return "", err
 	}
 
-	stateName := fmt.Sprintf("%s.%d.state.gz", c.hash, num)
+	stateName := fmt.Sprintf("%s.%d.state.gz", c.Cartridge.Hash(), num)
 	return filepath.Join(statesDir, stateName), nil
 }
