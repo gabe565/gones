@@ -12,7 +12,7 @@ require (
 	github.com/knadh/koanf/v2 v2.1.1
 	github.com/lmittmann/tint v1.0.5
 	github.com/mattn/go-isatty v0.0.20
-	github.com/ncruces/zenity v0.10.13
+	github.com/ncruces/zenity v0.10.14
 	github.com/pelletier/go-toml/v2 v2.2.3
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
@@ -40,7 +40,7 @@ require (
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
-	github.com/josephspurrier/goversioninfo v1.4.0 // indirect
+	github.com/josephspurrier/goversioninfo v1.4.1 // indirect
 	github.com/knadh/koanf/maps v0.1.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
