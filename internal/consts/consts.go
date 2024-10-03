@@ -22,4 +22,7 @@ const (
 
 	Width  = 256
 	Height = 240
+
+	PPUOAMSize     = 256
+	PPUSpriteLimit = 8
 )

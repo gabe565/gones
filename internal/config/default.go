@@ -9,10 +9,10 @@ import (
 func NewDefault() *Config {
 	return &Config{
 		UI: UI{
-			Fullscreen:     false,
-			Scale:          3,
-			PauseUnfocused: true,
-			Overscan:       Overscan{Top: 8, Bottom: 8},
+			Scale:             3,
+			PauseUnfocused:    true,
+			RemoveSpriteLimit: true,
+			Overscan:          Overscan{Top: 8, Bottom: 8},
 		},
 		State: State{
 			Resume:           true,

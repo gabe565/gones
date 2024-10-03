@@ -19,11 +19,12 @@ type Config struct {
 }
 
 type UI struct {
-	Fullscreen     bool     `toml:"fullscreen" comment:"Default fullscreen state. Fullscreen can also be toggled with a key (F11 by default)."`
-	Scale          float64  `toml:"scale" comment:"Multiplier used to scale the UI."`
-	PauseUnfocused bool     `toml:"pause_unfocused" comment:"Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background."`
-	Palette        string   `toml:"palette" comment:"Palette (.pal) file to use. An embedded palette will be used when blank."`
-	Overscan       Overscan `toml:"overscan,inline" comment:"Change the number of rows/cols of overscan."`
+	Fullscreen        bool     `toml:"fullscreen" comment:"Default fullscreen state. Fullscreen can also be toggled with a key (F11 by default)."`
+	Scale             float64  `toml:"scale" comment:"Multiplier used to scale the UI."`
+	PauseUnfocused    bool     `toml:"pause_unfocused" comment:"Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background."`
+	Palette           string   `toml:"palette" comment:"Palette (.pal) file to use. An embedded palette will be used when blank."`
+	RemoveSpriteLimit bool     `toml:"remove_sprite_limit" comment:"Removes the original hardware's 8 horizontal sprite limitation. When enabled, sprites will no longer flicker."`
+	Overscan          Overscan `toml:"overscan,inline" comment:"Change the number of rows/cols of overscan."`
 }
 
 type Overscan struct {

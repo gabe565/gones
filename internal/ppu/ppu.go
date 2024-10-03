@@ -6,6 +6,7 @@ import (
 
 	"github.com/gabe565/gones/internal/cartridge"
 	"github.com/gabe565/gones/internal/config"
+	"github.com/gabe565/gones/internal/consts"
 	"github.com/gabe565/gones/internal/interrupt"
 	"github.com/gabe565/gones/internal/log"
 	"github.com/gabe565/gones/internal/memory"
@@ -22,12 +23,23 @@ type CPU interface {
 
 func New(conf *config.Config, mapper cartridge.Mapper) *PPU {
 	rect := conf.UI.Overscan.Rect()
+	spriteLimit := uint8(8)
+	if conf.UI.RemoveSpriteLimit {
+		spriteLimit = consts.PPUOAMSize / 4
+	}
 	return &PPU{
 		offsets:       rect.Min,
 		mapper:        mapper,
 		image:         image.NewRGBA(image.Rect(0, 0, rect.Dx(), rect.Dy())),
 		Cycles:        21,
 		systemPalette: &palette.Default,
+		SpriteData: SpriteData{
+			limit:      spriteLimit,
+			Patterns:   make([]uint32, spriteLimit),
+			Positions:  make([]byte, spriteLimit),
+			Priorities: make([]byte, spriteLimit),
+			Indexes:    make([]byte, spriteLimit),
+		},
 	}
 }
 
@@ -45,8 +57,8 @@ type PPU struct {
 	FineX     byte
 	VRAM      [0x800]byte `msgpack:"alias:Vram"`
 
-	OAMAddr       byte        `msgpack:"alias:OamAddr"`
-	OAM           [0x100]byte `msgpack:"alias:Oam"`
+	OAMAddr       byte                    `msgpack:"alias:OamAddr"`
+	OAM           [consts.PPUOAMSize]byte `msgpack:"alias:Oam"`
 	systemPalette *palette.Palette
 	Palette       [0x20]byte
 

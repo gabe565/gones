@@ -7,6 +7,8 @@ scale = 3.0
 pause_unfocused = true
 # Palette (.pal) file to use. An embedded palette will be used when blank.
 palette = ''
+# Removes the original hardware's 8 horizontal sprite limitation. When enabled, sprites will no longer flicker.
+remove_sprite_limit = true
 # Change the number of rows/cols of overscan.
 overscan = {top = 8, right = 0, bottom = 8, left = 0}
 

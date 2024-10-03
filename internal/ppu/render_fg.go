@@ -1,46 +1,98 @@
 package ppu
 
-const MaxSprites = 8
+import (
+	"github.com/gabe565/gones/internal/consts"
+	"github.com/vmihailenco/msgpack/v5"
+)
 
 type SpriteData struct {
 	Count      uint8
-	Patterns   [MaxSprites]uint32
-	Positions  [MaxSprites]byte
-	Priorities [MaxSprites]byte
-	Indexes    [MaxSprites]byte
+	limit      uint8
+	Patterns   []uint32
+	Positions  []byte
+	Priorities []byte
+	Indexes    []byte
+}
+
+var _ msgpack.CustomDecoder = &SpriteData{}
+
+func (s *SpriteData) DecodeMsgpack(dec *msgpack.Decoder) error {
+	type tmpSpriteData SpriteData
+	if err := dec.Decode((*tmpSpriteData)(s)); err != nil {
+		return err
+	}
+	limit := int(s.limit)
+	if len(s.Patterns) > limit {
+		clear(s.Patterns[limit:])
+		s.Patterns = s.Patterns[:limit:limit]
+	} else if len(s.Patterns) < limit {
+		s.Patterns = append(s.Patterns, make([]uint32, limit-len(s.Patterns))...)
+	}
+	if len(s.Positions) > limit {
+		clear(s.Positions[limit:])
+		s.Positions = s.Positions[:limit:limit]
+	} else if len(s.Positions) < limit {
+		s.Positions = append(s.Positions, make([]byte, limit-len(s.Positions))...)
+	}
+	if len(s.Priorities) > limit {
+		clear(s.Priorities[limit:])
+		s.Priorities = s.Priorities[:limit:limit]
+	} else if len(s.Priorities) < limit {
+		s.Priorities = append(s.Priorities, make([]byte, limit-len(s.Priorities))...)
+	}
+	if len(s.Indexes) > limit {
+		clear(s.Indexes[limit:])
+		s.Indexes = s.Indexes[:limit:limit]
+	} else if len(s.Indexes) < limit {
+		s.Indexes = append(s.Indexes, make([]byte, limit-len(s.Indexes))...)
+	}
+	return nil
 }
 
 func (p *PPU) evaluateSprites() {
 	height := int(p.Ctrl.SpriteSize())
 	var count uint8
 
-	for i := range 64 {
-		sprite := p.OAM[i*4 : i*4+4 : i*4+4]
-		y := sprite[0]
-		a := sprite[2]
-		x := sprite[3]
+	var prevY, prevTile uint8
+	consecutive := uint8(1)
+	for i := range consts.PPUOAMSize / 4 {
+		i *= 4
+		y, tile, a, x := p.OAM[i], p.OAM[i+1], p.OAM[i+2], p.OAM[i+3]
 
 		row := p.Scanline - int(y)
 		if row < 0 || row >= height {
 			continue
 		}
 
-		if count < 8 {
-			p.SpriteData.Patterns[count] = p.fetchSpritePattern(sprite[1], a, row)
+		if count < p.SpriteData.limit {
+			p.SpriteData.Patterns[count] = p.fetchSpritePattern(tile, a, row)
 			p.SpriteData.Positions[count] = x
 			p.SpriteData.Priorities[count] = (a >> 5) & 1
 			p.SpriteData.Indexes[count] = byte(i)
+
+			if y == prevY && tile == prevTile {
+				consecutive++
+			}
+			prevY, prevTile = y, tile
 		}
 
 		count++
 	}
 
-	if count > 8 {
-		count = 8
+	if count > consts.PPUSpriteLimit {
 		p.Status.SpriteOverflow = true
 	}
 
-	p.SpriteData.Count = count
+	switch {
+	case consecutive >= consts.PPUSpriteLimit:
+		// Force original limit when masking effect is active
+		// See https://nesdev.org/wiki/Sprite_overflow_games#Detecting_masking_effects
+		p.SpriteData.Count = consts.PPUSpriteLimit
+	case count > p.SpriteData.limit:
+		p.SpriteData.Count = p.SpriteData.limit
+	default:
+		p.SpriteData.Count = count
+	}
 }
 
 func (p *PPU) fetchSpritePattern(tile, attributes byte, row int) uint32 {
