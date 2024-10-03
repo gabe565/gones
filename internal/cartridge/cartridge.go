@@ -53,7 +53,7 @@ func (c *Cartridge) Name() string {
 }
 
 func (c *Cartridge) SetName(path string) {
-	c.name = strings.TrimSuffix(filepath.Base(path), ".nes")
+	c.name = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 }
 
 func (c *Cartridge) Hash() string {

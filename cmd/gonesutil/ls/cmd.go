@@ -141,7 +141,12 @@ func loadPaths(paths []string) ([]*entry, bool) {
 	var failed bool
 	for _, path := range paths {
 		if err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
-			if err != nil || d.IsDir() || filepath.Ext(path) != ".nes" {
+			if err != nil || d.IsDir() {
+				return err
+			}
+
+			ext := filepath.Ext(path)
+			if !strings.EqualFold(ext, ".nes") {
 				return err
 			}
 
