@@ -141,9 +141,9 @@ func (p *Square) output() byte {
 		return 0
 	case p.LengthValue == 0:
 		return 0
-	case squareDutyTable[p.DutyMode][p.DutyValue] == 0:
-		return 0
 	case p.TimerPeriod < 8, p.TimerPeriod > 0x7FF:
+		return 0
+	case squareDutyTable[p.DutyMode][p.DutyValue] == 0:
 		return 0
 	case p.EnvelopeEnabled:
 		return p.EnvelopeVol
