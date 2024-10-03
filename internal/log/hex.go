@@ -7,7 +7,7 @@ import (
 type HexAddr uint16
 
 func (h HexAddr) String() string {
-	return fmt.Sprintf("$%04X", uint8(h))
+	return fmt.Sprintf("$%04X", uint16(h))
 }
 
 type HexVal uint8
