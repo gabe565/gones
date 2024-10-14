@@ -39,9 +39,7 @@ func New() *cobra.Command {
 		Aliases: []string{"list"},
 		RunE:    run,
 
-		ValidArgsFunction: func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
-			return []string{"nes"}, cobra.ShellCompDirectiveFilterFileExt
-		},
+		ValidArgsFunction: util.CompleteROM,
 	}
 
 	flag := cmd.Flags()
