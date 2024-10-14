@@ -43,24 +43,27 @@ func New() *cobra.Command {
 			return []string{"nes"}, cobra.ShellCompDirectiveFilterFileExt
 		},
 	}
-	cmd.Flags().StringP(FlagOutput, "o", "table", "Output format. One of: (table, json, yaml)")
+
+	flag := cmd.Flags()
+
+	flag.StringP(FlagOutput, "o", "table", "Output format. One of: (table, json, yaml)")
 	util.Must(cmd.RegisterFlagCompletionFunc("output",
 		func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 			return OutputFormatStrings(), cobra.ShellCompDirectiveNoFileComp
 		},
 	))
 
-	cmd.Flags().StringToStringP(FlagFilter, "f", map[string]string{}, "Filter by a field")
+	flag.StringToStringP(FlagFilter, "f", map[string]string{}, "Filter by a field")
 	util.Must(cmd.RegisterFlagCompletionFunc("filter", completeFilter))
 
-	cmd.Flags().StringP(FlagSort, "s", PathField, "Sort by a field")
+	flag.StringP(FlagSort, "s", PathField, "Sort by a field")
 	util.Must(cmd.RegisterFlagCompletionFunc("sort",
 		func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 			return []string{PathField, NameField, MapperField, BatteryField, MirrorField}, cobra.ShellCompDirectiveNoFileComp
 		},
 	))
 
-	cmd.Flags().BoolP(FlagReverse, "r", false, "Reverse the output")
+	flag.BoolP(FlagReverse, "r", false, "Reverse the output")
 
 	log.Init(os.Stderr)
 	return cmd
