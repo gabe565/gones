@@ -7,8 +7,8 @@ import (
 	"io"
 	"regexp"
 
-	"github.com/gabe565/gones/internal/console"
-	"github.com/gabe565/gones/internal/consts"
+	"gabe565.com/gones/internal/console"
+	"gabe565.com/gones/internal/consts"
 )
 
 type status int16

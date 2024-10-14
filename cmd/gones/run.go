@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"runtime"
 
-	"github.com/gabe565/gones/internal/config"
-	"github.com/gabe565/gones/internal/console"
-	"github.com/gabe565/gones/internal/pprof"
+	"gabe565.com/gones/internal/config"
+	"gabe565.com/gones/internal/console"
+	"gabe565.com/gones/internal/pprof"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 

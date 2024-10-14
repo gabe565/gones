@@ -2,7 +2,7 @@
 
 package console
 
-import "github.com/gabe565/gones/internal/apu"
+import "gabe565.com/gones/internal/apu"
 
 func (c *Console) SetRate(rate uint8) {
 	c.rate = rate

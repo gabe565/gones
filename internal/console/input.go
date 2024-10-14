@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"runtime"
 
-	"github.com/gabe565/gones/internal/controller"
+	"gabe565.com/gones/internal/controller"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )

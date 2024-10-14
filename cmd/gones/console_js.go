@@ -6,9 +6,9 @@ import (
 	"os"
 	"syscall/js"
 
-	"github.com/gabe565/gones/internal/cartridge"
-	"github.com/gabe565/gones/internal/config"
-	"github.com/gabe565/gones/internal/console"
+	"gabe565.com/gones/internal/cartridge"
+	"gabe565.com/gones/internal/config"
+	"gabe565.com/gones/internal/console"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 

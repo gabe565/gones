@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/gabe565/gones/internal/controller/button"
+	"gabe565.com/gones/internal/controller/button"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 

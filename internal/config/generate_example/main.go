@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/gabe565/gones/internal/config"
-	"github.com/gabe565/gones/internal/log"
+	"gabe565.com/gones/internal/config"
+	"gabe565.com/gones/internal/log"
 	"github.com/pelletier/go-toml/v2"
 )
 

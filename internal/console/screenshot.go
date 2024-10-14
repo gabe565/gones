@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/gabe565/gones/internal/config"
+	"gabe565.com/gones/internal/config"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 

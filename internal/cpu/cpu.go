@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/gabe565/gones/internal/interrupt"
-	"github.com/gabe565/gones/internal/log"
-	"github.com/gabe565/gones/internal/memory"
+	"gabe565.com/gones/internal/interrupt"
+	"gabe565.com/gones/internal/log"
+	"gabe565.com/gones/internal/memory"
 )
 
 func New(b memory.ReadSafeWrite) *CPU {

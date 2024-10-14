@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/gabe565/gones/internal/log"
+	"gabe565.com/gones/internal/log"
 )
 
 func main() {

@@ -4,9 +4,9 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/gabe565/gones/cmd/gones"
-	"github.com/gabe565/gones/cmd/options"
-	_ "github.com/gabe565/gones/internal/pprof"
+	"gabe565.com/gones/cmd/gones"
+	"gabe565.com/gones/cmd/options"
+	_ "gabe565.com/gones/internal/pprof"
 	"github.com/spf13/cobra"
 )
 

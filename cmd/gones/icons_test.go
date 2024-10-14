@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gabe565/gones/internal/log"
+	"gabe565.com/gones/internal/log"
 	"github.com/stretchr/testify/assert"
 )
 

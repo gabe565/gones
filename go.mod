@@ -1,4 +1,4 @@
-module github.com/gabe565/gones
+module gabe565.com/gones
 
 go 1.23.2
 

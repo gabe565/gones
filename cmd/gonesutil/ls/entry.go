@@ -1,6 +1,6 @@
 package ls
 
-import "github.com/gabe565/gones/internal/cartridge"
+import "gabe565.com/gones/internal/cartridge"
 
 func newEntry(file string, cart *cartridge.Cartridge) *entry {
 	return &entry{

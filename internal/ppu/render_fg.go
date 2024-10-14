@@ -1,7 +1,7 @@
 package ppu
 
 import (
-	"github.com/gabe565/gones/internal/consts"
+	"gabe565.com/gones/internal/consts"
 	"github.com/vmihailenco/msgpack/v5"
 )
 

@@ -5,7 +5,7 @@ GoNESutil is a separate package that provides command-line utilities for managin
 ## Installation
 
 ```shell
-go install github.com/gabe565/gones/cmd/gonesutil@latest
+go install gabe565.com/gones/cmd/gonesutil@latest
 ```
 
 ## Usage

@@ -45,7 +45,7 @@ See [ebiten install steps](https://ebitengine.org/en/documents/install.html).
 Make sure you have [Go](https://go.dev/doc/install) and the [requirements](#requirements) installed, then run:
 
 ```shell
-go install github.com/gabe565/gones@latest
+go install gabe565.com/gones@latest
 ```
 </details>
 

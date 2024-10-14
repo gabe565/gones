@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gabe565/gones/internal/memory"
-	"github.com/gabe565/gones/internal/ppu/registers"
+	"gabe565.com/gones/internal/memory"
+	"gabe565.com/gones/internal/ppu/registers"
 )
 
 type Mapper interface {

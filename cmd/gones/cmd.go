@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/gabe565/gones/cmd/options"
-	"github.com/gabe565/gones/internal/config"
+	"gabe565.com/gones/cmd/options"
+	"gabe565.com/gones/internal/config"
 	"github.com/spf13/cobra"
 )
 

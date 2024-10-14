@@ -12,8 +12,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gabe565/gones/internal/cartridge"
-	"github.com/gabe565/gones/internal/log"
+	"gabe565.com/gones/internal/cartridge"
+	"gabe565.com/gones/internal/log"
 	"github.com/spf13/cobra"
 )
 

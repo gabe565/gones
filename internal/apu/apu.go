@@ -6,11 +6,11 @@ import (
 	"math"
 	"sync"
 
-	"github.com/gabe565/gones/internal/config"
-	"github.com/gabe565/gones/internal/consts"
-	"github.com/gabe565/gones/internal/interrupt"
-	"github.com/gabe565/gones/internal/log"
-	"github.com/gabe565/gones/internal/memory"
+	"gabe565.com/gones/internal/config"
+	"gabe565.com/gones/internal/consts"
+	"gabe565.com/gones/internal/interrupt"
+	"gabe565.com/gones/internal/log"
+	"gabe565.com/gones/internal/memory"
 )
 
 type CPU interface {

@@ -3,8 +3,8 @@ package gones
 import (
 	"log/slog"
 
-	"github.com/gabe565/gones/cmd/options"
-	"github.com/gabe565/gones/internal/config"
+	"gabe565.com/gones/cmd/options"
+	"gabe565.com/gones/internal/config"
 )
 
 type Command struct{}

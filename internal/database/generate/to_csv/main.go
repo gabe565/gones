@@ -9,8 +9,8 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/gabe565/gones/internal/database/nointro"
-	"github.com/gabe565/gones/internal/log"
+	"gabe565.com/gones/internal/database/nointro"
+	"gabe565.com/gones/internal/log"
 )
 
 func main() {

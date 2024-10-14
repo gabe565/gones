@@ -4,14 +4,14 @@ import (
 	"image"
 	"log/slog"
 
-	"github.com/gabe565/gones/internal/cartridge"
-	"github.com/gabe565/gones/internal/config"
-	"github.com/gabe565/gones/internal/consts"
-	"github.com/gabe565/gones/internal/interrupt"
-	"github.com/gabe565/gones/internal/log"
-	"github.com/gabe565/gones/internal/memory"
-	"github.com/gabe565/gones/internal/ppu/palette"
-	"github.com/gabe565/gones/internal/ppu/registers"
+	"gabe565.com/gones/internal/cartridge"
+	"gabe565.com/gones/internal/config"
+	"gabe565.com/gones/internal/consts"
+	"gabe565.com/gones/internal/interrupt"
+	"gabe565.com/gones/internal/log"
+	"gabe565.com/gones/internal/memory"
+	"gabe565.com/gones/internal/ppu/palette"
+	"gabe565.com/gones/internal/ppu/registers"
 )
 
 type CPU interface {

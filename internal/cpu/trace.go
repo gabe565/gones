@@ -6,8 +6,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/gabe565/gones/internal/log"
-	"github.com/gabe565/gones/internal/memory"
+	"gabe565.com/gones/internal/log"
+	"gabe565.com/gones/internal/memory"
 )
 
 func (c *CPU) Trace() string {

@@ -3,7 +3,7 @@ package ppu
 import (
 	"testing"
 
-	"github.com/gabe565/gones/internal/cartridge"
+	"gabe565.com/gones/internal/cartridge"
 	"github.com/stretchr/testify/assert"
 )
 

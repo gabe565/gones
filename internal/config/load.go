@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/gabe565/gones/internal/consts"
-	"github.com/gabe565/gones/internal/log"
+	"gabe565.com/gones/internal/consts"
+	"gabe565.com/gones/internal/log"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/providers/rawbytes"
 	"github.com/knadh/koanf/providers/structs"

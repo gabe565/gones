@@ -1,8 +1,8 @@
 package root
 
 import (
-	"github.com/gabe565/gones/cmd/gonesutil/ls"
-	"github.com/gabe565/gones/cmd/options"
+	"gabe565.com/gones/cmd/gonesutil/ls"
+	"gabe565.com/gones/cmd/options"
 	"github.com/spf13/cobra"
 )
 

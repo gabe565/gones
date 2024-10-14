@@ -3,11 +3,11 @@ package cpu
 import (
 	"testing"
 
-	"github.com/gabe565/gones/internal/apu"
-	"github.com/gabe565/gones/internal/bus"
-	"github.com/gabe565/gones/internal/cartridge"
-	"github.com/gabe565/gones/internal/config"
-	"github.com/gabe565/gones/internal/ppu"
+	"gabe565.com/gones/internal/apu"
+	"gabe565.com/gones/internal/bus"
+	"gabe565.com/gones/internal/cartridge"
+	"gabe565.com/gones/internal/config"
+	"gabe565.com/gones/internal/ppu"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

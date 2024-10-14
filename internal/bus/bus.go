@@ -3,12 +3,12 @@ package bus
 import (
 	"log/slog"
 
-	"github.com/gabe565/gones/internal/apu"
-	"github.com/gabe565/gones/internal/cartridge"
-	"github.com/gabe565/gones/internal/config"
-	"github.com/gabe565/gones/internal/controller"
-	"github.com/gabe565/gones/internal/log"
-	"github.com/gabe565/gones/internal/ppu"
+	"gabe565.com/gones/internal/apu"
+	"gabe565.com/gones/internal/cartridge"
+	"gabe565.com/gones/internal/config"
+	"gabe565.com/gones/internal/controller"
+	"gabe565.com/gones/internal/log"
+	"gabe565.com/gones/internal/ppu"
 )
 
 func New(conf *config.Config, mapper cartridge.Mapper, ppu *ppu.PPU, apu *apu.APU) *Bus {

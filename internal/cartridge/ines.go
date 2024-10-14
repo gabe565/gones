@@ -12,8 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gabe565/gones/internal/consts"
-	"github.com/gabe565/gones/internal/database"
+	"gabe565.com/gones/internal/consts"
+	"gabe565.com/gones/internal/database"
 )
 
 type iNESFileHeader struct {

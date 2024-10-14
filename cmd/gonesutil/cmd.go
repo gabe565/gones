@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/gabe565/gones/cmd/gonesutil/root"
-	"github.com/gabe565/gones/cmd/options"
+	"gabe565.com/gones/cmd/gonesutil/root"
+	"gabe565.com/gones/cmd/options"
 )
 
 var version = ""

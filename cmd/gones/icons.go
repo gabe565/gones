@@ -9,7 +9,7 @@ import (
 	"log/slog"
 	"runtime"
 
-	"github.com/gabe565/gones/assets"
+	"gabe565.com/gones/assets"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 

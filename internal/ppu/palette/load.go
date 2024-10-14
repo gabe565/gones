@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gabe565/gones/internal/config"
+	"gabe565.com/gones/internal/config"
 )
 
 type PalColor struct {

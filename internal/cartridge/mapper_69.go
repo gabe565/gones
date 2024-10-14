@@ -3,7 +3,7 @@ package cartridge
 import (
 	"log/slog"
 
-	"github.com/gabe565/gones/internal/log"
+	"gabe565.com/gones/internal/log"
 )
 
 func NewMapper69(cartridge *Cartridge) *Mapper69 {

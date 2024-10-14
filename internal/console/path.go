@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/gabe565/gones/internal/config"
+	"gabe565.com/gones/internal/config"
 )
 
 func (c *Console) SRAMPath() (string, error) {

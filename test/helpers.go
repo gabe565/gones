@@ -5,13 +5,13 @@ import (
 	"errors"
 	"io"
 
-	"github.com/gabe565/gones/internal/apu"
-	"github.com/gabe565/gones/internal/bus"
-	"github.com/gabe565/gones/internal/cartridge"
-	"github.com/gabe565/gones/internal/config"
-	"github.com/gabe565/gones/internal/console"
-	"github.com/gabe565/gones/internal/cpu"
-	"github.com/gabe565/gones/internal/ppu"
+	"gabe565.com/gones/internal/apu"
+	"gabe565.com/gones/internal/bus"
+	"gabe565.com/gones/internal/cartridge"
+	"gabe565.com/gones/internal/config"
+	"gabe565.com/gones/internal/console"
+	"gabe565.com/gones/internal/cpu"
+	"gabe565.com/gones/internal/ppu"
 )
 
 //go:embed roms

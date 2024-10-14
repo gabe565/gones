@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/gabe565/gones/internal/consts"
+	"gabe565.com/gones/internal/consts"
 )
 
 type Config struct {
