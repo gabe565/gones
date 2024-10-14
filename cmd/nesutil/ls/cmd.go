@@ -25,6 +25,11 @@ const (
 	BatteryField = "battery"
 	MirrorField  = "mirror"
 	HashField    = "hash"
+
+	FlagOutput  = "output"
+	FlagFilter  = "filter"
+	FlagSort    = "sort"
+	FlagReverse = "reverse"
 )
 
 func New() *cobra.Command {
@@ -38,24 +43,24 @@ func New() *cobra.Command {
 			return []string{"nes"}, cobra.ShellCompDirectiveFilterFileExt
 		},
 	}
-	cmd.Flags().StringP("output", "o", "table", "Output format. One of: (table, json, yaml)")
+	cmd.Flags().StringP(FlagOutput, "o", "table", "Output format. One of: (table, json, yaml)")
 	util.Must(cmd.RegisterFlagCompletionFunc("output",
 		func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 			return OutputFormatStrings(), cobra.ShellCompDirectiveNoFileComp
 		},
 	))
 
-	cmd.Flags().StringToStringP("filter", "f", map[string]string{}, "Filter by a field")
+	cmd.Flags().StringToStringP(FlagFilter, "f", map[string]string{}, "Filter by a field")
 	util.Must(cmd.RegisterFlagCompletionFunc("filter", completeFilter))
 
-	cmd.Flags().StringP("sort", "s", PathField, "Sort by a field")
+	cmd.Flags().StringP(FlagSort, "s", PathField, "Sort by a field")
 	util.Must(cmd.RegisterFlagCompletionFunc("sort",
 		func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 			return []string{PathField, NameField, MapperField, BatteryField, MirrorField}, cobra.ShellCompDirectiveNoFileComp
 		},
 	))
 
-	cmd.Flags().BoolP("reverse", "r", false, "Reverse the output")
+	cmd.Flags().BoolP(FlagReverse, "r", false, "Reverse the output")
 
 	log.Init(os.Stderr)
 	return cmd
@@ -71,7 +76,7 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if field := util.Must2(cmd.Flags().GetString("sort")); field != "" {
+	if field := util.Must2(cmd.Flags().GetString(FlagSort)); field != "" {
 		errCh := make(chan error, 1)
 		slices.SortFunc(carts, sortFunc(field, errCh))
 		if len(errCh) != 0 {
@@ -79,11 +84,11 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if util.Must2(cmd.Flags().GetBool("reverse")) {
+	if util.Must2(cmd.Flags().GetBool(FlagReverse)) {
 		slices.Reverse(carts)
 	}
 
-	format, err := OutputFormatString(util.Must2(cmd.Flags().GetString("output")))
+	format, err := OutputFormatString(util.Must2(cmd.Flags().GetString(FlagOutput)))
 	if err != nil {
 		return err
 	}
@@ -102,7 +107,7 @@ func loadCarts(cmd *cobra.Command, args []string) ([]*entry, bool, error) {
 	var failed bool
 	carts, failed := loadPaths(args)
 
-	if filters := util.Must2(cmd.Flags().GetStringToString("filter")); len(filters) != 0 {
+	if filters := util.Must2(cmd.Flags().GetStringToString(FlagFilter)); len(filters) != 0 {
 		errCh := make(chan error, 1)
 		carts = slices.DeleteFunc(carts, deleteFunc(filters, errCh))
 		if len(errCh) != 0 {
