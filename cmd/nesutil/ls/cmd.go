@@ -14,6 +14,7 @@ import (
 
 	"gabe565.com/gones/internal/cartridge"
 	"gabe565.com/gones/internal/log"
+	"gabe565.com/gones/internal/util"
 	"github.com/spf13/cobra"
 )
 
@@ -38,27 +39,21 @@ func New() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringP("output", "o", "table", "Output format. One of: (table, json, yaml)")
-	if err := cmd.RegisterFlagCompletionFunc("output",
+	util.Must(cmd.RegisterFlagCompletionFunc("output",
 		func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 			return OutputFormatStrings(), cobra.ShellCompDirectiveNoFileComp
 		},
-	); err != nil {
-		panic(err)
-	}
+	))
 
 	cmd.Flags().StringToStringP("filter", "f", map[string]string{}, "Filter by a field")
-	if err := cmd.RegisterFlagCompletionFunc("filter", completeFilter); err != nil {
-		panic(err)
-	}
+	util.Must(cmd.RegisterFlagCompletionFunc("filter", completeFilter))
 
 	cmd.Flags().StringP("sort", "s", PathField, "Sort by a field")
-	if err := cmd.RegisterFlagCompletionFunc("sort",
+	util.Must(cmd.RegisterFlagCompletionFunc("sort",
 		func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 			return []string{PathField, NameField, MapperField, BatteryField, MirrorField}, cobra.ShellCompDirectiveNoFileComp
 		},
-	); err != nil {
-		panic(err)
-	}
+	))
 
 	cmd.Flags().BoolP("reverse", "r", false, "Reverse the output")
 
@@ -76,9 +71,7 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if field, err := cmd.Flags().GetString("sort"); err != nil {
-		return err
-	} else if field != "" {
+	if field := util.Must2(cmd.Flags().GetString("sort")); field != "" {
 		errCh := make(chan error, 1)
 		slices.SortFunc(carts, sortFunc(field, errCh))
 		if len(errCh) != 0 {
@@ -86,18 +79,11 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if reverse, err := cmd.Flags().GetBool("reverse"); err != nil {
-		return err
-	} else if reverse {
+	if util.Must2(cmd.Flags().GetBool("reverse")) {
 		slices.Reverse(carts)
 	}
 
-	formatSrc, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return err
-	}
-
-	format, err := OutputFormatString(formatSrc)
+	format, err := OutputFormatString(util.Must2(cmd.Flags().GetString("output")))
 	if err != nil {
 		return err
 	}
@@ -116,9 +102,7 @@ func loadCarts(cmd *cobra.Command, args []string) ([]*entry, bool, error) {
 	var failed bool
 	carts, failed := loadPaths(args)
 
-	if filters, err := cmd.Flags().GetStringToString("filter"); err != nil {
-		return carts, failed, err
-	} else if len(filters) != 0 {
+	if filters := util.Must2(cmd.Flags().GetStringToString("filter")); len(filters) != 0 {
 		errCh := make(chan error, 1)
 		carts = slices.DeleteFunc(carts, deleteFunc(filters, errCh))
 		if len(errCh) != 0 {
