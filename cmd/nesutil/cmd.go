@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"os"
 
-	"gabe565.com/gones/cmd/gonesutil/root"
+	"gabe565.com/gones/cmd/nesutil/root"
 	"gabe565.com/gones/cmd/options"
 )
 

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"gabe565.com/gones/cmd/gones"
-	gonesutil "gabe565.com/gones/cmd/gonesutil/root"
+	gonesutil "gabe565.com/gones/cmd/nesutil/root"
 	"gabe565.com/gones/internal/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"

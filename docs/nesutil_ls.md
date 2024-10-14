@@ -1,9 +1,9 @@
-## gonesutil ls
+## nesutil ls
 
 List ROM files and metadata
 
 ```
-gonesutil ls [path...] [flags]
+nesutil ls [path...] [flags]
 ```
 
 ### Options
@@ -18,5 +18,5 @@ gonesutil ls [path...] [flags]
 
 ### SEE ALSO
 
-* [gonesutil](gonesutil.md)	 - GoNES command-line utilities
+* [nesutil](nesutil.md)	 - GoNES command-line utilities
 

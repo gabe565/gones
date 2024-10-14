@@ -1,14 +1,14 @@
 package root
 
 import (
-	"gabe565.com/gones/cmd/gonesutil/ls"
+	"gabe565.com/gones/cmd/nesutil/ls"
 	"gabe565.com/gones/cmd/options"
 	"github.com/spf13/cobra"
 )
 
 func New(opts ...options.Option) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "gonesutil",
+		Use:   "nesutil",
 		Short: "GoNES command-line utilities",
 
 		SilenceErrors:     true,
