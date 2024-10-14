@@ -8,7 +8,7 @@ import (
 )
 
 func NewMapper2(cartridge *Cartridge) *Mapper2 {
-	prgBanks := uint(len(cartridge.prg) / consts.PRGChunkSize)
+	prgBanks := uint(len(cartridge.PRG) / consts.PRGChunkSize)
 	mapper := &Mapper2{
 		cartridge: cartridge,
 		PRGBanks:  prgBanks,
@@ -39,12 +39,12 @@ func (m *Mapper2) ReadMem(addr uint16) byte {
 		addr := uint(addr)
 		addr -= 0x8000
 		addr += m.PRGBank1 * consts.PRGChunkSize
-		return m.cartridge.prg[addr]
+		return m.cartridge.PRG[addr]
 	case 0xC000 <= addr:
 		addr := uint(addr)
 		addr -= 0xC000
 		addr += m.PRGBank2 * consts.PRGChunkSize
-		return m.cartridge.prg[addr]
+		return m.cartridge.PRG[addr]
 	default:
 		slog.Error("Invalid mapper 2 read", "addr", log.HexAddr(addr))
 		return 0

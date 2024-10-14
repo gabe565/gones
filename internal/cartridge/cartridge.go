@@ -13,16 +13,15 @@ import (
 )
 
 type Cartridge struct {
-	hash string
-	name string
+	hash   string
+	name   string
+	Header INESFileHeader `msgpack:"-"`
 
-	prg       []byte
-	CHR       []byte `msgpack:"alias:Chr"`
-	SRAM      []byte `msgpack:"alias:Sram"`
-	Mapper    uint8  `msgpack:"-"`
-	Submapper uint8  `msgpack:"-"`
-	Mirror    Mirror
-	Battery   bool `msgpack:"-"`
+	PRG     []byte `msgpack:"-"`
+	CHR     []byte `msgpack:"alias:Chr"`
+	SRAM    []byte `msgpack:"alias:Sram"`
+	Mirror  Mirror
+	Battery bool `msgpack:"-"`
 }
 
 func New() *Cartridge {
@@ -38,10 +37,10 @@ func FromBytes(b []byte) *Cartridge {
 		cart.name, _ = database.FindNameByHash(cart.hash)
 	}
 
-	cart.prg = make([]byte, consts.PRGROMAddr, consts.PRGChunkSize*2)
-	cart.prg = append(cart.prg, b...)
-	cart.prg = cart.prg[:cap(cart.prg)]
-	cart.prg[interrupt.ResetVector+1-consts.PRGChunkSize*2] = 0x86
+	cart.PRG = make([]byte, consts.PRGROMAddr, consts.PRGChunkSize*2)
+	cart.PRG = append(cart.PRG, b...)
+	cart.PRG = cart.PRG[:cap(cart.PRG)]
+	cart.PRG[interrupt.ResetVector+1-consts.PRGChunkSize*2] = 0x86
 
 	cart.CHR = make([]byte, consts.CHRChunkSize)
 

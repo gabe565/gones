@@ -144,7 +144,7 @@ func loadPaths(paths []string) ([]*entry, bool) {
 			go func() {
 				defer wg.Done()
 
-				cart, err := cartridge.FromiNesFile(path)
+				cart, err := cartridge.FromINESFile(path)
 				if err != nil {
 					slog.Error("Invalid ROM", "path", path, "error", err)
 					failed = true

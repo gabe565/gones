@@ -33,8 +33,8 @@ func (m *Mapper7) ReadMem(addr uint16) byte {
 		addr := uint(addr)
 		addr -= 0x8000
 		addr += m.PRGBank * 2 * consts.PRGChunkSize
-		addr %= uint(len(m.cartridge.prg))
-		return m.cartridge.prg[addr]
+		addr %= uint(len(m.cartridge.PRG))
+		return m.cartridge.PRG[addr]
 	default:
 		slog.Error("Invalid mapper 7 read", "addr", log.HexAddr(addr))
 		return 0

@@ -16,7 +16,7 @@ import (
 	"gabe565.com/gones/internal/database"
 )
 
-type iNESFileHeader struct {
+type INESFileHeader struct {
 	Magic    [4]byte
 	PRGCount byte
 	CHRCount byte
@@ -24,32 +24,35 @@ type iNESFileHeader struct {
 	_        [7]byte
 }
 
-func (i iNESFileHeader) Mapper() uint8 {
+func (i INESFileHeader) Mapper() uint8 {
 	return i.Control[1]&0xF0 | i.Control[0]>>4
 }
 
-func (i iNESFileHeader) Mirror() Mirror {
+func (i INESFileHeader) Mirror() Mirror {
 	if i.Control[0]&0x8 != 0 {
 		return FourScreen
 	}
 	return Mirror(i.Control[0] & 1)
 }
 
-func (i iNESFileHeader) Battery() bool {
+func (i INESFileHeader) Battery() bool {
 	return i.Control[0]&0x2 != 0
 }
 
-func (i iNESFileHeader) NESv2() bool {
+func (i INESFileHeader) NESv2() bool {
 	return i.Control[1]&0xC == 0x8
 }
 
-func (i iNESFileHeader) Submapper() uint8 {
-	return i.Control[2] >> 4
+func (i INESFileHeader) Submapper() uint8 {
+	if i.NESv2() {
+		return i.Control[2] >> 4
+	}
+	return 0
 }
 
 var ErrInvalidROM = errors.New("invalid ROM file")
 
-func FromiNesFile(path string) (*Cartridge, error) {
+func FromINESFile(path string) (*Cartridge, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -58,7 +61,7 @@ func FromiNesFile(path string) (*Cartridge, error) {
 		_ = f.Close()
 	}(f)
 
-	cartridge, err := FromiNes(f)
+	cartridge, err := FromINES(f)
 	if err != nil {
 		return nil, err
 	}
@@ -69,11 +72,11 @@ func FromiNesFile(path string) (*Cartridge, error) {
 	return cartridge, nil
 }
 
-func FromiNes(r io.Reader) (*Cartridge, error) {
+func FromINES(r io.Reader) (*Cartridge, error) {
 	hasher := md5.New()
 	tr := io.TeeReader(r, hasher)
 
-	var header iNESFileHeader
+	var header INESFileHeader
 	if err := binary.Read(tr, binary.LittleEndian, &header); err != nil {
 		return nil, err
 	}
@@ -83,24 +86,20 @@ func FromiNes(r io.Reader) (*Cartridge, error) {
 	}
 
 	cartridge := New()
-	cartridge.Mapper = header.Mapper()
+	cartridge.Header = header
 	cartridge.Mirror = header.Mirror()
 	cartridge.Battery = header.Battery()
 
-	if header.NESv2() {
-		cartridge.Submapper = header.Submapper()
-	}
-
 	slog.Debug("Loaded iNES header",
 		"battery", cartridge.Battery,
-		"mapper", cartridge.Mapper,
+		"mapper", header.Mapper(),
 		"mirror", cartridge.Mirror,
 		"prg", header.PRGCount,
 		"chr", header.CHRCount,
 	)
 
-	cartridge.prg = make([]byte, int(header.PRGCount)*consts.PRGChunkSize)
-	if _, err := io.ReadFull(tr, cartridge.prg); err != nil {
+	cartridge.PRG = make([]byte, int(header.PRGCount)*consts.PRGChunkSize)
+	if _, err := io.ReadFull(tr, cartridge.PRG); err != nil {
 		return nil, err
 	}
 

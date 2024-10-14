@@ -46,7 +46,7 @@ func (m *Mapper1) ReadMem(addr uint16) byte {
 		addr -= 0x8000
 		bank := addr / consts.PRGChunkSize
 		offset := int(addr % consts.PRGChunkSize)
-		return m.cartridge.prg[m.PRGOffsets[bank]+offset]
+		return m.cartridge.PRG[m.PRGOffsets[bank]+offset]
 	default:
 		slog.Error("Invalid mapper 1 read", "addr", log.HexAddr(addr))
 		return 0
@@ -114,10 +114,10 @@ func (m *Mapper1) prgBankOffset(i int) int {
 	if i >= 0x80 {
 		i -= 0x100
 	}
-	i %= len(m.cartridge.prg) / consts.PRGChunkSize
+	i %= len(m.cartridge.PRG) / consts.PRGChunkSize
 	offset := i * consts.PRGChunkSize
 	if offset < 0 {
-		offset += len(m.cartridge.prg)
+		offset += len(m.cartridge.PRG)
 	}
 	return offset
 }
