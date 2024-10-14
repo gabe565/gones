@@ -18,7 +18,7 @@ import (
 var roms embed.FS
 
 func stubConsole(r io.Reader) (*console.Console, error) {
-	cart, err := cartridge.FromiNes(r)
+	cart, err := cartridge.FromINES(r)
 	if err != nil {
 		return nil, err
 	}

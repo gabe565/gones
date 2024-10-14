@@ -7,7 +7,7 @@ import (
 )
 
 func NewMapper69(cartridge *Cartridge) *Mapper69 {
-	prgCount := len(cartridge.prg) / 0x2000
+	prgCount := len(cartridge.PRG) / 0x2000
 	mapper := &Mapper69{
 		cartridge: cartridge,
 		PRGCount:  byte(prgCount),
@@ -72,7 +72,7 @@ func (m *Mapper69) ReadMem(addr uint16) byte {
 		bank := addr / 0x2000
 		offset := int(addr % 0x2000)
 		addr := m.PRGBanks[bank]*0x2000 + offset
-		return m.cartridge.prg[addr%len(m.cartridge.prg)]
+		return m.cartridge.PRG[addr%len(m.cartridge.PRG)]
 	default:
 		slog.Error("Invalid mapper 69 read", "addr", log.HexAddr(addr))
 		return 0

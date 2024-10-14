@@ -2,7 +2,7 @@ package cartridge
 
 import "testing"
 
-func Test_iNESFileHeader_Battery(t *testing.T) {
+func Test_INESFileHeader_Battery(t *testing.T) {
 	t.Parallel()
 
 	type fields struct {
@@ -21,7 +21,7 @@ func Test_iNESFileHeader_Battery(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			i := iNESFileHeader{
+			i := INESFileHeader{
 				Control: tt.fields.Control,
 			}
 			if got := i.Battery(); got != tt.want {
@@ -31,7 +31,7 @@ func Test_iNESFileHeader_Battery(t *testing.T) {
 	}
 }
 
-func Test_iNESFileHeader_Mirror(t *testing.T) {
+func Test_INESFileHeader_Mirror(t *testing.T) {
 	t.Parallel()
 
 	type fields struct {
@@ -49,7 +49,7 @@ func Test_iNESFileHeader_Mirror(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			i := iNESFileHeader{
+			i := INESFileHeader{
 				Control: tt.fields.Control,
 			}
 			if got := i.Mirror(); got != tt.want {
@@ -59,7 +59,7 @@ func Test_iNESFileHeader_Mirror(t *testing.T) {
 	}
 }
 
-func Test_iNESFileHeader_Mapper(t *testing.T) {
+func Test_INESFileHeader_Mapper(t *testing.T) {
 	t.Parallel()
 
 	type fields struct {
@@ -78,7 +78,7 @@ func Test_iNESFileHeader_Mapper(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			i := iNESFileHeader{
+			i := INESFileHeader{
 				Control: tt.fields.Control,
 			}
 			if got := i.Mapper(); got != tt.want {

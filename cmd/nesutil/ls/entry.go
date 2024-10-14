@@ -6,7 +6,7 @@ func newEntry(file string, cart *cartridge.Cartridge) *entry {
 	return &entry{
 		Path:    file,
 		Name:    cart.Name(),
-		Mapper:  cart.Mapper,
+		Mapper:  cart.Header.Mapper(),
 		Mirror:  cart.Mirror.String(),
 		Battery: cart.Battery,
 		Hash:    cart.Hash(),

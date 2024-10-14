@@ -20,7 +20,7 @@ func newConsole(conf *config.Config, _ string) (*console.Console, error) {
 
 	r := bytes.NewReader(goData)
 
-	cart, err := cartridge.FromiNes(r)
+	cart, err := cartridge.FromINES(r)
 	if err != nil {
 		return nil, err
 	}

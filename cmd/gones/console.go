@@ -27,7 +27,7 @@ func newConsole(conf *config.Config, path string) (*console.Console, error) {
 		}
 	}
 
-	cart, err := cartridge.FromiNesFile(path)
+	cart, err := cartridge.FromINESFile(path)
 	if err != nil {
 		return nil, err
 	}

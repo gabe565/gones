@@ -50,7 +50,7 @@ func (m *Mapper4) IRQ() bool { return m.IRQPending }
 
 func (m *Mapper4) OnVRAMAddr(addr registers.Address) {
 	curr := addr.FineY&1 == 1
-	switch m.cartridge.Submapper {
+	switch m.cartridge.Header.Submapper() {
 	case SubmapperMcAcc:
 		if m.PrevA12 && !curr {
 			m.OnScanline()
@@ -76,7 +76,7 @@ func (m *Mapper4) ReadMem(addr uint16) byte {
 		addr -= 0x8000
 		bank := addr / 0x2000
 		offset := int(addr % 0x2000)
-		return m.cartridge.prg[m.PRGOffsets[bank]+offset]
+		return m.cartridge.PRG[m.PRGOffsets[bank]+offset]
 	default:
 		slog.Error("Invalid mapper 4 read", "addr", log.HexAddr(addr))
 		return 0
@@ -136,10 +136,10 @@ func (m *Mapper4) prgBankOffset(i int) int {
 	if i >= 0x80 {
 		i -= 0x100
 	}
-	i %= len(m.cartridge.prg) / 0x2000
+	i %= len(m.cartridge.PRG) / 0x2000
 	offset := i * 0x2000
 	if offset < 0 {
-		offset += len(m.cartridge.prg)
+		offset += len(m.cartridge.PRG)
 	}
 	return offset
 }
