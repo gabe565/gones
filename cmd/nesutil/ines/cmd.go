@@ -1,6 +1,7 @@
 package ines
 
 import (
+	"gabe565.com/gones/cmd/nesutil/ines/create"
 	"gabe565.com/gones/cmd/nesutil/ines/extract"
 	"github.com/spf13/cobra"
 )
@@ -8,8 +9,8 @@ import (
 func New() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "ines",
-		Short: "Commands that work with INES files",
+		Short: "INES ROM utilities",
 	}
-	cmd.AddCommand(extract.New())
+	cmd.AddCommand(extract.New(), create.New())
 	return cmd
 }

@@ -28,6 +28,13 @@ func (i INESFileHeader) Mapper() uint8 {
 	return i.Control[1]&0xF0 | i.Control[0]>>4
 }
 
+func (i *INESFileHeader) SetMapper(v uint8) {
+	i.Control[0] &^= 0xF0
+	i.Control[1] &^= 0xF0
+	i.Control[0] |= v << 4
+	i.Control[1] |= v & 0xF0
+}
+
 func (i INESFileHeader) Mirror() Mirror {
 	if i.Control[0]&0x8 != 0 {
 		return FourScreen
@@ -35,8 +42,27 @@ func (i INESFileHeader) Mirror() Mirror {
 	return Mirror(i.Control[0] & 1)
 }
 
+func (i *INESFileHeader) SetMirror(v Mirror) {
+	i.Control[0] &^= 0x8 | 0x1
+	switch v {
+	case Horizontal, Vertical:
+		i.Control[0] |= byte(v)
+		i.Control[0] &^= 0x8
+	default:
+		i.Control[0] |= 0x8
+	}
+}
+
 func (i INESFileHeader) Battery() bool {
 	return i.Control[0]&0x2 != 0
+}
+
+func (i *INESFileHeader) SetBattery(v bool) {
+	if v {
+		i.Control[0] |= 0x2
+	} else {
+		i.Control[0] &^= 0x2
+	}
 }
 
 func (i INESFileHeader) NESv2() bool {
