@@ -16,5 +16,5 @@ nesutil ines extract ROM [flags]
 
 ### SEE ALSO
 
-* [nesutil ines](nesutil_ines.md)	 - Commands that work with INES files
+* [nesutil ines](nesutil_ines.md)	 - INES ROM utilities
 
