@@ -11,6 +11,7 @@ import (
 	"gabe565.com/gones/internal/cartridge"
 	"gabe565.com/gones/internal/consts"
 	"gabe565.com/gones/internal/util"
+	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
 
@@ -40,7 +41,7 @@ func New() *cobra.Command {
 	flag.Uint8P(FlagMapper, "m", 0, "INES mapper number")
 	flag.StringP(FlagMirror, "n", "", "Type of nametable mirroring (one of horizontal, vertical, fourscreen)")
 	flag.BoolP(FlagBattery, "b", false, "Enable battery/extra RAM")
-	util.Must(cmd.MarkFlagRequired(FlagPRG))
+	must.Must(cmd.MarkFlagRequired(FlagPRG))
 
 	return cmd
 }
@@ -50,7 +51,7 @@ var ErrUnknownMirror = errors.New("unknown mirror")
 func run(cmd *cobra.Command, args []string) error {
 	cart := cartridge.New()
 
-	if header := util.Must2(cmd.Flags().GetString(FlagHeader)); header != "" {
+	if header := must.Must2(cmd.Flags().GetString(FlagHeader)); header != "" {
 		slog.Info("Loading header", "path", header)
 		f, err := os.Open(header)
 		if err != nil {
@@ -64,7 +65,7 @@ func run(cmd *cobra.Command, args []string) error {
 		_ = f.Close()
 	}
 
-	if prg := util.Must2(cmd.Flags().GetString(FlagPRG)); prg != "" {
+	if prg := must.Must2(cmd.Flags().GetString(FlagPRG)); prg != "" {
 		slog.Info("Loading PRG", "path", prg)
 		var err error
 		if cart.PRG, err = os.ReadFile(prg); err != nil {
@@ -73,7 +74,7 @@ func run(cmd *cobra.Command, args []string) error {
 		cart.Header.PRGCount = byte(len(cart.PRG) / consts.PRGChunkSize)
 	}
 
-	if chr := util.Must2(cmd.Flags().GetString(FlagCHR)); chr != "" {
+	if chr := must.Must2(cmd.Flags().GetString(FlagCHR)); chr != "" {
 		slog.Info("Loading CHR", "path", chr)
 		var err error
 		if cart.CHR, err = os.ReadFile(chr); err != nil {
@@ -83,14 +84,14 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	if cmd.Flags().Lookup(FlagMapper).Changed {
-		mapper := util.Must2(cmd.Flags().GetUint8(FlagMapper))
+		mapper := must.Must2(cmd.Flags().GetUint8(FlagMapper))
 		slog.Info("Set mapper", "value", mapper)
 		cart.Header.SetMapper(mapper)
 	}
 
 	if cmd.Flags().Lookup(FlagMirror).Changed {
 		var mirror cartridge.Mirror
-		switch strings.ToLower(util.Must2(cmd.Flags().GetString(FlagMirror))) {
+		switch strings.ToLower(must.Must2(cmd.Flags().GetString(FlagMirror))) {
 		case "horizontal", "h":
 			mirror = cartridge.Horizontal
 		case "vertical", "v":
@@ -105,7 +106,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	if cmd.Flags().Lookup(FlagBattery).Changed {
-		battery := util.Must2(cmd.Flags().GetBool(FlagBattery))
+		battery := must.Must2(cmd.Flags().GetBool(FlagBattery))
 		slog.Info("Set battery", "value", battery)
 		cart.Header.SetBattery(battery)
 	}

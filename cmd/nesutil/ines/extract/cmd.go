@@ -8,6 +8,7 @@ import (
 
 	"gabe565.com/gones/internal/cartridge"
 	"gabe565.com/gones/internal/util"
+	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
 
@@ -43,7 +44,7 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if header := util.Must2(cmd.Flags().GetString(FlagHeader)); header != "" {
+	if header := must.Must2(cmd.Flags().GetString(FlagHeader)); header != "" {
 		slog.Info("Extracting header", "path", header)
 		var buf bytes.Buffer
 		if err := binary.Write(&buf, binary.LittleEndian, cart.Header); err != nil {
@@ -54,14 +55,14 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if prg := util.Must2(cmd.Flags().GetString(FlagPRG)); prg != "" {
+	if prg := must.Must2(cmd.Flags().GetString(FlagPRG)); prg != "" {
 		slog.Info("Extracting PRG", "path", prg)
 		if err := os.WriteFile(prg, cart.PRG, 0o644); err != nil {
 			return err
 		}
 	}
 
-	if chr := util.Must2(cmd.Flags().GetString(FlagCHR)); chr != "" {
+	if chr := must.Must2(cmd.Flags().GetString(FlagCHR)); chr != "" {
 		if cart.Header.CHRCount == 0 {
 			slog.Warn("Game does not have CHR. Skipping")
 		} else {
