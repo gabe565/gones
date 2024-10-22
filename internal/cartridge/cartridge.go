@@ -27,7 +27,8 @@ type Cartridge struct {
 func New() *Cartridge {
 	return &Cartridge{
 		Header: INESFileHeader{
-			Magic: [4]byte{'N', 'E', 'S', 0x1A},
+			Magic:   [4]byte{'N', 'E', 'S', 0x1A},
+			Control: [10]byte{0, 8},
 		},
 		SRAM: make([]byte, 0x2000),
 	}

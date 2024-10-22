@@ -11,6 +11,7 @@ nesutil ines create ROM [flags]
 ```
   -b, --battery         Enable battery/extra RAM
   -c, --chr string      CHR ROM output file path
+  -H, --header string   Header file
   -h, --help            help for create
   -m, --mapper uint8    INES mapper number
   -n, --mirror string   Type of nametable mirroring (one of horizontal, vertical, fourscreen)

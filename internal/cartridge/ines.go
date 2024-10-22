@@ -20,8 +20,7 @@ type INESFileHeader struct {
 	Magic    [4]byte
 	PRGCount byte
 	CHRCount byte
-	Control  [3]byte
-	_        [7]byte
+	Control  [10]byte
 }
 
 func (i INESFileHeader) Mapper() uint8 {

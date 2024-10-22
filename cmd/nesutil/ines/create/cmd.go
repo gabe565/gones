@@ -15,6 +15,7 @@ import (
 )
 
 const (
+	FlagHeader  = "header"
 	FlagPRG     = "prg"
 	FlagCHR     = "chr"
 	FlagMapper  = "mapper"
@@ -33,13 +34,13 @@ func New() *cobra.Command {
 	}
 
 	flag := cmd.Flags()
+	flag.StringP(FlagHeader, "H", "", "Header file")
 	flag.StringP(FlagPRG, "p", "", "PRG ROM output file path")
-	util.Must(cmd.MarkFlagRequired(FlagPRG))
-
 	flag.StringP(FlagCHR, "c", "", "CHR ROM output file path")
 	flag.Uint8P(FlagMapper, "m", 0, "INES mapper number")
 	flag.StringP(FlagMirror, "n", "", "Type of nametable mirroring (one of horizontal, vertical, fourscreen)")
 	flag.BoolP(FlagBattery, "b", false, "Enable battery/extra RAM")
+	util.Must(cmd.MarkFlagRequired(FlagPRG))
 
 	return cmd
 }
@@ -48,6 +49,20 @@ var ErrUnknownMirror = errors.New("unknown mirror")
 
 func run(cmd *cobra.Command, args []string) error {
 	cart := cartridge.New()
+
+	if header := util.Must2(cmd.Flags().GetString(FlagHeader)); header != "" {
+		slog.Info("Loading header", "path", header)
+		f, err := os.Open(header)
+		if err != nil {
+			return err
+		}
+
+		if err := binary.Read(f, binary.LittleEndian, &cart.Header); err != nil {
+			return err
+		}
+
+		_ = f.Close()
+	}
 
 	if prg := util.Must2(cmd.Flags().GetString(FlagPRG)); prg != "" {
 		slog.Info("Loading PRG", "path", prg)
@@ -67,21 +82,33 @@ func run(cmd *cobra.Command, args []string) error {
 		cart.Header.CHRCount = byte(len(cart.CHR) / consts.CHRChunkSize)
 	}
 
-	cart.Header.SetMapper(util.Must2(cmd.Flags().GetUint8(FlagMapper)))
-
-	mirror := util.Must2(cmd.Flags().GetString(FlagMirror))
-	switch strings.ToLower(mirror) {
-	case "horizontal", "h":
-		cart.Header.SetMirror(cartridge.Horizontal)
-	case "vertical", "v":
-		cart.Header.SetMirror(cartridge.Vertical)
-	case "fourscreen", "f":
-		cart.Header.SetMirror(cartridge.FourScreen)
-	default:
-		return fmt.Errorf("%w: %s", ErrUnknownMirror, mirror)
+	if cmd.Flags().Lookup(FlagMapper).Changed {
+		mapper := util.Must2(cmd.Flags().GetUint8(FlagMapper))
+		slog.Info("Set mapper", "value", mapper)
+		cart.Header.SetMapper(mapper)
 	}
 
-	cart.Header.SetBattery(util.Must2(cmd.Flags().GetBool(FlagBattery)))
+	if cmd.Flags().Lookup(FlagMirror).Changed {
+		var mirror cartridge.Mirror
+		switch strings.ToLower(util.Must2(cmd.Flags().GetString(FlagMirror))) {
+		case "horizontal", "h":
+			mirror = cartridge.Horizontal
+		case "vertical", "v":
+			mirror = cartridge.Vertical
+		case "fourscreen", "f":
+			mirror = cartridge.FourScreen
+		default:
+			return fmt.Errorf("%w: %s", ErrUnknownMirror, mirror)
+		}
+		slog.Info("Set mirror", "value", mirror)
+		cart.Header.SetMirror(mirror)
+	}
+
+	if cmd.Flags().Lookup(FlagBattery).Changed {
+		battery := util.Must2(cmd.Flags().GetBool(FlagBattery))
+		slog.Info("Set battery", "value", battery)
+		cart.Header.SetBattery(battery)
+	}
 
 	f, err := os.Create(args[0])
 	if err != nil {
