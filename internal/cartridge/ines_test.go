@@ -10,7 +10,7 @@ func Test_INESFileHeader_Battery(t *testing.T) {
 	t.Parallel()
 
 	type fields struct {
-		Control [3]byte
+		Control [10]byte
 	}
 	tests := []struct {
 		name   string
@@ -18,9 +18,9 @@ func Test_INESFileHeader_Battery(t *testing.T) {
 		want   bool
 	}{
 		{"false", fields{}, false},
-		{"true", fields{[3]byte{2}}, true},
-		{"extraneous true", fields{[3]byte{0xff}}, true},
-		{"extraneous false", fields{[3]byte{0xff ^ 2}}, false},
+		{"true", fields{[10]byte{2}}, true},
+		{"extraneous true", fields{[10]byte{0xff}}, true},
+		{"extraneous false", fields{[10]byte{0xff ^ 2}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -37,7 +37,7 @@ func Test_INESFileHeader_Mirror(t *testing.T) {
 	t.Parallel()
 
 	type fields struct {
-		Control [3]byte
+		Control [10]byte
 	}
 	tests := []struct {
 		name   string
@@ -45,8 +45,8 @@ func Test_INESFileHeader_Mirror(t *testing.T) {
 		want   Mirror
 	}{
 		{"horizontal", fields{}, Horizontal},
-		{"vertical", fields{[3]byte{1}}, Vertical},
-		{"four screen", fields{[3]byte{0x8 | 0x1}}, FourScreen},
+		{"vertical", fields{[10]byte{1}}, Vertical},
+		{"four screen", fields{[10]byte{0x8 | 0x1}}, FourScreen},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -63,7 +63,7 @@ func Test_INESFileHeader_Mapper(t *testing.T) {
 	t.Parallel()
 
 	type fields struct {
-		Control [3]byte
+		Control [10]byte
 	}
 	tests := []struct {
 		name   string
@@ -71,9 +71,9 @@ func Test_INESFileHeader_Mapper(t *testing.T) {
 		want   byte
 	}{
 		{"0", fields{}, 0},
-		{"1", fields{[3]byte{0x10}}, 1},
-		{"2", fields{[3]byte{0x20}}, 2},
-		{"40", fields{[3]byte{0x80, 0x20}}, 40},
+		{"1", fields{[10]byte{0x10}}, 1},
+		{"2", fields{[10]byte{0x20}}, 2},
+		{"40", fields{[10]byte{0x80, 0x20}}, 40},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -89,7 +89,7 @@ func Test_INESFileHeader_Mapper(t *testing.T) {
 func TestINESFileHeader_SetBattery(t *testing.T) {
 	t.Parallel()
 	type fields struct {
-		Control [3]byte
+		Control [10]byte
 	}
 	type args struct {
 		v bool
@@ -101,11 +101,11 @@ func TestINESFileHeader_SetBattery(t *testing.T) {
 		want   byte
 	}{
 		{"false to true", fields{}, args{true}, 2},
-		{"true to false", fields{Control: [3]byte{2}}, args{false}, 0},
+		{"true to false", fields{Control: [10]byte{2}}, args{false}, 0},
 		{"false to false", fields{}, args{false}, 0},
-		{"true to true", fields{Control: [3]byte{2}}, args{true}, 2},
-		{"extraneous unchanged when true", fields{Control: [3]byte{0xff}}, args{true}, 0xff},
-		{"extraneous unchanged when false", fields{Control: [3]byte{0xff}}, args{false}, 0xfd},
+		{"true to true", fields{Control: [10]byte{2}}, args{true}, 2},
+		{"extraneous unchanged when true", fields{Control: [10]byte{0xff}}, args{true}, 0xff},
+		{"extraneous unchanged when false", fields{Control: [10]byte{0xff}}, args{false}, 0xfd},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -121,7 +121,7 @@ func TestINESFileHeader_SetBattery(t *testing.T) {
 func TestINESFileHeader_SetMirror(t *testing.T) {
 	t.Parallel()
 	type fields struct {
-		Control [3]byte
+		Control [10]byte
 	}
 	type args struct {
 		v Mirror
@@ -134,12 +134,12 @@ func TestINESFileHeader_SetMirror(t *testing.T) {
 	}{
 		{"horizontal to horizontal", fields{}, args{Horizontal}, 0},
 		{"horizontal to vertical", fields{}, args{Vertical}, 1},
-		{"vertical to horizontal", fields{Control: [3]byte{1}}, args{Vertical}, 1},
-		{"vertical to vertical", fields{Control: [3]byte{1}}, args{Vertical}, 1},
-		{"horizontal to four screen", fields{Control: [3]byte{1}}, args{FourScreen}, 0x8},
-		{"extraneous unchanged when horizontal", fields{Control: [3]byte{0xff}}, args{Horizontal}, 0xf6},
-		{"extraneous unchanged when vertical", fields{Control: [3]byte{0xff}}, args{Vertical}, 0xf7},
-		{"extraneous unchanged when four screen", fields{Control: [3]byte{0xff}}, args{FourScreen}, 0xfe},
+		{"vertical to horizontal", fields{Control: [10]byte{1}}, args{Vertical}, 1},
+		{"vertical to vertical", fields{Control: [10]byte{1}}, args{Vertical}, 1},
+		{"horizontal to four screen", fields{Control: [10]byte{1}}, args{FourScreen}, 0x8},
+		{"extraneous unchanged when horizontal", fields{Control: [10]byte{0xff}}, args{Horizontal}, 0xf6},
+		{"extraneous unchanged when vertical", fields{Control: [10]byte{0xff}}, args{Vertical}, 0xf7},
+		{"extraneous unchanged when four screen", fields{Control: [10]byte{0xff}}, args{FourScreen}, 0xfe},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -155,7 +155,7 @@ func TestINESFileHeader_SetMirror(t *testing.T) {
 func TestINESFileHeader_SetMapper(t *testing.T) {
 	t.Parallel()
 	type fields struct {
-		Control [3]byte
+		Control [10]byte
 	}
 	type args struct {
 		v uint8
@@ -164,12 +164,12 @@ func TestINESFileHeader_SetMapper(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   [3]byte
+		want   [10]byte
 	}{
-		{"0 to 1", fields{}, args{1}, [3]byte{0x10, 0}},
-		{"0 to 71", fields{}, args{71}, [3]byte{0x70, 0x40}},
-		{"71 to 0", fields{[3]byte{0x70, 0x40}}, args{0}, [3]byte{}},
-		{"extraneous unchanged", fields{Control: [3]byte{0xff, 0xff, 0xff}}, args{0}, [3]byte{0xf, 0xf, 0xff}},
+		{"0 to 1", fields{}, args{1}, [10]byte{0x10, 0}},
+		{"0 to 71", fields{}, args{71}, [10]byte{0x70, 0x40}},
+		{"71 to 0", fields{[10]byte{0x70, 0x40}}, args{0}, [10]byte{}},
+		{"extraneous unchanged", fields{Control: [10]byte{0xff, 0xff, 0xff}}, args{0}, [10]byte{0xf, 0xf, 0xff}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

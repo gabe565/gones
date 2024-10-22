@@ -1,6 +1,8 @@
 package extract
 
 import (
+	"bytes"
+	"encoding/binary"
 	"log/slog"
 	"os"
 
@@ -10,8 +12,9 @@ import (
 )
 
 const (
-	FlagPRG = "prg"
-	FlagCHR = "chr"
+	FlagHeader = "header"
+	FlagPRG    = "prg"
+	FlagCHR    = "chr"
 )
 
 func New() *cobra.Command {
@@ -25,6 +28,7 @@ func New() *cobra.Command {
 	}
 
 	flag := cmd.Flags()
+	flag.StringP(FlagHeader, "H", "", "Header output file path")
 	flag.StringP(FlagPRG, "p", "", "PRG ROM output file path")
 	flag.StringP(FlagCHR, "c", "", "CHR ROM output file path")
 	cmd.MarkFlagsOneRequired(FlagPRG, FlagCHR)
@@ -37,6 +41,17 @@ func run(cmd *cobra.Command, args []string) error {
 	cart, err := cartridge.FromINESFile(path)
 	if err != nil {
 		return err
+	}
+
+	if header := util.Must2(cmd.Flags().GetString(FlagHeader)); header != "" {
+		slog.Info("Extracting header", "path", header)
+		var buf bytes.Buffer
+		if err := binary.Write(&buf, binary.LittleEndian, cart.Header); err != nil {
+			return err
+		}
+		if err := os.WriteFile(header, buf.Bytes(), 0o644); err != nil {
+			return err
+		}
 	}
 
 	if prg := util.Must2(cmd.Flags().GetString(FlagPRG)); prg != "" {
