@@ -32,18 +32,15 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	var compare *int
+	var compare int64
 	if len(args) > 2 {
-		v, err := strconv.ParseInt(args[2], 16, 16)
+		compare, err = strconv.ParseInt(args[2], 16, 16)
 		if err != nil {
 			return err
 		}
-
-		v2 := int(v)
-		compare = &v2
 	}
 
-	code, err := encode(int(address), int(replace), compare)
+	code, err := encode(int(address), int(replace), int(compare))
 	if err != nil {
 		return err
 	}
@@ -54,19 +51,19 @@ func run(cmd *cobra.Command, args []string) error {
 
 var ErrOutOfRange = errors.New("encoded value out of range")
 
-func encode(address, replace int, compare *int) (string, error) {
+func encode(address, replace, compare int) (string, error) {
 	var codeLen int
 	var bigint int
 
 	// Create 24/32-bit int and clear/set MSB of address for 6/8-letter codes
-	if compare == nil {
+	if compare == -1 {
 		codeLen = 6
 		address &= 0x7fff
 		bigint = (address << 8) | replace
 	} else {
 		codeLen = 8
 		address |= 0x8000
-		bigint = (address << 16) | (replace << 8) | *compare
+		bigint = (address << 16) | (replace << 8) | compare
 	}
 
 	// Convert into 4-bit ints
