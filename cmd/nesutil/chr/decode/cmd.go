@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"image"
-	"image/color"
 	"image/png"
 	"iter"
 	"log/slog"
@@ -15,12 +14,8 @@ import (
 	"gabe565.com/gones/cmd/nesutil/chr/consts"
 	"gabe565.com/gones/internal/cartridge"
 	"gabe565.com/gones/internal/util"
-	"gabe565.com/utils/colorx"
-	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
-
-const FlagPalette = "palette"
 
 func New() *cobra.Command {
 	cmd := &cobra.Command{
@@ -31,15 +26,12 @@ func New() *cobra.Command {
 
 		ValidArgsFunction: util.CompleteROM,
 	}
-	fs := cmd.Flags()
-	fs.StringSliceP(FlagPalette, "p", []string{"000", "555", "AAA", "FFF"}, "Palette to use. Must contain 4 hex colors.")
+	consts.PaletteFlag(cmd.Flags())
 	return cmd
 }
 
-var ErrNoCHR = errors.New("ROM file has no CHR data")
-
 func run(cmd *cobra.Command, args []string) error {
-	palette, err := loadPalette(cmd)
+	palette, err := consts.LoadPalette(cmd)
 	if err != nil {
 		return err
 	}
@@ -51,7 +43,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	height := len(chr) / (consts.TilesPerRow * consts.BytesPerTile) * consts.TileSize
-	img := image.NewPaletted(image.Rect(0, 0, consts.TilesPerRow*consts.TileSize, height), palette)
+	img := image.NewPaletted(image.Rect(0, 0, consts.ImageWidth, height), palette)
 
 	var count int
 	for i, tile := range generateTiles(chr) {
@@ -91,25 +83,7 @@ func run(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-var ErrInvalidPalette = errors.New("palette must contain 4 hex colors")
-
-func loadPalette(cmd *cobra.Command) (color.Palette, error) {
-	paletteRaw := must.Must2(cmd.Flags().GetStringSlice(FlagPalette))
-	if len(paletteRaw) != 4 {
-		return nil, fmt.Errorf("%w: %s", ErrInvalidPalette, strings.Join(paletteRaw, ","))
-	}
-
-	palette := make(color.Palette, 0, len(paletteRaw))
-	for _, str := range paletteRaw {
-		c, err := colorx.ParseHex(str)
-		if err != nil {
-			return nil, err
-		}
-		palette = append(palette, c)
-	}
-
-	return palette, nil
-}
+var ErrNoCHR = errors.New("ROM file has no CHR data")
 
 func loadCHR(input string) ([]byte, error) {
 	if filepath.Ext(input) == ".nes" {
