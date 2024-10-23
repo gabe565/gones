@@ -9,10 +9,10 @@ nesutil ines extract ROM [flags]
 ### Options
 
 ```
-  -c, --chr string      CHR ROM output file path
-  -H, --header string   Header output file path
+  -c, --chr string      CHR ROM output file path (default generated)
+  -H, --header string   Header output file path (default generated)
   -h, --help            help for extract
-  -p, --prg string      PRG ROM output file path
+  -p, --prg string      PRG ROM output file path (default generated)
 ```
 
 ### SEE ALSO
