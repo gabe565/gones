@@ -68,12 +68,10 @@ func New() *cobra.Command {
 	return cmd
 }
 
-var ErrInvalidROMs = errors.New("some ROMs were invalid")
-
 func run(cmd *cobra.Command, args []string) error {
 	cmd.SilenceUsage = true
 
-	carts, failed, err := loadCarts(cmd, args)
+	carts, errs, err := loadCarts(cmd, args)
 	if err != nil {
 		return err
 	}
@@ -99,28 +97,24 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if failed {
-		return ErrInvalidROMs
-	}
-	return nil
+	return errors.Join(errs...)
 }
 
-func loadCarts(cmd *cobra.Command, args []string) ([]*entry, bool, error) {
-	var failed bool
-	carts, failed := loadPaths(args)
+func loadCarts(cmd *cobra.Command, args []string) ([]*entry, []error, error) {
+	carts, errs := loadPaths(args)
 
 	if filters := must.Must2(cmd.Flags().GetStringToString(FlagFilter)); len(filters) != 0 {
 		errCh := make(chan error, 1)
 		carts = slices.DeleteFunc(carts, deleteFunc(filters, errCh))
 		if len(errCh) != 0 {
-			return nil, true, <-errCh
+			return nil, errs, <-errCh
 		}
 	}
 
-	return carts, failed, nil
+	return carts, errs, nil
 }
 
-func loadPaths(paths []string) ([]*entry, bool) {
+func loadPaths(paths []string) ([]*entry, []error) {
 	if len(paths) == 0 {
 		paths = append(paths, ".")
 	}
@@ -129,7 +123,7 @@ func loadPaths(paths []string) ([]*entry, bool) {
 	wg := sync.WaitGroup{}
 	mu := sync.Mutex{}
 
-	var failed bool
+	var errs []error
 	for _, path := range paths {
 		if err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
 			if err != nil || d.IsDir() {
@@ -147,8 +141,9 @@ func loadPaths(paths []string) ([]*entry, bool) {
 
 				cart, err := cartridge.FromINESFile(path)
 				if err != nil {
-					slog.Error("Invalid ROM", "path", path, "error", err)
-					failed = true
+					mu.Lock()
+					errs = append(errs, fmt.Errorf("%s: %w", path, err))
+					mu.Unlock()
 					return
 				}
 
@@ -164,7 +159,7 @@ func loadPaths(paths []string) ([]*entry, bool) {
 		}
 	}
 	wg.Wait()
-	return carts, failed
+	return carts, errs
 }
 
 var ErrUnknownSortField = errors.New("unknown sort field")
