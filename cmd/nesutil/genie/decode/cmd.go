@@ -54,7 +54,7 @@ type decodeResult struct {
 	Code    string
 	Address int
 	Replace int
-	Compare *int
+	Compare int
 }
 
 var (
@@ -64,7 +64,7 @@ var (
 
 func decode(code string) (decodeResult, error) {
 	code = strings.ToUpper(code)
-	result := decodeResult{Code: code}
+	result := decodeResult{Code: code, Compare: -1}
 
 	switch len(code) {
 	case 6, 8:
@@ -94,7 +94,7 @@ func decode(code string) (decodeResult, error) {
 	// Split integer and set MSB of address
 	if len(code) == 8 {
 		compValue := bigint & 0xFF
-		result.Compare = &compValue
+		result.Compare = compValue
 		bigint >>= 8
 	}
 
@@ -104,8 +104,8 @@ func decode(code string) (decodeResult, error) {
 }
 
 func (d decodeResult) compareString() string {
-	if d.Compare == nil {
+	if d.Compare == -1 {
 		return "<none>"
 	}
-	return fmt.Sprintf("0x%02X", *d.Compare)
+	return fmt.Sprintf("0x%02X", d.Compare)
 }
