@@ -1,8 +1,6 @@
 package gones
 
 import (
-	"log/slog"
-
 	"gabe565.com/gones/cmd/options"
 	"gabe565.com/gones/internal/config"
 )
@@ -10,9 +8,14 @@ import (
 type Command struct{}
 
 func (c *Command) Execute() error {
-	slog.Info("Loaded config")
 	conf := config.NewDefault()
-	return run(nil, conf, "")
+
+	cart, err := loadCartridge()
+	if err != nil {
+		return err
+	}
+
+	return run(nil, conf, cart)
 }
 
 func New(_ ...options.Option) *Command {

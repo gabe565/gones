@@ -12,7 +12,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-func newConsole(conf *config.Config, _ string) (*console.Console, error) {
+func loadCartridge() (*cartridge.Cartridge, error) {
 	jsCartridge := js.Global().Get("GonesCartridge")
 	jsData := jsCartridge.Get("data")
 	goData := make([]byte, jsData.Get("length").Int())
@@ -29,6 +29,10 @@ func newConsole(conf *config.Config, _ string) (*console.Console, error) {
 	}
 	slog.Info("Loaded cartridge", "", cart)
 
+	return cart, nil
+}
+
+func newConsole(conf *config.Config, cart *cartridge.Cartridge) (*console.Console, error) {
 	js.Global().Get("GonesClient").Call("setRomName", cart.Name())
 
 	c, err := console.New(conf, cart)

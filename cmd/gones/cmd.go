@@ -33,19 +33,25 @@ func New(opts ...options.Option) *cobra.Command {
 }
 
 func runCobra(cmd *cobra.Command, args []string) error {
-	conf, err := config.Load(cmd)
-	if err != nil {
-		return err
-	}
+	cmd.SilenceUsage = true
 
 	var path string
 	if len(args) > 0 {
 		path = args[0]
 	}
-	cmd.SilenceUsage = true
+
+	cart, err := loadCartridge(path)
+	if err != nil {
+		return err
+	}
+
+	conf := config.NewDefault()
+	if err := conf.Load(cmd, cart.Name(), cart.Hash()); err != nil {
+		return err
+	}
 
 	ctx, cancel := signal.NotifyContext(cmd.Context(), os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
 	defer cancel()
 
-	return run(ctx, conf, path)
+	return run(ctx, conf, cart)
 }
