@@ -11,18 +11,17 @@ import (
 	"github.com/ncruces/zenity"
 )
 
-func newConsole(conf *config.Config, path string) (*console.Console, error) {
+func loadCartridge(path string) (*cartridge.Cartridge, error) {
 	if path == "" {
 		var err error
-		path, err = zenity.SelectFile(
+		if path, err = zenity.SelectFile(
 			zenity.Title("Choose a ROM file"),
 			zenity.FileFilter{
 				Name:     "NES ROM",
 				Patterns: []string{"*.nes"},
 				CaseFold: true,
 			},
-		)
-		if err != nil {
+		); err != nil {
 			return nil, err
 		}
 	}
@@ -33,5 +32,9 @@ func newConsole(conf *config.Config, path string) (*console.Console, error) {
 	}
 	slog.Info("Loaded cartridge", "", cart)
 
+	return cart, nil
+}
+
+func newConsole(conf *config.Config, cart *cartridge.Cartridge) (*console.Console, error) {
 	return console.New(conf, cart)
 }

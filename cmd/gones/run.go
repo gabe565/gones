@@ -6,13 +6,14 @@ import (
 	"log/slog"
 	"runtime"
 
+	"gabe565.com/gones/internal/cartridge"
 	"gabe565.com/gones/internal/config"
 	"gabe565.com/gones/internal/console"
 	"gabe565.com/gones/internal/pprof"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-func run(ctx context.Context, conf *config.Config, path string) error {
+func run(ctx context.Context, conf *config.Config, cart *cartridge.Cartridge) error {
 	if pprof.Enabled {
 		go func() {
 			if err := pprof.ListenAndServe(); err != nil {
@@ -21,7 +22,7 @@ func run(ctx context.Context, conf *config.Config, path string) error {
 		}()
 	}
 
-	c, err := newConsole(conf, path)
+	c, err := newConsole(conf, cart)
 	if err != nil {
 		return err
 	}

@@ -12,6 +12,7 @@ import (
 
 	"gabe565.com/gones/internal/consts"
 	"gabe565.com/gones/internal/log"
+	"gabe565.com/utils/must"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/providers/rawbytes"
 	"github.com/knadh/koanf/providers/structs"
@@ -20,107 +21,159 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func Load(cmd *cobra.Command) (*Config, error) {
+func (conf *Config) Load(cmd *cobra.Command, name, hash string) error {
 	log.Init(cmd.ErrOrStderr())
 
 	k := koanf.New(".")
-	conf := NewDefault()
 
 	// Load default config
 	if err := k.Load(structs.Provider(conf, "toml"), nil); err != nil {
-		return nil, err
+		return err
 	}
 
 	// Find config file
-	cfgFile, err := cmd.Flags().GetString("config")
-	if err != nil {
-		return nil, err
-	}
+	var gameCfgFile string
+	cfgFile := must.Must2(cmd.Flags().GetString("config"))
 	if cfgFile == "" {
 		cfgDir, err := GetDir()
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		cfgFile = filepath.Join(cfgDir, "config.toml")
+		gameCfgFile = filepath.Join(cfgDir, "games", hash+".toml")
 	}
-	logger := slog.With("file", cfgFile)
+
+	if err := conf.loadMainConfig(k, cfgFile); err != nil {
+		return err
+	}
+
+	if gameCfgFile != "" {
+		if err := conf.loadGameOverrides(k, gameCfgFile, name); err != nil {
+			return err
+		}
+	}
+
+	if err := conf.loadFlags(k, cmd); err != nil {
+		return err
+	}
+
+	paletteDir, err := GetPaletteDir()
+	if err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(paletteDir, 0o777); err != nil {
+		return err
+	}
+
+	return err
+}
+
+func (conf *Config) loadMainConfig(k *koanf.Koanf, path string) error {
+	logger := slog.With("file", path)
 
 	var cfgNotExists bool
 	// Load config file if exists
-	cfgContents, err := os.ReadFile(cfgFile)
+	cfgContents, err := os.ReadFile(path)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			cfgNotExists = true
 		} else {
-			return nil, err
+			return err
 		}
 	}
 
 	// Parse config file
-	parser := TOMLParser{}
-	if err := k.Load(rawbytes.Provider(cfgContents), parser); err != nil {
-		return nil, err
+	if err := k.Load(rawbytes.Provider(cfgContents), TOMLParser{}); err != nil {
+		return err
 	}
 
 	if err := fixConfig(k); err != nil {
-		return nil, err
+		return err
 	}
 
 	if err := k.UnmarshalWithConf("", conf, koanf.UnmarshalConf{Tag: "toml"}); err != nil {
-		return nil, err
+		return err
 	}
 
+	// Update config if necessary
 	newCfg, err := toml.Marshal(conf)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if !bytes.Equal(cfgContents, newCfg) {
 		if cfgNotExists {
-			logger.Info("Creating config")
+			logger.Info("Creating main config")
 
-			if err := os.MkdirAll(filepath.Dir(cfgFile), 0o777); err != nil {
-				return nil, err
+			if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
+				return err
 			}
 		} else {
-			logger.Info("Updating config")
+			logger.Info("Updating main config")
 		}
 
-		if err := os.WriteFile(cfgFile, newCfg, 0o666); err != nil {
-			return nil, err
+		if err := os.WriteFile(path, newCfg, 0o666); err != nil {
+			return err
 		}
 	}
 
-	// Load flags
-	flagTable := flagTable()
-	err = k.Load(posflag.ProviderWithValue(cmd.Flags(), ".", k, func(key string, value string) (string, any) {
-		if k, ok := flagTable[key]; ok {
+	logger.Info("Loaded main config")
+	return nil
+}
+
+func (conf *Config) loadGameOverrides(k *koanf.Koanf, path, name string) error {
+	logger := slog.With("file", path)
+
+	b, err := os.ReadFile(path)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return err
+		}
+
+		logger.Info("Creating game config")
+		if err := os.MkdirAll(filepath.Dir(path), 0o777); err != nil {
+			return err
+		}
+
+		if err := os.WriteFile(path, []byte("# Overrides for "+name), 0o666); err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	if err := k.Load(rawbytes.Provider(b), TOMLParser{}); err != nil {
+		return err
+	}
+
+	if err := k.UnmarshalWithConf("", conf, koanf.UnmarshalConf{Tag: "toml"}); err != nil {
+		return err
+	}
+
+	if err := fixConfig(k); err != nil {
+		return err
+	}
+
+	logger.Info("Loaded game config")
+	return nil
+}
+
+func (conf *Config) loadFlags(k *koanf.Koanf, cmd *cobra.Command) error {
+	lookup := flagTable()
+	if err := k.Load(posflag.ProviderWithValue(cmd.Flags(), ".", k, func(key string, value string) (string, any) {
+		if k, ok := lookup[key]; ok {
 			key = k
 		} else {
 			key = ""
 		}
 		return key, value
-	}), nil)
-	if err != nil {
-		return nil, err
+	}), nil); err != nil {
+		return err
 	}
 
-	if err := k.UnmarshalWithConf("", conf, koanf.UnmarshalConf{Tag: "toml"}); err != nil {
-		return nil, err
-	}
-
-	paletteDir, err := GetPaletteDir()
-	if err != nil {
-		return nil, err
-	}
-
-	if err := os.MkdirAll(paletteDir, 0o777); err != nil && !errors.Is(err, os.ErrExist) {
-		return nil, err
-	}
-
-	logger.Info("Loaded config")
-	return conf, err
+	return k.UnmarshalWithConf("", conf, koanf.UnmarshalConf{Tag: "toml"})
 }
 
 func fixConfig(k *koanf.Koanf) error {
