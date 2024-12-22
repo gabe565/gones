@@ -7,19 +7,14 @@ repos:
         args: [--fix]
       - id: go-test-mod
 
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.19.0
-    hooks:
-      - id: eslint
-        files: '^web'
-        types: []
-        types_or: [javascript, vue]
-        args:
-          - --config=web/eslint.config.js
-          - --fix
-
   - repo: local
     hooks:
+      - id: eslint
+        name: eslint
+        entry: npm --prefix web run lint
+        language: system
+        files: ^web
+        pass_filenames: false
       - id: usage-docs
         name: usage-docs
         entry: go run ./internal/generate/docs

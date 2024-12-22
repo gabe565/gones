@@ -1,7 +1,6 @@
-import "./wasm_exec";
 import wasmUrl from "../assets/gones.wasm?url";
-import { waitForElement } from "../util/element";
 import { dbGet, dbPut } from "../plugins/db";
+import { waitForElement } from "../util/element";
 import {
   exitEvent,
   loadStateEvent,
@@ -11,6 +10,7 @@ import {
   playEvent,
   saveStateEvent,
 } from "../util/events";
+import "./wasm_exec";
 
 // Polyfill
 if (!WebAssembly.instantiateStreaming) {

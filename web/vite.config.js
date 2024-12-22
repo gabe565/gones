@@ -1,10 +1,10 @@
-import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import Icons from "unplugin-icons/vite";
-import { promises as fs } from "node:fs";
-import { VitePWA } from "vite-plugin-pwa";
 import autoprefixer from "autoprefixer";
+import { promises as fs } from "node:fs";
 import tailwindcss from "tailwindcss";
+import Icons from "unplugin-icons/vite";
+import { defineConfig } from "vite";
+import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig({

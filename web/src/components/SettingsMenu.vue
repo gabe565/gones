@@ -1,15 +1,15 @@
 <script setup>
-import IconClose from "~icons/material-symbols/close-rounded";
-import IconOpen from "~icons/material-symbols/folder-open-rounded";
-import IconStop from "~icons/material-symbols/stop-rounded";
-import IconGithub from "~icons/simple-icons/github";
-import IconSave from "~icons/material-symbols/save-rounded";
-import IconLoad from "~icons/material-symbols/restore-page-rounded";
-import IconLogo from "~icons/gones/icon";
-import IconHeading from "~icons/gones/heading?width=8em&height=2.5em";
-import KeyTable from "./KeyTable.vue";
 import { ref } from "vue";
 import GonesButton from "./GonesButton.vue";
+import KeyTable from "./KeyTable.vue";
+import IconHeading from "~icons/gones/heading?width=8em&height=2.5em";
+import IconLogo from "~icons/gones/icon";
+import IconClose from "~icons/material-symbols/close-rounded";
+import IconOpen from "~icons/material-symbols/folder-open-rounded";
+import IconLoad from "~icons/material-symbols/restore-page-rounded";
+import IconSave from "~icons/material-symbols/save-rounded";
+import IconStop from "~icons/material-symbols/stop-rounded";
+import IconGithub from "~icons/simple-icons/github";
 
 defineProps({
   modelValue: {

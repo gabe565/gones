@@ -1,7 +1,7 @@
-import globals from "globals";
 import pluginJs from "@eslint/js";
-import pluginVue from "eslint-plugin-vue";
 import pluginPrettier from "eslint-plugin-prettier/recommended";
+import pluginVue from "eslint-plugin-vue";
+import globals from "globals";
 
 export default [
   { languageOptions: { globals: globals.browser } },

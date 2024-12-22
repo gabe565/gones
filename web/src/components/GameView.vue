@@ -1,7 +1,6 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
-import MenuButton from "./MenuButton.vue";
-import SettingsMenu from "./SettingsMenu.vue";
+import { plausible } from "../plugins/plausible.js";
 import {
   exitEvent,
   nameEvent,
@@ -12,7 +11,8 @@ import {
   newSaveStateEvent,
   readyEvent,
 } from "../util/events";
-import { plausible } from "../plugins/plausible.js";
+import MenuButton from "./MenuButton.vue";
+import SettingsMenu from "./SettingsMenu.vue";
 
 const showSettings = ref(true);
 const name = ref("");

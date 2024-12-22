@@ -32,9 +32,9 @@
 </template>
 
 <script setup>
-import IconRefreshCw from "~icons/material-symbols/refresh-rounded";
-import IconClose from "~icons/material-symbols/close-rounded";
 import { onMounted, ref, watch } from "vue";
+import IconClose from "~icons/material-symbols/close-rounded";
+import IconRefreshCw from "~icons/material-symbols/refresh-rounded";
 
 const updateSW = ref(undefined);
 const offlineReady = ref(false);
