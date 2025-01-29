@@ -72,6 +72,7 @@ type APU struct {
 	SampleRate float64 `msgpack:"-"`
 	conf       *config.Audio
 	buf        *ringBuffer
+	sample     float32
 
 	Square   [2]Square
 	Triangle Triangle
@@ -172,6 +173,8 @@ func (a *APU) Step() bool {
 	}
 
 	if a.Enabled {
+		a.sample += a.output()
+
 		s1 := uint32(cycle1 / a.SampleRate)
 		s2 := uint32(cycle2 / a.SampleRate)
 		if s1 != s2 {
@@ -259,7 +262,8 @@ func (a *APU) output() float32 {
 }
 
 func (a *APU) sendSample() {
-	result := a.output()
+	result := a.sample / float32(a.SampleRate)
+	a.sample = 0
 	b := math.Float32bits(result)
 	a.buf.Write([]byte{
 		byte(b), byte(b >> 8), byte(b >> 16), byte(b >> 24),
