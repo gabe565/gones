@@ -215,7 +215,7 @@ jobs:
         working-directory: web/src/assets
         run: |
           temp="$(mktemp)"
-          wasm-opt -Oz --enable-bulk-memory -o "$temp" gones.wasm
+          wasm-opt --converge --flatten --rereloop -O3 --gufa -O3 --enable-bulk-memory -o "$temp" gones.wasm
           mv "$temp" gones.wasm
       - name: Set up Node
         uses: actions/setup-node@v4

@@ -23,7 +23,7 @@ tasks:
         sh: mktemp
     cmds:
       - defer: rm -f "{{ .TEMP }}"
-      - wasm-opt -Oz --enable-bulk-memory -o "{{ .TEMP }}"  gones.wasm
+      - wasm-opt --converge --flatten --rereloop -O3 --gufa -O3 --enable-bulk-memory -o "{{ .TEMP }}" gones.wasm
       - mv "{{ .TEMP }}" gones.wasm
 
   build:
