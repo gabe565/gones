@@ -212,6 +212,7 @@ jobs:
           GOARCH: wasm
         run: go build -ldflags='-w -s' -trimpath -tags "${{ env.BUILD_TAGS }}" -o web/src/assets/gones.wasm
       - name: Optimize
+        if: startsWith(github.ref, 'refs/tags/') || github.ref_name == 'main'
         working-directory: web/src/assets
         run: |
           temp="$(mktemp)"
