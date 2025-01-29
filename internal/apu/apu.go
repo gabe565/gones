@@ -1,10 +1,8 @@
 package apu
 
 import (
-	"bytes"
 	"log/slog"
 	"math"
-	"sync"
 
 	"gabe565.com/gones/internal/config"
 	"gabe565.com/gones/internal/consts"
@@ -59,13 +57,13 @@ func New(conf *config.Config) *APU {
 		Enabled:    true,
 		SampleRate: DefaultSampleRate,
 		conf:       &conf.Audio,
+		buf:        newRingBuffer(BufferCap),
 
 		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},
 
 		FramePeriod: 4,
 	}
-	a.buf.Grow(BufferCap)
 	return a
 }
 
@@ -73,6 +71,7 @@ type APU struct {
 	Enabled    bool    `msgpack:"-"`
 	SampleRate float64 `msgpack:"-"`
 	conf       *config.Audio
+	buf        *ringBuffer
 
 	Square   [2]Square
 	Triangle Triangle
@@ -85,9 +84,6 @@ type APU struct {
 
 	IRQEnabled bool `msgpack:"alias:IrqEnabled"`
 	IRQPending bool `msgpack:"alias:IrqPending"`
-
-	buf bytes.Buffer
-	mu  sync.Mutex
 }
 
 func (a *APU) WriteMem(addr uint16, data byte) {
@@ -265,31 +261,21 @@ func (a *APU) output() float32 {
 func (a *APU) sendSample() {
 	result := a.output()
 	b := math.Float32bits(result)
-	a.mu.Lock()
-	defer a.mu.Unlock()
-	if a.buf.Len() < BufferCap {
-		a.buf.Write([]byte{
-			byte(b), byte(b >> 8), byte(b >> 16), byte(b >> 24),
-			byte(b), byte(b >> 8), byte(b >> 16), byte(b >> 24),
-		})
-	}
+	a.buf.Write([]byte{
+		byte(b), byte(b >> 8), byte(b >> 16), byte(b >> 24),
+		byte(b), byte(b >> 8), byte(b >> 16), byte(b >> 24),
+	})
 }
 
 func (a *APU) Clear() {
-	a.mu.Lock()
-	defer a.mu.Unlock()
 	a.buf.Reset()
 }
 
 func (a *APU) Read(p []byte) (int, error) {
-	a.mu.Lock()
-	n, err := a.buf.Read(p)
-	a.mu.Unlock()
-	if err != nil {
-		if n == 0 {
-			clear(p)
-		}
+	n := a.buf.Read(p)
+	if n == 0 {
+		clear(p)
 		return len(p), nil
 	}
-	return n, err
+	return n, nil
 }
