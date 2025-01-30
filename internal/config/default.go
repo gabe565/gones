@@ -71,7 +71,7 @@ func NewDefault() *Config {
 				Noise:    true,
 				PCM:      true,
 			},
-			BufferSize: 70 * bytefmt.KiB,
+			BufferSize: 40 * bytefmt.KiB,
 		},
 	}
 }
