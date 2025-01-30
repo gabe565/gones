@@ -241,5 +241,23 @@ func fixConfig(k *koanf.Koanf) error {
 		}
 	}
 
+	// Audio buffer size
+	if raw := k.String("audio.buffer_size"); raw != "" {
+		var b Bytes
+		if err := b.UnmarshalText([]byte(raw)); err != nil {
+			return err
+		}
+		if int(b) < consts.AudioBufferBytes {
+			minVal, err := Bytes(consts.AudioBufferBytes).MarshalText()
+			if err != nil {
+				return err
+			}
+			slog.Warn("The minimum allowed buffer size is " + string(minVal) + ". Setting to default.")
+			if err := k.Set("audio.buffer_size", NewDefault().Audio.BufferSize); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }

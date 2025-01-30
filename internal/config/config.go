@@ -68,9 +68,10 @@ func (i Input) ResetHoldFrames() int {
 }
 
 type Audio struct {
-	Enabled  bool          `toml:"enabled" comment:"Enables audio output."`
-	Volume   float64       `toml:"volume" comment:"Output volume (between 0 and 1)."`
-	Channels AudioChannels `toml:"channels" comment:"Toggles specific audio channels."`
+	Enabled    bool          `toml:"enabled" comment:"Enables audio output."`
+	Volume     float64       `toml:"volume" comment:"Output volume (between 0 and 1)."`
+	Channels   AudioChannels `toml:"channels" comment:"Toggles specific audio channels."`
+	BufferSize Bytes         `toml:"buffer_size" comment:"Audio buffer size. Try increasing this if audio pops or stutters."`
 }
 
 type AudioChannels struct {

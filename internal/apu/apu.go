@@ -18,8 +18,7 @@ type CPU interface {
 
 const (
 	FrameCounterRate  = float64(consts.CPUFrequency) / 240.0
-	DefaultSampleRate = float64(consts.CPUFrequency) / float64(consts.AudioSampleRate) * consts.FrameRateDifference
-	BufferCap         = consts.AudioSampleRate / 5 * 8
+	DefaultSampleRate = float64(consts.CPUFrequency) / float64(consts.AudioSampleRate) * consts.FrameRateDiff
 )
 
 //nolint:gochecknoglobals
@@ -57,7 +56,7 @@ func New(conf *config.Config) *APU {
 		Enabled:    true,
 		SampleRate: DefaultSampleRate,
 		conf:       &conf.Audio,
-		buf:        newRingBuffer(BufferCap),
+		buf:        newRingBuffer(int(conf.Audio.BufferSize)),
 
 		Square: [2]Square{{Channel1: true}, {}},
 		Noise:  Noise{ShiftRegister: 1},

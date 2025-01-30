@@ -3,6 +3,7 @@ package config
 import (
 	"time"
 
+	"gabe565.com/utils/bytefmt"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -70,6 +71,7 @@ func NewDefault() *Config {
 				Noise:    true,
 				PCM:      true,
 			},
+			BufferSize: 70 * bytefmt.KiB,
 		},
 	}
 }

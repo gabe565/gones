@@ -77,6 +77,8 @@ b_turbo = 'Numpad5'
 enabled = true
 # Output volume (between 0 and 1).
 volume = 1.0
+# Audio buffer size. Try increasing this if audio pops or stutters.
+buffer_size = '70 KiB'
 
 # Toggles specific audio channels.
 [audio.channels]
