@@ -3,5 +3,16 @@
   "extends": [
     "local>gabe565/renovate-config",
     "local>gabe565/renovate-config:golang"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["\\.github/workflows/.*\\.ya?ml$"],
+      "matchStrings": [
+        "GH_REPO: (?<depName>.+)\\n\\s+BINARYEN_VERSION: (?<currentValue>.+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "regex:^(?<compatability>.+?)_(?<major>\\d+)$"
+    }
   ]
 }

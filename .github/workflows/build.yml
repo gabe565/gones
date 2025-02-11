@@ -200,10 +200,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - name: Install apt dependencies
-        uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          packages: binaryen
       - name: Generate
         run: go generate -x
       - name: Build Go
@@ -211,6 +207,16 @@ jobs:
           GOOS: js
           GOARCH: wasm
         run: go build -ldflags='-w -s' -trimpath -tags "${{ env.BUILD_TAGS }}" -o web/src/assets/gones.wasm
+      - name: Install binaryen
+        env:
+          GH_REPO: webassembly/binaryen
+          BINARYEN_VERSION: version_122
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          temp="$(mktemp --directory)"
+          gh release download "$BINARYEN_VERSION" --pattern="*-$(uname -m)-linux.tar.gz" --output=- \
+            | tar xzvf - --strip-components=1 --directory="$temp"
+          echo "$temp/bin" >> $GITHUB_PATH
       - name: Optimize
         if: startsWith(github.ref, 'refs/tags/') || github.ref_name == 'main'
         working-directory: web/src/assets
