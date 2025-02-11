@@ -51,12 +51,10 @@ const cartridgeInput = ref();
         <div class="h-full p-3 pl-0 border-r border-gray-700">
           <icon-logo class="text-4xl" aria-hidden="true" />
         </div>
-        <div class="p-3">
+        <div class="grow p-3">
           <icon-heading aria-hidden="true" />
           <h1 class="sr-only">GoNES</h1>
         </div>
-
-        <div class="flex-grow" />
 
         <gones-button
           text="Close menu"
@@ -65,7 +63,7 @@ const cartridgeInput = ref();
         />
       </div>
 
-      <div class="flex flex-col items-center pb-6 gap-2 text-center">
+      <div class="flex flex-col grow items-center pb-6 gap-2 text-center">
         <h2>Game</h2>
         <div v-if="name" class="w-full px-3 truncate" :title="name"><b>Name:</b> {{ name }}</div>
         <div class="flex justify-center mb-3">
@@ -111,8 +109,6 @@ const cartridgeInput = ref();
           />
         </div>
       </div>
-
-      <div class="flex-grow" />
 
       <key-table />
 
