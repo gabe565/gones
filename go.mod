@@ -3,7 +3,7 @@ module gabe565.com/gones
 go 1.23.5
 
 require (
-	gabe565.com/utils v0.0.0-20250130072635-ed882da6fcdd
+	gabe565.com/utils v0.0.0-20250203234441-e4ad4d8bf6fc
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/PuerkitoBio/goquery v1.10.1
 	github.com/dmarkham/enumer v1.5.10
