@@ -36,6 +36,7 @@ jobs:
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
           packages: ${{ env.LINUX_DEPENDENCIES }}
+          version: amd64
       - name: Lint
         uses: golangci/golangci-lint-action@v6
 
@@ -55,6 +56,7 @@ jobs:
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
           packages: ${{ env.LINUX_DEPENDENCIES }}
+          version: amd64
       - name: Test
         run: xvfb-run go test ./... -coverprofile=coverage.txt -covermode=atomic
 
@@ -117,9 +119,16 @@ jobs:
           name: gones_cask
           path: dist/gones.rb
 
-  build-linux-amd64:
-    name: Build (linux-amd64)
-    runs-on: ubuntu-24.04
+  build-linux:
+    name: Build (linux-${{ matrix.platform }})
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      matrix:
+        include:
+          - platform: amd64
+            runs-on: ubuntu-24.04
+          - platform: arm64
+            runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -131,6 +140,7 @@ jobs:
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
           packages: ${{ env.LINUX_DEPENDENCIES }}
+          version: ${{ matrix.platform }}
       - name: Generate
         run: go generate -x
       - name: Build
@@ -138,56 +148,12 @@ jobs:
           CGO_ENABLED: "1"
         run: go build -ldflags='-w -s' -trimpath -tags "${{ env.BUILD_TAGS }}" -o dist/gones
       - name: Compress
-        run: tar -cvf gones_linux_amd64.tar.gz -C dist .
+        run: tar -cvf gones_linux_${{ matrix.platform }}.tar.gz -C dist .
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: gones_linux_amd64
-          path: gones_linux_amd64.tar.gz
-
-  build-linux-arm64:
-    name: Build (linux-arm64)
-    runs-on: ubuntu-24.04
-    if: startsWith(github.ref, 'refs/tags/') || github.ref_name == 'main'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Go
-        id: setup-go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Build container
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: hack/builder.Dockerfile
-          tags: builder
-          load: true
-          platforms: linux/arm64/v8
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-      - name: Generate
-        run: go generate -x
-      - name: Build
-        run: |
-          docker run --rm -i --platform=linux/arm64/v8 \
-            -v "$(go env GOCACHE):/root/.cache/go-build" \
-            -v "$(go env GOMODCACHE):/go/pkg/mod" \
-            -v "$PWD:/app" \
-            builder \
-            go build -ldflags='-w -s' -trimpath -tags "${{ env.BUILD_TAGS }}" -o dist/gones
-      - name: Compress
-        run: tar -cvf gones_linux_arm64.tar.gz -C dist .
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: gones_linux_arm64
-          path: gones_linux_arm64.tar.gz
+          name: gones_linux_${{ matrix.platform }}
+          path: gones_linux_${{ matrix.platform }}.tar.gz
 
   build-web:
     name: Build Web
@@ -261,7 +227,7 @@ jobs:
   release:
     name: Release
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [lint, test, build-windows, build-darwin, build-linux-amd64, build-linux-arm64]
+    needs: [lint, test, build-windows, build-darwin, build-linux]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
