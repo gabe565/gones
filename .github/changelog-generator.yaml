@@ -3,6 +3,7 @@ filters:
   exclude:
     - "^docs"
     - "^test"
+    - "^ci"
 groups:
   - title: Features
     order: 0
