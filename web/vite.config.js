@@ -1,7 +1,6 @@
+import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
-import autoprefixer from "autoprefixer";
 import { promises as fs } from "node:fs";
-import tailwindcss from "tailwindcss";
 import Icons from "unplugin-icons/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
@@ -18,6 +17,7 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    tailwindcss(),
     Icons({
       compiler: "vue3",
       autoInstall: true,
@@ -57,9 +57,4 @@ export default defineConfig({
       },
     }),
   ],
-  css: {
-    postcss: {
-      plugins: [tailwindcss(), autoprefixer()],
-    },
-  },
 });
