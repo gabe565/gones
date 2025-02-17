@@ -14,7 +14,7 @@ var version = ""
 func main() {
 	rootCmd := root.New(options.WithVersion(version))
 	if err := rootCmd.Execute(); err != nil {
-		for _, s := range strings.Split(err.Error(), "\n") {
+		for s := range strings.SplitSeq(err.Error(), "\n") {
 			slog.Error(s)
 		}
 		os.Exit(1)
