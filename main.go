@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//go:generate cp $GOROOT/misc/wasm/wasm_exec.js web/src/scripts
+//go:generate cp $GOROOT/lib/wasm/wasm_exec.js web/src/scripts
 //go:generate sh -c "gzip -c internal/database/database.csv > internal/database/database.csv.gz"
 
 var version = "beta"
