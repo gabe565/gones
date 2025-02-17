@@ -10,7 +10,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//go:generate go run github.com/dmarkham/enumer -type OutputFormat -trimprefix OutputFormat -transform lower
+//go:generate go tool enumer -type OutputFormat -trimprefix OutputFormat -transform lower
 
 type OutputFormat uint8
 
