@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-//go:generate stringer -type Button -linecomment
+//go:generate go tool stringer -type Button -linecomment
 
 type Button uint8
 

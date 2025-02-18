@@ -1,6 +1,6 @@
 package cpu
 
-//go:generate stringer -type InstructionName
+//go:generate go tool stringer -type InstructionName
 
 type InstructionName uint8
 

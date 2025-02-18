@@ -1,6 +1,6 @@
 package cartridge
 
-//go:generate stringer -type Mirror
+//go:generate go tool stringer -type Mirror
 
 type Mirror byte
 

@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-//go:generate stringer -type AddressingMode
+//go:generate go tool stringer -type AddressingMode
 
 // AddressingMode defines opcode addressing modes.
 //
