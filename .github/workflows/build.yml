@@ -176,7 +176,7 @@ jobs:
       - name: Install binaryen
         env:
           GH_REPO: webassembly/binaryen
-          BINARYEN_VERSION: version_122
+          BINARYEN_VERSION: version_123
           GH_TOKEN: ${{ github.token }}
         run: |
           temp="$(mktemp --directory)"
