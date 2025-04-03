@@ -38,7 +38,7 @@ jobs:
           packages: ${{ env.LINUX_DEPENDENCIES }}
           version: amd64
       - name: Lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v7
 
   test:
     name: Test
