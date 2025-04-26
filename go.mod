@@ -6,7 +6,7 @@ require (
 	gabe565.com/utils v0.0.0-20250217005250-f306fa7738cd
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/PuerkitoBio/goquery v1.10.2
-	github.com/hajimehoshi/ebiten/v2 v2.8.6
+	github.com/hajimehoshi/ebiten/v2 v2.8.8
 	github.com/knadh/koanf/providers/posflag v0.1.0
 	github.com/knadh/koanf/providers/rawbytes v0.1.0
 	github.com/knadh/koanf/providers/structs v0.1.0
@@ -34,7 +34,7 @@ require (
 	github.com/dmarkham/enumer v1.5.11 // indirect
 	github.com/ebitengine/gomobile v0.0.0-20240911145611-4856209ac325 // indirect
 	github.com/ebitengine/hideconsole v1.0.0 // indirect
-	github.com/ebitengine/oto/v3 v3.3.2 // indirect
+	github.com/ebitengine/oto/v3 v3.3.3 // indirect
 	github.com/ebitengine/purego v0.8.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
