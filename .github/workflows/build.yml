@@ -273,7 +273,7 @@ jobs:
         with:
           name: gones_cask
           path: Casks
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: Brew formula update for gones version ${{ github.ref_name }}
           commit_user_name: ${{ env.commit_name }}
