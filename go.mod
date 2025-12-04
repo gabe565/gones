@@ -15,8 +15,8 @@ require (
 	github.com/mattn/go-isatty v0.0.20
 	github.com/ncruces/zenity v0.10.14
 	github.com/pelletier/go-toml/v2 v2.2.3
-	github.com/spf13/cobra v1.9.1
-	github.com/spf13/pflag v1.0.6
+	github.com/spf13/cobra v1.10.2
+	github.com/spf13/pflag v1.0.9
 	github.com/stretchr/testify v1.10.0
 	github.com/vmihailenco/msgpack/v5 v5.4.1
 	gopkg.in/yaml.v3 v3.0.1
@@ -53,6 +53,7 @@ require (
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/spf13/cast v1.7.0 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
+	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.33.0 // indirect
 	golang.org/x/image v0.20.0 // indirect
 	golang.org/x/mod v0.23.0 // indirect
