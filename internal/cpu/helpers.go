@@ -1,6 +1,6 @@
 package cpu
 
-// updateZeroAndNegFlags updates zero and negative flags
+// updateZeroAndNegFlags updates zero and negative flags.
 func (c *CPU) updateZeroAndNegFlags(result byte) {
 	c.Status.Zero = result == 0
 	c.Status.Negative = result&Negative != 0

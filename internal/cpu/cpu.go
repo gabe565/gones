@@ -87,7 +87,7 @@ func (c *CPU) irq() {
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
 var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
-// Step steps through the next instruction
+// Step steps through the next instruction.
 func (c *CPU) Step() uint {
 	if c.Stall > 0 {
 		c.Stall--

@@ -49,10 +49,12 @@ func (c *Console) CheckInput() {
 				slog.Info("Toggle trace logs")
 				c.enableTrace = !c.enableTrace
 			}
-			if inpututil.IsKeyJustPressed(controller.StepFrame) || inpututil.KeyPressDuration(controller.StepFrame) > 30 {
+			if inpututil.IsKeyJustPressed(controller.StepFrame) ||
+				inpututil.KeyPressDuration(controller.StepFrame) > 30 {
 				c.debug = DebugStepFrame
 			}
-			if inpututil.IsKeyJustPressed(controller.RunToRender) || inpututil.KeyPressDuration(controller.RunToRender) > 30 {
+			if inpututil.IsKeyJustPressed(controller.RunToRender) ||
+				inpututil.KeyPressDuration(controller.RunToRender) > 30 {
 				c.debug = DebugRunRender
 			}
 		}

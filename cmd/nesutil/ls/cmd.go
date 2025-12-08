@@ -58,7 +58,13 @@ func New() *cobra.Command {
 	flag.StringP(FlagSort, "s", PathField, "Sort by a field")
 	must.Must(cmd.RegisterFlagCompletionFunc("sort",
 		func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
-			return []string{PathField, NameField, MapperField, BatteryField, MirrorField}, cobra.ShellCompDirectiveNoFileComp
+			return []string{
+				PathField,
+				NameField,
+				MapperField,
+				BatteryField,
+				MirrorField,
+			}, cobra.ShellCompDirectiveNoFileComp
 		},
 	))
 

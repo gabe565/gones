@@ -72,8 +72,8 @@ func Test_blarggOAM(t *testing.T) {
 			require.NoError(t, err)
 
 			require.NoError(t, test.run())
-			assert.EqualValues(t, tt.wantStatus, getBlarggStatus(test))
-			assert.EqualValues(t, tt.want, getBlarggMessage(test, msgTypeSRAM))
+			assert.Equal(t, tt.wantStatus, getBlarggStatus(test))
+			assert.Equal(t, tt.want, getBlarggMessage(test, msgTypeSRAM))
 		})
 	}
 }

@@ -32,8 +32,8 @@ func Test_blarggMMC3(t *testing.T) {
 			require.NoError(t, err)
 
 			require.NoError(t, test.run())
-			assert.EqualValues(t, tt.wantStatus, getBlarggStatus(test))
-			assert.EqualValues(t, tt.want, getBlarggMessage(test, msgTypePPUVRAM))
+			assert.Equal(t, tt.wantStatus, getBlarggStatus(test))
+			assert.Equal(t, tt.want, getBlarggMessage(test, msgTypePPUVRAM))
 		})
 	}
 }

@@ -23,7 +23,9 @@ const (
 )
 
 func PaletteFlag(fs *pflag.FlagSet) {
-	fs.StringSliceP(FlagPalette, "p", []string{"000", "555", "AAA", "FFF"}, "Palette to use. Must contain 4 hex colors.")
+	fs.StringSliceP(FlagPalette, "p", []string{"000", "555", "AAA", "FFF"},
+		"Palette to use. Must contain 4 hex colors.",
+	)
 }
 
 var ErrInvalidPalette = errors.New("palette must contain 4 hex colors")

@@ -24,17 +24,17 @@ func TestCPU_TraceFormat(t *testing.T) {
 		}
 	}
 
-	assert.EqualValues(
+	assert.Equal(
 		t,
 		"8600  A2 01     LDX #$01                        A:01 X:02 Y:03 P:24 SP:FD",
 		traces[0],
 	)
-	assert.EqualValues(
+	assert.Equal(
 		t,
 		"8602  CA        DEX                             A:01 X:01 Y:03 P:24 SP:FD",
 		traces[1],
 	)
-	assert.EqualValues(
+	assert.Equal(
 		t,
 		"8603  88        DEY                             A:01 X:00 Y:03 P:26 SP:FD",
 		traces[2],
@@ -58,7 +58,7 @@ func TestCPU_Trace_MemAccess(t *testing.T) {
 		}
 	}
 
-	assert.EqualValues(
+	assert.Equal(
 		t,
 		"8600  11 33     ORA ($33),Y = 0400 @ 0400 = AA  A:00 X:00 Y:00 P:24 SP:FD",
 		traces[0],

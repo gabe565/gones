@@ -42,7 +42,7 @@ const (
 	StatusDMCInterrupt
 )
 
-func init() { //nolint:all
+func init() { //nolint:gochecknoinits
 	for i := range squareTable {
 		squareTable[i] = float32(95.52 / (8128.0/float64(i) + 100))
 	}

@@ -24,7 +24,9 @@ func Flags(cmd *cobra.Command) {
 	}); err != nil {
 		panic(err)
 	}
-	cmd.Flags().Bool("pause-unfocused", true, "Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background.")
+	cmd.Flags().Bool("pause-unfocused", true,
+		"Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background.",
+	)
 }
 
 func flagTable() map[string]string {

@@ -19,12 +19,12 @@ type Config struct {
 }
 
 type UI struct {
-	Fullscreen        bool     `toml:"fullscreen" comment:"Default fullscreen state. Fullscreen can also be toggled with a key (F11 by default)."`
-	Scale             float64  `toml:"scale" comment:"Multiplier used to scale the UI."`
-	PauseUnfocused    bool     `toml:"pause_unfocused" comment:"Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background."`
-	Palette           string   `toml:"palette" comment:"Palette (.pal) file to use. An embedded palette will be used when blank."`
+	Fullscreen        bool     `toml:"fullscreen"          comment:"Default fullscreen state. Fullscreen can also be toggled with a key (F11 by default)."`
+	Scale             float64  `toml:"scale"               comment:"Multiplier used to scale the UI."`
+	PauseUnfocused    bool     `toml:"pause_unfocused"     comment:"Pauses when the window loses focus. Optional, but audio will be glitchy when the game is running in the background."`
+	Palette           string   `toml:"palette"             comment:"Palette (.pal) file to use. An embedded palette will be used when blank."`
 	RemoveSpriteLimit bool     `toml:"remove_sprite_limit" comment:"Removes the original hardware's 8 horizontal sprite limitation. When enabled, sprites will no longer flicker."`
-	Overscan          Overscan `toml:"overscan,inline" comment:"Change the number of rows/cols of overscan."`
+	Overscan          Overscan `toml:"overscan,inline"     comment:"Change the number of rows/cols of overscan."`
 }
 
 type Overscan struct {
@@ -39,24 +39,24 @@ func (t Overscan) Rect() image.Rectangle {
 }
 
 type State struct {
-	Resume           bool     `toml:"resume" comment:"Automatically resumes the previous game state."`
+	Resume           bool     `toml:"resume"            comment:"Automatically resumes the previous game state."`
 	AutosaveInterval Duration `toml:"autosave_interval" comment:"If resume is enabled, the game state will be saved regularly at the configured interval."`
-	UndoStateCount   int      `toml:"undo_state_count" comment:"Number of undo states to keep in memory."`
+	UndoStateCount   int      `toml:"undo_state_count"  comment:"Number of undo states to keep in memory."`
 }
 
 type Input struct {
-	Reset             Key      `toml:"reset" comment:"Key to reset the game (must be held)."`
-	ResetHold         Duration `toml:"reset_hold" comment:"Time the reset button must be held."`
-	State1Save        Key      `toml:"state1_save" comment:"Key to save the game state (separate from auto resume state)."`
-	State1Load        Key      `toml:"state1_load" comment:"Key to load the last save state."`
+	Reset             Key      `toml:"reset"               comment:"Key to reset the game (must be held)."`
+	ResetHold         Duration `toml:"reset_hold"          comment:"Time the reset button must be held."`
+	State1Save        Key      `toml:"state1_save"         comment:"Key to save the game state (separate from auto resume state)."`
+	State1Load        Key      `toml:"state1_load"         comment:"Key to load the last save state."`
 	StateUndoModifier Key      `toml:"state_undo_modifier" comment:"Hold this key and press the save/load state key, and the action will be undone."`
-	FastForward       Key      `toml:"fast_forward" comment:"Key to fast-forward the game (must be held)."`
-	FastForwardRate   uint8    `toml:"fast_forward_rate" comment:"Fast-forward rate multiplier."`
-	Fullscreen        Key      `toml:"fullscreen" comment:"Key to toggle fullscreen."`
-	Screenshot        Key      `toml:"screenshot" comment:"Key to take a screenshot."`
-	TurboDutyCycle    uint16   `toml:"turbo_duty_cycle" comment:"Frame duty cycle when turbo key is held (minimum: 2)."`
-	Player1           Keymap   `toml:"player1" comment:"Player 1 keymap."`
-	Player2           Keymap   `toml:"player2" comment:"Player 2 keymap."`
+	FastForward       Key      `toml:"fast_forward"        comment:"Key to fast-forward the game (must be held)."`
+	FastForwardRate   uint8    `toml:"fast_forward_rate"   comment:"Fast-forward rate multiplier."`
+	Fullscreen        Key      `toml:"fullscreen"          comment:"Key to toggle fullscreen."`
+	Screenshot        Key      `toml:"screenshot"          comment:"Key to take a screenshot."`
+	TurboDutyCycle    uint16   `toml:"turbo_duty_cycle"    comment:"Frame duty cycle when turbo key is held (minimum: 2)."`
+	Player1           Keymap   `toml:"player1"             comment:"Player 1 keymap."`
+	Player2           Keymap   `toml:"player2"             comment:"Player 2 keymap."`
 }
 
 func (i Input) ResetHoldFrames() int {
@@ -68,9 +68,9 @@ func (i Input) ResetHoldFrames() int {
 }
 
 type Audio struct {
-	Enabled    bool          `toml:"enabled" comment:"Enables audio output."`
-	Volume     float64       `toml:"volume" comment:"Output volume (between 0 and 1)."`
-	Channels   AudioChannels `toml:"channels" comment:"Toggles specific audio channels."`
+	Enabled    bool          `toml:"enabled"     comment:"Enables audio output."`
+	Volume     float64       `toml:"volume"      comment:"Output volume (between 0 and 1)."`
+	Channels   AudioChannels `toml:"channels"    comment:"Toggles specific audio channels."`
 	BufferSize Bytes         `toml:"buffer_size" comment:"Audio buffer size. Try increasing this if audio pops or stutters."`
 }
 

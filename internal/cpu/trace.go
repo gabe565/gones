@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log/slog"
 	"runtime"
-	"strings"
 
 	"gabe565.com/gones/internal/log"
 	"gabe565.com/gones/internal/memory"
@@ -31,6 +30,7 @@ func (c *CPU) Trace() string {
 		//
 	default:
 		valAddr, _ = c.getAbsoluteAddress(op.Mode, begin+1)
+		//nolint:errcheck
 		val = c.bus.(memory.ReadSafe).ReadMemSafe(valAddr)
 	}
 
@@ -94,11 +94,7 @@ func (c *CPU) Trace() string {
 		}
 	}
 
-	var hexStr string
-	for _, v := range hexDump {
-		hexStr += fmt.Sprintf("%02X ", v)
-	}
-	hexStr = strings.TrimSpace(hexStr)
+	hexStr := fmt.Sprintf("% X", hexDump)
 
 	undocumented := ' '
 	if op.Undocumented {

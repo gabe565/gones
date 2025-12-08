@@ -680,9 +680,9 @@ func lxa(c *CPU, mode AddressingMode) {
 // The NOP instruction causes no changes to the processor other than
 // the normal incrementing of the program counter to the next instruction.
 //
-// See [NOP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#NOP
+// See [NOP Instruction Reference]
 //
-// [NOP Instruction Reference]:
+// [NOP Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#NOP
 func nop(c *CPU, mode AddressingMode) {
 	if mode != Implicit {
 		addr, pageCrossed := c.getOperandAddress(mode)

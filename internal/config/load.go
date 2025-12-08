@@ -179,6 +179,7 @@ func (conf *Config) loadFlags(k *koanf.Koanf, cmd *cobra.Command) error {
 func fixConfig(k *koanf.Koanf) error {
 	// Migrate `input.keys` to `input`
 	if k.Exists("input.keys") {
+		//nolint:errcheck
 		inputKeys := k.Get("input.keys").(map[string]any)
 		if err := k.Set("input", inputKeys); err != nil {
 			return err

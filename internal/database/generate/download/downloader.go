@@ -236,7 +236,10 @@ var (
 	ErrNoButton        = errors.New(`could not find download button`)
 )
 
-func (g *Downloader) prepareDownload(ctx context.Context, postFields map[string]string) (string, string, string, error) {
+func (g *Downloader) prepareDownload(
+	ctx context.Context,
+	postFields map[string]string,
+) (string, string, string, error) {
 	// Get form params to request a download
 	body, contentType, err := g.buildPostForm(postFields)
 	if err != nil {
@@ -354,7 +357,12 @@ func (g *Downloader) download(ctx context.Context, url, name, value string) (io.
 
 var ErrInvalidResponse = errors.New("invalid response")
 
-func (g *Downloader) request(ctx context.Context, method, url, contentType string, body io.Reader, expectStatus int) (*http.Response, error) {
+func (g *Downloader) request(
+	ctx context.Context,
+	method, url, contentType string,
+	body io.Reader,
+	expectStatus int,
+) (*http.Response, error) {
 	req, err := http.NewRequestWithContext(ctx, method, url, body)
 	if err != nil {
 		return nil, err
