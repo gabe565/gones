@@ -11,7 +11,7 @@ func stubPPU() (*PPU, *cartridge.Cartridge) {
 	var ppu PPU
 	cart := &cartridge.Cartridge{}
 	cart.CHR = make([]byte, 2048)
-	ppu.mapper = cartridge.NewMapper2(cart)
+	ppu.mapper = cartridge.NewMapper2(cart, false)
 	return &ppu, cart
 }
 

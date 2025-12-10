@@ -34,10 +34,12 @@ var ErrUnsupportedMapper = errors.New("unsupported mapper")
 
 func NewMapper(cartridge *Cartridge) (Mapper, error) { //nolint:ireturn,nolintlint
 	switch cartridge.Header.Mapper() {
-	case 0, 2:
-		return NewMapper2(cartridge), nil
+	case 0:
+		return NewMapper2(cartridge, false), nil
 	case 1:
 		return NewMapper1(cartridge), nil
+	case 2:
+		return NewMapper2(cartridge, true), nil
 	case 3:
 		return NewMapper3(cartridge), nil
 	case 4:

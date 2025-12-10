@@ -4,21 +4,23 @@ import (
 	"gabe565.com/gones/internal/consts"
 )
 
-func NewMapper2(cartridge *Cartridge) *Mapper2 {
+func NewMapper2(cartridge *Cartridge, bankSwitching bool) *Mapper2 {
 	prgBanks := uint(len(cartridge.PRG) / consts.PRGChunkSize)
 	mapper := &Mapper2{
-		cartridge: cartridge,
-		PRGBanks:  prgBanks,
-		PRGBank2:  prgBanks - 1,
+		cartridge:     cartridge,
+		bankSwitching: bankSwitching,
+		PRGBanks:      prgBanks,
+		PRGBank2:      prgBanks - 1,
 	}
 	return mapper
 }
 
 type Mapper2 struct {
-	cartridge *Cartridge
-	PRGBanks  uint `msgpack:"alias:PrgBanks"`
-	PRGBank1  uint `msgpack:"alias:PrgBank1"`
-	PRGBank2  uint `msgpack:"alias:PrgBank2"`
+	cartridge     *Cartridge
+	bankSwitching bool
+	PRGBanks      uint `msgpack:"alias:PrgBanks"`
+	PRGBank1      uint `msgpack:"alias:PrgBank1"`
+	PRGBank2      uint `msgpack:"alias:PrgBank2"`
 }
 
 func (m *Mapper2) Cartridge() *Cartridge { return m.cartridge }
@@ -55,8 +57,10 @@ func (m *Mapper2) WriteMem(addr uint16, data byte) {
 		addr -= 0x6000
 		m.cartridge.SRAM[addr] = data
 	case 0x8000 <= addr:
-		data := uint(data)
-		data %= m.PRGBanks
-		m.PRGBank1 = data
+		if m.bankSwitching {
+			data := uint(data)
+			data %= m.PRGBanks
+			m.PRGBank1 = data
+		}
 	}
 }

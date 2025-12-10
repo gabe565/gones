@@ -50,7 +50,7 @@ func (m *MockBus) ReadMem16(addr uint16) uint16 {
 
 func stubCPU(program []byte) *CPU {
 	cart := cartridge.FromBytes(program)
-	mapper := cartridge.NewMapper2(cart)
+	mapper := cartridge.NewMapper2(cart, false)
 	ppu := ppu.New(config.NewDefault(), mapper)
 	conf := config.NewDefault()
 	apu := apu.New(conf)
