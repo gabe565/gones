@@ -30,15 +30,21 @@ func adc(c *CPU, mode AddressingMode) {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func ahx(c *CPU, mode AddressingMode) {
-	var pos uint16
+	addr, pageCrossed := c.getOperandAddress(mode)
+
+	var baseHi byte
 	switch mode {
-	case IndirectY:
-		pos = uint16(c.ReadMem(c.ProgramCounter))
 	case AbsoluteY:
-		pos = c.ProgramCounter
+		baseHi = c.ReadMem(c.ProgramCounter + 1)
+	case IndirectY:
+		ptr := c.ReadMem(c.ProgramCounter)
+		baseHi = c.ReadMem(uint16(ptr+1) & 0x00FF)
 	}
-	addr := c.ReadMem16(pos) + uint16(c.RegisterY)
-	data := c.Accumulator & c.RegisterX & uint8(addr>>8)
+
+	data := c.Accumulator & c.RegisterX & (baseHi + 1)
+	if pageCrossed {
+		addr = uint16(data)<<8 | addr&0x00FF
+	}
 	c.WriteMem(addr, data)
 }
 
