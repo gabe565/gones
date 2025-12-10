@@ -207,6 +207,8 @@ func (p *PPU) ReadData() byte {
 		val, p.ReadBuf = p.ReadBuf, val
 	} else if addr < 0x4000 {
 		p.ReadBuf = p.ReadDataAddr(addr - 0x1000)
+		// Palette reads return 6 bits; upper 2 bits are open bus.
+		val &= 0x3F
 		val |= p.OpenBus & 0xC0
 	}
 
