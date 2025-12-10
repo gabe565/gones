@@ -50,11 +50,19 @@ func (c *CPU) getAbsoluteAddress(mode AddressingMode, addr uint16) (uint16, bool
 	case AbsoluteX:
 		base := c.ReadMem16(addr)
 		addr := base + uint16(c.RegisterX)
-		return addr, crossedPage(base, addr)
+		if crossedPage(base, addr) {
+			c.ReadMem(addr - 0x100)
+			return addr, true
+		}
+		return addr, false
 	case AbsoluteY:
 		base := c.ReadMem16(addr)
 		addr := base + uint16(c.RegisterY)
-		return addr, crossedPage(base, addr)
+		if crossedPage(base, addr) {
+			c.ReadMem(addr - 0x100)
+			return addr, true
+		}
+		return addr, false
 	case Indirect:
 		base := c.ReadMem16(addr)
 		return c.ReadMem16Bug(base), false
@@ -72,7 +80,11 @@ func (c *CPU) getAbsoluteAddress(mode AddressingMode, addr uint16) (uint16, bool
 		hi := c.ReadMem(uint16(base + 1))
 		derefBase := uint16(hi)<<8 | uint16(lo)
 		addr := derefBase + uint16(c.RegisterY)
-		return addr, crossedPage(derefBase, addr)
+		if crossedPage(derefBase, addr) {
+			c.ReadMem(addr - 0x100)
+			return addr, true
+		}
+		return addr, false
 	default:
 		slog.Error("unsupported mode", "mode", mode)
 		os.Exit(1)
