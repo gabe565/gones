@@ -34,9 +34,9 @@ func (b *Bus) ReadMem(addr uint16) byte {
 	case addr < 0x2000:
 		addr &= 0x07FF
 		b.OpenBus = b.CPUVRAM[addr]
-	case 0x2000 <= addr && addr <= 0x2007, addr == 0x4014:
+	case addr <= 0x2007, addr == 0x4014:
 		b.OpenBus = b.ppu.ReadMem(addr)
-	case 0x2008 <= addr && addr < 0x4000:
+	case addr < 0x4000:
 		addr &= 0x2007
 		b.OpenBus = b.ppu.ReadMem(addr)
 	case addr == 0x4015:
@@ -47,7 +47,7 @@ func (b *Bus) ReadMem(addr uint16) byte {
 	case addr == 0x4017:
 		b.OpenBus &^= 0xF
 		b.OpenBus |= b.controller2.Read()
-	case 0x4020 <= addr:
+	case addr >= 0x4020:
 		if addr < 0x6000 {
 			switch b.mapper.(type) {
 			case *cartridge.Mapper2, *cartridge.Mapper3, *cartridge.Mapper7:
@@ -77,19 +77,19 @@ func (b *Bus) WriteMem(addr uint16, data byte) {
 	case addr < 0x2000:
 		addr &= 0x07FF
 		b.CPUVRAM[addr] = data
-	case 0x2000 <= addr && addr <= 0x2007, addr == 0x4014:
+	case addr <= 0x2007, addr == 0x4014:
 		b.ppu.WriteMem(addr, data)
 		return
-	case 0x2008 <= addr && addr < 0x4000:
+	case addr < 0x4000:
 		addr &= 0x2007
 		b.ppu.WriteMem(addr, data)
 		return
-	case 0x4000 <= addr && addr <= 0x4013, addr == 0x4015, addr == 0x4017:
+	case addr <= 0x4013, addr == 0x4015, addr == 0x4017:
 		b.apu.WriteMem(addr, data)
 	case addr == 0x4016:
 		b.controller1.Write(data)
 		b.controller2.Write(data)
-	case 0x4020 <= addr:
+	case addr >= 0x4020:
 		b.mapper.WriteMem(addr, data)
 	}
 	b.OpenBus = data
