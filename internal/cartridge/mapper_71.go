@@ -1,10 +1,7 @@
 package cartridge
 
 import (
-	"log/slog"
-
 	"gabe565.com/gones/internal/consts"
-	"gabe565.com/gones/internal/log"
 )
 
 func NewMapper71(cartridge *Cartridge) *Mapper71 {
@@ -43,7 +40,6 @@ func (m *Mapper71) ReadMem(addr uint16) byte {
 		addr += m.PRGLast * consts.PRGChunkSize
 		return m.cartridge.PRG[addr]
 	default:
-		slog.Error("Invalid mapper 71 read", "addr", log.HexAddr(addr))
 		return 0
 	}
 }
@@ -61,7 +57,5 @@ func (m *Mapper71) WriteMem(addr uint16, data byte) {
 		data := uint(data & 0xF)
 		data %= m.PRGCount
 		m.PRGActive = data
-	default:
-		slog.Error("Invalid mapper 71 write", "addr", log.HexAddr(addr))
 	}
 }

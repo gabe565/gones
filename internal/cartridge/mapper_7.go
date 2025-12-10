@@ -1,10 +1,7 @@
 package cartridge
 
 import (
-	"log/slog"
-
 	"gabe565.com/gones/internal/consts"
-	"gabe565.com/gones/internal/log"
 )
 
 func NewMapper7(cartridge *Cartridge) *Mapper7 {
@@ -36,7 +33,6 @@ func (m *Mapper7) ReadMem(addr uint16) byte {
 		addr %= uint(len(m.cartridge.PRG))
 		return m.cartridge.PRG[addr]
 	default:
-		slog.Error("Invalid mapper 7 read", "addr", log.HexAddr(addr))
 		return 0
 	}
 }
@@ -57,7 +53,5 @@ func (m *Mapper7) WriteMem(addr uint16, data byte) {
 			m.cartridge.Mirror = SingleUpper
 		}
 		m.PRGBank = uint(data & 7)
-	default:
-		slog.Error("Invalid mapper 7 write", "addr", log.HexAddr(addr))
 	}
 }

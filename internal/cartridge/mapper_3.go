@@ -1,10 +1,7 @@
 package cartridge
 
 import (
-	"log/slog"
-
 	"gabe565.com/gones/internal/consts"
-	"gabe565.com/gones/internal/log"
 )
 
 func NewMapper3(cartridge *Cartridge) *Mapper3 {
@@ -47,7 +44,6 @@ func (m *Mapper3) ReadMem(addr uint16) byte {
 		addr += m.PRGBank2 * consts.PRGChunkSize
 		return m.cartridge.PRG[addr]
 	default:
-		slog.Error("Invalid mapper 3 read", "addr", log.HexAddr(addr))
 		return 0
 	}
 }
@@ -63,7 +59,5 @@ func (m *Mapper3) WriteMem(addr uint16, data byte) {
 		m.cartridge.SRAM[addr] = data
 	case 0x8000 <= addr:
 		m.CHRBank = uint(data & 3)
-	default:
-		slog.Error("Invalid mapper 3 write", "addr", log.HexAddr(addr))
 	}
 }
