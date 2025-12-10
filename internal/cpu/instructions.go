@@ -957,9 +957,13 @@ func sei(c *CPU, _ AddressingMode) {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func shx(c *CPU, mode AddressingMode) {
-	addr, _ := c.getOperandAddress(mode)
-	data := c.RegisterX & (uint8(addr>>8) + 1)
-	c.WriteMem(uint16(data)<<8|addr&0xFF, data)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	baseHi := c.ReadMem(c.ProgramCounter + 1)
+	data := c.RegisterX & (baseHi + 1)
+	if pageCrossed {
+		addr = uint16(data)<<8 | addr&0xFF
+	}
+	c.WriteMem(addr, data)
 }
 
 // shy - Undocumented Opcode
@@ -971,9 +975,13 @@ func shx(c *CPU, mode AddressingMode) {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func shy(c *CPU, mode AddressingMode) {
-	addr, _ := c.getOperandAddress(mode)
-	data := c.RegisterY & (uint8(addr>>8) + 1)
-	c.WriteMem(uint16(data)<<8|addr&0xFF, data)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	baseHi := c.ReadMem(c.ProgramCounter + 1)
+	data := c.RegisterY & (baseHi + 1)
+	if pageCrossed {
+		addr = uint16(data)<<8 | addr&0xFF
+	}
+	c.WriteMem(addr, data)
 }
 
 // slo - Undocumented Opcode
@@ -1049,11 +1057,15 @@ func sty(c *CPU, mode AddressingMode) {
 // See [6502 Undocumented Opcodes]
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
-func tas(c *CPU, _ AddressingMode) {
+func tas(c *CPU, mode AddressingMode) {
 	data := c.Accumulator & c.RegisterX
 	c.StackPointer = data
-	addr := c.ReadMem16(c.ProgramCounter) + uint16(c.RegisterY)
-	data = (uint8(addr>>8) + 1) & c.StackPointer
+	addr, pageCrossed := c.getOperandAddress(mode)
+	baseHi := c.ReadMem(c.ProgramCounter + 1)
+	data = (baseHi + 1) & c.StackPointer
+	if pageCrossed {
+		addr = uint16(data)<<8 | addr&0xFF
+	}
 	c.WriteMem(addr, data)
 }
 
