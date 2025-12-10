@@ -6,57 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type MockBus struct {
-	Memory  [0x10000]byte
-	ReadLog []uint16
-}
-
-func (m *MockBus) ReadMem(addr uint16) byte {
-	m.ReadLog = append(m.ReadLog, addr)
-	return m.Memory[addr]
-}
-
-func (m *MockBus) ReadMemSafe(addr uint16) byte {
-	return m.Memory[addr]
-}
-
-func (m *MockBus) WriteMem(addr uint16, data byte) {
-	m.Memory[addr] = data
-}
-
-func (m *MockBus) WriteMem16(addr uint16, data uint16) {
-	m.Memory[addr] = byte(data)
-	m.Memory[addr+1] = byte(data >> 8)
-}
-
-func (m *MockBus) ReadMem16(addr uint16) uint16 {
-	lo := uint16(m.ReadMem(addr))
-	hi := uint16(m.ReadMem(addr + 1))
-	return hi<<8 | lo
-}
-
-func stubCPUMockBus(program []byte) (*CPU, *MockBus) {
-	bus := &MockBus{}
-	// Load program at 0x8000 (Mapper 2 style but simplified)
-	// We just write to memory directly.
-	// Reset vector at FFFC.
-
-	for i, b := range program {
-		bus.Memory[0x8000+i] = b
-	}
-	bus.Memory[0xFFFC] = 0x00
-	bus.Memory[0xFFFD] = 0x80
-
-	cpu := &CPU{
-		StackPointer:   0xFD,
-		Status:         Status{InterruptDisable: true},
-		bus:            bus,
-		Cycles:         7,
-		ProgramCounter: 0x8000,
-	}
-	return cpu, bus
-}
-
 func Test_DummyRead_AbsoluteX(t *testing.T) {
 	// LDA $20F2, X (where X = $10)
 	// Opcode: BD F2 20
@@ -94,18 +43,32 @@ func Test_DummyRead_AbsoluteX(t *testing.T) {
 }
 
 func Test_DummyRead_AbsoluteX_NoCross(t *testing.T) {
-	// LDA $2000, X (X=0)
-	// BD 00 20
-	// No page cross.
-	// Reads: Op, Lo, Hi, Effective. No dummy.
+	// LDA $2000, X (X=0) -> BD 00 20. No page cross. No dummy (Load).
+	// STA $2000, X (X=0) -> 9D 00 20. No page cross. Dummy read required (Store).
 
-	cpu, bus := stubCPUMockBus([]byte{0xBD, 0x00, 0x20})
-	cpu.RegisterX = 0x00
+	t.Run("LDA No Cross", func(t *testing.T) {
+		cpu, bus := stubCPUMockBus([]byte{0xBD, 0x00, 0x20})
+		cpu.RegisterX = 0x00
+		bus.ReadLog = []uint16{}
+		cpu.Step()
+		expectedReads := []uint16{0x8000, 0x8001, 0x8002, 0x2000}
+		assert.Equal(t, expectedReads, bus.ReadLog)
+	})
 
-	bus.ReadLog = []uint16{}
+	t.Run("STA No Cross (Dummy Read)", func(t *testing.T) {
+		// STA $2000, X
+		// 1. Fetch Op (8000)
+		// 2. Fetch Lo (8001)
+		// 3. Fetch Hi (8002)
+		// 4. Dummy Read (2000)
+		// 5. Write (2000) - Not logged in ReadLog
 
-	cpu.Step()
+		cpu, bus := stubCPUMockBus([]byte{0x9D, 0x00, 0x20})
+		cpu.RegisterX = 0x00
+		bus.ReadLog = []uint16{}
+		cpu.Step()
 
-	expectedReads := []uint16{0x8000, 0x8001, 0x8002, 0x2000}
-	assert.Equal(t, expectedReads, bus.ReadLog, "Reads should match (no dummy)")
+		expectedReads := []uint16{0x8000, 0x8001, 0x8002, 0x2000}
+		assert.Equal(t, expectedReads, bus.ReadLog)
+	})
 }

@@ -12,6 +12,42 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type WriteLog struct {
+	Addr uint16
+	Data byte
+}
+
+type MockBus struct {
+	Memory   [0x10000]byte
+	ReadLog  []uint16
+	WriteLog []WriteLog
+}
+
+func (m *MockBus) ReadMem(addr uint16) byte {
+	m.ReadLog = append(m.ReadLog, addr)
+	return m.Memory[addr]
+}
+
+func (m *MockBus) ReadMemSafe(addr uint16) byte {
+	return m.Memory[addr]
+}
+
+func (m *MockBus) WriteMem(addr uint16, data byte) {
+	m.WriteLog = append(m.WriteLog, WriteLog{addr, data})
+	m.Memory[addr] = data
+}
+
+func (m *MockBus) WriteMem16(addr uint16, data uint16) {
+	m.WriteMem(addr, byte(data))
+	m.WriteMem(addr+1, byte(data>>8))
+}
+
+func (m *MockBus) ReadMem16(addr uint16) uint16 {
+	lo := uint16(m.ReadMem(addr))
+	hi := uint16(m.ReadMem(addr + 1))
+	return hi<<8 | lo
+}
+
 func stubCPU(program []byte) *CPU {
 	cart := cartridge.FromBytes(program)
 	mapper := cartridge.NewMapper2(cart)
@@ -22,6 +58,24 @@ func stubCPU(program []byte) *CPU {
 	cpu := New(bus)
 	apu.SetCPU(cpu)
 	return cpu
+}
+
+func stubCPUMockBus(program []byte) (*CPU, *MockBus) {
+	bus := &MockBus{}
+	for i, b := range program {
+		bus.Memory[0x8000+i] = b
+	}
+	bus.Memory[0xFFFC] = 0x00
+	bus.Memory[0xFFFD] = 0x80
+
+	cpu := &CPU{
+		StackPointer:   0xFD,
+		Status:         Status{InterruptDisable: true},
+		bus:            bus,
+		Cycles:         7,
+		ProgramCounter: 0x8000,
+	}
+	return cpu, bus
 }
 
 func Test_0xa9_lda_immediate_load_data(t *testing.T) {

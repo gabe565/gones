@@ -1020,7 +1020,13 @@ func sre(c *CPU, mode AddressingMode) {
 //
 // [STA Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#STA
 func sta(c *CPU, mode AddressingMode) {
-	addr, _ := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if !pageCrossed {
+		switch mode {
+		case AbsoluteX, AbsoluteY, IndirectY:
+			c.ReadMem(addr)
+		}
+	}
 	c.WriteMem(addr, c.Accumulator)
 }
 
