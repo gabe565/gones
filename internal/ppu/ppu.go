@@ -175,7 +175,10 @@ func (p *PPU) WriteData(data byte) {
 	addr := p.Addr.Get() % 0x4000
 	switch {
 	case addr < 0x2000:
-		p.mapper.WriteMem(addr, data)
+		// Only writable when CHR is RAM.
+		if p.mapper.Cartridge().CHRIsRAM() {
+			p.mapper.WriteMem(addr, data)
+		}
 	case 0x2000 <= addr && addr < 0x3F00:
 		addr := p.MirrorVRAMAddr(addr)
 		p.VRAM[addr] = data

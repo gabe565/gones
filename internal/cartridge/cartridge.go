@@ -68,3 +68,9 @@ func (c *Cartridge) LogValue() slog.Value {
 		slog.String("title", c.name),
 	)
 }
+
+// CHRIsRAM reports whether the cartridge provides CHR RAM instead of ROM.
+// Per iNES, this is true when the CHR count in the header is zero.
+func (c *Cartridge) CHRIsRAM() bool {
+	return c.Header.CHRCount == 0
+}
