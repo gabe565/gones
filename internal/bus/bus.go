@@ -38,21 +38,29 @@ func (b *Bus) ReadMem(addr uint16) byte {
 		addr &= 0x07FF
 		b.OpenBus = b.CPUVRAM[addr]
 	case 0x2000 <= addr && addr <= 0x2007, addr == 0x4014:
-		return b.ppu.ReadMem(addr)
+		b.OpenBus = b.ppu.ReadMem(addr)
 	case 0x2008 <= addr && addr < 0x4000:
 		addr &= 0x2007
-		return b.ppu.ReadMem(addr)
-	case 0x4000 <= addr && addr < 0x4016:
-		b.OpenBus = b.apu.ReadMem(addr)
+		b.OpenBus = b.ppu.ReadMem(addr)
+	case addr == 0x4015:
+		return (b.apu.ReadMem(addr) & 0xDF) | (b.OpenBus & 0x20)
 	case addr == 0x4016:
 		b.OpenBus &^= 0xF
 		b.OpenBus |= b.controller1.Read()
 	case addr == 0x4017:
 		b.OpenBus &^= 0xF
 		b.OpenBus |= b.controller2.Read()
+	case 0x4000 <= addr && addr < 0x4016:
+		// Write-only APU registers return open bus
 	case addr <= 0x4018 && addr < 0x4020:
 		// Disabled test registers
 	case 0x4020 <= addr:
+		if addr < 0x6000 {
+			switch b.mapper.(type) {
+			case *cartridge.Mapper2, *cartridge.Mapper3, *cartridge.Mapper7:
+				return b.OpenBus
+			}
+		}
 		b.OpenBus = b.mapper.ReadMem(addr)
 	default:
 		slog.Error("Invalid Bus read", "addr", log.HexAddr(addr))
