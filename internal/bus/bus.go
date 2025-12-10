@@ -1,13 +1,10 @@
 package bus
 
 import (
-	"log/slog"
-
 	"gabe565.com/gones/internal/apu"
 	"gabe565.com/gones/internal/cartridge"
 	"gabe565.com/gones/internal/config"
 	"gabe565.com/gones/internal/controller"
-	"gabe565.com/gones/internal/log"
 	"gabe565.com/gones/internal/ppu"
 )
 
@@ -50,10 +47,6 @@ func (b *Bus) ReadMem(addr uint16) byte {
 	case addr == 0x4017:
 		b.OpenBus &^= 0xF
 		b.OpenBus |= b.controller2.Read()
-	case 0x4000 <= addr && addr < 0x4016:
-		// Write-only APU registers return open bus
-	case addr <= 0x4018 && addr < 0x4020:
-		// Disabled test registers
 	case 0x4020 <= addr:
 		if addr < 0x6000 {
 			switch b.mapper.(type) {
@@ -62,9 +55,6 @@ func (b *Bus) ReadMem(addr uint16) byte {
 			}
 		}
 		b.OpenBus = b.mapper.ReadMem(addr)
-	default:
-		slog.Error("Invalid Bus read", "addr", log.HexAddr(addr))
-		return 0
 	}
 	return b.OpenBus
 }
@@ -99,12 +89,8 @@ func (b *Bus) WriteMem(addr uint16, data byte) {
 	case addr == 0x4016:
 		b.controller1.Write(data)
 		b.controller2.Write(data)
-	case addr <= 0x4018 && addr < 0x4020:
-		// Disabled test registers
 	case 0x4020 <= addr:
 		b.mapper.WriteMem(addr, data)
-	default:
-		slog.Error("Invalid Bus write", "addr", log.HexAddr(addr))
 	}
 	b.OpenBus = data
 }
