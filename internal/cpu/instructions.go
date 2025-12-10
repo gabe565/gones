@@ -126,6 +126,10 @@ func arr(c *CPU, mode AddressingMode) {
 //
 // [ASL Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#ASL
 func asl(c *CPU, mode AddressingMode) {
+	aslOp(c, mode)
+}
+
+func aslOp(c *CPU, mode AddressingMode) byte {
 	var addr uint16
 	var data byte
 	if mode == Accumulator {
@@ -143,6 +147,7 @@ func asl(c *CPU, mode AddressingMode) {
 		c.WriteMem(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
+	return data
 }
 
 // axs - Undocumented Opcode
@@ -464,12 +469,17 @@ func eor(c *CPU, mode AddressingMode) {
 //
 // [INC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#INC
 func inc(c *CPU, mode AddressingMode) {
+	incOp(c, mode)
+}
+
+func incOp(c *CPU, mode AddressingMode) byte {
 	addr, _ := c.getOperandAddress(mode)
 	data := c.ReadMem(addr)
 	c.WriteMem(addr, data)
 	data++
 	c.WriteMem(addr, data)
 	c.updateZeroAndNegFlags(data)
+	return data
 }
 
 // inx - Increment X Register
@@ -505,9 +515,7 @@ func iny(c *CPU, _ AddressingMode) {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func isb(c *CPU, mode AddressingMode) {
-	inc(c, mode)
-	addr, _ := c.getOperandAddress(mode)
-	data := c.ReadMem(addr)
+	data := incOp(c, mode)
 	c.addAccumulator(byte(-int8(data) - 1))
 }
 
@@ -648,6 +656,10 @@ func ldy(c *CPU, mode AddressingMode) {
 //
 // [LSR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#LSR
 func lsr(c *CPU, mode AddressingMode) {
+	lsrOp(c, mode)
+}
+
+func lsrOp(c *CPU, mode AddressingMode) byte {
 	var addr uint16
 	var data byte
 	if mode == Accumulator {
@@ -665,6 +677,7 @@ func lsr(c *CPU, mode AddressingMode) {
 		c.WriteMem(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
+	return data
 }
 
 // lxa - Undocumented Opcode
@@ -773,9 +786,7 @@ func plp(c *CPU, _ AddressingMode) {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func rla(c *CPU, mode AddressingMode) {
-	rol(c, mode)
-	addr, _ := c.getOperandAddress(mode)
-	data := c.ReadMem(addr)
+	data := rolOp(c, mode)
 	c.setAccumulator(data & c.Accumulator)
 }
 
@@ -789,6 +800,10 @@ func rla(c *CPU, mode AddressingMode) {
 //
 // [ROL Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ROL
 func rol(c *CPU, mode AddressingMode) {
+	rolOp(c, mode)
+}
+
+func rolOp(c *CPU, mode AddressingMode) byte {
 	var addr uint16
 	var data byte
 	if mode == Accumulator {
@@ -811,6 +826,7 @@ func rol(c *CPU, mode AddressingMode) {
 		c.WriteMem(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
+	return data
 }
 
 // ror - Rotate Right
@@ -823,6 +839,10 @@ func rol(c *CPU, mode AddressingMode) {
 //
 // [ROR Instruction Reference]: https://nesdev.org/obelisk-6502-guide/reference.html#ROR
 func ror(c *CPU, mode AddressingMode) {
+	rorOp(c, mode)
+}
+
+func rorOp(c *CPU, mode AddressingMode) byte {
 	var addr uint16
 	var data byte
 	if mode == Accumulator {
@@ -845,6 +865,7 @@ func ror(c *CPU, mode AddressingMode) {
 		c.WriteMem(addr, data)
 		c.updateZeroAndNegFlags(data)
 	}
+	return data
 }
 
 // rra - Undocumented Opcode
@@ -855,9 +876,7 @@ func ror(c *CPU, mode AddressingMode) {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func rra(c *CPU, mode AddressingMode) {
-	ror(c, mode)
-	addr, _ := c.getOperandAddress(mode)
-	data := c.ReadMem(addr)
+	data := rorOp(c, mode)
 	c.addAccumulator(data)
 }
 
@@ -998,9 +1017,7 @@ func shy(c *CPU, mode AddressingMode) {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func slo(c *CPU, mode AddressingMode) {
-	asl(c, mode)
-	addr, _ := c.getOperandAddress(mode)
-	data := c.ReadMem(addr)
+	data := aslOp(c, mode)
 	c.setAccumulator(data | c.Accumulator)
 }
 
@@ -1012,9 +1029,7 @@ func slo(c *CPU, mode AddressingMode) {
 //
 // [6502 Undocuments Opcodes]: https://www.nesdev.org/undocumented_opcodes.txt
 func sre(c *CPU, mode AddressingMode) {
-	lsr(c, mode)
-	addr, _ := c.getOperandAddress(mode)
-	data := c.ReadMem(addr)
+	data := lsrOp(c, mode)
 	c.setAccumulator(data ^ c.Accumulator)
 }
 
