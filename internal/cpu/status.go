@@ -49,9 +49,6 @@ func (s *Status) Get() byte {
 	if s.Decimal {
 		v |= Decimal
 	}
-	if s.Break {
-		v |= Break
-	}
 	if s.Overflow {
 		v |= Overflow
 	}
@@ -66,7 +63,6 @@ func (s *Status) Set(data byte) {
 	s.Zero = data&Zero != 0
 	s.InterruptDisable = data&InterruptDisable != 0
 	s.Decimal = data&Decimal != 0
-	s.Break = data&Break != 0
 	s.Overflow = data&Overflow != 0
 	s.Negative = data&Negative != 0
 }

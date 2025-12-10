@@ -68,7 +68,7 @@ func (c *CPU) Reset() {
 
 func (c *CPU) nmi() {
 	c.stackPush16(c.ProgramCounter)
-	php(c, 0)
+	c.stackPush(c.Status.Get() | Unused)
 	sei(c, 0)
 	c.Cycles += 7
 	c.ProgramCounter = c.ReadMem16(interrupt.NMIVector)
@@ -77,7 +77,7 @@ func (c *CPU) nmi() {
 
 func (c *CPU) irq() {
 	c.stackPush16(c.ProgramCounter)
-	php(c, 0)
+	c.stackPush(c.Status.Get() | Unused)
 	sei(c, 0)
 	c.Cycles += 7
 	c.ProgramCounter = c.ReadMem16(interrupt.IRQVector)
@@ -99,12 +99,13 @@ func (c *CPU) Step() uint {
 
 	if c.NMIPending {
 		c.nmi()
+		return c.Cycles - cycles
 	} else if c.IRQPending && !c.Status.InterruptDisable {
 		if c.irqDelay == 0 {
 			c.irq()
-		} else {
-			c.irqDelay--
+			return c.Cycles - cycles
 		}
+		c.irqDelay--
 	}
 
 	code := c.ReadMem(c.ProgramCounter)
