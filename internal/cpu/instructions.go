@@ -133,6 +133,7 @@ func asl(c *CPU, mode AddressingMode) {
 	} else {
 		addr, _ = c.getOperandAddress(mode)
 		data = c.ReadMem(addr)
+		c.WriteMem(addr, data)
 	}
 	c.Status.Carry = data>>7 == 1
 	data <<= 1
@@ -403,6 +404,7 @@ func dcp(c *CPU, mode AddressingMode) {
 func dec(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
 	data := c.ReadMem(addr)
+	c.WriteMem(addr, data)
 	data--
 	c.WriteMem(addr, data)
 	c.updateZeroAndNegFlags(data)
@@ -464,6 +466,7 @@ func eor(c *CPU, mode AddressingMode) {
 func inc(c *CPU, mode AddressingMode) {
 	addr, _ := c.getOperandAddress(mode)
 	data := c.ReadMem(addr)
+	c.WriteMem(addr, data)
 	data++
 	c.WriteMem(addr, data)
 	c.updateZeroAndNegFlags(data)
@@ -652,6 +655,7 @@ func lsr(c *CPU, mode AddressingMode) {
 	} else {
 		addr, _ = c.getOperandAddress(mode)
 		data = c.ReadMem(addr)
+		c.WriteMem(addr, data)
 	}
 	c.Status.Carry = data&1 == 1
 	data >>= 1
@@ -792,6 +796,7 @@ func rol(c *CPU, mode AddressingMode) {
 	} else {
 		addr, _ = c.getOperandAddress(mode)
 		data = c.ReadMem(addr)
+		c.WriteMem(addr, data)
 	}
 	prevCarry := c.Status.Carry
 
@@ -825,6 +830,7 @@ func ror(c *CPU, mode AddressingMode) {
 	} else {
 		addr, _ = c.getOperandAddress(mode)
 		data = c.ReadMem(addr)
+		c.WriteMem(addr, data)
 	}
 	prevCarry := c.Status.Carry
 
