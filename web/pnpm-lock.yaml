@@ -52,8 +52,8 @@ importers:
         specifier: 9.39.1
         version: 9.39.1
       '@trivago/prettier-plugin-sort-imports':
-        specifier: 6.0.0
-        version: 6.0.0(@vue/compiler-sfc@3.5.25)(prettier@3.7.4)
+        specifier: 6.0.2
+        version: 6.0.2(@vue/compiler-sfc@3.5.25)(prettier@3.7.4)
       '@vue/eslint-config-prettier':
         specifier: 10.2.0
         version: 10.2.0(eslint@9.39.1(jiti@2.6.1))(prettier@3.7.4)
@@ -1217,8 +1217,8 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7
 
-  '@trivago/prettier-plugin-sort-imports@6.0.0':
-    resolution: {integrity: sha512-Xarx55ow0R8oC7ViL5fPmDsg1EBa1dVhyZFVbFXNtPPJyW2w9bJADIla8YFSaNG9N06XfcklA9O9vmw4noNxkQ==}
+  '@trivago/prettier-plugin-sort-imports@6.0.2':
+    resolution: {integrity: sha512-3DgfkukFyC/sE/VuYjaUUWoFfuVjPK55vOFDsxD56XXynFMCZDYFogH2l/hDfOsQAm1myoU/1xByJ3tWqtulXA==}
     engines: {node: '>= 20'}
     peerDependencies:
       '@vue/compiler-sfc': 3.x
@@ -4071,7 +4071,7 @@ snapshots:
       tailwindcss: 4.1.17
       vite: 7.2.7(jiti@2.6.1)(lightningcss@1.30.2)(sass-embedded@1.93.3)(sass@1.93.3)(terser@5.46.0)
 
-  '@trivago/prettier-plugin-sort-imports@6.0.0(@vue/compiler-sfc@3.5.25)(prettier@3.7.4)':
+  '@trivago/prettier-plugin-sort-imports@6.0.2(@vue/compiler-sfc@3.5.25)(prettier@3.7.4)':
     dependencies:
       '@babel/generator': 7.29.1
       '@babel/parser': 7.29.0
