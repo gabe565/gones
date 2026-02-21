@@ -2,11 +2,11 @@
 version: '3'
 
 tasks:
-  npm:
+  pnpm:
     internal: true
     dir: web
     sources: [package*.json]
-    cmd: npm install
+    cmd: pnpm install
 
   build-wasm:
     env:
@@ -27,13 +27,13 @@ tasks:
       - mv "{{ .TEMP }}" gones.wasm
 
   build:
-    deps: [build-wasm, npm]
+    deps: [build-wasm, pnpm]
     dir: web
     cmds:
       - task: optimize
-      - npm run build
+      - pnpm run build
 
   serve:
-    deps: [build-wasm, npm]
+    deps: [build-wasm, pnpm]
     dir: web
-    cmd: npm run dev
+    cmd: pnpm run dev
