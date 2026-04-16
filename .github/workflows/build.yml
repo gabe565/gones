@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: '41 8 5 * *'
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -239,6 +242,8 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     needs: [lint, test, build-windows, build-darwin, build-linux]
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
