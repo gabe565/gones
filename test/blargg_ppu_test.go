@@ -30,6 +30,44 @@ func Test_blarggPPU(t *testing.T) {
 		{"vbl nmi", "roms/ppu_vbl_nmi/ppu_vbl_nmi.nes", msgTypeSRAM, 1, blarggPPUVblNMIWant},
 
 		{
+			"vbl nmi timing frame basics",
+			"roms/vbl_nmi_timing/1.frame_basics.nes",
+			msgTypePPUVRAM,
+			-1,
+			"PPU FRAME BASICS\nPASSED",
+		},
+		{"vbl nmi timing vbl timing", "roms/vbl_nmi_timing/2.vbl_timing.nes", msgTypePPUVRAM, -1, "VBL TIMING\nPASSED"},
+		{
+			"vbl nmi timing even odd frames",
+			"roms/vbl_nmi_timing/3.even_odd_frames.nes",
+			msgTypePPUVRAM,
+			-1,
+			"EVEN ODD FRAMES\nPASSED",
+		},
+		{
+			"vbl nmi timing vbl clear timing",
+			"roms/vbl_nmi_timing/4.vbl_clear_timing.nes",
+			msgTypePPUVRAM,
+			-1,
+			"VBL CLEAR TIMING\nPASSED",
+		},
+		{
+			"vbl nmi timing nmi suppression",
+			"roms/vbl_nmi_timing/5.nmi_suppression.nes",
+			msgTypePPUVRAM,
+			-1,
+			"NMI SUPPRESSION\nPASSED",
+		},
+		{
+			"vbl nmi timing nmi disable",
+			"roms/vbl_nmi_timing/6.nmi_disable.nes",
+			msgTypePPUVRAM,
+			-1,
+			"NMI DISABLE\nPASSED",
+		},
+		{"vbl nmi timing nmi timing", "roms/vbl_nmi_timing/7.nmi_timing.nes", msgTypePPUVRAM, -1, "NMI TIMING\nPASSED"},
+
+		{
 			"sprite overflow basics",
 			"roms/sprite_overflow_tests/1.Basics.nes",
 			msgTypePPUVRAM,
