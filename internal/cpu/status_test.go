@@ -14,7 +14,7 @@ func Test_Status_BFlag(t *testing.T) {
 
 		cpu.IRQPending = true
 
-		cpu.Step()
+		cpu.StepInstruction()
 
 		statusByte := cpu.ReadMem(0x0100 + uint16(cpu.StackPointer) + 1)
 		assert.Equal(t, uint8(0), statusByte&0x10, "B flag should not be set on IRQ")
@@ -25,7 +25,7 @@ func Test_Status_BFlag(t *testing.T) {
 	t.Run("PHP", func(t *testing.T) {
 		cpu := stubCPU([]byte{0x08, 0x00})
 
-		cpu.Step()
+		cpu.StepInstruction()
 
 		statusByte := cpu.ReadMem(0x0100 + uint16(cpu.StackPointer) + 1)
 		assert.Equal(t, uint8(0x10), statusByte&0x10, "B flag should be set on PHP")
@@ -35,7 +35,7 @@ func Test_Status_BFlag(t *testing.T) {
 	t.Run("BRK", func(t *testing.T) {
 		cpu := stubCPU([]byte{0x00, 0x00})
 
-		cpu.Step()
+		cpu.StepInstruction()
 
 		statusByte := cpu.ReadMem(0x0100 + uint16(cpu.StackPointer) + 1)
 		assert.Equal(t, uint8(0x10), statusByte&0x10, "B flag should be set on BRK")

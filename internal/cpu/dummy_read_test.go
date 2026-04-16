@@ -29,7 +29,7 @@ func Test_DummyRead_AbsoluteX(t *testing.T) {
 
 	bus.ReadLog = []uint16{} // Clear log from fetch/setup
 
-	cpu.Step()
+	cpu.StepInstruction()
 
 	// Expected Reads:
 	// 1. 8000 (Opcode)
@@ -50,7 +50,7 @@ func Test_DummyRead_AbsoluteX_NoCross(t *testing.T) {
 		cpu, bus := stubCPUMockBus([]byte{0xBD, 0x00, 0x20})
 		cpu.RegisterX = 0x00
 		bus.ReadLog = []uint16{}
-		cpu.Step()
+		cpu.StepInstruction()
 		expectedReads := []uint16{0x8000, 0x8001, 0x8002, 0x2000}
 		assert.Equal(t, expectedReads, bus.ReadLog)
 	})
@@ -66,7 +66,7 @@ func Test_DummyRead_AbsoluteX_NoCross(t *testing.T) {
 		cpu, bus := stubCPUMockBus([]byte{0x9D, 0x00, 0x20})
 		cpu.RegisterX = 0x00
 		bus.ReadLog = []uint16{}
-		cpu.Step()
+		cpu.StepInstruction()
 
 		expectedReads := []uint16{0x8000, 0x8001, 0x8002, 0x2000}
 		assert.Equal(t, expectedReads, bus.ReadLog)

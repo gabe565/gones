@@ -17,7 +17,7 @@ func Test_RMW_DoubleWrite(t *testing.T) {
 	cpu, bus := stubCPUMockBus([]byte{0xEE, 0x00, 0x20})
 	bus.Memory[0x2000] = 0x10
 
-	cpu.Step()
+	cpu.StepInstruction()
 
 	// Filter write log to $2000
 	var writes []byte
@@ -41,7 +41,7 @@ func Test_ASL_DoubleWrite(t *testing.T) {
 	cpu, bus := stubCPUMockBus([]byte{0x0E, 0x00, 0x20})
 	bus.Memory[0x2000] = 0x01
 
-	cpu.Step()
+	cpu.StepInstruction()
 
 	var writes []byte
 	for _, w := range bus.WriteLog {

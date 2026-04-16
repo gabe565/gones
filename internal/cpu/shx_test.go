@@ -14,7 +14,7 @@ func Test_instruction_shx(t *testing.T) {
 		// Expected: Write 03 to $0210.
 		cpu := stubCPU([]byte{0xA2, 0xFF, 0xA0, 0x10, 0x9E, 0x00, 0x02, 0x00})
 		for {
-			cpu.Step()
+			cpu.StepInstruction()
 			require.NoError(t, cpu.StepErr)
 			if cpu.Status.Break {
 				break
@@ -29,7 +29,7 @@ func Test_instruction_shx(t *testing.T) {
 		// Expected: Value=03 (FF & (02+1)). Write 03 to $0310.
 		cpu := stubCPU([]byte{0xA2, 0xFF, 0xA0, 0x80, 0x9E, 0x90, 0x02, 0x00})
 		for {
-			cpu.Step()
+			cpu.StepInstruction()
 			require.NoError(t, cpu.StepErr)
 			if cpu.Status.Break {
 				break
@@ -47,7 +47,7 @@ func Test_instruction_shx(t *testing.T) {
 		cpu.WriteMem(0x0010, 0xFF) // Init to verify write
 		cpu.WriteMem(0x0310, 0xFF) // Init to verify no write
 		for {
-			cpu.Step()
+			cpu.StepInstruction()
 			require.NoError(t, cpu.StepErr)
 			if cpu.Status.Break {
 				break

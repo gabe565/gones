@@ -3,6 +3,7 @@ package cpu
 import (
 	"errors"
 	"fmt"
+	"iter"
 	"log/slog"
 
 	"gabe565.com/gones/internal/interrupt"
@@ -87,47 +88,61 @@ func (c *CPU) irq() {
 // ErrUnsupportedOpcode indicates an unsupported opcode was evaluated.
 var ErrUnsupportedOpcode = errors.New("unsupported opcode")
 
-// Step steps through the next instruction.
-func (c *CPU) Step() uint {
-	if c.Stall > 0 {
-		c.Stall--
-		c.Cycles++
-		return 1
+func (c *CPU) StepInstruction() uint {
+	var total uint
+	for cycles := range c.Step() {
+		total += cycles
 	}
+	return total
+}
 
-	cycles := c.Cycles
-
-	if c.NMIPending {
-		c.nmi()
-		return c.Cycles - cycles
-	} else if c.IRQPending && !c.Status.InterruptDisable {
-		if c.irqDelay == 0 {
-			c.irq()
-			return c.Cycles - cycles
+// Step steps through the next instruction, yielding the number of CPU cycles consumed.
+func (c *CPU) Step() iter.Seq[uint] {
+	return func(yield func(uint) bool) {
+		if c.Stall > 0 {
+			c.Stall--
+			c.Cycles++
+			yield(1)
+			return
 		}
-		c.irqDelay--
+
+		cycles := c.Cycles
+
+		if c.NMIPending {
+			c.nmi()
+			yield(c.Cycles - cycles)
+			return
+		} else if c.IRQPending && !c.Status.InterruptDisable {
+			if c.irqDelay == 0 {
+				c.irq()
+				yield(c.Cycles - cycles)
+				return
+			}
+			c.irqDelay--
+		}
+
+		code := c.ReadMem(c.ProgramCounter)
+		c.ProgramCounter++
+		prevPC := c.ProgramCounter
+
+		op := opcodes[code]
+		if op == nil {
+			c.StepErr = fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
+			slog.Error("Failed to step CPU", "error", ErrUnsupportedOpcode, "code", log.HexVal(code))
+			yield(1)
+			return
+		}
+
+		op.Exec(c, op.Mode)
+
+		c.Cycles += uint(op.Cycles)
+
+		if prevPC == c.ProgramCounter {
+			c.ProgramCounter += uint16(op.Len - 1)
+		}
+
+		yield(c.Cycles - cycles)
 	}
-
-	code := c.ReadMem(c.ProgramCounter)
-	c.ProgramCounter++
-	prevPC := c.ProgramCounter
-
-	op := opcodes[code]
-	if op == nil {
-		c.StepErr = fmt.Errorf("%w: $%02X", ErrUnsupportedOpcode, code)
-		slog.Error("Failed to step CPU", "error", ErrUnsupportedOpcode, "code", log.HexVal(code))
-		return 1
-	}
-
-	op.Exec(c, op.Mode)
-
-	c.Cycles += uint(op.Cycles)
-
-	if prevPC == c.ProgramCounter {
-		c.ProgramCounter += uint16(op.Len - 1)
-	}
-
-	return c.Cycles - cycles
 }
 
 func (c *CPU) AddStall(stall uint16) {

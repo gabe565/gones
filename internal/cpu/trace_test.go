@@ -17,7 +17,7 @@ func TestCPU_TraceFormat(t *testing.T) {
 	c.RegisterY = 3
 	for {
 		traces = append(traces, c.Trace())
-		c.Step()
+		c.StepInstruction()
 		require.NoError(t, c.StepErr)
 		if c.Status.Break {
 			break
@@ -51,7 +51,7 @@ func TestCPU_Trace_MemAccess(t *testing.T) {
 	c.WriteMem(0x400, 0xAA)
 	for {
 		traces = append(traces, c.Trace())
-		c.Step()
+		c.StepInstruction()
 		require.NoError(t, c.StepErr)
 		if c.Status.Break {
 			break

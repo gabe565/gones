@@ -144,17 +144,18 @@ func (c *Console) Step(render bool) {
 
 	var irq bool
 
-	cycles := c.CPU.Step()
-	if mapper, ok := c.Mapper.(cartridge.MapperOnCPUStep); ok {
-		mapper.OnCPUStep(cycles)
-	}
+	for cycles := range c.CPU.Step() {
+		if mapper, ok := c.Mapper.(cartridge.MapperOnCPUStep); ok {
+			mapper.OnCPUStep(cycles)
+		}
 
-	for range cycles * 3 {
-		c.PPU.Step(render)
-	}
+		for range cycles * 3 {
+			c.PPU.Step(render)
+		}
 
-	for range cycles {
-		irq = c.APU.Step() || irq
+		for range cycles {
+			irq = c.APU.Step() || irq
+		}
 	}
 
 	if mapper, ok := c.Mapper.(cartridge.MapperIRQ); ok {
