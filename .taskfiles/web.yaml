@@ -23,7 +23,7 @@ tasks:
         sh: mktemp
     cmds:
       - defer: rm -f "{{ .TEMP }}"
-      - wasm-opt --converge --flatten --rereloop -O3 --gufa -O3 --enable-bulk-memory -o "{{ .TEMP }}" gones.wasm
+      - wasm-opt --converge --flatten --rereloop -O3 --gufa -O3 --enable-bulk-memory --enable-bulk-memory-opt --enable-nontrapping-float-to-int --enable-sign-ext --enable-mutable-globals -o "{{ .TEMP }}" gones.wasm
       - mv "{{ .TEMP }}" gones.wasm
 
   build:
