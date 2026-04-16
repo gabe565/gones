@@ -35,6 +35,6 @@
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-vue": "10.6.2",
     "globals": "17.5.0",
-    "prettier": "3.7.4"
+    "prettier": "3.8.3"
   }
 }
