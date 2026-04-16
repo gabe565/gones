@@ -118,7 +118,7 @@ func (p *Square) stepSweep() {
 	}
 }
 
-func (p *Square) sweep() {
+func (p *Square) sweepTarget() uint16 {
 	delta := p.TimerPeriod >> p.SweepShift
 	if p.SweepNegate {
 		delta = -delta
@@ -126,7 +126,11 @@ func (p *Square) sweep() {
 			delta--
 		}
 	}
-	p.TimerPeriod += delta
+	return p.TimerPeriod + delta
+}
+
+func (p *Square) sweep() {
+	p.TimerPeriod = p.sweepTarget()
 }
 
 func (p *Square) stepLength() {
@@ -141,7 +145,7 @@ func (p *Square) output() byte {
 		return 0
 	case p.LengthValue == 0:
 		return 0
-	case p.TimerPeriod < 8, p.TimerPeriod > 0x7FF:
+	case p.TimerPeriod < 8, p.sweepTarget() > 0x7FF:
 		return 0
 	case squareDutyTable[p.DutyMode][p.DutyValue] == 0:
 		return 0
