@@ -158,7 +158,3 @@ linters:
       - common-false-positives
       - legacy
       - std-error-handling
-    rules:
-      - linters:
-          - revive
-        text: var-naming

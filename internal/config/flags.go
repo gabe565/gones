@@ -6,9 +6,12 @@ import (
 
 func Flags(cmd *cobra.Command) {
 	cmd.Flags().StringP("config", "c", "", "Config file (default is $HOME/.config/gones/config.yaml)")
-	if err := cmd.RegisterFlagCompletionFunc("config", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
-		return []string{"toml"}, cobra.ShellCompDirectiveFilterFileExt
-	}); err != nil {
+	if err := cmd.RegisterFlagCompletionFunc(
+		"config",
+		func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
+			return []string{"toml"}, cobra.ShellCompDirectiveFilterFileExt
+		},
+	); err != nil {
 		panic(err)
 	}
 
@@ -19,9 +22,12 @@ func Flags(cmd *cobra.Command) {
 	cmd.Flags().BoolP("audio", "a", true, "Enabled audio output")
 	cmd.Flags().Bool("resume", true, "Automatically resume where you left off")
 	cmd.Flags().String("palette", "", "Optional palette (.pal) file to use")
-	if err := cmd.RegisterFlagCompletionFunc("palette", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
-		return []string{"pal"}, cobra.ShellCompDirectiveFilterFileExt
-	}); err != nil {
+	if err := cmd.RegisterFlagCompletionFunc(
+		"palette",
+		func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
+			return []string{"pal"}, cobra.ShellCompDirectiveFilterFileExt
+		},
+	); err != nil {
 		panic(err)
 	}
 	cmd.Flags().Bool("pause-unfocused", true,
