@@ -15,7 +15,7 @@ import (
 )
 
 type CPU interface {
-	memory.Read8
+	ReadMemDMA(addr uint16) byte
 	memory.HasCycles
 	interrupt.NMI
 	interrupt.Stall
@@ -275,7 +275,7 @@ func (p *PPU) WriteMem(addr uint16, data byte) {
 	case 0x4014:
 		hi := uint16(data) << 8
 		for i := range uint16(256) {
-			p.WriteOam(p.cpu.ReadMem(hi + i))
+			p.WriteOam(p.cpu.ReadMemDMA(hi + i))
 		}
 		if p.cpu.GetCycles()%2 == 1 {
 			p.cpu.AddStall(514)
@@ -309,7 +309,8 @@ func (p *PPU) tick() {
 		p.NMIOffset--
 		if p.NMIOffset == 0 {
 			p.cpu.AddNMI()
-		} else if p.NMIOffset >= 12 {
+		} else if p.NMIOffset >= 3 {
+			// Suppression window: NMI can be cancelled within first 2 PPU clocks
 			if !p.Status.Vblank || !p.Ctrl.EnableNMI {
 				p.NMIOffset = 0
 			}
@@ -444,7 +445,7 @@ func (p *PPU) writePalette(addr uint16, data byte) {
 func (p *PPU) updateNMI() {
 	nmi := p.Status.Vblank && p.Ctrl.EnableNMI
 	if nmi && !p.Status.PrevVblank {
-		p.NMIOffset = 14
+		p.NMIOffset = 5
 	}
 	p.Status.PrevVblank = nmi
 }

@@ -113,7 +113,7 @@ func Test_blarggCPU(t *testing.T) {
 			"roms/cpu_interrupts_v2/rom_singles/5-branch_delays_irq.nes",
 			msgTypeSRAM,
 			1,
-			"test_jmp\nT+ CK PC\n00 02 02 \n01 01 02 \n02 02 00 \n03 02 00 \n04 02 02 \n05 01 02 \n06 01 00 \n07 01 04 \n08 02 04 \n09 02 00 \n\n\n663F1536\n5-branch_delays_irq\n\nFailed",
+			"test_jmp\nT+ CK PC\n00 05 02 \n01 04 04 \n02 03 02 \n03 05 00 \n04 03 00 \n05 04 00 \n06 06 0E \n07 06 0F \n08 04 04 \n09 04 04 \n\n\n63D21E49\n5-branch_delays_irq\n\nFailed",
 		},
 	}
 	for _, tt := range tests {
