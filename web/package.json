@@ -12,8 +12,8 @@
     "format": "prettier . --write --ignore-path .gitignore"
   },
   "dependencies": {
-    "@iconify-json/material-symbols": "1.2.49",
-    "@iconify-json/simple-icons": "1.2.62",
+    "@iconify-json/material-symbols": "1.2.67",
+    "@iconify-json/simple-icons": "1.2.78",
     "@tailwindcss/vite": "4.1.17",
     "@types/golang-wasm-exec": "1.15.2",
     "@vitejs/plugin-vue": "6.0.6",
