@@ -107,6 +107,7 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 		a.DMC.IRQPending = false
 	case addr == 0x4017:
 		a.FramePeriod = 4 + data>>7&1
+		a.FrameValue = 0
 		a.IRQEnabled = data>>6&1 == 0
 		if !a.IRQEnabled {
 			a.IRQPending = false
