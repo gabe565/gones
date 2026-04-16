@@ -14,7 +14,7 @@ func (c *CPU) Trace() string {
 		return "DISABLED"
 	}
 
-	code := c.ReadMem(c.ProgramCounter)
+	code := c.readMemSafe(c.ProgramCounter)
 	op := opcodes[code]
 	if op == nil {
 		return ""
@@ -29,7 +29,7 @@ func (c *CPU) Trace() string {
 	case Implicit, Immediate, Accumulator, Relative:
 		//
 	default:
-		valAddr, _ = c.getAbsoluteAddress(op.Mode, begin+1)
+		valAddr, _ = c.getAbsoluteAddressSafe(op.Mode, begin+1)
 		//nolint:errcheck
 		val = c.bus.(memory.ReadSafe).ReadMemSafe(valAddr)
 	}
@@ -41,7 +41,7 @@ func (c *CPU) Trace() string {
 			trace += "A "
 		}
 	case 2:
-		addr := c.ReadMem(begin + 1)
+		addr := c.readMemSafe(begin + 1)
 		hexDump = append(hexDump, addr)
 
 		switch op.Mode {
@@ -68,7 +68,7 @@ func (c *CPU) Trace() string {
 			)
 		}
 	case 3:
-		addr := c.ReadMem16(begin + 1)
+		addr := c.readMem16Safe(begin + 1)
 		hexDump = append(hexDump, uint8(addr&0xFF), uint8(addr>>8))
 
 		switch op.Mode {

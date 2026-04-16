@@ -8,11 +8,10 @@ import (
 	"gabe565.com/gones/internal/consts"
 	"gabe565.com/gones/internal/interrupt"
 	"gabe565.com/gones/internal/log"
-	"gabe565.com/gones/internal/memory"
 )
 
 type CPU interface {
-	memory.Read8
+	ReadMemDMA(addr uint16) byte
 	interrupt.Stall
 }
 

@@ -1,21 +1,26 @@
 package cpu
 
-// ReadMem reads byte from memory.
+// ReadMem reads byte from memory and ticks one CPU cycle.
 func (c *CPU) ReadMem(addr uint16) byte {
-	return c.bus.ReadMem(addr)
+	v := c.bus.ReadMem(addr)
+	c.tick()
+	return v
 }
 
-// WriteMem writes byte to memory.
+// WriteMem writes byte to memory and ticks one CPU cycle.
 func (c *CPU) WriteMem(addr uint16, data byte) {
 	c.bus.WriteMem(addr, data)
+	c.tick()
 }
 
-// ReadMem16 reads two bytes from memory.
+// ReadMem16 reads two bytes from memory (2 CPU cycles).
 func (c *CPU) ReadMem16(addr uint16) uint16 {
-	return c.bus.ReadMem16(addr)
+	lo := uint16(c.ReadMem(addr))
+	hi := uint16(c.ReadMem(addr + 1))
+	return hi<<8 | lo
 }
 
-// ReadMem16Bug reads two bytes from memory, emulating a 6502 bug.
+// ReadMem16Bug reads two bytes from memory, emulating a 6502 bug (2 CPU cycles).
 //
 // JMP ($xxyy), or JMP indirect, does not advance pages if the lower eight bits
 // of the specified address is $FF; the upper eight bits are fetched from $xx00,
@@ -26,17 +31,26 @@ func (c *CPU) ReadMem16(addr uint16) uint16 {
 // [JMP Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#JMP
 // [NESDev CPU Errata]:https://www.nesdev.org/wiki/Errata#CPU
 func (c *CPU) ReadMem16Bug(addr uint16) uint16 {
-	if addr&0x00FF == 0x00FF {
-		lo := uint16(c.bus.ReadMem(addr))
-		hi := uint16(c.bus.ReadMem(addr & 0xFF00))
-		return hi<<8 | lo
-	}
-	return c.bus.ReadMem16(addr)
+	lo := uint16(c.ReadMem(addr))
+	hi := uint16(c.ReadMem(addr&0xFF00 | (addr+1)&0x00FF))
+	return hi<<8 | lo
 }
 
-// WriteMem16 writes two bytes to memory.
-func (c *CPU) WriteMem16(addr uint16, data uint16) {
-	c.bus.WriteMem16(addr, data)
+// ReadMemDMA reads memory without ticking. Used for DMA operations (e.g. DMC sample fetches).
+func (c *CPU) ReadMemDMA(addr uint16) byte {
+	return c.bus.ReadMem(addr)
+}
+
+// readMemSafe reads memory without ticking. Used for tracing/debugging.
+func (c *CPU) readMemSafe(addr uint16) byte {
+	return c.bus.ReadMem(addr)
+}
+
+// readMem16Safe reads two bytes without ticking.
+func (c *CPU) readMem16Safe(addr uint16) uint16 {
+	lo := uint16(c.bus.ReadMem(addr))
+	hi := uint16(c.bus.ReadMem(addr + 1))
+	return hi<<8 | lo
 }
 
 // StackAddr is the memory address of the stack.

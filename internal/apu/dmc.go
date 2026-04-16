@@ -76,7 +76,7 @@ func (d *DMC) stepTimer() {
 func (d *DMC) stepReader() {
 	if d.CurrLen > 0 && d.BitCount == 0 {
 		d.cpu.AddStall(4)
-		d.ShiftRegister = d.cpu.ReadMem(d.CurrAddr)
+		d.ShiftRegister = d.cpu.ReadMemDMA(d.CurrAddr)
 		d.BitCount = 8
 		d.CurrAddr++
 		if d.CurrAddr == 0 {

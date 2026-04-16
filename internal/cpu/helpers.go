@@ -7,14 +7,14 @@ func (c *CPU) updateZeroAndNegFlags(result byte) {
 }
 
 func (c *CPU) branch(condition bool) {
+	offset := c.ReadMem(c.ProgramCounter) // always read operand (1 cycle)
 	if condition {
-		c.Cycles++
+		c.tick() // internal: compute branch target
 
-		jump := int8(c.ReadMem(c.ProgramCounter))
-		jumpAddr := c.ProgramCounter + 1 + uint16(jump)
+		jumpAddr := c.ProgramCounter + 1 + uint16(int8(offset))
 
-		if crossedPage(c.ProgramCounter+1, jumpAddr&0xFF00) {
-			c.Cycles++
+		if crossedPage(c.ProgramCounter+1, jumpAddr) {
+			c.tick() // internal: fix high byte
 		}
 
 		c.ProgramCounter = jumpAddr
@@ -22,12 +22,7 @@ func (c *CPU) branch(condition bool) {
 }
 
 func (c *CPU) compare(mode AddressingMode, rhs byte) {
-	addr, pageCrossed := c.getOperandAddress(mode)
-	if pageCrossed {
-		defer func() {
-			c.Cycles++
-		}()
-	}
+	addr, _ := c.getOperandAddress(mode)
 	data := c.ReadMem(addr)
 	c.Status.Carry = data <= rhs
 	c.updateZeroAndNegFlags(rhs - data)
