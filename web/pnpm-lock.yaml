@@ -14,6 +14,9 @@ importers:
       '@iconify-json/simple-icons':
         specifier: 1.2.78
         version: 1.2.78
+      '@plausible-analytics/tracker':
+        specifier: 0.4.4
+        version: 0.4.4
       '@tailwindcss/vite':
         specifier: 4.2.2
         version: 4.2.2(vite@8.0.8(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1))
@@ -23,9 +26,6 @@ importers:
       '@vitejs/plugin-vue':
         specifier: 6.0.6
         version: 6.0.6(vite@8.0.8(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1))(vue@3.5.32)
-      plausible-tracker:
-        specifier: 0.3.9
-        version: 0.3.9
       sass-embedded:
         specifier: 1.99.0
         version: 1.99.0
@@ -784,6 +784,9 @@ packages:
   '@pkgr/core@0.2.9':
     resolution: {integrity: sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
+
+  '@plausible-analytics/tracker@0.4.4':
+    resolution: {integrity: sha512-fz0NOYUEYXtg1TBaPEEvtcBq3FfmLFuTe1VZw4M8sTWX129br5dguu3M15+plOQnc181ShYe67RfwhKgK89VnA==}
 
   '@rolldown/binding-android-arm64@1.0.0-rc.15':
     resolution: {integrity: sha512-YYe6aWruPZDtHNpwu7+qAHEMbQ/yRl6atqb/AhznLTnD3UY99Q1jE7ihLSahNWkF4EqRPVC4SiR4O0UkLK02tA==}
@@ -2000,11 +2003,6 @@ packages:
 
   pkg-types@2.3.0:
     resolution: {integrity: sha512-SIqCzDRg0s9npO5XQ3tNZioRY1uK06lA41ynBC1YmFTmnY6FjUjVt6s4LoADmwoig1qqD0oK8h1p/8mlMx8Oig==}
-
-  plausible-tracker@0.3.9:
-    resolution: {integrity: sha512-hMhneYm3GCPyQon88SZrVJx+LlqhM1kZFQbuAgXPoh/Az2YvO1B6bitT9qlhpiTdJlsT5lsr3gPmzoVjb5CDXA==}
-    engines: {node: '>=10'}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
@@ -3498,6 +3496,8 @@ snapshots:
 
   '@pkgr/core@0.2.9': {}
 
+  '@plausible-analytics/tracker@0.4.4': {}
+
   '@rolldown/binding-android-arm64@1.0.0-rc.15':
     optional: true
 
@@ -4680,8 +4680,6 @@ snapshots:
       confbox: 0.2.4
       exsolve: 1.0.8
       pathe: 2.0.3
-
-  plausible-tracker@0.3.9: {}
 
   possible-typed-array-names@1.1.0: {}
 

@@ -1,13 +1,25 @@
-import Plausible from "plausible-tracker";
+import { init, track } from "@plausible-analytics/tracker";
 
-export const plausible = Plausible({
-  apiHost: import.meta.env.VITE_PLAUSIBLE_HOST,
-});
+const apiHost = import.meta.env.VITE_PLAUSIBLE_HOST;
 
-if (import.meta.env.VITE_PLAUSIBLE_HOST) {
-  plausible.enableAutoPageviews();
-  plausible.enableAutoOutboundTracking();
-} else {
-  plausible.trackPageview = () => {};
-  plausible.trackEvent = () => {};
+if (apiHost) {
+  init({
+    domain: window.location.hostname,
+    endpoint: apiHost + "/api/event",
+    outboundLinks: true,
+  });
+  track("pageview");
 }
+
+export const plausible = {
+  trackEvent: (eventName, options) => {
+    if (apiHost) {
+      track(eventName, options);
+    }
+  },
+  trackPageview: (options) => {
+    if (apiHost) {
+      track("pageview", options);
+    }
+  },
+};
