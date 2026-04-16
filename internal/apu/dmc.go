@@ -2,7 +2,7 @@ package apu
 
 //nolint:gochecknoglobals
 var dmcPeriodTable = [...]byte{
-	214, 190, 170, 160, 143, 127, 113, 107, 95, 80, 71, 64, 53, 42, 36, 27,
+	213, 189, 169, 159, 142, 126, 112, 106, 94, 79, 70, 63, 52, 41, 35, 26,
 }
 
 type DMC struct {

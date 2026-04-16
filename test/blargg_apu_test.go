@@ -33,12 +33,7 @@ func Test_blarggAPU(t *testing.T) {
 			"Flag first set too soon\n\n6-irq_flag_timing\n\nFailed #2",
 		},
 		{"DMC basics", "roms/apu_test/rom_singles/7-dmc_basics.nes", 0, "7-dmc_basics\n\nPassed"},
-		{
-			"DMC rates",
-			"roms/apu_test/rom_singles/8-dmc_rates.nes",
-			3,
-			"Rate 0's period is too long\n\n8-dmc_rates\n\nFailed #3",
-		},
+		{"DMC rates", "roms/apu_test/rom_singles/8-dmc_rates.nes", 0, "8-dmc_rates\n\nPassed"},
 		{"reset clears $4015", "roms/apu_reset/4015_cleared.nes", 0, "4015_cleared\n\nPassed"},
 		{"reset clears IRQ", "roms/apu_reset/irq_flag_cleared.nes", 0, "irq_flag_cleared\n\nPassed"},
 		{
