@@ -23,8 +23,8 @@ linters:
     - bodyclose
     - canonicalheader
     - copyloopvar
-    - decorder
     - cyclop
+    - decorder
     - depguard
     - dupl
     - durationcheck
@@ -42,23 +42,24 @@ linters:
     - goconst
     - gocritic
     - gocyclo
+    - godot
     - godox
     - goheader
-    - godot
     - gomoddirectives
     - goprintffuncname
     - gosec
-    - importas
-    - inamedparam
-    - interfacebloat
     - govet
     - iface
+    - importas
+    - inamedparam
     - ineffassign
+    - interfacebloat
     - intrange
     - ireturn
     - loggercheck
     - makezero
     - mirror
+    - modernize
     - musttag
     - nakedret
     - nestif

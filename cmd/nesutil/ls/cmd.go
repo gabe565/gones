@@ -141,10 +141,7 @@ func loadPaths(paths []string) ([]*entry, []error) {
 				return err
 			}
 
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-
+			wg.Go(func() {
 				cart, err := cartridge.FromINESFile(path)
 				if err != nil {
 					mu.Lock()
@@ -157,7 +154,7 @@ func loadPaths(paths []string) ([]*entry, []error) {
 				mu.Lock()
 				carts = append(carts, entry)
 				mu.Unlock()
-			}()
+			})
 			return nil
 		}); err != nil {
 			slog.Error("Failed to load ROMs", "error", err)
