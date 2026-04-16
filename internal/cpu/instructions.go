@@ -141,7 +141,11 @@ func aslOp(c *CPU, mode AddressingMode) byte {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		addr, _ = c.getOperandAddress(mode)
+		var pageCrossed bool
+		addr, pageCrossed = c.getOperandAddress(mode)
+		if !pageCrossed && mode == AbsoluteX {
+			c.ReadMem(addr)
+		}
 		data = c.ReadMem(addr)
 		c.WriteMem(addr, data)
 	}
@@ -413,7 +417,10 @@ func dcp(c *CPU, mode AddressingMode) {
 //
 // [DEC Instruction Reference]: https://www.nesdev.org/obelisk-6502-guide/reference.html#DEC
 func dec(c *CPU, mode AddressingMode) {
-	addr, _ := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if !pageCrossed && mode == AbsoluteX {
+		c.ReadMem(addr)
+	}
 	data := c.ReadMem(addr)
 	c.WriteMem(addr, data)
 	data--
@@ -479,7 +486,10 @@ func inc(c *CPU, mode AddressingMode) {
 }
 
 func incOp(c *CPU, mode AddressingMode) byte {
-	addr, _ := c.getOperandAddress(mode)
+	addr, pageCrossed := c.getOperandAddress(mode)
+	if !pageCrossed && mode == AbsoluteX {
+		c.ReadMem(addr)
+	}
 	data := c.ReadMem(addr)
 	c.WriteMem(addr, data)
 	data++
@@ -671,7 +681,11 @@ func lsrOp(c *CPU, mode AddressingMode) byte {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		addr, _ = c.getOperandAddress(mode)
+		var pageCrossed bool
+		addr, pageCrossed = c.getOperandAddress(mode)
+		if !pageCrossed && mode == AbsoluteX {
+			c.ReadMem(addr)
+		}
 		data = c.ReadMem(addr)
 		c.WriteMem(addr, data)
 	}
@@ -815,7 +829,11 @@ func rolOp(c *CPU, mode AddressingMode) byte {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		addr, _ = c.getOperandAddress(mode)
+		var pageCrossed bool
+		addr, pageCrossed = c.getOperandAddress(mode)
+		if !pageCrossed && mode == AbsoluteX {
+			c.ReadMem(addr)
+		}
 		data = c.ReadMem(addr)
 		c.WriteMem(addr, data)
 	}
@@ -854,7 +872,11 @@ func rorOp(c *CPU, mode AddressingMode) byte {
 	if mode == Accumulator {
 		data = c.Accumulator
 	} else {
-		addr, _ = c.getOperandAddress(mode)
+		var pageCrossed bool
+		addr, pageCrossed = c.getOperandAddress(mode)
+		if !pageCrossed && mode == AbsoluteX {
+			c.ReadMem(addr)
+		}
 		data = c.ReadMem(addr)
 		c.WriteMem(addr, data)
 	}

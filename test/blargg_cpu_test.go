@@ -70,8 +70,8 @@ func Test_blarggCPU(t *testing.T) {
 			"instr misc dummy reads",
 			"roms/instr_misc/rom_singles/03-dummy_reads.nes",
 			msgTypeSRAM,
-			10,
-			"ROL abs,x\n\n03-dummy_reads\n\nFailed #10",
+			0,
+			"03-dummy_reads\n\nPassed",
 		},
 		{
 			"instr misc dummy reads APU",
