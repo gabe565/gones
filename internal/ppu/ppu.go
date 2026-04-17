@@ -412,7 +412,7 @@ func (p *PPU) Step(render bool) {
 			p.VblRace = false
 			p.OpenBus = 0
 		}
-	case 280:
+	case 260:
 		if renderLine && renderingEnabled {
 			if mapper, ok := p.mapper.(cartridge.MapperOnScanline); ok {
 				mapper.OnScanline()

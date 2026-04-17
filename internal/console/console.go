@@ -156,13 +156,13 @@ func (c *Console) Step(render bool) {
 		for range cycles {
 			irq = c.APU.Step() || irq
 		}
-	}
 
-	if mapper, ok := c.Mapper.(cartridge.MapperIRQ); ok {
-		irq = mapper.IRQ() || irq
-	}
+		if mapper, ok := c.Mapper.(cartridge.MapperIRQ); ok {
+			irq = mapper.IRQ() || irq
+		}
 
-	c.CPU.IRQPending = irq
+		c.CPU.IRQPending = irq
+	}
 }
 
 func (c *Console) Reset() {
