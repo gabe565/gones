@@ -99,21 +99,21 @@ func Test_blarggCPU(t *testing.T) {
 			"roms/cpu_interrupts_v2/rom_singles/3-nmi_and_irq.nes",
 			msgTypeSRAM,
 			1,
-			"NMI BRK\n23  00 \n21  00 \n21  00 \n20  00 \n20  00 \n20  00 \n20  00 \n00  00 \n00  00 \n00  00 \n00  00 \n00  00 \n\n7A096051\n3-nmi_and_irq\n\nFailed",
+			"NMI BRK\n23  00 \n27  23 \n27  23 \n27  23 \n27  23 \n27  23 \n27  23 \n27  23 \n27  23 \n27  23 \n27  23 \n27  23 \n\nE589905A\n3-nmi_and_irq\n\nFailed",
 		},
 		{
 			"interrupts IRQ and DMA",
 			"roms/cpu_interrupts_v2/rom_singles/4-irq_and_dma.nes",
 			msgTypeSRAM,
 			1,
-			"53 +0\n53 +1\n53 +2\n53 +3\n53 +4\n53 +5\n53 +6\n53 +7\n53 +8\n53 +9\n53 +10\n53 +11\n53 +12\n53 +13\n...\n53 +524\n53 +525\n53 +526\n53 +527\n\nD927EAD0\n4-irq_and_dma\n\nFailed",
+			"0 +0\n1 +1\n1 +2\n1 +3\n1 +4\n1 +5\n2 +6\n2 +7\n4 +8\n4 +9\n7 +10\n7 +11\n8 +12\n8 +13\n...\n8 +524\n8 +525\n8 +526\n8 +527\n\n2343931E\n4-irq_and_dma\n\nFailed",
 		},
 		{
 			"interrupts branch delays IRQ",
 			"roms/cpu_interrupts_v2/rom_singles/5-branch_delays_irq.nes",
 			msgTypeSRAM,
 			1,
-			"test_jmp\nT+ CK PC\n00 05 02 \n01 04 04 \n02 03 02 \n03 05 00 \n04 03 00 \n05 04 00 \n06 06 0E \n07 06 0F \n08 04 04 \n09 04 04 \n\n\n63D21E49\n5-branch_delays_irq\n\nFailed",
+			"test_jmp\nT+ CK PC\n00 05 04 \n01 04 04 \n02 03 04 \n03 02 04 \n04 01 04 \n05 03 07 \n06 02 07 \n07 03 08 \n08 02 08 \n09 01 08 \n\n\n74DC0BFA\n5-branch_delays_irq\n\nFailed",
 		},
 	}
 	for _, tt := range tests {

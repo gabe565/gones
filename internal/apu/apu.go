@@ -15,10 +15,7 @@ type CPU interface {
 	interrupt.Stall
 }
 
-const (
-	FrameCounterRate  = float64(consts.CPUFrequency) / 240.0
-	DefaultSampleRate = float64(consts.CPUFrequency) / float64(consts.AudioSampleRate) * consts.FrameRateDiff
-)
+const DefaultSampleRate = float64(consts.CPUFrequency) / float64(consts.AudioSampleRate) * consts.FrameRateDiff
 
 //nolint:gochecknoglobals
 var (
@@ -77,9 +74,9 @@ type APU struct {
 	Noise    Noise
 	DMC      DMC
 
-	Cycle       uint
-	FramePeriod uint8
-	FrameValue  byte
+	Cycle        uint
+	FramePeriod  uint8
+	FrameDivider uint16
 
 	IRQEnabled bool `msgpack:"alias:IrqEnabled"`
 	IRQPending bool `msgpack:"alias:IrqPending"`
@@ -106,7 +103,7 @@ func (a *APU) WriteMem(addr uint16, data byte) {
 		a.DMC.IRQPending = false
 	case addr == 0x4017:
 		a.FramePeriod = 4 + data>>7&1
-		a.FrameValue = 0
+		a.FrameDivider = 0
 		a.IRQEnabled = data>>6&1 == 0
 		if !a.IRQEnabled {
 			a.IRQPending = false
@@ -164,12 +161,7 @@ func (a *APU) Step() bool {
 	cycle2 := float64(a.Cycle)
 
 	a.stepTimer()
-
-	f1 := uint32(cycle1 / FrameCounterRate)
-	f2 := uint32(cycle2 / FrameCounterRate)
-	if f1 != f2 {
-		a.stepFrameCounter()
-	}
+	a.stepFrameCounter()
 
 	if a.Enabled {
 		a.sample += a.output()
@@ -188,22 +180,56 @@ func (a *APU) SetCPU(c CPU) {
 	a.DMC.cpu = c
 }
 
+// Frame counter cycle thresholds from NES APU documentation.
+// These are CPU cycle offsets from the last $4017 write (or power-on).
 func (a *APU) stepFrameCounter() {
-	a.FrameValue++
-	a.FrameValue %= a.FramePeriod
-	switch a.FrameValue {
-	case 0, 2:
-		a.stepEnvelope()
-	case 1:
-		a.stepEnvelope()
-		a.stepSweep()
-		a.stepLength()
-	case 3:
-		a.stepEnvelope()
-		a.stepSweep()
-		a.stepLength()
-		if a.FramePeriod == 4 && a.IRQEnabled {
-			a.IRQPending = true
+	a.FrameDivider++
+
+	if a.FramePeriod == 4 {
+		// 4-step mode
+		switch a.FrameDivider {
+		case 7457: // quarter frame
+			a.stepEnvelope()
+		case 14913: // half frame
+			a.stepEnvelope()
+			a.stepSweep()
+			a.stepLength()
+		case 22371: // quarter frame
+			a.stepEnvelope()
+		case 29828: // IRQ flag set (3 consecutive cycles)
+			if a.IRQEnabled {
+				a.IRQPending = true
+			}
+		case 29829: // half frame + IRQ
+			a.stepEnvelope()
+			a.stepSweep()
+			a.stepLength()
+			if a.IRQEnabled {
+				a.IRQPending = true
+			}
+		case 29830: // IRQ + reset
+			if a.IRQEnabled {
+				a.IRQPending = true
+			}
+			a.FrameDivider = 0
+		}
+	} else {
+		// 5-step mode (no IRQ)
+		switch a.FrameDivider {
+		case 7457: // quarter frame
+			a.stepEnvelope()
+		case 14913: // half frame
+			a.stepEnvelope()
+			a.stepSweep()
+			a.stepLength()
+		case 22371: // quarter frame
+			a.stepEnvelope()
+		case 37281: // half frame
+			a.stepEnvelope()
+			a.stepSweep()
+			a.stepLength()
+		case 37282: // reset
+			a.FrameDivider = 0
 		}
 	}
 }

@@ -17,7 +17,7 @@ func Test_blarggAPU(t *testing.T) {
 		want       string
 	}{
 		{"len ctr", "roms/apu_test/rom_singles/1-len_ctr.nes", 0, "1-len_ctr\n\nPassed"},
-		{"len table", "roms/apu_test/rom_singles/2-len_table.nes", 1, "Channel: 0\n\n2-len_table\n\nFailed"},
+		{"len table", "roms/apu_test/rom_singles/2-len_table.nes", 0, "2-len_table\n\nPassed"},
 		{"IRQ flag", "roms/apu_test/rom_singles/3-irq_flag.nes", 0, "3-irq_flag\n\nPassed"},
 		{"jitter", "roms/apu_test/rom_singles/4-jitter.nes", 2, "Frame irq is set too soon\n\n4-jitter\n\nFailed #2"},
 		{
@@ -54,12 +54,7 @@ func Test_blarggAPU(t *testing.T) {
 			2,
 			"At power, length counters should be enabled\n\nlen_ctrs_enabled\n\nFailed #2",
 		},
-		{
-			"reset works immediately",
-			"roms/apu_reset/works_immediately.nes",
-			2,
-			"At power, writes should work immediately\n\nworks_immediately\n\nFailed #2",
-		},
+		{"reset works immediately", "roms/apu_reset/works_immediately.nes", 0, "works_immediately\n\nPassed"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
