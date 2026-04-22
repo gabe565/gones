@@ -33,7 +33,7 @@
     "eslint": "10.2.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.5",
-    "eslint-plugin-vue": "10.8.0",
+    "eslint-plugin-vue": "10.9.0",
     "globals": "17.5.0",
     "prettier": "3.8.3"
   }
