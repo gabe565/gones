@@ -23,7 +23,7 @@
     "unplugin-icons": "23.0.1",
     "vite": "8.0.8",
     "vite-plugin-pwa": "1.2.0",
-    "vue": "3.5.32",
+    "vue": "3.5.33",
     "workbox-window": "7.4.0"
   },
   "devDependencies": {
