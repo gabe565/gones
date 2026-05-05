@@ -14,7 +14,7 @@
   "dependencies": {
     "@iconify-json/material-symbols": "1.2.67",
     "@iconify-json/simple-icons": "1.2.78",
-    "@plausible-analytics/tracker": "0.4.4",
+    "@plausible-analytics/tracker": "0.4.5",
     "@tailwindcss/vite": "4.2.2",
     "@types/golang-wasm-exec": "1.15.2",
     "@vitejs/plugin-vue": "6.0.6",
