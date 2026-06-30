@@ -40,7 +40,7 @@ jobs:
           go-version-file: go.mod
           cache: false
       - name: Install apt dependencies
-        uses: awalsh128/cache-apt-pkgs-action@acb598e5ddbc6f68a970c5da0688d2f3a9f04d05 # v1.6.0
+        uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9 # v1.6.3
         with:
           packages: ${{ env.LINUX_DEPENDENCIES }}
           version: amd64
@@ -60,7 +60,7 @@ jobs:
         with:
           go-version-file: go.mod
       - name: Install apt dependencies
-        uses: awalsh128/cache-apt-pkgs-action@acb598e5ddbc6f68a970c5da0688d2f3a9f04d05 # v1.6.0
+        uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9 # v1.6.3
         with:
           packages: ${{ env.LINUX_DEPENDENCIES }}
           version: amd64
@@ -144,7 +144,7 @@ jobs:
         with:
           go-version-file: go.mod
       - name: Install apt dependencies
-        uses: awalsh128/cache-apt-pkgs-action@acb598e5ddbc6f68a970c5da0688d2f3a9f04d05 # v1.6.0
+        uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9 # v1.6.3
         with:
           packages: ${{ env.LINUX_DEPENDENCIES }}
           version: ${{ matrix.platform }}
