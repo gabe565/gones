@@ -17,7 +17,7 @@
     "@plausible-analytics/tracker": "0.4.4",
     "@tailwindcss/vite": "4.2.2",
     "@types/golang-wasm-exec": "1.15.2",
-    "@vitejs/plugin-vue": "6.0.6",
+    "@vitejs/plugin-vue": "6.0.8",
     "sass-embedded": "1.99.0",
     "tailwindcss": "4.2.2",
     "unplugin-icons": "23.0.1",
