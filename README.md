@@ -170,4 +170,5 @@ Keys are configurable, but the default values are listed below.
 - [ltriant/nes](https://github.com/ltriant/nes)
 - [i82orbom/nesgo](https://github.com/i82orbom/nesgo)
 - [No-Intro](https://no-intro.org)
+- [libretro-database](https://github.com/libretro/libretro-database)
 - [NES Composite Palette Project](https://www.firebrandx.com/nespalette.html)
