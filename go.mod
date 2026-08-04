@@ -8,7 +8,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.12.0
 	github.com/hajimehoshi/ebiten/v2 v2.9.9
 	github.com/knadh/koanf/providers/posflag v1.0.1
-	github.com/knadh/koanf/providers/rawbytes v1.0.0
+	github.com/knadh/koanf/providers/rawbytes v1.0.1
 	github.com/knadh/koanf/providers/structs v1.0.0
 	github.com/knadh/koanf/v2 v2.3.4
 	github.com/lmittmann/tint v1.1.3
