@@ -7,7 +7,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/PuerkitoBio/goquery v1.12.0
 	github.com/hajimehoshi/ebiten/v2 v2.9.9
-	github.com/knadh/koanf/providers/posflag v1.0.1
+	github.com/knadh/koanf/providers/posflag v1.0.2
 	github.com/knadh/koanf/providers/rawbytes v1.0.0
 	github.com/knadh/koanf/providers/structs v1.0.0
 	github.com/knadh/koanf/v2 v2.3.4
