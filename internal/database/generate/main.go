@@ -6,6 +6,7 @@ import (
 	"encoding/csv"
 	"encoding/hex"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"log/slog"
@@ -16,6 +17,7 @@ import (
 	"strings"
 	"time"
 
+	"gabe565.com/gones/internal/database/compact"
 	"gabe565.com/gones/internal/database/rdb"
 	"gabe565.com/gones/internal/log"
 )
@@ -24,32 +26,52 @@ import (
 const url = "https://raw.githubusercontent.com/libretro/libretro-database/master/rdb/Nintendo%20-%20Nintendo%20Entertainment%20System.rdb"
 
 //nolint:gochecknoglobals
-var path = filepath.Join("internal", "database", "database.csv")
+var (
+	// csvPath is committed to the repo and embedded by development builds.
+	csvPath = filepath.Join("internal", "database", "database.csv")
+	// compactPath is built from csvPath by go:generate and embedded by release builds.
+	compactPath = filepath.Join("internal", "database", "database.bin.gz")
+)
 
 func main() {
 	log.Init(os.Stderr)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-	defer cancel()
+	fromCSV := flag.Bool("from-csv", false,
+		"Rebuild "+compactPath+" from the committed CSV instead of downloading the database.")
+	flag.Parse()
 
-	if err := run(ctx); err != nil {
+	if err := run(*fromCSV); err != nil {
 		slog.Error("Failed to generate database", "error", err)
 		os.Exit(1)
 	}
 }
 
-func run(ctx context.Context) error {
+func run(fromCSV bool) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
+	if fromCSV {
+		entries, err := readCSV()
+		if err != nil {
+			return err
+		}
+		return writeCompact(entries)
+	}
+
 	data, err := download(ctx)
 	if err != nil {
 		return err
 	}
 
-	names, err := parse(data)
+	entries, err := parse(data)
 	if err != nil {
 		return err
 	}
 
-	return write(names)
+	if err := writeCSV(entries); err != nil {
+		return err
+	}
+	return writeCompact(entries)
 }
 
 func download(ctx context.Context) ([]byte, error) {
@@ -86,8 +108,9 @@ type entry struct {
 	name string
 }
 
-// parse builds a deduplicated, hash-sorted entry list. If a duplicate is
-// encountered, only keeps the shorter title.
+// parse builds a deduplicated entry list. If a duplicate is encountered, only
+// keeps the shorter title. Entries are sorted by name so that similar titles
+// end up adjacent, which compresses far better than hash order.
 func parse(data []byte) ([]entry, error) {
 	names := make(map[string]string)
 
@@ -114,6 +137,9 @@ func parse(data []byte) ([]entry, error) {
 		entries = append(entries, entry{hash: hash, name: name})
 	}
 	slices.SortFunc(entries, func(a, b entry) int {
+		if c := strings.Compare(a.name, b.name); c != 0 {
+			return c
+		}
 		return strings.Compare(a.hash, b.hash)
 	})
 
@@ -121,24 +147,44 @@ func parse(data []byte) ([]entry, error) {
 	return entries, nil
 }
 
-func write(entries []entry) error {
-	slog.Info("Creating CSV file", "path", path)
-	f, err := os.Create(path)
+func readCSV() ([]entry, error) {
+	f, err := os.Open(csvPath)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		_ = f.Close()
+	}()
+
+	c := csv.NewReader(f)
+	c.FieldsPerRecord = 2
+
+	records, err := c.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	entries := make([]entry, 0, len(records))
+	for _, record := range records {
+		entries = append(entries, entry{hash: record[0], name: record[1]})
+	}
+
+	slog.Info("Read CSV", "path", csvPath, "games", len(entries))
+	return entries, nil
+}
+
+func writeCSV(entries []entry) error {
+	slog.Info("Creating CSV file", "path", csvPath)
+
+	f, err := os.Create(csvPath)
 	if err != nil {
 		return err
 	}
-	defer func() { _ = f.Close() }()
+	defer func() {
+		_ = f.Close()
+	}()
 
-	slog.Info("Creating gzipped CSV file", "path", path+".gz")
-	gzf, err := os.Create(path + ".gz")
-	if err != nil {
-		return err
-	}
-	defer func() { _ = gzf.Close() }()
-	gz := gzip.NewWriter(gzf)
-	defer func() { _ = gz.Close() }()
-
-	c := csv.NewWriter(io.MultiWriter(f, gz))
+	c := csv.NewWriter(f)
 	for _, e := range entries {
 		if err := c.Write([]string{e.hash, e.name}); err != nil {
 			return err
@@ -146,10 +192,52 @@ func write(entries []entry) error {
 	}
 	c.Flush()
 
-	return errors.Join(
-		c.Error(),
-		gz.Close(),
-		gzf.Close(),
-		f.Close(),
-	)
+	return errors.Join(c.Error(), f.Close())
+}
+
+func writeCompact(entries []entry) error {
+	hashes := make([]uint64, 0, len(entries))
+	names := make([]string, 0, len(entries))
+	seen := make(map[uint64]string, len(entries))
+
+	for _, e := range entries {
+		key, err := compact.Key(e.hash)
+		if err != nil {
+			return err
+		}
+		// Truncation is only safe while it stays collision free.
+		if prev, ok := seen[key]; ok {
+			return fmt.Errorf("%w: %q collides with %q", compact.ErrInvalid, e.name, prev)
+		}
+		seen[key] = e.name
+
+		hashes = append(hashes, key)
+		names = append(names, e.name)
+	}
+
+	data, err := compact.Marshal(hashes, names)
+	if err != nil {
+		return err
+	}
+
+	slog.Info("Creating compact database", "path", compactPath, "bytes", len(data))
+
+	f, err := os.Create(compactPath)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = f.Close()
+	}()
+
+	gz, err := gzip.NewWriterLevel(f, gzip.BestCompression)
+	if err != nil {
+		return err
+	}
+
+	if _, err := gz.Write(data); err != nil {
+		return errors.Join(err, gz.Close())
+	}
+
+	return errors.Join(gz.Close(), f.Close())
 }

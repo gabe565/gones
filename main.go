@@ -11,7 +11,7 @@ import (
 )
 
 //go:generate cp $GOROOT/lib/wasm/wasm_exec.js web/src/scripts
-//go:generate sh -c "gzip -c internal/database/database.csv > internal/database/database.csv.gz"
+//go:generate go run ./internal/database/generate -from-csv
 
 var version = "beta"
 

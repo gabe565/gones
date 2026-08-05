@@ -6,41 +6,35 @@ import (
 	"bytes"
 	"compress/gzip"
 	_ "embed"
-	"encoding/csv"
-	"errors"
-	"io"
+
+	"gabe565.com/gones/internal/database/compact"
 )
 
-//go:generate sh -c "gzip -c database.csv > database.csv.gz"
-
-//go:embed database.csv.gz
+// database is built from database.csv by go:generate, so it is not committed.
+//
+//go:embed database.bin.gz
 var database []byte
 
-var ErrNotFound = errors.New("not found")
-
 func FindNameByHash(hash string) (string, error) {
+	key, err := compact.Key(hash)
+	if err != nil {
+		return "", ErrNotFound
+	}
+
 	gzr, err := gzip.NewReader(bytes.NewReader(database))
 	if err != nil {
 		return "", err
 	}
-	defer func(gzr *gzip.Reader) {
+	defer func() {
 		_ = gzr.Close()
-	}(gzr)
+	}()
 
-	c := csv.NewReader(gzr)
-	for {
-		record, err := c.Read()
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			return "", err
-		}
-
-		if record[0] == hash {
-			return record[1], nil
-		}
+	name, ok, err := compact.Find(gzr, key)
+	if err != nil {
+		return "", err
 	}
-
-	return "", ErrNotFound
+	if !ok {
+		return "", ErrNotFound
+	}
+	return name, nil
 }
