@@ -20,8 +20,9 @@ const _Mirror_name = "HorizontalVerticalSingleLowerSingleUpperFourScreen"
 var _Mirror_index = [...]uint8{0, 10, 18, 29, 40, 50}
 
 func (i Mirror) String() string {
-	if i >= Mirror(len(_Mirror_index)-1) {
+	idx := int(i) - 0
+	if i < 0 || idx >= len(_Mirror_index)-1 {
 		return "Mirror(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
-	return _Mirror_name[_Mirror_index[i]:_Mirror_index[i+1]]
+	return _Mirror_name[_Mirror_index[idx]:_Mirror_index[idx+1]]
 }

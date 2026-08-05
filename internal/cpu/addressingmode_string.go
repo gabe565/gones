@@ -28,8 +28,9 @@ const _AddressingMode_name = "ImplicitAccumulatorImmediateZeroPageZeroPageXZeroP
 var _AddressingMode_index = [...]uint8{0, 8, 19, 28, 36, 45, 54, 62, 70, 79, 88, 96, 105, 114}
 
 func (i AddressingMode) String() string {
-	if i >= AddressingMode(len(_AddressingMode_index)-1) {
+	idx := int(i) - 0
+	if i < 0 || idx >= len(_AddressingMode_index)-1 {
 		return "AddressingMode(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
-	return _AddressingMode_name[_AddressingMode_index[i]:_AddressingMode_index[i+1]]
+	return _AddressingMode_name[_AddressingMode_index[idx]:_AddressingMode_index[idx+1]]
 }

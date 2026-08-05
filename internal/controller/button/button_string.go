@@ -23,8 +23,9 @@ const _Button_name = "abselectstartupdownleftright"
 var _Button_index = [...]uint8{0, 1, 2, 8, 13, 15, 19, 23, 28}
 
 func (i Button) String() string {
-	if i >= Button(len(_Button_index)-1) {
+	idx := int(i) - 0
+	if i < 0 || idx >= len(_Button_index)-1 {
 		return "Button(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
-	return _Button_name[_Button_index[i]:_Button_index[i+1]]
+	return _Button_name[_Button_index[idx]:_Button_index[idx+1]]
 }
