@@ -1,6 +1,6 @@
 module gabe565.com/gones
 
-go 1.26.2
+go 1.27.1
 
 require (
 	gabe565.com/utils v0.0.0-20260310002041-b3b94f17b36b
