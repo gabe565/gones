@@ -6,7 +6,7 @@ require (
 	gabe565.com/utils v0.0.0-20260310002041-b3b94f17b36b
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/hajimehoshi/ebiten/v2 v2.9.9
-	github.com/knadh/koanf/providers/posflag v1.0.1
+	github.com/knadh/koanf/providers/posflag v1.0.2
 	github.com/knadh/koanf/providers/rawbytes v1.0.0
 	github.com/knadh/koanf/providers/structs v1.0.0
 	github.com/knadh/koanf/v2 v2.3.4
