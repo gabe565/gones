@@ -89,12 +89,12 @@ jobs:
           zip -r ../gones_windows_amd64.zip GoNES-amd64.exe
           zip -r ../gones_windows_arm64.zip GoNES-arm64.exe
       - name: Upload Artifact (amd64)
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gones_windows_amd64
           path: gones_windows_amd64.zip
       - name: Upload Artifact (arm64)
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gones_windows_arm64
           path: gones_windows_arm64.zip
@@ -116,12 +116,12 @@ jobs:
           VERSION: ${{ github.ref_name }}
         run: ./hack/build-darwin.sh
       - name: Upload Artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gones_darwin
           path: dist/gones_darwin.tar.gz
       - name: Upload Artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gones_cask
           path: dist/gones.rb
@@ -157,7 +157,7 @@ jobs:
       - name: Compress
         run: tar -cvf gones_linux_${{ matrix.platform }}.tar.gz -C dist .
       - name: Upload Artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gones_linux_${{ matrix.platform }}
           path: gones_linux_${{ matrix.platform }}.tar.gz
