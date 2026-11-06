@@ -15,7 +15,7 @@ require (
 	github.com/ncruces/zenity v0.10.14
 	github.com/pelletier/go-toml/v2 v2.3.0
 	github.com/spf13/cobra v1.10.2
-	github.com/spf13/pflag v1.0.10
+	github.com/spf13/pflag v1.1.0
 	github.com/stretchr/testify v1.11.1
 	github.com/vmihailenco/msgpack/v5 v5.4.1
 	gopkg.in/yaml.v3 v3.0.1
